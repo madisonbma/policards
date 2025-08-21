@@ -1,6 +1,8 @@
 import gen_reps_json
 import gen_voting_record_json
+import modify_reps
 import gen_xls
+import gen_cards
 import sys
 import os
 import time
@@ -50,5 +52,15 @@ if __name__ == "__main__":
         gen_voting_record_json.gen_voting_record_json()    
 
     #Now that records have all been pulled, merge them and export into csv. 
-    gen_xls.gen_xls("congressmen.json", "voting_records.json")
-    print("Merging these JSONs, see result in raw_data.csv")
+    #gen_xls.gen_xls("congressmen.json", "voting_records.json")
+    #print("Merging these JSONs, see result in raw_data.csv")
+
+    #Now generate player cards. For now, just passing in the congressmen.json
+    modify_reps.modify_reps("congressmen.json")
+    if get_yes_no_input(f"Proceed with card creation on congressmen size above?"):
+        print("Generating cards")
+        gen_cards.gen_cards('congressmen_mod.json')
+    else:
+        print("Generating test card.")
+        gen_cards.gen_cards('congressmen_mod.json', test_card=True)
+        
