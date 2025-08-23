@@ -88,19 +88,19 @@ def get_house_vote_members(vote_number, congress=119, session=1, limit=250, offs
     return data.get('houseRollCallVoteMemberVotes')
 
 
-def get_voting_record(max_records=100):
+def get_voting_record(max_records=1000):
     """
     This will query house voting records up to max_records. 
 
     Args: 
-        max_records (int): Max number of measures to get voting records of, defaults to 100 for now but will change once working
+        max_records (int): Max number of measures to get voting records of, defaults to 1000 for now but will change once working
 
     """
     full_voting_record = []
     i = 1
     #Modify this, can set this whole thing to True when running for all voting records
 
-    while i < max_records:
+    while i <= max_records:
         try: 
             vote_record_i = get_house_vote_members(i)
             ###Postprocesses the vote_record_test JSON to flatten the "results" column
@@ -120,14 +120,38 @@ def get_voting_record(max_records=100):
 
             # Iterate through each term and create a new, flattened dictionary
             for vote in results_list:
-                # Create a new dictionary for this row
+                """vote contains this info:
+                    "bioguideID": "A000148",
+                    "firstName": "Jake",
+                    "lastName": "Auchincloss",
+                    "voteCast": "Present",
+                    "voteParty": "D",
+                    "voteState": "MA"
+                    we only need bioguideID, voteCast, and voteParty
+                """
+                keep_terms = ['bioguideID', 'voteCast', 'voteParty']
+                vote_keep = {key: vote[key] for key in keep_terms if key in vote}
+
                 flattened_row = parent_fields.copy()  # Start with the parent data
-                flattened_row.update(vote)           # Add the nested term data
+                flattened_row.update(vote_keep)           # Add the nested term data
                 full_voting_record.append(flattened_row)
 
             time.sleep(RATE_LIMIT_DELAY_SECONDS)
             i = i + 1
         except requests.exceptions.HTTPError as e:
+            #TODO this isn't working for some reason
+            """HTTP Error for vote members: 404 - {
+                "error": "No Vote matches the given query.",
+                "request": {
+                    "congress": "119",
+                    "contentType": "application/json",
+                    "format": "json",
+                    "session": "1"
+                }
+            }
+            - Vote not found or invalid congress/session/voteNumber combination.
+            An unhandled error occurred: cannot access local variable 'data' where it is not associated with a value
+            """
             print(f"Voting record {i} does not exist, quitting" )
             break
         except Exception as e:
@@ -141,8 +165,8 @@ def get_voting_record(max_records=100):
 
 
 #if __name__ == "__main__":
-def gen_voting_record_json():
-    voting_json = get_voting_record()
+def gen_voting_record_json(max_records=1000):
+    voting_json = get_voting_record(max_records=max_records)
 
     with open('voting_records.json', 'w') as f:
         json.dump(voting_json, f, indent=2)

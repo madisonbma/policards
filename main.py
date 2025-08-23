@@ -1,6 +1,7 @@
 import gen_reps_json
 import gen_voting_record_json
 import modify_reps
+import modify_votes
 import gen_xls
 import gen_cards
 import sys
@@ -56,11 +57,19 @@ if __name__ == "__main__":
     #print("Merging these JSONs, see result in raw_data.csv")
 
     #Now generate player cards. For now, just passing in the congressmen.json
-    modify_reps.modify_reps("congressmen.json")
+    modify_votes.modify_votes("voting_records.json")
+
+    modify_reps.modify_reps("congressmen.json", "vote_avg.json")
+
+
     if get_yes_no_input(f"Proceed with card creation on congressmen size above?"):
         print("Generating cards")
         gen_cards.gen_cards('congressmen_mod.json')
     else:
-        print("Generating test card.")
-        gen_cards.gen_cards('congressmen_mod.json', test_card=True)
+        if get_yes_no_input(f"Single card debug?"):
+            gen_cards.gen_cards('congressmen_mod.json', test_card=True, dummy_img=False)
+        else:
+            print("Batch debug, disabling photo pull")
+            gen_cards.gen_cards('congressmen_mod.json', test_card=False, dummy_img=True)
+
         

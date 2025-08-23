@@ -72,23 +72,55 @@ def add_tenure(df):
     df['party_all_time_count'] = df.groupby('partyName')['bioguideID'].transform('count')
     df['party_current_count'] = df.groupby(['partyName','current_member'])['bioguideID'].transform('count')
 
-
-
-
     return df
+
+############################################
 
 def only_current(df):
     df = df[df['current_member']=="yes"]
     return df
 
+############################################
+
 def normalize_name(df):
     df['name'] = df['name'].str.split(', ').str[::-1].str.join(' ')
     return df
 
+############################################
+
+#Merge voting records into the reps df
+def merge_in_voting_records(rep_df, vote_df):
+    """
+    Takes the current rep df and merges with the voting df. Merges on bioguideID
+    """
+    merged_df = pd.merge(
+        rep_df,     # This is your left DataFrame (all rows kept)
+        vote_df,     # This is your right DataFrame (info to be added)
+        on='bioguideID',             # The common column to join on
+        how='left'               # Type of merge: keep all rows from the left DataFrame
+    )
+    merged_df['absent'] = merged_df['absent'].astype(pd.Int64Dtype())
+    merged_df['abstain'] = merged_df['abstain'].astype(pd.Int64Dtype())
+    merged_df['against_party'] = merged_df['against_party'].astype(pd.Int64Dtype())
+    merged_df['with_party'] = merged_df['with_party'].astype(pd.Int64Dtype())
+    merged_df['missing_records'] = merged_df['missing_records'].astype(pd.Int64Dtype())
+    merged_df['vote_count'] = merged_df['vote_count'].astype(pd.Int64Dtype())
+
+
+    return merged_df
+
+############################################
+
+def replace_democratic(df):
+    """Change Democratic party to Democrat"""
+    df['partyName'] = df['partyName'].replace('Democratic', 'Democrat')
+    return df
+
+
 ####################################################################################################
 
 
-def modify_reps(input_json_f):
+def modify_reps(input_json_f, vote_f):
     """
     Takes the congressmen.json file path and will save a congressmen_mod.json 
     
@@ -103,11 +135,20 @@ def modify_reps(input_json_f):
     except Exception as e:
         print("There is an issue with the congressmen.json. Quitting.")
         sys.exit()
+
+    try: 
+        vote_df = pd.read_json(vote_f)
+    except Exception as e:
+        print("There is an issue with the congressmen.json. Quitting.")
+        sys.exit()
         
     df = update_endyear(df)
     df = add_tenure(df)
     df = normalize_name(df)
     df = only_current(df)
+    df = merge_in_voting_records(df, vote_df)
+    df = replace_democratic(df)
+
 
     print(f"Exporting {len(df)} congressmen")
 
