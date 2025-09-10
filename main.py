@@ -64,7 +64,7 @@ if __name__ == "__main__":
 
     if get_yes_no_input(f"Proceed with card creation on congressmen size above?"):
         print("Generating cards")
-        gen_cards.gen_cards('congressmen_mod.json')
+        gen_cards.gen_cards('congressmen_mod.json', test_card=False, dummy_img=False)
     else:
         if get_yes_no_input(f"Single card debug?"):
             gen_cards.gen_cards('congressmen_mod.json', test_card=True, dummy_img=False)

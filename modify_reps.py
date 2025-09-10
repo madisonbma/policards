@@ -3,6 +3,7 @@ import os
 import json
 import time
 import pandas as pd
+import add_bioguide
 import sys
 import os
 from datetime import date
@@ -128,8 +129,7 @@ def modify_reps(input_json_f, vote_f):
         input_json_f [str]: File path to congressmen.json
 
     """
-
-        #Load in the JSON
+    #Load in the JSON
     try: 
         df = pd.read_json(input_json_f)
     except Exception as e:
@@ -139,7 +139,7 @@ def modify_reps(input_json_f, vote_f):
     try: 
         vote_df = pd.read_json(vote_f)
     except Exception as e:
-        print("There is an issue with the congressmen.json. Quitting.")
+        print("There is an issue with the voting_records.json. Quitting.")
         sys.exit()
         
     df = update_endyear(df)
@@ -152,7 +152,12 @@ def modify_reps(input_json_f, vote_f):
 
     print(f"Exporting {len(df)} congressmen")
 
-    df.to_json('congressmen_mod.json', indent=2, orient='records')
+    con_json = df.to_json(indent=2, orient='records')
+    print("Starting the add_bioguide")
+    #Last, modify the JSON with add_bioguide.py
+    modified_congressmen_json = add_bioguide.add_bioguide(con_json) #list of dicts python Obj
+    with open('congressmen_mod.json', 'w') as json_file:
+        json.dump(modified_congressmen_json, json_file, indent=4) # indent for pretty printing
 
     print("Modified congressmen.json, wrote mods to congressmen_mod.json")
 
