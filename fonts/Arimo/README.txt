@@ -7,20 +7,20 @@ Arimo is a variable font with this axis:
   wght
 
 This means all the styles are contained in these files:
-  Arimo-VariableFont_wght.ttf
-  Arimo-Italic-VariableFont_wght.ttf
+  Arimo/Arimo-VariableFont_wght.ttf
+  Arimo/Arimo-Italic-VariableFont_wght.ttf
 
 If your app fully supports variable fonts, you can now pick intermediate styles
 that aren’t available as static fonts. Not all apps support variable fonts, and
 in those cases you can use the static font files for Arimo:
-  static/Arimo-Regular.ttf
-  static/Arimo-Medium.ttf
-  static/Arimo-SemiBold.ttf
-  static/Arimo-Bold.ttf
-  static/Arimo-Italic.ttf
-  static/Arimo-MediumItalic.ttf
-  static/Arimo-SemiBoldItalic.ttf
-  static/Arimo-BoldItalic.ttf
+  Arimo/static/Arimo-Regular.ttf
+  Arimo/static/Arimo-Medium.ttf
+  Arimo/static/Arimo-SemiBold.ttf
+  Arimo/static/Arimo-Bold.ttf
+  Arimo/static/Arimo-Italic.ttf
+  Arimo/static/Arimo-MediumItalic.ttf
+  Arimo/static/Arimo-SemiBoldItalic.ttf
+  Arimo/static/Arimo-BoldItalic.ttf
 
 Get started
 -----------

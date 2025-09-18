@@ -1,10 +1,5 @@
-import requests
-import os
 import json
-import time
 import pandas as pd
-import sys
-import os
 from datetime import date
 import numpy as np
 import re
@@ -44,6 +39,7 @@ def load_json(filepath):
 
 ############################################
 
+
 def add_bioguide_congress_data(list_of_dict):
     """
     Using the data loaded from bioguide.congress.gov, which has been downloaded to bioguide_data dir,
@@ -72,8 +68,9 @@ def add_bioguide_congress_data(list_of_dict):
                      "M.A.", "M.P.A", "B.B.A", "A.A.", "LL.M", "L.L.B", "B.D.", "M.Ed", "B. S.", "A.S.", "Ed.D.", "LLB", "D.P.A.",
                      "M. D.", "B.C.L.", "M.Div", "M.E.", "Ph..D.", "B.Litt.", "M.P.H.", "C.L.U", "Bachelor of Law", "Ph.B.", "A.M.", "M.H.R.M.")
     military_record = ("United States Army", "United States Nav", "United States Marine", "United States Coast Guard", 
-                       "United States Air Force", "U.S. Army", "National Guard", "U.S. Marine", "Judge Advocate", "judge advocate", "Marine Corps")
-    bad_behavior = ("censured", "reprimanded", "convicted", "sentence", "pardon", "indicted", "acquitted", "charges", "evidence", "denounced")
+                       "United States Air Force", "U.S. Army", "National Guard", "U.S. Marine", "Judge Advocate", "judge advocate", "Marine Corps",
+                       "discharged", "enlisted")
+    bad_behavior = ("expelled", "censured", "reprimanded", "convicted", "sentence", "pardon", "indicted", "acquitted", "charges", "evidence", "denounced")
     term_end = ("resigned", )
     
     for rep in list_of_dict:
@@ -93,12 +90,31 @@ def add_bioguide_congress_data(list_of_dict):
         seen_rep.append(rep.get('bioguideID'))
         newjson_path = f"bioguide_data/{rep.get('bioguideID')}.json"
         bioguide_data = load_json(newjson_path)
+        photo_url = ""
         
+        #Get the URL for the photo
+        photo_path_list = bioguide_data.get('image')
+        if not photo_path_list:
+            photo_path_list = bioguide_data.get('asset')
+        if not photo_path_list:
+            #print(f"No photo available for {rep.get('bioguideID')}")
+            rep.update({"photo": None})
+        else:
+            jpg_path = photo_path_list[0].get('contentUrl')
+            if jpg_path:
+                base_url = "https://bioguide.congress.gov/photo/"
+                photo_url = base_url + jpg_path.split("/")[-1]
+                rep.update({"photo": photo_url})
+            else:
+                rep.update({"photo": None})
+
+
+
         #Parse the profileText section for more data
-        #try:
         profiletext = bioguide_data.get('profileText')
         if profiletext is None:
             print(f"\tCould not find profileText data for {rep.get('bioguideID')}")
+            print(f"{rep.keys()}")
         else:
             data = profiletext.replace("&amp;", "&")
             data = data.replace("&aacute;", "a")
@@ -204,7 +220,7 @@ def add_bioguide_congress_data(list_of_dict):
                     pattern = r"born (?:.* in )?([\w,\. -]+)"
                     #Remove the date
                     cleaned = re.sub(r"(?:(, |on |)?((January|February|March|April|May|June|July|August|September|October|November|December)( \d{1,2},)? \d{4})(, )?)", "", fact)
-                    
+
                     match = re.search(pattern, cleaned, re.I)
                     if not match:
                         birthplace = None
@@ -212,7 +228,9 @@ def add_bioguide_congress_data(list_of_dict):
                     else: 
                         #Add to birthplace
                         birthplace = match.group(1)
-
+                        if birthplace.startswith("in "):
+                            birthplace = birthplace[2:]
+                            
                 else:
                     #print(f"\tUncaptured string: {fact}")
                     continue
