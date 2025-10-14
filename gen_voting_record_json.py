@@ -3,12 +3,14 @@ import requests
 import os
 import json
 import time
+import xml.etree.ElementTree as ET
+from init_logger import my_logger
 
 # --- Configuration ---
 CONGRESS_API_KEY = os.getenv("CONGRESS_API_KEY")
 if CONGRESS_API_KEY is None:
-    print("Error: CONGRESS_API_KEY environment variable not set.")
-    print("Please get an API key from https://api.data.gov/signup/ and set it.")
+    my_logger.error("Error: CONGRESS_API_KEY environment variable not set.")
+    my_logger.error("Please get an API key from https://api.data.gov/signup/ and set it.")
     exit() # Exit if no API key is found
 
 BASE_URL = "https://api.congress.gov/v3/"
@@ -16,7 +18,6 @@ HEADERS = {
     "Accept": "application/json"
 }
 RATE_LIMIT_DELAY_SECONDS = 0.2 
-
 
 
 
@@ -47,11 +48,11 @@ def get_house_vote_members(vote_number, congress=119, session=1, limit=250, offs
         "offset": current_offset
     }
 
-    print(f"Requesting members for vote: Congress {congress}, Session {session}, Vote #{vote_number}")
+    my_logger.info(f"Requesting members for vote: Congress {congress}, Session {session}, Vote #{vote_number}")
 
     try:
         full_url = f"{BASE_URL}{endpoint}"
-        print(f"  - Querying: {full_url} with offset={params['offset']}")
+        my_logger.info(f"  - Querying: {full_url} with offset={params['offset']}")
         response = requests.get(full_url, headers=HEADERS, params=params)
         response.raise_for_status() # Raise an exception for HTTP errors (4xx or 5xx)
 
@@ -65,42 +66,43 @@ def get_house_vote_members(vote_number, congress=119, session=1, limit=250, offs
             member_votes_on_page = member_votes_container.get('results', [])
 
         if not member_votes_on_page:
-            print("  - No more member votes found for this roll call or 'results' key missing/empty.")
+            my_logger.info("  - No more member votes found for this roll call or 'results' key missing/empty.")
 
         all_member_votes.extend(member_votes_on_page)
-        print(f"  - Fetched {len(member_votes_on_page)} member votes. Total: {len(all_member_votes)}")
+        my_logger.info(f"  - Fetched {len(member_votes_on_page)} member votes. Total: {len(all_member_votes)}")
 
     except requests.exceptions.HTTPError as e:
-        print(f"HTTP Error for vote members: {e.response.status_code} - {e.response.text}")
+        my_logger.error(f"HTTP Error for vote members: {e.response.status_code} - {e.response.text}")
         if e.response.status_code == 404:
-            print("  - Vote not found or invalid congress/session/voteNumber combination.")
+            my_logger.error("  - Vote not found or invalid congress/session/voteNumber combination.")
     except requests.exceptions.ConnectionError as e:
-        print(f"Connection Error for vote members: {e}")
+        my_logger.error(f"Connection Error for vote members: {e}")
     except requests.exceptions.Timeout as e:
-        print(f"Timeout Error for vote members: {e}")
+        my_logger.error(f"Timeout Error for vote members: {e}")
     except requests.exceptions.RequestException as e:
-        print(f"An unexpected error occurred for vote members: {e}")
+        my_logger.error(f"An unexpected error occurred for vote members: {e}")
     except json.JSONDecodeError as e:
-        print(f"Error decoding JSON response for vote members: {e}")
+        my_logger.error(f"Error decoding JSON response for vote members: {e}")
     except Exception as e:
-        print(f"An unhandled error occurred for vote members: {e}")
+        my_logger.error(f"An unhandled error occurred for vote members: {e}")
 
     return data.get('houseRollCallVoteMemberVotes')
 
 
-def get_voting_record(max_records=1000):
+def get_voting_record(old_votes, max_records=1000, start_vote=1):
     """
     This will query house voting records up to max_records. 
 
     Args: 
+        old_votes (loaded JSON): votes already done
         max_records (int): Max number of measures to get voting records of, defaults to 1000 for now but will change once working
 
     """
-    full_voting_record = []
-    i = 1
-    #Modify this, can set this whole thing to True when running for all voting records
-
-    while i <= max_records:
+    full_voting_record = old_votes
+    i = start_vote
+    max = max_records + start_vote
+    my_logger.info(f"Starting from vote {i} for house pull")
+    while i < max:
         try: 
             vote_record_i = get_house_vote_members(i)
             ###Postprocesses the vote_record_test JSON to flatten the "results" column
@@ -114,7 +116,7 @@ def get_voting_record(max_records=1000):
                 #'startDate': vote_record_i.get('startDate'),
                 #'updateDate_vote': vote_record_i.get('updateDate'),
                 'voteQuestion': vote_record_i.get('voteQuestion'),
-                'voteType': vote_record_i.get('voteType')
+                #'voteType': vote_record_i.get('voteType')
             }
             results_list = vote_record_i.get('results', [])
 
@@ -139,38 +141,170 @@ def get_voting_record(max_records=1000):
             time.sleep(RATE_LIMIT_DELAY_SECONDS)
             i = i + 1
         except requests.exceptions.HTTPError as e:
-            #TODO this isn't working for some reason
-            """HTTP Error for vote members: 404 - {
-                "error": "No Vote matches the given query.",
-                "request": {
-                    "congress": "119",
-                    "contentType": "application/json",
-                    "format": "json",
-                    "session": "1"
-                }
-            }
-            - Vote not found or invalid congress/session/voteNumber combination.
-            An unhandled error occurred: cannot access local variable 'data' where it is not associated with a value
-            """
-            print(f"Voting record {i} does not exist, quitting" )
+            my_logger.error(f"Voting record {i} does not exist, quitting" )
+            break
+        except UnboundLocalError as e:
+            my_logger.error(f"Voting record not found for {i}, likely timeout issue. Quitting.")
             break
         except Exception as e:
-            print(f"An unhandled error occurred: {e}")
+            my_logger.error(f"An unhandled error occurred: {e}")
             break
 
     return full_voting_record
 
 
+def get_root(url):
+    try:
+        response = requests.get(url)
+        xml_content = response.content  # The XML content as bytes
+        root = ET.fromstring(xml_content)
+        return root
+    except requests.exceptions.ConnectionError as e:
+        my_logger.error(f"Connection error: {e}")
+    except requests.exceptions.HTTPError as e:
+        my_logger.error(f"HTTP error: {e}")
 
 
 
-#if __name__ == "__main__":
+def get_voting_record_senate(old_votes, max_records=1000, start_vote=1):
+    # url example: https://www.senate.gov/legislative/LIS/roll_call_votes/vote1191/vote_119_1_00001.xml 
+    # 1. Iterate over all the vote paths.
+    # 2. Add same content as for house: congress, identifier, result, voteQuestion, voteType, bioguideID, voteCast, voteParty
+    # 3. Add to a JSON
+    # 
+    #  
+    url_base = "https://www.senate.gov/legislative/LIS/roll_call_votes/vote1191/vote_119_1_"
+    full_voting_record = old_votes
+    i = start_vote
+    max = start_vote+max_records
+    my_logger.info(f"Starting from vote {i} for senate pull")
+    while i < max:
+        dict_i = {}
+
+        # Pull the XML page for the ith vote
+        num_to_string = str(i)
+        if len(num_to_string) < 5:
+            num_to_string = "0"*(5 - len(num_to_string)) + num_to_string + ".xml"
+
+        try:
+
+            url = url_base + num_to_string
+            root = get_root(url)
+
+            if root is None:
+                my_logger.error(f"No root found for {i}. Quitting.")
+                break
+
+            dict_i['congress'] = root.find('congress').text
+            dict_i['identifier'] = root.find('vote_number').text
+            dict_i['result'] = root.find('vote_result').text
+            dict_i['voteQuestion'] = root.find('question').text
+            #voteType = root.find('') #??
+
+            members_list = root.find('members')
+
+            if members_list is None:
+                my_logger.error("Error: The <members> element was not found.")
+                break
+
+            # Iterate through each <member> child of the <members> list
+            for member_element in members_list.findall('member'):
+                temp_dict = dict_i.copy()
+                # 1. Get the ID
+                temp_dict['lis_member_id'] = member_element.find('lis_member_id').text
+                temp_dict['voteCast'] = member_element.find('vote_cast').text
+                temp_dict['voteParty'] = member_element.find('party').text
+                full_voting_record.append(temp_dict)
+            my_logger.info(f"Success getting votes for vote {num_to_string} for Senate")
+
+        except ET.ParseError as e:
+            my_logger.error(f"XML {i} doesn't exist yet. Quitting.")
+            break
+        except ConnectionResetError as e:
+            my_logger.error(f"Voting record not found for {i}, likely timeout issue. Quitting.")
+            break
+        except requests.exceptions.HTTPError as e:
+            my_logger.error(f"Senate voting record {i} does not exist, quitting" )
+            break
+        except Exception as e:
+            my_logger.error(f"An unhandled error occurred: {e}")
+            break
+        
+        time.sleep(RATE_LIMIT_DELAY_SECONDS)
+        i += 1
+    return full_voting_record
+
+
+
+
+def get_starting_point(starting_file):
+    """
+    Open the pre-existing file if it exists. If not, starting value is vote 1.
+    Then check for the most recent voting record, return n+1 which will be the starting point.
+    """
+    #open input json file and load it in. 
+    try:
+        with open(starting_file, 'r') as f:
+            data = json.load(f)
+        n = str(data[-1].get('identifier'))
+        if len(n) > 8: #house formatting (e.g. 11912025111), get rid of first 8
+            n = int(n[8:])
+        else:
+            n = int(n)
+        return n+1
+
+    except FileNotFoundError:
+        print(f"Error: The file {starting_file} was not found. Starting from vote 1.")
+        return 1
+    except json.JSONDecodeError:
+        print("Error: Failed to decode JSON from the file. Check if the JSON is well-formed.")
+        return None
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        return None
+
+    
+
+
 def gen_voting_record_json(max_records=1000):
-    voting_json = get_voting_record(max_records=max_records)
+    print("##############################################")
+    print("Calling gen_voting_record_json.py for House Data")
 
-    with open('voting_records.json', 'w') as f:
-        json.dump(voting_json, f, indent=2)
+    try:
+        with open('voting_records.json', 'r') as file:
+            file_house_votes = json.load(file)
+    except FileNotFoundError:
+        file_house_votes = []
 
-    print("Wrote to file name voting_records.json")
+    house_start = get_starting_point('voting_records.json')
+    new_house_data = get_voting_record(file_house_votes, max_records=max_records, start_vote=house_start)
+    #file_house_votes.append(new_house_data)
+
+    # Step 3: Write the updated data back to the file
+    with open('voting_records.json', 'w') as file:
+        # Use indent for clean formatting
+        json.dump(new_house_data, file, indent=2)
+
+    print("##############################################")
+    print("Calling gen_voting_record_json.py for Senate Data")
+
+    try:
+        with open('voting_records_senate.json', 'r') as file:
+            file_senate_votes = json.load(file)
+    except FileNotFoundError:
+        file_senate_votes = []
+
+    senate_start = get_starting_point('voting_records_senate.json')
+    new_senate_data = get_voting_record_senate(file_senate_votes, max_records=max_records, start_vote=senate_start)
+    #file_senate_votes.append(new_senate_data)
+
+    # Step 3: Write the updated data back to the file
+    with open('voting_records_senate.json', 'w') as file:
+        # Use indent for clean formatting
+        json.dump(new_senate_data, file, indent=2)
+
+
+
+    my_logger.info("Done with gen_voting_record_json.py")
 
 

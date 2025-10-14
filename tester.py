@@ -5,6 +5,8 @@ import modify_votes
 import gen_xls
 import add_bioguide
 import gen_cards
+import gen_committees
+import json
 import sys
 import os
 import time
@@ -14,11 +16,11 @@ def check_reps_standalone():
     gen_reps_json.gen_reps_json()
     print(gen_reps_json.get_member_committee_info(["O000172"]))
 
-def check_voting_record_standalone():
+def gen_voting_record_standalone():
     gen_voting_record_json.gen_voting_record_json()    
 
 def modify_votes_standalone():
-    modify_votes.modify_votes("voting_records.json")
+    modify_votes.modify_votes("voting_records.json", "voting_records_senate.json")
 
 def modify_reps_standalone():
     """This calls add_bioguide internally, and assumes modify_votes has already been run. """
@@ -26,6 +28,9 @@ def modify_reps_standalone():
 
 def add_bioguide_standalone():
     add_bioguide.add_bioguide("congressmen.json")
+
+def gen_committees_standalone():
+    print(gen_committees.gen_committees())
 
 def gen_cards_standalone():    
     gen_cards.gen_cards('congressmen_mod.json', test_card=True, dummy_img=False)
@@ -39,7 +44,7 @@ def check_gen_json():
 
 def check_full_modify_json():
     """Checks the modify suite. Assumes you have the JSONs in place, will modify the voting record"""
-    modify_votes.modify_votes("voting_records.json")
+    modify_votes.modify_votes("voting_records.json", "voting_records_senate.json")
     modify_reps.modify_reps("congressmen.json", "vote_avg.json")   
 
 def check_modify_to_card_gen():
@@ -62,8 +67,10 @@ def check_converting_string_to_num():
 
 if __name__ == "__main__":
     #Put only functions listed above here:
+    #gen_voting_record_standalone()
+    #gen_committees_standalone()
     #check_modify_to_card_gen()
+    #check_full_modify_json()
     gen_cards_standalone()
-
 
 

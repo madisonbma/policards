@@ -12,41 +12,53 @@ from init_logger import my_logger
 TEMPLATE_PATH = 'template.png'
 OUTPUT_DIR = 'cards'
 ARIMO_FONT_PATH = 'fonts/Arimo/Arimo-VariableFont_wght.ttf' # Path to a .ttf font file (e.g., download from Google Fonts or use one installed on your OS)
-TITLE_FONT_PATH = 'fonts/Alfa_Slab_One/AlfaSlabOne-Regular.ttf' # Path to a .ttf font file (e.g., download from Google Fonts or use one installed on your OS)
+ALFA_SLAB_ONE_PATH = 'fonts/Alfa_Slab_One/AlfaSlabOne-Regular.ttf' # Path to a .ttf font file (e.g., download from Google Fonts or use one installed on your OS)
 ARIMO_ITALIC_FONT_PATH = 'fonts/Arimo/Arimo-Italic-VariableFont_wght.ttf'
 ZAIN_FONT_PATH = 'fonts/Zain/Zain-Regular.ttf'
 ZAIN_BOLD_PATH = 'fonts/Zain/Zain-Bold.ttf'
+CARLITO_FONT_PATH = 'fonts/Carlito/Carlito-Regular.ttf'
+CARLITO_BOLD_PATH = 'fonts/Carlito/Carlito-Bold.ttf'
 
-BORDER = (45,45)
+
+TEXT_FONT = CARLITO_FONT_PATH
+HEADER_FONT = CARLITO_BOLD_PATH
+TITLE_FONT = ALFA_SLAB_ONE_PATH
+
+BORDER = (30,30)
 INTERNAL_SPACING = 15
-BOX_BOUND = 25
+BOX_BOUND = 15
 # All coordinates are (x, y) from the top-left corner of the image.
-CARD_DIMS = (1080, 1920)
-PIC_MAX = (580, 670)
-PIC_WIDTH = 500
+IG_STORY = (1080, 1920)
+IG_POST = (1080, 1350)
+CARD_DIMS = IG_STORY
+
+PIC_WIDTH_STORY = 500
+PIC_WIDTH_POST = 400
+PIC_WIDTH = PIC_WIDTH_STORY
 POSITIONS = {
-    'pic_pos': (BORDER[0], 250),      # Top-left corner to paste player's face - 45
-    'name_pos': (0, BORDER[1]),           # Position for player's name
-    'header_pos' : (0, 170),
-    'rightofface_text': (625, 250),
-    'belowface_text': (BORDER[0], 920)
+    'pic_pos': (BORDER[0], 250)
 }
+
+
 OFFBLUE = (206,218,235)
 RED = (140, 23, 42)
 BLUE = (18, 52, 153)
 GRAY = (213, 220, 232)
+MID_GRAY = (143, 140, 140)
+DARK_GRAY = (89, 87, 87)
 #PINK = (161, 136, 166)
 PINK = (216, 74, 98)
 LILAC = (120, 139, 255)
 TAN = (214, 203, 193)
 BLACK = (0,0,0)
+WHITE = (255,255,255)
 
 LINE_SPACING = 1.0
-BAR_DIMS = (200, 30)
+BAR_DIMS = (400, 30)
 
 # Font sizes (adjust as needed)
 FONT_SIZES = {
-    'name': 100,
+    'name': 80,
     'text':35,
     'headers': 40,
     'subtitle': 50
@@ -59,24 +71,25 @@ Zain: LINE_SPACING=1.0, FONT_SIZES['text'] = 35, FONT_SIZES['headers'] = 40, FON
 """
 
 ###Load in the fonts    
+
 try:
-    font_text = ImageFont.truetype(ZAIN_FONT_PATH, FONT_SIZES['text'])
+    font_text = ImageFont.truetype(TEXT_FONT, FONT_SIZES['text'])
 except IOError:
-    print(f"Warning: Could not load font from {ZAIN_FONT_PATH}. Using default Pillow font. "
+    print(f"Warning: Could not load font from {TEXT_FONT}. Using default Pillow font. "
         "Ensure the font file exists and is accessible.")
     font_text = ImageFont.load_default()
 
 try:
-    font_header = ImageFont.truetype(ZAIN_BOLD_PATH, FONT_SIZES['headers'])
+    font_header = ImageFont.truetype(HEADER_FONT, FONT_SIZES['headers'])
 except IOError:
-    print(f"Warning: Could not load font from {ZAIN_BOLD_PATH}. Using default Pillow font. "
+    print(f"Warning: Could not load font from {HEADER_FONT}. Using default Pillow font. "
         "Ensure the font file exists and is accessible.")
     font_header = ImageFont.load_default()
 
 try:
-    font_name = ImageFont.truetype(TITLE_FONT_PATH, FONT_SIZES['name'])
+    font_name = ImageFont.truetype(TITLE_FONT, FONT_SIZES['name'])
 except IOError:
-    print(f"Warning: Could not load font from {TITLE_FONT_PATH}. Using default Pillow font. "
+    print(f"Warning: Could not load font from {TITLE_FONT}. Using default Pillow font. "
         "Ensure the font file exists and is accessible.")
     font_name = ImageFont.load_default()
 
@@ -132,20 +145,22 @@ def create_linear_gradient(size, start_color, end_color):
 
 
 
-def center_text(draw, text, font, text_color, offset=(0,0), center=(True,True)):
+def center_text(draw, text, font, text_color, xy=(0,0), center=(True,True), wh=CARD_DIMS):
 
-    _, _, w, h = draw.textbbox((0,0), text=text, font=font)
+    w,h = wh
+    x,y = xy
+    _, _, w_text, h_text = draw.textbbox((0,0), text=text, font=font)
     #image_width, image_height = card.size
     if center[0]:
-        x_text = ((CARD_DIMS[0] - offset[0] - w) / 2 ) + offset[0]
+        x_text = ((w - w_text) / 2 ) + x
     else: 
-        x_text = offset[0]
+        x_text = x
     if center[1]:
-        y_text = ((CARD_DIMS[1] - offset[1] - h) / 2 ) + offset[1]
-
+        y_text = ((h -  h_text) / 2 ) + y
     else:
-        y_text = offset[1]
+        y_text = y
     draw.text((x_text, y_text), text=text, font=font, fill=text_color)
+    return w,h
 
 
 
@@ -163,7 +178,7 @@ def pull_pic_from_web(rep, dummy=False):
 
     try:
         if dummy:
-            img = Image.new('RGB', PIC_MAX, color = 'lightgray')
+            img = Image.new('RGB', (PIC_WIDTH, PIC_WIDTH), color = 'lightgray')
             my_logger.debug(f'Dummy Image for {rep['name']}')
         else:
             face_path = rep['photo']
@@ -172,7 +187,7 @@ def pull_pic_from_web(rep, dummy=False):
                 face_path = rep['imageUrl']
 
             if face_path is None:
-                img = Image.new('RGB', PIC_MAX, color = 'lightgray')
+                img = Image.new('RGB', (PIC_WIDTH,PIC_WIDTH), color = 'lightgray')
                 my_logger.debug(f'No image found for {rep['name']}')
 
             elif "http" in face_path:
@@ -188,7 +203,7 @@ def pull_pic_from_web(rep, dummy=False):
                     my_logger.error(f"An unexpected error occurred: {e}")
 
             else:
-                img = Image.new('RGB', PIC_MAX, color = 'lightgray')
+                img = Image.new('RGB', (PIC_WIDTH,PIC_WIDTH), color = 'lightgray')
                 my_logger.debug(f'Face path invalid for {rep['name']}')
 
 
@@ -241,6 +256,9 @@ def draw_wrapped_text(draw, text, xy, text_color=GRAY, extra_padding_for_newline
 
             #if STAT_BAR, append it outright 
             if "||STAT_BAR||" in word:
+                bar_count += 1
+                lines.append(word)
+            elif "||STAT_BAR_VOTE||" in word:
                 bar_count += 1
                 lines.append(word)
             else:
@@ -308,9 +326,20 @@ def draw_wrapped_text(draw, text, xy, text_color=GRAY, extra_padding_for_newline
             message = line.replace("||HEADER||", "") #remove the marker
             draw.text((x+BOX_BOUND, y), message, font=font_header, fill=text_color)
             y += header_height*LINE_SPACING
+        elif "||STAT_BAR_VOTE||" in line:
+            stat_val = int(line.replace("||STAT_BAR_VOTE||", "")) #convert string to int
+            stat_bar_gradient(draw, (x+BOX_BOUND,y), BAR_DIMS, stat_val, fg=BLUE, fg2=RED, slider=True)
+            y+= BAR_DIMS[1]*LINE_SPACING
         elif "||STAT_BAR||" in line:
             stat_val = int(line.replace("||STAT_BAR||", "")) #convert string to int
-            stat_bar(draw, (x+BOX_BOUND,y), BAR_DIMS, stat_val, bg=(129, 66, 97), fg=(211,211,211), fg2=(15,15,15))
+            stat_bar(draw, (x+BOX_BOUND,y), BAR_DIMS, stat_val, fg=MID_GRAY, fg2=DARK_GRAY)
+            try:
+                font_height = int(BAR_DIMS[1]*0.8)
+                font_bar = ImageFont.truetype(TEXT_FONT, font_height)
+            except IOError:
+                font_height = 10
+                font_bar = ImageFont.load_default()
+            center_text(draw, num_to_percentile(stat_val), font_bar, WHITE, wh=BAR_DIMS, xy=(x+BOX_BOUND,y), center=(True, True))
             y+= BAR_DIMS[1]*LINE_SPACING
 
 
@@ -448,12 +477,16 @@ def create_title_block(draw, rep_info, text_color):
     party = rep_info['partyName']
     state = rep_info['state']
 
-    name_font = check_text_fit(draw, TITLE_FONT_PATH, FONT_SIZES["name"], name)
-    center_text(draw, text=name, font=name_font, offset=POSITIONS['name_pos'], text_color=text_color, center=(True,False))
+    name_font = check_text_fit(draw, TITLE_FONT, FONT_SIZES["name"], name)
+    _, _, _, name_height = draw.textbbox((0,0), "A", font=name_font)
+    center_text(draw, text=name, font=name_font, xy=(0, BORDER[1]), text_color=text_color, center=(True,False))
+
     subtitle_text = f"{party} from {state}"
-    subtitle_font = check_text_fit(draw, ZAIN_FONT_PATH, FONT_SIZES["subtitle"], subtitle_text)
-    center_text(draw, text=subtitle_text, font=subtitle_font, offset=POSITIONS['header_pos'], text_color=text_color, center=(True,False))
-   
+    subtitle_font = check_text_fit(draw, HEADER_FONT, FONT_SIZES["subtitle"], subtitle_text)
+    center_text(draw, text=subtitle_text, font=subtitle_font, xy=(0,BORDER[1]+name_height+INTERNAL_SPACING), text_color=text_color, center=(True,False))
+    _, _, _, subtitle_height = draw.textbbox((0,0), "A", font=subtitle_font)
+    return subtitle_height+BORDER[1]+name_height+2*INTERNAL_SPACING
+
 
 def create_birth_block(draw, message_in, rep_info, start_location):
     message = ""
@@ -505,7 +538,7 @@ def create_bio_block(draw, message_in, rep_info, box_start):
     """
     box_with_spacing = (box_start[0], box_start[1] + INTERNAL_SPACING)
     chamber = rep_info['chamber']
-    tenure = f"{rep_info['tenure_current_party']}/{rep_info['party_current_count']}"
+    tenure = f"{rep_info['tenure_rank_current_party']}/{rep_info['party_current_count']}"
     party = rep_info['partyName']
 
     #Line 1
@@ -576,22 +609,27 @@ def create_vote_block(draw, message_in, rep_info, box_start):
         message = f"||HEADER||Voting Record\n"
 
         #if they are D or R, show how often they vote with party:
-        if party=="Republican" or party=="Democrat":
-            with_party_percent = rep_info['with_party_percent']
+        if party=="Republican":
+            with_party_percent = rep_info['with_R_percent']
             if with_party_percent >= 95:
-                message += f"Votes with {party}s {with_party_percent}% of the time\n"
+                message += f"Votes with Republicans {with_party_percent}% of the time\n"
             else:
-                message += f"Votes with {party}s {with_party_percent}% of the time ({rep_info['with_party_rank']} percentile)\n"
-
+                message += f"Votes with Republicans {with_party_percent}% of the time ({rep_info['with_party_percentile']} percentile)\n"
+        elif party=="Democrat":
+            with_party_percent = rep_info['with_D_percent']
+            if with_party_percent >= 95:
+                message += f"Votes with Democrats {with_party_percent}% of the time\n"
+            else:
+                message += f"Votes with Democrats {with_party_percent}% of the time ({rep_info['with_party_percentile']} percentile)\n"
 
         else: #if they're not D or R, show which party they vote with more often:
             if rep_info['with_D'] > rep_info['with_R']:
-                with_party_percent = int((rep_info['with_D'] + rep_info['Both'])/rep_info['vote_count']*100)
+                with_party_percent = rep_info['with_D_percent']
                 message += f"Votes with Democrats {with_party_percent}% of the time\n"
             elif rep_info['with_D'] == rep_info['with_R']:
                 message += "Votes with Democrats and Republicans 50% of the time\n"
             else:
-                with_party_percent = int((rep_info['with_R'] + rep_info['Both'])/rep_info['vote_count']*100)
+                with_party_percent = rep_info['with_R_percent']
                 message += f"Votes with Republicans {with_party_percent}% of the time\n"
 
         #if they abstain 0% of the time, skip:
@@ -647,7 +685,7 @@ def create_military_block(draw, message_in, rep_info, box_start):
     box_with_spacing = (box_start[0], box_start[1] + INTERNAL_SPACING)
     mil_list = "\n".join(rep_info['military'])
     if not mil_list:
-        my_logger.warning(f"No military record for {rep_info['name']}. Skip.")
+        my_logger.info(f"No military record for {rep_info['name']}. Skip.")
         #_,y = box_start
     else:
         message = f"||HEADER||Military Record:\n{mil_list}\n"
@@ -685,7 +723,7 @@ def create_congressional_block(draw, message_in, rep_info, box_start):
         my_logger.warning(f"No congressional stats found for {rep_info['name']}. Skip.")
         _,y = box_start
     else:
-        message = f"||HEADER||Congressional Leadership:\n{congress_highlights}\n"
+        message = f"||HEADER||Past Congressional Leadership:\n{congress_highlights}\n"
         #_,_,_,y = draw_wrapped_text(draw, message, box_with_spacing, fill_color=(206, 218, 235))
 
     #return (box_start[0],y)
@@ -710,7 +748,7 @@ def create_net_worth_box(draw, message_in, rep_info, box_start):
     message = ""
     box_with_spacing = (box_start[0], box_start[1] + INTERNAL_SPACING)
 
-    net_worth = "IN PROGRESS"
+    net_worth = "WIP"
     #net_worth = rep_info['net_worth']
 
     if not net_worth:
@@ -727,8 +765,8 @@ def create_committee_membership_box(draw, message_in, rep_info, box_start):
     message = ""
     box_with_spacing = (box_start[0], box_start[1] + INTERNAL_SPACING)
 
-    committees = ["Placeholder 1", "Placeholder 2", "Placeholder 3"]
-    #committees = rep_info['committees']
+    #committees = ["Placeholder 1", "Placeholder 2", "Placeholder 3"]
+    committees = rep_info['committees'] #list of dictionaries
 
     committee_list = "\n   ".join(committees)
 
@@ -736,7 +774,7 @@ def create_committee_membership_box(draw, message_in, rep_info, box_start):
         my_logger.warning(f"No committees found for {rep_info['name']}. Skip.")
         _,y = box_start
     else:
-        message = f"||HEADER||Committee List (WIP):\n   {committee_list}\n"
+        message = f"||HEADER||Committee List:\n   {committee_list}\n"
         #_,_,_,y = draw_wrapped_text(draw, message, box_with_spacing, fill_color=(206, 218, 235))
 
     #return (box_start[0],y)
@@ -746,7 +784,7 @@ def create_top_donors_box(draw, message_in, rep_info, box_start):
     message = ""
     box_with_spacing = (box_start[0], box_start[1] + INTERNAL_SPACING)
 
-    top_donors = ["Placeholder 1", "Placeholder 2", "Placeholder 3"]
+    top_donors = ["Placeholder 1"]
     #top_donors = rep_info['top_donors']
 
     donor_list = "\n   ".join(top_donors)
@@ -765,7 +803,7 @@ def create_top_issues_box(draw, message_in, rep_info, box_start):
     message = ""
     box_with_spacing = (box_start[0], box_start[1] + INTERNAL_SPACING)
 
-    top_issues = ["Placeholder 1", "Placeholder 2", "Placeholder 3"]
+    top_issues = ["Placeholder 1"]
     #top_issues = rep_info['top_issues']
 
     issues_list = "\n   ".join(top_issues)
@@ -774,7 +812,7 @@ def create_top_issues_box(draw, message_in, rep_info, box_start):
         my_logger.warning(f"No top issues found for {rep_info['committees']}. Skip.")
         _,y = box_start
     else:
-        message = f"||HEADER||Top Issues (WIP):\n   {issues_list}\n"
+        message = f"||HEADER||Top Issues (WIP):\n   {issues_list}"
         #_,_,_,y = draw_wrapped_text(draw, message, box_with_spacing, fill_color=(206, 218, 235))
 
     #return (box_start[0],y)
@@ -784,17 +822,35 @@ def create_block_0_bar(draw, rep_info, box_start, fill_color, text_color):
     """Create the bar section only. Bar data should include:
     tenure
     vote with party
-    vote against bipartisan"""
+    breaks the aisle
+    absentia
+    """
     (x,y) = (0,0)
 
     msg = ""
-    msg += f"||HEADER||Tenure:\n||STAT_BAR||{rep_info['tenure_current_party_percentile']}"
+    msg += f"||HEADER||Tenure:\n||STAT_BAR||{rep_info['tenure_rank_current_party_percentile']}"
 
-    w_party_rank = rep_info['with_party_rank']
-    if w_party_rank:
-        msg += f"\n||HEADER||Vote with Party:\n||STAT_BAR||{w_party_rank}"
+
+    # Creating a slider bar, D on left and R on right. 
+    w_party_rank = rep_info['with_R_percent']
+    if w_party_rank is None:
+        my_logger.error(f"{rep_info['name']} doesn't have voting info. Skipping bar generation.")
     else:
-        my_logger.warning(f"{rep_info['name']} doesn't have voting info. Skipping bar generation.")
+        msg += f"\n||HEADER||Voting Record:\n||STAT_BAR_VOTE||{w_party_rank}"
+
+    # Create percentile bar for disagreeing with both
+    neither = rep_info['neither_percent']
+    if neither:
+        msg += f"\n||HEADER||Breaks bipartisan agreement:\n||STAT_BAR||{rep_info['neither_percentile']}"
+    else:
+        my_logger.info(f"{rep_info['name']} has never disagreed")
+
+    # Create a slider bar for absentia rank 
+    absent = rep_info['absent_percent']
+    if absent:
+        msg += f"\n||HEADER||Absent:\n||STAT_BAR||{rep_info['absent_percentile']}"
+    else:
+        my_logger.info(f"{rep_info['name']} has never been absent")
 
     _,_,x,y = draw_wrapped_text(draw, msg, box_start, fill_color=fill_color, text_color=text_color)
 
@@ -825,7 +881,7 @@ def create_block_1(draw, rep_info, box_start, fill_color, text_color):
     return x,y
 
 def create_block_2(draw, rep_info, box_start, fill_color, text_color):
-    #box_start = (POSITIONS['pic_pos'][0], POSITIONS['pic_pos'][1]+PIC_MAX[1])
+
     x,y = (0,0)
     msg = create_military_block(draw, "", rep_info, box_start)
 
@@ -845,9 +901,32 @@ def create_block_2(draw, rep_info, box_start, fill_color, text_color):
 
     _,_,x,y = draw_wrapped_text(draw, msg, box_start, fill_color=fill_color, text_color=text_color)
 
+    if y > CARD_DIMS[1]:
+        my_logger.error(f"Text box 2 for {rep_info['name']} exceeds card dimensions by {y - CARD_DIMS[1]} pixels")
+
 
     return x,y
 
+
+
+def num_to_percentile(num):
+    if num%10 == 1:
+        if num%100==11:
+            return f"{num}th percentile"
+        else:
+            return f"{num}st percentile"
+    elif num%10 == 2:
+        if num%100==12:
+            return f"{num}th percentile"
+        else:
+            return f"{num}nd percentile"
+    elif num%10 == 3:
+        if num%100==13:
+            return f"{num}th percentile"
+        else:
+            return f"{num}rd percentile"
+    else:
+        return f"{num}th percentile"
 
 
 
@@ -963,6 +1042,9 @@ def resize_image(img, desired_width):
     # Calculate the new height to maintain aspect ratio
     aspect_ratio = original_height / original_width
     new_height = int(desired_width * aspect_ratio)
+
+    if new_height > original_height:
+        my_logger.warning(f"Having to expand picture, could be poor quality. Original photo: {img.size}")
     
     # Resize the image using the calculated dimensions
     resized_img = img.resize((desired_width, new_height))
@@ -999,27 +1081,23 @@ def create_card_1(rep_info, face_img):
 
 
     # 2. Add face in
-
     face_img = resize_image(face_img, PIC_WIDTH)
-    #face_img.thumbnail(PIC_MAX) # Resize to desired dimensions
-    #face_img = face_img.resize(PIC_MAX) # Resize to desired dimensions
-    card.paste(face_img, box=POSITIONS['pic_pos'])
+
 
     pic_dims = face_img.size
-    print(pic_dims)
-
 
     # 3. Prepare to draw text
     draw = ImageDraw.Draw(card)
 
-
     # 4. Text blocks
-    create_title_block(draw, rep_info, text_color)
+    card_start_y = create_title_block(draw, rep_info, text_color)
 
-    box_start = (POSITIONS['pic_pos'][0] + pic_dims[0] + INTERNAL_SPACING, POSITIONS['pic_pos'][1])
+    card.paste(face_img, box=(BORDER[0], card_start_y))
+
+    box_start = (BORDER[0] + pic_dims[0] + INTERNAL_SPACING, card_start_y)
 
     x,y = create_block_1(draw, rep_info, box_start, fill_color, text_color)
-    y = max(y+INTERNAL_SPACING, POSITIONS['pic_pos'][1]+pic_dims[1] + INTERNAL_SPACING)
+    y = max(y+INTERNAL_SPACING, card_start_y + pic_dims[1] + INTERNAL_SPACING)
     create_block_2(draw, rep_info, (BORDER[0],y), fill_color, text_color)
 
     return card
@@ -1055,26 +1133,24 @@ def create_card_2(rep_info, face_img):
 
     # 2. Add face in
     face_img = resize_image(face_img, PIC_WIDTH)
-    #face_img.thumbnail(PIC_MAX) # Resize to desired dimensions
-    #face_img = face_img.resize(PIC_MAX) # Resize to desired dimensions
-    card.paste(face_img, box=POSITIONS['pic_pos'])
+
 
     pic_dims = face_img.size
-
 
     # 3. Prepare to draw text
     draw = ImageDraw.Draw(card)
 
-
     # 4. Text blocks
-    create_title_block(draw, rep_info, text_color)
+    card_start_y = create_title_block(draw, rep_info, text_color)
 
-    box_start = (POSITIONS['pic_pos'][0] + pic_dims[0] + INTERNAL_SPACING, POSITIONS['pic_pos'][1])
+    card.paste(face_img, box=(BORDER[0], card_start_y))
+
+    box_start = (BORDER[0] + pic_dims[0] + INTERNAL_SPACING, card_start_y)
 
     x,y = create_block_1_bar(draw, rep_info, box_start, fill_color, text_color)
     x,y = create_block_0_bar(draw, rep_info, (box_start[0],y+INTERNAL_SPACING), fill_color, text_color)
-    y = max(y+INTERNAL_SPACING, POSITIONS['pic_pos'][1]+pic_dims[1] + INTERNAL_SPACING)
-    create_block_2(draw, rep_info, (BORDER[0],y),fill_color, text_color)
+    y = max(y+INTERNAL_SPACING, card_start_y + pic_dims[1] + INTERNAL_SPACING)
+    create_block_2(draw, rep_info, (BORDER[0],y), fill_color, text_color)
 
     return card
 
@@ -1097,18 +1173,78 @@ def display_card(card):
     card.show()
 
 
-def stat_bar(draw, xy, wh, percentile, bg=(129, 66, 97), fg=(211,211,211), fg2=(15,15,15)):
+def stat_bar(draw, xy, wh, percentile, fg=(211,211,211), fg2=(15,15,15), slider=False):
     x, y = xy
     w, h = wh
+    ol = 1
+    #Add an outline
+    draw.rectangle((x+(h/2), y-ol, x+w+(h/2), y+h+ol), fill=BLACK, width=10)
+    draw.ellipse((x+w-ol, y-ol, x+h+w+ol, y+h+ol), fill=BLACK)
+    draw.ellipse((x-ol, y-ol, x+h+ol, y+h+ol), fill=BLACK)
     # Draw the background
     draw.rectangle((x+(h/2), y, x+w+(h/2), y+h), fill=fg2, width=10)
     draw.ellipse((x+w, y, x+h+w, y+h), fill=fg2)
     draw.ellipse((x, y, x+h, y+h), fill=fg2)
-    w = int(w*percentile/100)
-    # Draw the part of the progress bar that is actually filled
-    draw.rectangle((x+(h/2), y, x+w+(h/2), y+h), fill=fg, width=10)
-    draw.ellipse((x+w, y, x+h+w, y+h), fill=fg)
-    draw.ellipse((x, y, x+h, y+h), fill=fg)
+    if slider:
+        # Draw a marker width 10 where they fall
+        #Full width of the bar is w+h. Final location is 
+        w = int((w+h)*percentile/100)
+        draw.rectangle((x+w-6, y-6, x+w+6, y+h+6), fill=BLACK, width=10)
+
+        draw.rectangle((x+w-5, y-5, x+w+5, y+h+5), fill=WHITE, width=10)
+
+    else:
+        # Draw the part of the progress bar that is actually filled
+        w = int(w*percentile/100)
+        draw.rectangle((x+(h/2), y, x+w+(h/2), y+h), fill=fg, width=10)
+        draw.ellipse((x+w, y, x+h+w, y+h), fill=fg)
+        draw.ellipse((x, y, x+h, y+h), fill=fg)
+        
+def stat_bar_gradient(draw, xy, wh, percentile, fg=(211,211,211), fg2=(15,15,15), slider=False):
+    x, y = xy
+    w, h = wh
+    ol = 1
+    #Add an outline
+    draw.rectangle((x+(h/2), y-ol, x+w+(h/2), y+h+ol), fill=BLACK, width=10)
+    draw.ellipse((x+w-ol, y-ol, x+h+w+ol, y+h+ol), fill=BLACK)
+    draw.ellipse((x-ol, y-ol, x+h+ol, y+h+ol), fill=BLACK)
+    # Draw the background
+
+    draw.ellipse((x+w, y, x+h+w, y+h), fill=RED)
+    draw.ellipse((x, y, x+h, y+h), fill=BLUE)
+    # Define rectangle and colors
+    x1, y1, x2, y2 = (int(x+(h/2)), int(y), int(x+w+(h/2)), int(y+h))
+    color1 = BLUE
+    color2 = RED
+    # Loop and draw pixels (simplified example for horizontal gradient)
+    for x_val in range(x1, x2):
+        for y_val in range(y1, y2):
+            # Calculate interpolation factor (0.0 to 1.0)
+            t = (x_val - x1) / w
+            # Interpolate colors
+            r = int(color1[0] * (1 - t) + color2[0] * t)
+            g = int(color1[1] * (1 - t) + color2[1] * t)
+            b = int(color1[2] * (1 - t) + color2[2] * t)
+            pixel_color = (r, g, b)
+            draw.point((x_val, y_val), fill=pixel_color)
+
+    #draw.rectangle((x+(h/2), y, x+w+(h/2), y+h), fill=fg2, width=10)
+
+    if slider:
+        # Draw a marker width 10 where they fall
+        #Full width of the bar is w+h. Final location is 
+        w = int((w+h)*percentile/100)
+        draw.rectangle((x+w-6, y-6, x+w+6, y+h+6), fill=BLACK, width=10)
+
+        draw.rectangle((x+w-5, y-5, x+w+5, y+h+5), fill=WHITE, width=10)
+
+    else:
+        # Draw the part of the progress bar that is actually filled
+        w = int(w*percentile/100)
+        draw.rectangle((x+(h/2), y, x+w+(h/2), y+h), fill=fg, width=10)
+        draw.ellipse((x+w, y, x+h+w, y+h), fill=fg)
+        draw.ellipse((x, y, x+h, y+h), fill=fg)
+        
 
 
 
@@ -1139,12 +1275,12 @@ def gen_cards(congressmen_f, test_card=False, dummy_img=False):
             #Sanders S000033
             if rep.get('bioguideID')=='H001098': 
                 face_img = pull_pic_from_web(rep)
-                card = create_card_1(rep, face_img)
+                card = create_card_2(rep, face_img)
                 display_card(card)
                 #save_card(card, rep['name'], option="1")
     else:
         for rep in congressmen_json:
             face_img = pull_pic_from_web(rep, dummy=dummy_img)
-            card = create_card_1(rep, face_img)
+            card = create_card_2(rep, face_img)
             save_card(card, rep['name'])
     my_logger.info("Card generation complete!")

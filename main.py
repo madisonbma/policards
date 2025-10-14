@@ -57,7 +57,7 @@ if __name__ == "__main__":
     #print("Merging these JSONs, see result in raw_data.csv")
 
     #Now generate player cards. For now, just passing in the congressmen.json
-    modify_votes.modify_votes("voting_records.json")
+    modify_votes.modify_votes("voting_records.json", "voting_records_senate.json")
 
     modify_reps.modify_reps("congressmen.json", "vote_avg.json")
 

@@ -4,6 +4,7 @@ import json
 import time
 import pandas as pd
 import add_bioguide
+import gen_committees
 import sys
 import os
 from datetime import date
@@ -60,21 +61,21 @@ def add_tenure(df):
     df['duration'] = df['endYear'] - df['startYear']
 
     #tenure_all_time is across everyone, and across all time
-    df['tenure_all_time']  = df['duration'].rank(ascending=False, method='min').astype(int)
-    df['tenure_all_time_party'] = df.groupby('partyName')['duration'].rank(ascending=False, method='min').astype(int)
+    df['tenure_rank_all_time']  = df['duration'].rank(ascending=False, method='min').astype(int)
+    df['tenure_rank_all_time_party'] = df.groupby('partyName')['duration'].rank(ascending=False, method='min').astype(int)
 
     #tenure_current is just for current members, if they're not current members will be nan
-    df['tenure_current'] = np.where(df['current_member']=="yes", df.groupby('current_member')['duration'].rank(ascending=False,method='min'), np.nan)
-    df['tenure_current_party'] = np.where(df['current_member']=="yes", df.groupby(['current_member','partyName'])['duration'].rank(ascending=False,method='min'), np.nan)
-    df['tenure_current_party'] = df['tenure_current_party'].astype(pd.Int64Dtype())
+    df['tenure_rank_current'] = np.where(df['current_member']=="yes", df.groupby(['current_member', 'chamber'])['duration'].rank(ascending=False,method='min'), np.nan)
+    df['tenure_rank_current_party'] = np.where(df['current_member']=="yes", df.groupby(['current_member', 'chamber','partyName'])['duration'].rank(ascending=False,method='min'), np.nan)
+    df['tenure_rank_current_party'] = df['tenure_rank_current_party'].astype(pd.Int64Dtype())
 
     df['party_all_time_count'] = df.groupby('partyName')['bioguideID'].transform('count')
-    df['party_current_count'] = df.groupby(['partyName','current_member'])['bioguideID'].transform('count')
+    df['party_current_count'] = df.groupby(['partyName', 'chamber', 'current_member'])['bioguideID'].transform('count')
 
-    df['tenure_current'] = df['tenure_current'].astype(pd.Int64Dtype())
+    df['tenure_rank_current'] = df['tenure_rank_current'].astype(pd.Int64Dtype())
 
-    df['tenure_current_party_percentile'] = np.where(df['current_member']=="yes", df.groupby(['current_member','partyName'])['duration'].rank(ascending=True,method='max'), np.nan)
-    df['tenure_current_party_percentile'] = round(df['tenure_current_party_percentile']/df['party_current_count']*100).astype(pd.Int64Dtype())
+    df['tenure_rank_current_party_percentile'] = np.where(df['current_member']=="yes", df.groupby(['current_member','chamber','partyName'])['duration'].rank(ascending=True,method='max'), np.nan)
+    df['tenure_rank_current_party_percentile'] = round(df['tenure_rank_current_party_percentile']/df['party_current_count']*100).astype(pd.Int64Dtype())
 
 
     return df
@@ -124,7 +125,7 @@ def replace_democratic(df):
 
 ############################################
 
-def get_voter_rank(merged_df):
+def get_voter_rank_0(merged_df):
     """
     On the merged df between reps and votes, sorted by party allegiance 
     get their rank of times voting with their party.
@@ -137,8 +138,10 @@ def get_voter_rank(merged_df):
         their peers, repeated for ties
     """
     ###Only do this for House members, care about how they vote within a chamber.
-    reps_mask = np.logical_and(merged_df['partyName']=="Republican", merged_df['chamber']=="House of Representatives")
-    dems_mask = np.logical_and(merged_df['partyName']=="Democrat", merged_df['chamber']=="House of Representatives")
+    #reps_mask = np.logical_and(merged_df['partyName']=="Republican", merged_df['chamber']=="House of Representatives")
+    #dems_mask = np.logical_and(merged_df['partyName']=="Democrat", merged_df['chamber']=="House of Representatives")
+    reps_mask = merged_df['partyName']=="Republican"
+    dems_mask = merged_df['partyName']=="Democrat"
     #ind_mask = merged_df['partyName']!='Democrat' & merged_df['partyName']!='Republican'
 
     #with_party_count == Raw count of times they voted with their party
@@ -150,18 +153,97 @@ def get_voter_rank(merged_df):
     #Then want to rank them based on their with_party_count / vote_count
     merged_df['with_party_percent'] = merged_df['with_party_count'] / (merged_df['vote_count'] - merged_df['Absent'])
     #Rank them based on the percentage of the time they vote with their party
-    merged_df['with_party_rank'] = merged_df.groupby('partyName')['with_party_percent'].rank(ascending=True, method='max')
+    #This one is for ranking by party, changed to ranking within the chamber
+    #merged_df['with_party_rank'] = merged_df.groupby('partyName')['with_party_percent'].rank(ascending=True, method='max')
+    merged_df['with_party_rank'] = merged_df.groupby('chamber')['with_party_percent'].rank(ascending=True, method='max')
 
     #convert rank to percentile
-    merged_df['with_party_rank'] = round(merged_df['with_party_rank']/merged_df['party_current_count']*100).astype(pd.Int64Dtype())
-    merged_df['with_party_percent'] = round(merged_df['with_party_percent']*100).astype(pd.Int64Dtype())
+    senate_count = len(merged_df[merged_df['chamber']=="Senate"])
+    house_count = len(merged_df[merged_df['chamber']=="House of Representatives"])
 
-    #merged_df['break_bipartisan_consensus'] merged_df['Neither']
+
+    #Same as above, changing to ranking within the chamber
+    #merged_df['with_party_rank'] = round(merged_df['with_party_rank']/merged_df['party_current_count']*100).astype(pd.Int64Dtype())
+    merged_df['with_party_rank'] = np.where(merged_df['chamber']=="Senate", 
+                                            round(merged_df['with_party_rank']/senate_count*100), 
+                                            round(merged_df['with_party_rank']/house_count*100)) 
+    merged_df['with_party_rank'] = merged_df['with_party_rank'].astype(pd.Int64Dtype())
+    merged_df['with_party_percent'] = round(merged_df['with_party_percent']*100).astype(pd.Int64Dtype())
 
     return merged_df
 
 
 
+def get_voter_rank(merged_df):
+    """
+    On the merged df between reps and votes, sorted by party allegiance 
+    get their rank of times voting with their party.
+    #If they're independent, simply put if they voted with D or R more.
+    Also get rank of absentia, abstention (non-party specific)
+
+    with_party_count is the raw count of number of times they've voted with their party
+    with_party_percent is the percent of their votes that they've voted with the party, excluding absentia
+    with_party_percentile is for the percent bar. It's scaled out of 100 what their voting percentage rank is among 
+        their peers, repeated for ties
+    """
+
+    #Then want to rank them based on their with_party_count / vote_count
+    #removing BOTH and NEITHER (bipartisan consensus) from the denominator
+    #removing ABSENT and ABSTAIN from the denominator since showing elsewhere
+    merged_df['with_D_percent'] = (merged_df['with_D'] / (merged_df['with_D'] + merged_df['with_R']))*100
+    merged_df['with_R_percent'] = (merged_df['with_R'] / (merged_df['with_D'] + merged_df['with_R']))*100
+    merged_df['absent_percent'] = (merged_df['Absent'] / (merged_df['vote_count']))*100
+    merged_df['neither_percent'] = (merged_df['Neither'] / (merged_df['vote_count'] - merged_df['Absent']))*100
+
+    #with_party_count == Raw count of times they voted with their party
+    merged_df['with_party_percent'] = np.where(merged_df['partyName']=="Republican", merged_df['with_R_percent'], np.nan)
+    merged_df['with_party_percent'] = np.where(merged_df['partyName']=="Democrat", merged_df['with_D_percent'], merged_df['with_party_percent'])
+
+    #Rank them
+    merged_df['neither_rank'] = merged_df.groupby('chamber')['neither_percent'].rank(ascending=True, method='max')
+    merged_df['absent_rank'] = merged_df.groupby('chamber')['absent_percent'].rank(ascending=True, method='max')
+    merged_df['with_party_rank'] = merged_df.groupby('chamber')['with_party_percent'].rank(ascending=True, method='max')
+
+    #convert rank to percentile
+    senate_count = len(merged_df[merged_df['chamber']=="Senate"])
+    house_count = len(merged_df[merged_df['chamber']=="House of Representatives"])
+
+
+    #Same as above, changing to ranking within the chamber
+    merged_df['with_party_percentile'] = np.where(merged_df['chamber']=="Senate", 
+                                            round(merged_df['with_party_rank']/senate_count*100), 
+                                            round(merged_df['with_party_rank']/house_count*100)) 
+    merged_df['neither_percentile'] = np.where(merged_df['chamber']=="Senate", 
+                                            round(merged_df['neither_rank']/senate_count*100), 
+                                            round(merged_df['neither_rank']/house_count*100)) 
+    merged_df['absent_percentile'] = np.where(merged_df['chamber']=="Senate", 
+                                            round(merged_df['absent_rank']/senate_count*100), 
+                                            round(merged_df['absent_rank']/house_count*100)) 
+    
+    #Convert all to Int64Dtype
+    merged_df['with_D_percent'] = round(merged_df['with_D_percent']).astype(pd.Int64Dtype())
+    merged_df['with_R_percent'] = round(merged_df['with_R_percent']).astype(pd.Int64Dtype())
+    merged_df['absent_percent'] = round(merged_df['absent_percent']).astype(pd.Int64Dtype())
+    merged_df['neither_percent'] = round(merged_df['neither_percent']).astype(pd.Int64Dtype())
+    merged_df['with_party_percent'] = round(merged_df['with_party_percent']).astype(pd.Int64Dtype())
+    merged_df['neither_rank'] = merged_df['neither_rank'].astype(pd.Int64Dtype())
+    merged_df['absent_rank'] = merged_df['absent_rank'].astype(pd.Int64Dtype())
+    merged_df['with_party_rank'] = merged_df['with_party_rank'].astype(pd.Int64Dtype())
+    merged_df['with_party_percentile'] = merged_df['with_party_percentile'].astype(pd.Int64Dtype())
+    merged_df['neither_percentile'] = merged_df['neither_percentile'].astype(pd.Int64Dtype())
+    merged_df['absent_percentile'] = merged_df['absent_percentile'].astype(pd.Int64Dtype())
+
+
+    return merged_df
+
+
+def merge_in_comms(df, comms_dict):
+    """Given the final dataframe and the comms_dict, add the committees in per bioguideID.
+    If no committee found, add "None" instead.
+    """
+    df['committees'] = df['bioguideID'].map(comms_dict)
+
+    return df
 ####################################################################################################
 
 
@@ -195,6 +277,9 @@ def modify_reps(input_json_f, vote_f):
 
     #Functions you need to do on merged vote and reps:
     df = get_voter_rank(df)
+
+    comm_dict = gen_committees.gen_committees()
+    df = merge_in_comms(df, comm_dict)
 
 
     print(f"Exporting {len(df)} congressmen")

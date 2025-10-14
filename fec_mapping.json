@@ -1,0 +1,4991 @@
+[
+  {
+    "name": "adams, alma s.",
+    "bioguide_id": "A000370",
+    "candidate_id": "H4NC12100",
+    "committees": [
+      "C00546358"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "aderholt, robert b.",
+    "bioguide_id": "A000055",
+    "candidate_id": "H6AL04098",
+    "committees": [
+      "C00313247"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "aguilar, pete",
+    "bioguide_id": "A000371",
+    "candidate_id": "H2CA31125",
+    "committees": [
+      "C00510461"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "alford, mark",
+    "bioguide_id": "A000379",
+    "candidate_id": "H2MO04207",
+    "committees": [
+      "C00792598"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "allen, rick w.",
+    "bioguide_id": "A000372",
+    "candidate_id": "H2GA12121",
+    "committees": [
+      "C00504019"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "radewagen, aumua amata coleman",
+    "bioguide_id": "R000600",
+    "candidate_id": "H4AS00036",
+    "committees": [
+      "C00393041"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "amodei, mark e.",
+    "bioguide_id": "A000369",
+    "candidate_id": "H2NV02395",
+    "committees": [
+      "C00496760"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "amo, gabe",
+    "bioguide_id": "A000380",
+    "candidate_id": "H4RI01265",
+    "committees": [
+      "C00838060"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "ansari, yassamin",
+    "bioguide_id": "A000381",
+    "candidate_id": "H4AZ03109",
+    "committees": [
+      "C00836767"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "hinson, ashley",
+    "bioguide_id": "H001091",
+    "candidate_id": "H0IA01174",
+    "committees": [
+      "C00706267"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "arrington, jodey c.",
+    "bioguide_id": "A000375",
+    "candidate_id": "H6TX19099",
+    "committees": [
+      "C00588657"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "auchincloss, jake",
+    "bioguide_id": "A000148",
+    "candidate_id": "H0MA04192",
+    "committees": [
+      "C00721449"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "babin, brian",
+    "bioguide_id": "B001291",
+    "candidate_id": "H6TX02079",
+    "committees": [
+      "C00553859"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "bacon, don",
+    "bioguide_id": "B001298",
+    "candidate_id": "H6NE02125",
+    "committees": [
+      "C00575167"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "baird, james r.",
+    "bioguide_id": "B001307",
+    "candidate_id": "H8IN04199",
+    "committees": [
+      "C00662940"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "balderson, troy",
+    "bioguide_id": "B001306",
+    "candidate_id": "H8OH12180",
+    "committees": [
+      "C00662650"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "balint, becca",
+    "bioguide_id": "B001318",
+    "candidate_id": "H2VT01076",
+    "committees": [
+      "C00797175"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "barragan, nanette diaz",
+    "bioguide_id": "B001300",
+    "candidate_id": "H6CA44103",
+    "committees": [
+      "C00577353"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "barrett, tom",
+    "bioguide_id": "B001321",
+    "candidate_id": "H2MI07123",
+    "committees": [
+      "C00793976"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "barr, andy",
+    "bioguide_id": "B001282",
+    "candidate_id": "H0KY06104",
+    "committees": [
+      "C00467571"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "baumgartner, michael",
+    "bioguide_id": "B001322",
+    "candidate_id": "H4WA05234",
+    "committees": [
+      "C00870758"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "bean, aaron",
+    "bioguide_id": "B001314",
+    "candidate_id": "H2FL04211",
+    "committees": [
+      "C00816983"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "beatty, joyce",
+    "bioguide_id": "B001281",
+    "candidate_id": "H2OH03125",
+    "committees": [
+      "C00507368"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "begich, nicholas j.",
+    "bioguide_id": "B001323",
+    "candidate_id": "H2AK01083",
+    "committees": [
+      "C00792341"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "bell, wesley",
+    "bioguide_id": "B001324",
+    "candidate_id": "H4MO01134",
+    "committees": [
+      "C00842336"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "bentz, cliff",
+    "bioguide_id": "B000668",
+    "candidate_id": "H0OR02127",
+    "committees": [
+      "C00725465"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "bera, ami",
+    "bioguide_id": "B001287",
+    "candidate_id": "H0CA03078",
+    "committees": [
+      "C00461061"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "bergman, jack",
+    "bioguide_id": "B001301",
+    "candidate_id": "H6MI01226",
+    "committees": [
+      "C00614214"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "beyer, donald s.",
+    "bioguide_id": "B001292",
+    "candidate_id": "H4VA08224",
+    "committees": [
+      "C00555888"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "bice, stephanie i.",
+    "bioguide_id": "B000740",
+    "candidate_id": "H0OK05205",
+    "committees": [
+      "C00703843"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "biggs, andy",
+    "bioguide_id": "B001302",
+    "candidate_id": "H6AZ05083",
+    "committees": [
+      "C00610451"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "biggs, sheri",
+    "bioguide_id": "B001325",
+    "candidate_id": "H4SC01313",
+    "committees": [
+      "C00866426"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "bilirakis, gus m.",
+    "bioguide_id": "B001257",
+    "candidate_id": "H6FL09070",
+    "committees": [
+      "C00408534"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "bishop, sanford d.",
+    "bioguide_id": "B000490",
+    "candidate_id": "H2GA02031",
+    "committees": [
+      "C00266940"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "boebert, lauren",
+    "bioguide_id": "B000825",
+    "candidate_id": "H0CO03165",
+    "committees": [
+      "C00728238"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "bonamici, suzanne",
+    "bioguide_id": "B001278",
+    "candidate_id": "H2OR01133",
+    "committees": [
+      "C00500421"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "bost, mike",
+    "bioguide_id": "B001295",
+    "candidate_id": "H4IL12060",
+    "committees": [
+      "C00546499"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "boyle, brendan f.",
+    "bioguide_id": "B001296",
+    "candidate_id": "H4PA13199",
+    "committees": [
+      "C00543363"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "brecheen, josh",
+    "bioguide_id": "B001317",
+    "candidate_id": "H2OK02315",
+    "committees": [
+      "C00812974"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "bresnahan, robert p.",
+    "bioguide_id": "B001327",
+    "candidate_id": "H4PA08124",
+    "committees": [
+      "C00852137"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "brownley, julia",
+    "bioguide_id": "B001285",
+    "candidate_id": "H2CA00120",
+    "committees": [
+      "C00513077"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "brown, shontel m.",
+    "bioguide_id": "B001313",
+    "candidate_id": "H2OH11169",
+    "committees": [
+      "C00764381"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "buchanan, vern",
+    "bioguide_id": "B001260",
+    "candidate_id": "H6FL13148",
+    "committees": [
+      "C00412759"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "budzinski, nikki",
+    "bioguide_id": "B001315",
+    "candidate_id": "H2IL13153",
+    "committees": [
+      "C00787812"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "burchett, tim",
+    "bioguide_id": "B001309",
+    "candidate_id": "H8TN02119",
+    "committees": [
+      "C00652149"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "burlison, eric",
+    "bioguide_id": "B001316",
+    "candidate_id": "H2MO07143",
+    "committees": [
+      "C00788414"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "bynum, janelle s.",
+    "bioguide_id": "B001326",
+    "candidate_id": "H4OR05304",
+    "committees": [
+      "C00843425"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "calvert, ken",
+    "bioguide_id": "C000059",
+    "candidate_id": "H2CA37023",
+    "committees": [
+      "C00257337",
+      "C00150276"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "cammack, kat",
+    "bioguide_id": "C001039",
+    "candidate_id": "H0FL03175",
+    "committees": [
+      "C00730895"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "carbajal, salud o.",
+    "bioguide_id": "C001112",
+    "candidate_id": "H6CA24303",
+    "committees": [
+      "C00576041"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "carey, mike",
+    "bioguide_id": "C001126",
+    "candidate_id": "H2OH15228",
+    "committees": [
+      "C00779603"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "carson, andre",
+    "bioguide_id": "C001072",
+    "candidate_id": "H8IN07184",
+    "committees": [
+      "C00442921"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "carter, earl l. buddy",
+    "bioguide_id": "C001103",
+    "candidate_id": "H4GA01039",
+    "committees": [
+      "C00543967"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "carter, john r.",
+    "bioguide_id": "C001051",
+    "candidate_id": "H2TX31044",
+    "committees": [
+      "C00371203"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "carter, troy a.",
+    "bioguide_id": "C001125",
+    "candidate_id": "H2LA02149",
+    "committees": [
+      "C00763649"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "casar, greg",
+    "bioguide_id": "C001131",
+    "candidate_id": "H2TX35144",
+    "committees": [
+      "C00791897"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "case, ed",
+    "bioguide_id": "C001055",
+    "candidate_id": "H2HI02128",
+    "committees": [
+      "C00680918",
+      "C00382978"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "casten, sean",
+    "bioguide_id": "C001117",
+    "candidate_id": "H8IL06139",
+    "committees": [
+      "C00648493"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "castor, kathy",
+    "bioguide_id": "C001066",
+    "candidate_id": "H6FL11126",
+    "committees": [
+      "C00410761"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "castro, joaquin",
+    "bioguide_id": "C001091",
+    "candidate_id": "H2TX35011",
+    "committees": [
+      "C00497933"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "cherfilus-mccormick, sheila",
+    "bioguide_id": "C001127",
+    "candidate_id": "H8FL20032",
+    "committees": [
+      "C00677492"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "chu, judy",
+    "bioguide_id": "C001080",
+    "candidate_id": "H0CA32101",
+    "committees": [
+      "C00458125"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "ciscomani, juan",
+    "bioguide_id": "C001133",
+    "candidate_id": "H2AZ02360",
+    "committees": [
+      "C00786194"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "cisneros, gilbert ray",
+    "bioguide_id": "C001123",
+    "candidate_id": "H4CA31170",
+    "committees": [
+      "C00850420"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "clarke, yvette d.",
+    "bioguide_id": "C001067",
+    "candidate_id": "H4NY11138",
+    "committees": [
+      "C00415331",
+      "C00398941"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "clark, katherine m.",
+    "bioguide_id": "C001101",
+    "candidate_id": "H4MA05084",
+    "committees": [
+      "C00541888"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "cleaver, emanuel",
+    "bioguide_id": "C001061",
+    "candidate_id": "H4MO05234",
+    "committees": [
+      "C00395848"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "cline, ben",
+    "bioguide_id": "C001118",
+    "candidate_id": "H8VA06104",
+    "committees": [
+      "C00661561"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "cloud, michael",
+    "bioguide_id": "C001115",
+    "candidate_id": "H8TX27049",
+    "committees": [
+      "C00655332"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "clyburn, james e.",
+    "bioguide_id": "C000537",
+    "candidate_id": "H2SC02042",
+    "committees": [
+      "C00255562"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "clyde, andrew s.",
+    "bioguide_id": "C001116",
+    "candidate_id": "H0GA09246",
+    "committees": [
+      "C00740100"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "cohen, steve",
+    "bioguide_id": "C001068",
+    "candidate_id": "H6TN09068",
+    "committees": [
+      "C00422980",
+      "C00318915"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "watson coleman, bonnie",
+    "bioguide_id": "W000822",
+    "candidate_id": "H4NJ12149",
+    "committees": [
+      "C00558437"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "cole, tom",
+    "bioguide_id": "C001053",
+    "candidate_id": "H2OK04055",
+    "committees": [
+      "C00379735"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "collins, mike",
+    "bioguide_id": "C001129",
+    "candidate_id": "H4GA10071",
+    "committees": [
+      "C00544684"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "comer, james",
+    "bioguide_id": "C001108",
+    "candidate_id": "H6KY01110",
+    "committees": [
+      "C00588764"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "conaway, herbert c.",
+    "bioguide_id": "C001136",
+    "candidate_id": "H4NJ03080",
+    "committees": [
+      "C00859496",
+      "C00399881"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "correa, j. luis",
+    "bioguide_id": "C001110",
+    "candidate_id": "H6CA46116",
+    "committees": [
+      "C00578302"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "costa, jim",
+    "bioguide_id": "C001059",
+    "candidate_id": "H4CA20082",
+    "committees": [
+      "C00391029"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "courtney, joe",
+    "bioguide_id": "C001069",
+    "candidate_id": "H2CT02112",
+    "committees": [
+      "C00410233",
+      "C00369199"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "craig, angie",
+    "bioguide_id": "C001119",
+    "candidate_id": "H6MN02131",
+    "committees": [
+      "C00575209"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "crane, elijah",
+    "bioguide_id": "C001132",
+    "candidate_id": "H2AZ01354",
+    "committees": [
+      "C00784934"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "crank, jeff",
+    "bioguide_id": "C001137",
+    "candidate_id": "H6CO05142",
+    "committees": [
+      "C00865592",
+      "C00421776"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "crawford, eric a. rick",
+    "bioguide_id": "C001087",
+    "candidate_id": "H0AR01083",
+    "committees": [
+      "C00462374"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "crawford, eric a. rick",
+    "bioguide_id": "C001087",
+    "candidate_id": "H0AR01083",
+    "committees": [
+      "C00462374"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "crenshaw, dan",
+    "bioguide_id": "C001120",
+    "candidate_id": "H8TX02166",
+    "committees": [
+      "C00660795"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "crockett, jasmine",
+    "bioguide_id": "C001130",
+    "candidate_id": "H2TX30178",
+    "committees": [
+      "C00795450"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "crow, jason",
+    "bioguide_id": "C001121",
+    "candidate_id": "H8CO06229",
+    "committees": [
+      "C00637363"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "cuellar, henry",
+    "bioguide_id": "C001063",
+    "candidate_id": "H2TX23082",
+    "committees": [
+      "C00371302"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "davidson, warren",
+    "bioguide_id": "D000626",
+    "candidate_id": "H6OH08315",
+    "committees": [
+      "C00600718"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "davids, sharice",
+    "bioguide_id": "D000629",
+    "candidate_id": "H8KS03155",
+    "committees": [
+      "C00670034"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "davis, danny k.",
+    "bioguide_id": "D000096",
+    "candidate_id": "H4IL07037",
+    "committees": [
+      "C00172619"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "davis, donald g.",
+    "bioguide_id": "D000230",
+    "candidate_id": "H2NC02287",
+    "committees": [
+      "C00795211"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "dean, madeleine",
+    "bioguide_id": "D000631",
+    "candidate_id": "H8PA04116",
+    "committees": [
+      "C00670844"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "degette, diana",
+    "bioguide_id": "D000197",
+    "candidate_id": "H6CO01141",
+    "committees": [
+      "C00311639"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "de la cruz, monica",
+    "bioguide_id": "D000594",
+    "candidate_id": "H0TX15124",
+    "committees": [
+      "C00765719",
+      "C00723072"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "mcclain delaney, april",
+    "bioguide_id": "M001232",
+    "candidate_id": "H4MD06340",
+    "committees": [
+      "C00854471"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "delauro, rosa l.",
+    "bioguide_id": "D000216",
+    "candidate_id": "H0CT03072",
+    "committees": [
+      "C00238865"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "delbene, suzan k.",
+    "bioguide_id": "D000617",
+    "candidate_id": "H0WA08046",
+    "committees": [
+      "C00459099"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "deluzio, christopher r.",
+    "bioguide_id": "D000530",
+    "candidate_id": "H2PA17103",
+    "committees": [
+      "C00787648"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "desaulnier, mark",
+    "bioguide_id": "D000623",
+    "candidate_id": "H0CA10073",
+    "committees": [
+      "C00554709",
+      "C00460162"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "desjarlais, scott",
+    "bioguide_id": "D000616",
+    "candidate_id": "H0TN04195",
+    "committees": [
+      "C00464073"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "dexter, maxine",
+    "bioguide_id": "D000635",
+    "candidate_id": "H4OR03192",
+    "committees": [
+      "C00859108"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "diaz-balart, mario",
+    "bioguide_id": "D000600",
+    "candidate_id": "H2FL25018",
+    "committees": [
+      "C00376087"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "dingell, debbie",
+    "bioguide_id": "D000624",
+    "candidate_id": "H4MI12079",
+    "committees": [
+      "C00558213"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "doggett, lloyd",
+    "bioguide_id": "D000399",
+    "candidate_id": "H4TX10028",
+    "committees": [
+      "C00286500"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "donalds, byron",
+    "bioguide_id": "D000032",
+    "candidate_id": "H2FL14186",
+    "committees": [
+      "C00733329",
+      "C00509877"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "downing, troy",
+    "bioguide_id": "D000634",
+    "candidate_id": "H4MT02098",
+    "committees": [
+      "C00855288"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "dunn, neal p.",
+    "bioguide_id": "D000628",
+    "candidate_id": "H6FL02208",
+    "committees": [
+      "C00582304"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "edwards, chuck",
+    "bioguide_id": "E000246",
+    "candidate_id": "H2NC14050",
+    "committees": [
+      "C00796433"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "elfreth, sarah",
+    "bioguide_id": "E000301",
+    "candidate_id": "H4MD03156",
+    "committees": [
+      "C00855353"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "ellzey, jake",
+    "bioguide_id": "E000071",
+    "candidate_id": "H8TX06266",
+    "committees": [
+      "C00770438",
+      "C00662932"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "emmer, tom",
+    "bioguide_id": "E000294",
+    "candidate_id": "H4MN06087",
+    "committees": [
+      "C00545749"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "escobar, veronica",
+    "bioguide_id": "E000299",
+    "candidate_id": "H8TX16109",
+    "committees": [
+      "C00653923"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "espaillat, adriano",
+    "bioguide_id": "E000297",
+    "candidate_id": "H2NY13096",
+    "committees": [
+      "C00701953",
+      "C00635722",
+      "C00593525",
+      "C00518365"
+    ],
+    "committees_len": 4
+  },
+  {
+    "name": "estes, ron",
+    "bioguide_id": "E000298",
+    "candidate_id": "H8KS04112",
+    "committees": [
+      "C00632067"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "evans, dwight",
+    "bioguide_id": "E000296",
+    "candidate_id": "H6PA02171",
+    "committees": [
+      "C00591065"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "evans, gabe",
+    "bioguide_id": "E000300",
+    "candidate_id": "H4CO08034",
+    "committees": [
+      "C00849844"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "ezell, mike",
+    "bioguide_id": "E000235",
+    "candidate_id": "H2MS04258",
+    "committees": [
+      "C00776393"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "fallon, pat",
+    "bioguide_id": "F000246",
+    "candidate_id": "H0TX04219",
+    "committees": [
+      "C00750307"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "fedorchak, julie",
+    "bioguide_id": "F000482",
+    "candidate_id": "H4ND00061",
+    "committees": [
+      "C00869370"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "feenstra, randy",
+    "bioguide_id": "F000446",
+    "candidate_id": "H0IA04145",
+    "committees": [
+      "C00693663"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "fields, cleo",
+    "bioguide_id": "F000110",
+    "candidate_id": "H4LA06211",
+    "committees": [
+      "C00868513"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "figures, shomari",
+    "bioguide_id": "F000481",
+    "candidate_id": "H4AL02170",
+    "committees": [
+      "C00856237"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "fine, randy",
+    "bioguide_id": "F000484",
+    "candidate_id": "H6FL06258",
+    "committees": [
+      "C00893271"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "finstad, brad",
+    "bioguide_id": "F000475",
+    "candidate_id": "H2MN01223",
+    "committees": [
+      "C00807743"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "fischbach, michelle",
+    "bioguide_id": "F000470",
+    "candidate_id": "H0MN07091",
+    "committees": [
+      "C00717959"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "fitzgerald, scott",
+    "bioguide_id": "F000471",
+    "candidate_id": "H0WI05113",
+    "committees": [
+      "C00720011"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "fitzpatrick, brian k.",
+    "bioguide_id": "F000466",
+    "candidate_id": "H6PA08277",
+    "committees": [
+      "C00607416"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "fleischmann, charles j. chuck",
+    "bioguide_id": "F000459",
+    "candidate_id": "H0TN03254",
+    "committees": [
+      "C00461822"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "fletcher, lizzie",
+    "bioguide_id": "F000468",
+    "candidate_id": "H8TX07140",
+    "committees": [
+      "C00640045"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "flood, mike",
+    "bioguide_id": "F000474",
+    "candidate_id": "H2NE01118",
+    "committees": [
+      "C00801241"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "fong, vince",
+    "bioguide_id": "F000480",
+    "candidate_id": "H4CA20181",
+    "committees": [
+      "C00859892"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "foster, bill",
+    "bioguide_id": "F000454",
+    "candidate_id": "H8IL14067",
+    "committees": [
+      "C00435099"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "foushee, valerie p.",
+    "bioguide_id": "F000477",
+    "candidate_id": "H2NC06114",
+    "committees": [
+      "C00794727"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "foxx, virginia",
+    "bioguide_id": "F000450",
+    "candidate_id": "H4NC05146",
+    "committees": [
+      "C00386748"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "frankel, lois",
+    "bioguide_id": "F000462",
+    "candidate_id": "H2FL14053",
+    "committees": [
+      "C00494856",
+      "C00252767"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "franklin, scott",
+    "bioguide_id": "F000472",
+    "candidate_id": "H0FL15104",
+    "committees": [
+      "C00742247"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "friedman, laura",
+    "bioguide_id": "F000483",
+    "candidate_id": "H4CA30149",
+    "committees": [
+      "C00831321"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "frost, maxwell",
+    "bioguide_id": "F000476",
+    "candidate_id": "H2FL10259",
+    "committees": [
+      "C00786822"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "fry, russell",
+    "bioguide_id": "F000478",
+    "candidate_id": "H2SC07280",
+    "committees": [
+      "C00786657"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "fulcher, russ",
+    "bioguide_id": "F000469",
+    "candidate_id": "H8ID01124",
+    "committees": [
+      "C00648295"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "garamendi, john",
+    "bioguide_id": "G000559",
+    "candidate_id": "H0CA10149",
+    "committees": [
+      "C00462697"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "garbarino, andrew r.",
+    "bioguide_id": "G000597",
+    "candidate_id": "H0NY02234",
+    "committees": [
+      "C00729954"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "garcia, jesus g. chuy",
+    "bioguide_id": "G000586",
+    "candidate_id": "H8IL04134",
+    "committees": [
+      "C00661777"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "garcia, robert",
+    "bioguide_id": "G000598",
+    "candidate_id": "H2CA47188",
+    "committees": [
+      "C00797795"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "garcia, sylvia r.",
+    "bioguide_id": "G000587",
+    "candidate_id": "H8TX29052",
+    "committees": [
+      "C00660555"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "gill, brandon",
+    "bioguide_id": "G000603",
+    "candidate_id": "H4TX26149",
+    "committees": [
+      "C00857359"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "gillen, laura",
+    "bioguide_id": "G000602",
+    "candidate_id": "H4NY04158",
+    "committees": [
+      "C00840165"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "gimenez, carlos a.",
+    "bioguide_id": "G000593",
+    "candidate_id": "H0FL26036",
+    "committees": [
+      "C00735985"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "perez, marie gluesenkamp",
+    "bioguide_id": "G000600",
+    "candidate_id": "H2WA03217",
+    "committees": [
+      "C00806174"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "golden, jared f.",
+    "bioguide_id": "G000592",
+    "candidate_id": "H8ME02185",
+    "committees": [
+      "C00653816"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "goldman, craig a.",
+    "bioguide_id": "G000601",
+    "candidate_id": "H4TX12065",
+    "committees": [
+      "C00855528"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "goldman, daniel s.",
+    "bioguide_id": "G000599",
+    "candidate_id": "H2NY10308",
+    "committees": [
+      "C00816660"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "gomez, jimmy",
+    "bioguide_id": "G000585",
+    "candidate_id": "H8CA34266",
+    "committees": [
+      "C00629659"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "gonzales, tony",
+    "bioguide_id": "G000594",
+    "candidate_id": "H0TX35015",
+    "committees": [
+      "C00706614"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "gonzalez, vicente",
+    "bioguide_id": "G000581",
+    "candidate_id": "H6TX15162",
+    "committees": [
+      "C00592659"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "gooden, lance",
+    "bioguide_id": "G000589",
+    "candidate_id": "H8TX05144",
+    "committees": [
+      "C00662601"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "goodlander, maggie",
+    "bioguide_id": "G000604",
+    "candidate_id": "H4NH02399",
+    "committees": [
+      "C00878454"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "gosar, paul a.",
+    "bioguide_id": "G000565",
+    "candidate_id": "H0AZ01259",
+    "committees": [
+      "C00461806"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "gottheimer, josh",
+    "bioguide_id": "G000583",
+    "candidate_id": "H6NJ05171",
+    "committees": [
+      "C00573949"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "graves, sam",
+    "bioguide_id": "G000546",
+    "candidate_id": "H0MO06073",
+    "committees": [
+      "C00359034"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "gray, adam",
+    "bioguide_id": "G000605",
+    "candidate_id": "H2CA13115",
+    "committees": [
+      "C00801431"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "green, al",
+    "bioguide_id": "G000553",
+    "candidate_id": "H4TX09095",
+    "committees": [
+      "C00578567",
+      "C00396028"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "greene, marjorie taylor",
+    "bioguide_id": "G000596",
+    "candidate_id": "H0GA06192",
+    "committees": [
+      "C00708289"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "greene, marjorie taylor",
+    "bioguide_id": "G000596",
+    "candidate_id": "H0GA06192",
+    "committees": [
+      "C00708289"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "griffith, h. morgan",
+    "bioguide_id": "G000568",
+    "candidate_id": "H0VA09055",
+    "committees": [
+      "C00477240"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "grothman, glenn",
+    "bioguide_id": "G000576",
+    "candidate_id": "H4WI06048",
+    "committees": [
+      "C00561597"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "guest, michael",
+    "bioguide_id": "G000591",
+    "candidate_id": "H8MS03125",
+    "committees": [
+      "C00665752"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "guthrie, brett",
+    "bioguide_id": "G000558",
+    "candidate_id": "H8KY02031",
+    "committees": [
+      "C00445023"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "guthrie, brett",
+    "bioguide_id": "G000558",
+    "candidate_id": "H8KY02031",
+    "committees": [
+      "C00445023"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "hageman, harriet m.",
+    "bioguide_id": "H001096",
+    "candidate_id": "H2WY00166",
+    "committees": [
+      "C00788943"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "hamadeh, abraham j.",
+    "bioguide_id": "H001098",
+    "candidate_id": "H4AZ08108",
+    "committees": [
+      "C00853986"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "harder, josh",
+    "bioguide_id": "H001090",
+    "candidate_id": "H8CA10126",
+    "committees": [
+      "C00639146"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "haridopolos, mike",
+    "bioguide_id": "H001099",
+    "candidate_id": "H4FL08168",
+    "committees": [
+      "C00877324"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "harrigan, pat",
+    "bioguide_id": "H001101",
+    "candidate_id": "H2NC13243",
+    "committees": [
+      "C00802298"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "harris, andy",
+    "bioguide_id": "H001052",
+    "candidate_id": "H8MD01094",
+    "committees": [
+      "C00435974"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "harris, mark",
+    "bioguide_id": "H001102",
+    "candidate_id": "H4NC08066",
+    "committees": [
+      "C00850404"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "harshbarger, diana",
+    "bioguide_id": "H001086",
+    "candidate_id": "H0TN01118",
+    "committees": [
+      "C00741090"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "hayes, jahana",
+    "bioguide_id": "H001081",
+    "candidate_id": "H8CT05245",
+    "committees": [
+      "C00677898"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "hernandez, pablo jose",
+    "bioguide_id": "H001103",
+    "candidate_id": "H4PR01010",
+    "committees": [
+      "C00831487"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "hernandez, pablo jose",
+    "bioguide_id": "H001103",
+    "candidate_id": "H4PR01010",
+    "committees": [
+      "C00831487"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "hern, kevin",
+    "bioguide_id": "H001082",
+    "candidate_id": "H8OK01157",
+    "committees": [
+      "C00636092"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "higgins, clay",
+    "bioguide_id": "H001077",
+    "candidate_id": "H6LA03148",
+    "committees": [
+      "C00617662"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "hill, j. french",
+    "bioguide_id": "H001072",
+    "candidate_id": "H4AR02141",
+    "committees": [
+      "C00551275"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "himes, james a.",
+    "bioguide_id": "H001047",
+    "candidate_id": "H8CT04172",
+    "committees": [
+      "C00434191"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "horsford, steven",
+    "bioguide_id": "H001066",
+    "candidate_id": "H2NV04011",
+    "committees": [
+      "C00668228",
+      "C00504613"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "houchin, erin",
+    "bioguide_id": "H001093",
+    "candidate_id": "H6IN09143",
+    "committees": [
+      "C00800649",
+      "C00581298"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "houlahan, chrissy",
+    "bioguide_id": "H001085",
+    "candidate_id": "H8PA06087",
+    "committees": [
+      "C00637371"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "hoyer, steny h.",
+    "bioguide_id": "H000874",
+    "candidate_id": "H2MD05155",
+    "committees": [
+      "C00140715"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "hoyle, val t.",
+    "bioguide_id": "H001094",
+    "candidate_id": "H2OR04095",
+    "committees": [
+      "C00796144"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "hudson, richard",
+    "bioguide_id": "H001067",
+    "candidate_id": "H2NC08185",
+    "committees": [
+      "C00504522"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "huffman, jared",
+    "bioguide_id": "H001068",
+    "candidate_id": "H2CA06259",
+    "committees": [
+      "C00536680",
+      "C00491746"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "huizenga, bill",
+    "bioguide_id": "H001058",
+    "candidate_id": "H0MI02094",
+    "committees": [
+      "C00459297"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "hunt, wesley",
+    "bioguide_id": "H001095",
+    "candidate_id": "H0TX07170",
+    "committees": [
+      "C00701003"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "hurd, jeff",
+    "bioguide_id": "H001100",
+    "candidate_id": "H4CO03357",
+    "committees": [
+      "C00848333"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "issa, darrell",
+    "bioguide_id": "I000056",
+    "candidate_id": "H0CA48024",
+    "committees": [
+      "C00721332",
+      "C00350520"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "ivey, glenn",
+    "bioguide_id": "I000058",
+    "candidate_id": "H2MD04315",
+    "committees": [
+      "C00792283"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "jack, brian",
+    "bioguide_id": "J000311",
+    "candidate_id": "H4GA03126",
+    "committees": [
+      "C00872473"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "jackson, jonathan l.",
+    "bioguide_id": "J000309",
+    "candidate_id": "H2IL01349",
+    "committees": [
+      "C00802603"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "jackson, ronny",
+    "bioguide_id": "J000304",
+    "candidate_id": "H0TX13228",
+    "committees": [
+      "C00730531"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "jacobs, sara",
+    "bioguide_id": "J000305",
+    "candidate_id": "H8CA49074",
+    "committees": [
+      "C00719559",
+      "C00660837"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "james, john",
+    "bioguide_id": "J000307",
+    "candidate_id": "H2MI10150",
+    "committees": [
+      "C00803502"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "jayapal, pramila",
+    "bioguide_id": "J000298",
+    "candidate_id": "H6WA07458",
+    "committees": [
+      "C00605592"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "jeffries, hakeem s.",
+    "bioguide_id": "J000294",
+    "candidate_id": "H2NY10092",
+    "committees": [
+      "C00503052"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "johnson, dusty",
+    "bioguide_id": "J000301",
+    "candidate_id": "H8SD01055",
+    "committees": [
+      "C00628917"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "johnson, henry c. hank",
+    "bioguide_id": "J000288",
+    "candidate_id": "H6GA04129",
+    "committees": [
+      "C00418293"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "johnson, henry c. hank",
+    "bioguide_id": "J000288",
+    "candidate_id": "H6GA04129",
+    "committees": [
+      "C00418293"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "johnson, mike",
+    "bioguide_id": "J000299",
+    "candidate_id": "H6LA04138",
+    "committees": [
+      "C00608695"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "johnson, julie",
+    "bioguide_id": "J000310",
+    "candidate_id": "H4TX32089",
+    "committees": [
+      "C00843003"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "jordan, jim",
+    "bioguide_id": "J000289",
+    "candidate_id": "H6OH04082",
+    "committees": [
+      "C00416594"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "joyce, david p.",
+    "bioguide_id": "J000295",
+    "candidate_id": "H2OH14064",
+    "committees": [
+      "C00527457"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "joyce, john",
+    "bioguide_id": "J000302",
+    "candidate_id": "H8PA13125",
+    "committees": [
+      "C00674259"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "kamlager-dove, sydney",
+    "bioguide_id": "K000400",
+    "candidate_id": "H2CA37304",
+    "committees": [
+      "C00795823"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "kaptur, marcy",
+    "bioguide_id": "K000009",
+    "candidate_id": "H2OH09031",
+    "committees": [
+      "C00154625"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "kean, thomas h.",
+    "bioguide_id": "K000398",
+    "candidate_id": "H0NJ07261",
+    "committees": [
+      "C00703058"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "keating, william r.",
+    "bioguide_id": "K000375",
+    "candidate_id": "H0MA10082",
+    "committees": [
+      "C00479063"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "kelly, mike",
+    "bioguide_id": "K000376",
+    "candidate_id": "H0PA03271",
+    "committees": [
+      "C00474189"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "kelly, trent",
+    "bioguide_id": "K000388",
+    "candidate_id": "H6MS01131",
+    "committees": [
+      "C00573980"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "kelly, robin l.",
+    "bioguide_id": "K000385",
+    "candidate_id": "H2IL02172",
+    "committees": [
+      "C00539866"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "kennedy, mike",
+    "bioguide_id": "K000403",
+    "candidate_id": "H4UT03260",
+    "committees": [
+      "C00864488"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "kennedy, timothy m.",
+    "bioguide_id": "K000402",
+    "candidate_id": "H4NY26078",
+    "committees": [
+      "C00856526"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "khanna, ro",
+    "bioguide_id": "K000389",
+    "candidate_id": "H4CA12055",
+    "committees": [
+      "C00503185",
+      "C00392100"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "kiggans, jennifer a.",
+    "bioguide_id": "K000399",
+    "candidate_id": "H2VA02064",
+    "committees": [
+      "C00776120"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "kiley, kevin",
+    "bioguide_id": "K000401",
+    "candidate_id": "H2CA03157",
+    "committees": [
+      "C00801985"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "kim, young",
+    "bioguide_id": "K000397",
+    "candidate_id": "H8CA39240",
+    "committees": [
+      "C00665638"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "king-hinds, kimberlyn",
+    "bioguide_id": "K000404",
+    "candidate_id": "H4MP01022",
+    "committees": [
+      "C00873554"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "knott, brad",
+    "bioguide_id": "K000405",
+    "candidate_id": "H4NC13116",
+    "committees": [
+      "C00855361"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "krishnamoorthi, raja",
+    "bioguide_id": "K000391",
+    "candidate_id": "H6IL08147",
+    "committees": [
+      "C00575092"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "kustoff, david",
+    "bioguide_id": "K000392",
+    "candidate_id": "H2TN07103",
+    "committees": [
+      "C00614826",
+      "C00376244"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "lahood, darin",
+    "bioguide_id": "L000585",
+    "candidate_id": "H6IL18088",
+    "committees": [
+      "C00575050"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "lamalfa, doug",
+    "bioguide_id": "L000578",
+    "candidate_id": "H2CA02142",
+    "committees": [
+      "C00509422"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "landsman, greg",
+    "bioguide_id": "L000601",
+    "candidate_id": "H2OH01194",
+    "committees": [
+      "C00800276"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "langworthy, nicholas a.",
+    "bioguide_id": "L000600",
+    "candidate_id": "H2NY23228",
+    "committees": [
+      "C00817932"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "larsen, rick",
+    "bioguide_id": "L000560",
+    "candidate_id": "H0WA02080",
+    "committees": [
+      "C00345546"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "larson, john b.",
+    "bioguide_id": "L000557",
+    "candidate_id": "H8CT01046",
+    "committees": [
+      "C00330142"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "latimer, george",
+    "bioguide_id": "L000606",
+    "candidate_id": "H4NY16087",
+    "committees": [
+      "C00859041"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "latta, robert e.",
+    "bioguide_id": "L000566",
+    "candidate_id": "H8OH05036",
+    "committees": [
+      "C00438697",
+      "C00221689"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "lawler, michael",
+    "bioguide_id": "L000599",
+    "candidate_id": "H2NY17162",
+    "committees": [
+      "C00815415"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "lee, laurel m.",
+    "bioguide_id": "L000597",
+    "candidate_id": "H2FL15241",
+    "committees": [
+      "C00815373"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "lee, summer l.",
+    "bioguide_id": "L000602",
+    "candidate_id": "H2PA18200",
+    "committees": [
+      "C00791780"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "lee, susie",
+    "bioguide_id": "L000590",
+    "candidate_id": "H6NV04020",
+    "committees": [
+      "C00655613",
+      "C00578476"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "leger fernandez, teresa",
+    "bioguide_id": "L000273",
+    "candidate_id": "H0NM03102",
+    "committees": [
+      "C00704049"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "letlow, julia",
+    "bioguide_id": "L000595",
+    "candidate_id": "H2LA05126",
+    "committees": [
+      "C00766428"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "levin, mike",
+    "bioguide_id": "L000593",
+    "candidate_id": "H8CA49058",
+    "committees": [
+      "C00634253"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "liccardo, sam t.",
+    "bioguide_id": "L000607",
+    "candidate_id": "H4CA16197",
+    "committees": [
+      "C00858688"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "lieu, ted",
+    "bioguide_id": "L000582",
+    "candidate_id": "H4CA33119",
+    "committees": [
+      "C00556506"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "lofgren, zoe",
+    "bioguide_id": "L000397",
+    "candidate_id": "H4CA16049",
+    "committees": [
+      "C00289603"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "loudermilk, barry",
+    "bioguide_id": "L000583",
+    "candidate_id": "H4GA11061",
+    "committees": [
+      "C00543892"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "lucas, frank d.",
+    "bioguide_id": "L000491",
+    "candidate_id": "H4OK06056",
+    "committees": [
+      "C00287912"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "luttrell, morgan",
+    "bioguide_id": "L000603",
+    "candidate_id": "H2TX08182",
+    "committees": [
+      "C00781112"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "lynch, stephen f.",
+    "bioguide_id": "L000562",
+    "candidate_id": "H2MA09072",
+    "committees": [
+      "C00366948"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "mace, nancy",
+    "bioguide_id": "M000194",
+    "candidate_id": "H0SC01394",
+    "committees": [
+      "C00710103"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "mackenzie, ryan",
+    "bioguide_id": "M001230",
+    "candidate_id": "H8PA15195",
+    "committees": [
+      "C00846501",
+      "C00655175"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "magaziner, seth",
+    "bioguide_id": "M001223",
+    "candidate_id": "H2RI02184",
+    "committees": [
+      "C00802504"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "malliotakis, nicole",
+    "bioguide_id": "M000317",
+    "candidate_id": "H0NY11078",
+    "committees": [
+      "C00694778"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "maloy, celeste",
+    "bioguide_id": "M001228",
+    "candidate_id": "H4UT02296",
+    "committees": [
+      "C00842765"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "mannion, john w.",
+    "bioguide_id": "M001231",
+    "candidate_id": "H4NY22085",
+    "committees": [
+      "C00845461"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "mann, tracey",
+    "bioguide_id": "M000871",
+    "candidate_id": "H0KS01123",
+    "committees": [
+      "C00460659"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "massie, thomas",
+    "bioguide_id": "M001184",
+    "candidate_id": "H2KY04121",
+    "committees": [
+      "C00509729"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "mast, brian j.",
+    "bioguide_id": "M001199",
+    "candidate_id": "H6FL18097",
+    "committees": [
+      "C00632257",
+      "C00579896"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "matsui, doris o.",
+    "bioguide_id": "M001163",
+    "candidate_id": "H6CA05195",
+    "committees": [
+      "C00409219"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "mcbath, lucy",
+    "bioguide_id": "M001208",
+    "candidate_id": "H8GA06393",
+    "committees": [
+      "C00672295"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "mcbride, sarah",
+    "bioguide_id": "M001238",
+    "candidate_id": "H4DE00045",
+    "committees": [
+      "C00843763"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "mccaul, michael t.",
+    "bioguide_id": "M001157",
+    "candidate_id": "H4TX10093",
+    "committees": [
+      "C00392688"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "mcclain, lisa c.",
+    "bioguide_id": "M001136",
+    "candidate_id": "H0MI10287",
+    "committees": [
+      "C00726042"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "mcclellan, jennifer l.",
+    "bioguide_id": "M001227",
+    "candidate_id": "H4VA04066",
+    "committees": [
+      "C00829812"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "mcclintock, tom",
+    "bioguide_id": "M001177",
+    "candidate_id": "H8CA04152",
+    "committees": [
+      "C00446815"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "mccollum, betty",
+    "bioguide_id": "M001143",
+    "candidate_id": "H0MN04049",
+    "committees": [
+      "C00354688"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "mccormick, richard",
+    "bioguide_id": "M001218",
+    "candidate_id": "H0GA07273",
+    "committees": [
+      "C00706747"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "mcdonald rivet, kristen",
+    "bioguide_id": "M001237",
+    "candidate_id": "H4MI08218",
+    "committees": [
+      "C00864207"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "mcdowell, addison p.",
+    "bioguide_id": "M001240",
+    "candidate_id": "H4NC06177",
+    "committees": [
+      "C00860064"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "mcgarvey, morgan",
+    "bioguide_id": "M001220",
+    "candidate_id": "H2KY03206",
+    "committees": [
+      "C00791392"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "mcgovern, james p.",
+    "bioguide_id": "M000312",
+    "candidate_id": "H4MA03022",
+    "committees": [
+      "C00285171"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "mciver, lamonica",
+    "bioguide_id": "M001229",
+    "candidate_id": "H4NJ10176",
+    "committees": [
+      "C00878603"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "meeks, gregory w.",
+    "bioguide_id": "M001137",
+    "candidate_id": "H8NY06048",
+    "committees": [
+      "C00430991",
+      "C00329375"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "menendez, robert",
+    "bioguide_id": "M001226",
+    "candidate_id": "H2NJ08232",
+    "committees": [
+      "C00799767"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "meng, grace",
+    "bioguide_id": "M001188",
+    "candidate_id": "H2NY06116",
+    "committees": [
+      "C00516666"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "messmer, mark b.",
+    "bioguide_id": "M001233",
+    "candidate_id": "H4IN08249",
+    "committees": [
+      "C00867218"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "meuser, daniel",
+    "bioguide_id": "M001204",
+    "candidate_id": "H8PA10147",
+    "committees": [
+      "C00654723",
+      "C00439448"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "mfume, kweisi",
+    "bioguide_id": "M000687",
+    "candidate_id": "H6MD07020",
+    "committees": [
+      "C00726372",
+      "C00200808"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "miller, carol d.",
+    "bioguide_id": "M001205",
+    "candidate_id": "H8WV03097",
+    "committees": [
+      "C00653220"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "miller, mary e.",
+    "bioguide_id": "M001211",
+    "candidate_id": "H0IL15129",
+    "committees": [
+      "C00723916"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "miller, max l.",
+    "bioguide_id": "M001222",
+    "candidate_id": "H2OH16051",
+    "committees": [
+      "C00770818"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "miller-meeks, mariannette",
+    "bioguide_id": "M001215",
+    "candidate_id": "H8IA02043",
+    "committees": [
+      "C00558825",
+      "C00472092",
+      "C00441774"
+    ],
+    "committees_len": 3
+  },
+  {
+    "name": "mills, cory",
+    "bioguide_id": "M001216",
+    "candidate_id": "H2FL07156",
+    "committees": [
+      "C00774943"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "min, dave",
+    "bioguide_id": "M001241",
+    "candidate_id": "H4CA47085",
+    "committees": [
+      "C00831537"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "moolenaar, john r.",
+    "bioguide_id": "M001194",
+    "candidate_id": "H4MI04126",
+    "committees": [
+      "C00561530"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "moore, blake d.",
+    "bioguide_id": "M001213",
+    "candidate_id": "H0UT01205",
+    "committees": [
+      "C00738872"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "moore, barry",
+    "bioguide_id": "M001212",
+    "candidate_id": "H8AL02171",
+    "committees": [
+      "C00720375",
+      "C00639096"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "moore, gwen",
+    "bioguide_id": "M001160",
+    "candidate_id": "H4WI04183",
+    "committees": [
+      "C00397505"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "moore, riley m.",
+    "bioguide_id": "M001235",
+    "candidate_id": "H4WV02205",
+    "committees": [
+      "C00828947"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "moore, tim",
+    "bioguide_id": "M001236",
+    "candidate_id": "H4NC14015",
+    "committees": [
+      "C00856005"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "moran, nathaniel",
+    "bioguide_id": "M001224",
+    "candidate_id": "H2TX01112",
+    "committees": [
+      "C00796086"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "morelle, joseph d.",
+    "bioguide_id": "M001206",
+    "candidate_id": "H8NY25105",
+    "committees": [
+      "C00675108"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "morrison, kelly",
+    "bioguide_id": "M001234",
+    "candidate_id": "H4MN03118",
+    "committees": [
+      "C00856062"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "moskowitz, jared",
+    "bioguide_id": "M001217",
+    "candidate_id": "H2FL22171",
+    "committees": [
+      "C00807628"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "moulton, seth",
+    "bioguide_id": "M001196",
+    "candidate_id": "H4MA06090",
+    "committees": [
+      "C00547240"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "moylan, james c.",
+    "bioguide_id": "M001219",
+    "candidate_id": "H2GU01031",
+    "committees": [
+      "C00809343"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "mrvan, frank j.",
+    "bioguide_id": "M001214",
+    "candidate_id": "H0IN01150",
+    "committees": [
+      "C00727529"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "mullin, kevin",
+    "bioguide_id": "M001225",
+    "candidate_id": "H2CA14162",
+    "committees": [
+      "C00795005"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "murphy, gregory f.",
+    "bioguide_id": "M001210",
+    "candidate_id": "H0NC03172",
+    "committees": [
+      "C00697649"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "nadler, jerrold",
+    "bioguide_id": "N000002",
+    "candidate_id": "H2NY17071",
+    "committees": [
+      "C00290825",
+      "C00276394"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "neal, richard e.",
+    "bioguide_id": "N000015",
+    "candidate_id": "H8MA02041",
+    "committees": [
+      "C00226522"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "neguse, joe",
+    "bioguide_id": "N000191",
+    "candidate_id": "H8CO02160",
+    "committees": [
+      "C00648253"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "nehls, troy e.",
+    "bioguide_id": "N000026",
+    "candidate_id": "H0TX22302",
+    "committees": [
+      "C00730150"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "newhouse, dan",
+    "bioguide_id": "N000189",
+    "candidate_id": "H4WA04104",
+    "committees": [
+      "C00559393"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "lalota, nick",
+    "bioguide_id": "L000598",
+    "candidate_id": "H2NY01190",
+    "committees": [
+      "C00806018"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "norcross, donald",
+    "bioguide_id": "N000188",
+    "candidate_id": "H4NJ01084",
+    "committees": [
+      "C00558320"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "norman, ralph",
+    "bioguide_id": "N000190",
+    "candidate_id": "H8SC05158",
+    "committees": [
+      "C00633610"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "norton, eleanor holmes",
+    "bioguide_id": "N000147",
+    "candidate_id": "H0DC00058",
+    "committees": [
+      "C00244335"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "norton, eleanor holmes",
+    "bioguide_id": "N000147",
+    "candidate_id": "H0DC00058",
+    "committees": [
+      "C00244335"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "nunn, zachary",
+    "bioguide_id": "N000193",
+    "candidate_id": "H2IA03119",
+    "committees": [
+      "C00784389"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "obernolte, jay",
+    "bioguide_id": "O000019",
+    "candidate_id": "H0CA08135",
+    "committees": [
+      "C00720078"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "ocasio-cortez, alexandria",
+    "bioguide_id": "O000172",
+    "candidate_id": "H8NY15148",
+    "committees": [
+      "C00639591"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "ogles, andrew",
+    "bioguide_id": "O000175",
+    "candidate_id": "H2TN05446",
+    "committees": [
+      "C00811844"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "olszewski, johnny",
+    "bioguide_id": "O000176",
+    "candidate_id": "H4MD02232",
+    "committees": [
+      "C00867747"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "omar, ilhan",
+    "bioguide_id": "O000173",
+    "candidate_id": "H8MN05239",
+    "committees": [
+      "C00680934"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "onder, robert f.",
+    "bioguide_id": "O000177",
+    "candidate_id": "H8MO09146",
+    "committees": [
+      "C00870238",
+      "C00446799"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "owens, burgess",
+    "bioguide_id": "O000086",
+    "candidate_id": "H0UT04076",
+    "committees": [
+      "C00725853"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "pallone, frank",
+    "bioguide_id": "P000034",
+    "candidate_id": "H8NJ03073",
+    "committees": [
+      "C00226928"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "palmer, gary j.",
+    "bioguide_id": "P000609",
+    "candidate_id": "H4AL06098",
+    "committees": [
+      "C00551374"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "panetta, jimmy",
+    "bioguide_id": "P000613",
+    "candidate_id": "H6CA20152",
+    "committees": [
+      "C00592154"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "pappas, chris",
+    "bioguide_id": "P000614",
+    "candidate_id": "H8NH01210",
+    "committees": [
+      "C00660464"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "patronis, jimmy",
+    "bioguide_id": "P000622",
+    "candidate_id": "H6FL01390",
+    "committees": [
+      "C00893594"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "luna, anna paulina",
+    "bioguide_id": "L000596",
+    "candidate_id": "H0FL13158",
+    "committees": [
+      "C00718239"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "pelosi, nancy",
+    "bioguide_id": "P000197",
+    "candidate_id": "H8CA05035",
+    "committees": [
+      "C00213512"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "perry, scott",
+    "bioguide_id": "P000605",
+    "candidate_id": "H2PA04135",
+    "committees": [
+      "C00510164"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "peters, scott h.",
+    "bioguide_id": "P000608",
+    "candidate_id": "H2CA52089",
+    "committees": [
+      "C00503110"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "pettersen, brittany",
+    "bioguide_id": "P000620",
+    "candidate_id": "H8CO07045",
+    "committees": [
+      "C00637215"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "pfluger, august",
+    "bioguide_id": "P000048",
+    "candidate_id": "H0TX11230",
+    "committees": [
+      "C00719294"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "pingree, chellie",
+    "bioguide_id": "P000597",
+    "candidate_id": "H8ME01120",
+    "committees": [
+      "C00433391"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "plaskett, stacey e.",
+    "bioguide_id": "P000610",
+    "candidate_id": "H2VI00082",
+    "committees": [
+      "C00528182"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "pocan, mark",
+    "bioguide_id": "P000607",
+    "candidate_id": "H2WI02124",
+    "committees": [
+      "C00502179"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "pou, nellie",
+    "bioguide_id": "P000621",
+    "candidate_id": "H4NJ09194",
+    "committees": [
+      "C00887547"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "pressley, ayanna",
+    "bioguide_id": "P000617",
+    "candidate_id": "H8MA07032",
+    "committees": [
+      "C00667741"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "quigley, mike",
+    "bioguide_id": "Q000023",
+    "candidate_id": "H0IL05096",
+    "committees": [
+      "C00457556"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "ramirez, delia c.",
+    "bioguide_id": "R000617",
+    "candidate_id": "H2IL03162",
+    "committees": [
+      "C00796672"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "randall, emily",
+    "bioguide_id": "R000621",
+    "candidate_id": "H4WA06117",
+    "committees": [
+      "C00857094"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "raskin, jamie",
+    "bioguide_id": "R000606",
+    "candidate_id": "H6MD08457",
+    "committees": [
+      "C00575126"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "reschenthaler, guy",
+    "bioguide_id": "R000610",
+    "candidate_id": "H8PA18199",
+    "committees": [
+      "C00657833"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "riley, josh",
+    "bioguide_id": "R000622",
+    "candidate_id": "H8NY22177",
+    "committees": [
+      "C00793760"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "rivas, luz m.",
+    "bioguide_id": "R000620",
+    "candidate_id": "H4CA29141",
+    "committees": [
+      "C00857417"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "rogers, harold",
+    "bioguide_id": "R000395",
+    "candidate_id": "H0KY05015",
+    "committees": [
+      "C00116632"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "rogers, mike d.",
+    "bioguide_id": "R000575",
+    "candidate_id": "H2AL03032",
+    "committees": [
+      "C00367862"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "rose, john w.",
+    "bioguide_id": "R000612",
+    "candidate_id": "H8TN06094",
+    "committees": [
+      "C00652743"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "ross, deborah k.",
+    "bioguide_id": "R000305",
+    "candidate_id": "H0NC02125",
+    "committees": [
+      "C00729277"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "rouzer, david",
+    "bioguide_id": "R000603",
+    "candidate_id": "H2NC07096",
+    "committees": [
+      "C00501643"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "roy, chip",
+    "bioguide_id": "R000614",
+    "candidate_id": "H8TX21307",
+    "committees": [
+      "C00662767"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "ruiz, raul",
+    "bioguide_id": "R000599",
+    "candidate_id": "H0CA36177",
+    "committees": [
+      "C00718387"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "rulli, michael a.",
+    "bioguide_id": "R000619",
+    "candidate_id": "H4OH06165",
+    "committees": [
+      "C00858415"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "rutherford, john h.",
+    "bioguide_id": "R000609",
+    "candidate_id": "H6FL04105",
+    "committees": [
+      "C00615294"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "ryan, patrick",
+    "bioguide_id": "R000579",
+    "candidate_id": "H8NY19223",
+    "committees": [
+      "C00815290",
+      "C00647115"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "salazar, maria elvira",
+    "bioguide_id": "S000168",
+    "candidate_id": "H8FL27185",
+    "committees": [
+      "C00714261",
+      "C00671859"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "salazar, maria elvira",
+    "bioguide_id": "S000168",
+    "candidate_id": "H8FL27185",
+    "committees": [
+      "C00714261",
+      "C00671859"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "salinas, andrea",
+    "bioguide_id": "S001226",
+    "candidate_id": "H2OR06066",
+    "committees": [
+      "C00793703",
+      "C00783480"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "sanchez, linda t.",
+    "bioguide_id": "S001156",
+    "candidate_id": "H2CA39078",
+    "committees": [
+      "C00384057",
+      "C00369363"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "scalise, steve",
+    "bioguide_id": "S001176",
+    "candidate_id": "H0LA01087",
+    "committees": [
+      "C00394957",
+      "C00342790"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "scanlon, mary gay",
+    "bioguide_id": "S001205",
+    "candidate_id": "H8PA07200",
+    "committees": [
+      "C00669358"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "scanlon, mary gay",
+    "bioguide_id": "S001205",
+    "candidate_id": "H8PA07200",
+    "committees": [
+      "C00669358"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "schakowsky, janice d.",
+    "bioguide_id": "S001145",
+    "candidate_id": "H8IL09067",
+    "committees": [
+      "C00327023"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "schmidt, derek",
+    "bioguide_id": "S001228",
+    "candidate_id": "H4KS02164",
+    "committees": [
+      "C00877373"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "schneider, bradley scott",
+    "bioguide_id": "S001190",
+    "candidate_id": "H2IL10068",
+    "committees": [
+      "C00495952"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "scholten, hillary j.",
+    "bioguide_id": "S001221",
+    "candidate_id": "H0MI03316",
+    "committees": [
+      "C00711317",
+      "C00783480"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "schrier, kim",
+    "bioguide_id": "S001216",
+    "candidate_id": "H8WA08189",
+    "committees": [
+      "C00652628"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "schweikert, david",
+    "bioguide_id": "S001183",
+    "candidate_id": "H4AZ06045",
+    "committees": [
+      "C00540617",
+      "C00492413",
+      "C00440727",
+      "C00287672"
+    ],
+    "committees_len": 4
+  },
+  {
+    "name": "scott, david",
+    "bioguide_id": "S001157",
+    "candidate_id": "H2GA13012",
+    "committees": [
+      "C00369801"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "scott, austin",
+    "bioguide_id": "S001189",
+    "candidate_id": "H0GA08099",
+    "committees": [
+      "C00482737"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "scott, robert c. bobby",
+    "bioguide_id": "S000185",
+    "candidate_id": "H6VA01117",
+    "committees": [
+      "C00256925",
+      "C00204669"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "self, keith",
+    "bioguide_id": "S001224",
+    "candidate_id": "H2TX03290",
+    "committees": [
+      "C00791293"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "sessions, pete",
+    "bioguide_id": "S000250",
+    "candidate_id": "H2TX03126",
+    "committees": [
+      "C00303305",
+      "C00286104",
+      "C00251058"
+    ],
+    "committees_len": 3
+  },
+  {
+    "name": "sewell, terri a.",
+    "bioguide_id": "S001185",
+    "candidate_id": "H0AL07086",
+    "committees": [
+      "C00458976"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "sherman, brad",
+    "bioguide_id": "S000344",
+    "candidate_id": "H6CA24113",
+    "committees": [
+      "C00308742"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "sherrill, mikie",
+    "bioguide_id": "S001207",
+    "candidate_id": "H8NJ11142",
+    "committees": [
+      "C00640003"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "shreve, jefferson",
+    "bioguide_id": "S001229",
+    "candidate_id": "H4IN06185",
+    "committees": [
+      "C00870949"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "simon, lateefah",
+    "bioguide_id": "S001231",
+    "candidate_id": "H4CA12154",
+    "committees": [
+      "C00834291"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "simpson, michael k.",
+    "bioguide_id": "S001148",
+    "candidate_id": "H8ID02064",
+    "committees": [
+      "C00331397"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "smith, adrian",
+    "bioguide_id": "S001172",
+    "candidate_id": "H6NE03115",
+    "committees": [
+      "C00412890"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "smith, christopher h.",
+    "bioguide_id": "S000522",
+    "candidate_id": "H8NJ04014",
+    "committees": [
+      "C00096412"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "smith, adam",
+    "bioguide_id": "S000510",
+    "candidate_id": "H6WA09025",
+    "committees": [
+      "C00304709"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "smith, jason",
+    "bioguide_id": "S001195",
+    "candidate_id": "H4MO08162",
+    "committees": [
+      "C00541862"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "smucker, lloyd",
+    "bioguide_id": "S001199",
+    "candidate_id": "H6PA16320",
+    "committees": [
+      "C00599464"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "sorensen, eric",
+    "bioguide_id": "S001225",
+    "candidate_id": "H2IL17147",
+    "committees": [
+      "C00793935"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "soto, darren",
+    "bioguide_id": "S001200",
+    "candidate_id": "H6FL09179",
+    "committees": [
+      "C00581074"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "spartz, victoria",
+    "bioguide_id": "S000929",
+    "candidate_id": "H0IN05326",
+    "committees": [
+      "C00737767"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "stansbury, melanie a.",
+    "bioguide_id": "S001218",
+    "candidate_id": "H2NM01144",
+    "committees": [
+      "C00765099"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "stanton, greg",
+    "bioguide_id": "S001211",
+    "candidate_id": "H8AZ09040",
+    "committees": [
+      "C00657304"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "stauber, pete",
+    "bioguide_id": "S001212",
+    "candidate_id": "H8MN08043",
+    "committees": [
+      "C00650697"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "stefanik, elise m.",
+    "bioguide_id": "S001196",
+    "candidate_id": "H4NY21079",
+    "committees": [
+      "C00547893"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "steil, bryan",
+    "bioguide_id": "S001213",
+    "candidate_id": "H8WI01156",
+    "committees": [
+      "C00677286"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "steube, w. gregory",
+    "bioguide_id": "S001214",
+    "candidate_id": "H8FL17053",
+    "committees": [
+      "C00671891"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "stevens, haley m.",
+    "bioguide_id": "S001215",
+    "candidate_id": "H8MI11254",
+    "committees": [
+      "C00638650"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "strickland, marilyn",
+    "bioguide_id": "S001159",
+    "candidate_id": "H0WA10034",
+    "committees": [
+      "C00732826"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "strong, dale w.",
+    "bioguide_id": "S001220",
+    "candidate_id": "H2AL05102",
+    "committees": [
+      "C00774281"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "stutzman, marlin a.",
+    "bioguide_id": "S001188",
+    "candidate_id": "H0IN03198",
+    "committees": [
+      "C00838110",
+      "C00484683"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "subramanyam, suhas",
+    "bioguide_id": "S001230",
+    "candidate_id": "H4VA10279",
+    "committees": [
+      "C00856963"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "suozzi, thomas r.",
+    "bioguide_id": "S001201",
+    "candidate_id": "H6NY03247",
+    "committees": [
+      "C00607200"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "swalwell, eric",
+    "bioguide_id": "S001193",
+    "candidate_id": "H2CA15094",
+    "committees": [
+      "C00502294"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "sykes, emilia strong",
+    "bioguide_id": "S001223",
+    "candidate_id": "H2OH13264",
+    "committees": [
+      "C00801274"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "takano, mark",
+    "bioguide_id": "T000472",
+    "candidate_id": "H2CA43245",
+    "committees": [
+      "C00498667",
+      "C00286666",
+      "C00263616"
+    ],
+    "committees_len": 3
+  },
+  {
+    "name": "taylor, david j.",
+    "bioguide_id": "T000490",
+    "candidate_id": "H4OH02248",
+    "committees": [
+      "C00860213"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "tenney, claudia",
+    "bioguide_id": "T000478",
+    "candidate_id": "H4NY22051",
+    "committees": [
+      "C00632828",
+      "C00561183"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "thanedar, shri",
+    "bioguide_id": "T000488",
+    "candidate_id": "H2MI13204",
+    "committees": [
+      "C00798132"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "thompson, bennie g.",
+    "bioguide_id": "T000193",
+    "candidate_id": "H4MS02068",
+    "committees": [
+      "C00279851"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "thompson, glenn",
+    "bioguide_id": "T000467",
+    "candidate_id": "H8PA05071",
+    "committees": [
+      "C00444620"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "thompson, mike",
+    "bioguide_id": "T000460",
+    "candidate_id": "H8CA01109",
+    "committees": [
+      "C00326363"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "tiffany, thomas p.",
+    "bioguide_id": "T000165",
+    "candidate_id": "H0WI07101",
+    "committees": [
+      "C00718635"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "timmons, william r.",
+    "bioguide_id": "T000480",
+    "candidate_id": "H8SC04250",
+    "committees": [
+      "C00668491"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "titus, dina",
+    "bioguide_id": "T000468",
+    "candidate_id": "H8NV03036",
+    "committees": [
+      "C00499467",
+      "C00450577"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "tlaib, rashida",
+    "bioguide_id": "T000481",
+    "candidate_id": "H8MI13250",
+    "committees": [
+      "C00668608"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "tokuda, jill n.",
+    "bioguide_id": "T000487",
+    "candidate_id": "H2HI02581",
+    "committees": [
+      "C00813758"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "tonko, paul",
+    "bioguide_id": "T000469",
+    "candidate_id": "H8NY21203",
+    "committees": [
+      "C00450049"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "torres, norma j.",
+    "bioguide_id": "T000474",
+    "candidate_id": "H4CA35031",
+    "committees": [
+      "C00557652"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "torres, ritchie",
+    "bioguide_id": "T000486",
+    "candidate_id": "H0NY15160",
+    "committees": [
+      "C00699744"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "trahan, lori",
+    "bioguide_id": "T000482",
+    "candidate_id": "H8MA03106",
+    "committees": [
+      "C00655647"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "tran, derek",
+    "bioguide_id": "T000491",
+    "candidate_id": "H4CA45170",
+    "committees": [
+      "C00851790"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "turner, michael r.",
+    "bioguide_id": "T000463",
+    "candidate_id": "H2OH03067",
+    "committees": [
+      "C00373001"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "underwood, lauren",
+    "bioguide_id": "U000040",
+    "candidate_id": "H8IL14174",
+    "committees": [
+      "C00652719"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "valadao, david g.",
+    "bioguide_id": "V000129",
+    "candidate_id": "H2CA20094",
+    "committees": [
+      "C00499392"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "van drew, jefferson",
+    "bioguide_id": "V000133",
+    "candidate_id": "H8NJ02166",
+    "committees": [
+      "C00661868"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "van duyne, beth",
+    "bioguide_id": "V000134",
+    "candidate_id": "H0TX24209",
+    "committees": [
+      "C00714865"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "van orden, derrick",
+    "bioguide_id": "V000135",
+    "candidate_id": "H0WI03175",
+    "committees": [
+      "C00742007"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "vargas, juan",
+    "bioguide_id": "V000130",
+    "candidate_id": "H2CA50026",
+    "committees": [
+      "C00497321",
+      "C00408161",
+      "C00307256",
+      "C00259705"
+    ],
+    "committees_len": 4
+  },
+  {
+    "name": "vasquez, gabe",
+    "bioguide_id": "V000136",
+    "candidate_id": "H2NM02191",
+    "committees": [
+      "C00789404"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "veasey, marc a.",
+    "bioguide_id": "V000131",
+    "candidate_id": "H2TX33073",
+    "committees": [
+      "C00506832"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "velazquez, nydia m.",
+    "bioguide_id": "V000081",
+    "candidate_id": "H2NY00010",
+    "committees": [
+      "C00271312"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "vindman, eugene simon",
+    "bioguide_id": "V000138",
+    "candidate_id": "H4VA07234",
+    "committees": [
+      "C00856955"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "wagner, ann",
+    "bioguide_id": "W000812",
+    "candidate_id": "H2MO02102",
+    "committees": [
+      "C00495846"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "walberg, tim",
+    "bioguide_id": "W000798",
+    "candidate_id": "H4MI07103",
+    "committees": [
+      "C00390724"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "wasserman schultz, debbie",
+    "bioguide_id": "W000797",
+    "candidate_id": "H4FL20023",
+    "committees": [
+      "C00385773"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "waters, maxine",
+    "bioguide_id": "W000187",
+    "candidate_id": "H4CA23011",
+    "committees": [
+      "C00167585"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "weber, randy k. sr.",
+    "bioguide_id": "W000814",
+    "candidate_id": "H2TX14149",
+    "committees": [
+      "C00502229"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "webster, daniel",
+    "bioguide_id": "W000806",
+    "candidate_id": "H0FL08208",
+    "committees": [
+      "C00481911"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "westerman, bruce",
+    "bioguide_id": "W000821",
+    "candidate_id": "H4AR04048",
+    "committees": [
+      "C00548180"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "whitesides, george",
+    "bioguide_id": "W000830",
+    "candidate_id": "H4CA27111",
+    "committees": [
+      "C00834028"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "wied, tony",
+    "bioguide_id": "W000829",
+    "candidate_id": "H4WI08119",
+    "committees": [
+      "C00875518"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "williams, nikema",
+    "bioguide_id": "W000788",
+    "candidate_id": "H0GA05301",
+    "committees": [
+      "C00752584"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "williams, roger",
+    "bioguide_id": "W000816",
+    "candidate_id": "H2TX33040",
+    "committees": [
+      "C00498121"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "wilson, frederica s.",
+    "bioguide_id": "W000808",
+    "candidate_id": "H0FL17068",
+    "committees": [
+      "C00460055"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "wilson, joe",
+    "bioguide_id": "W000795",
+    "candidate_id": "H2SC02059",
+    "committees": [
+      "C00368522"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "wittman, robert j.",
+    "bioguide_id": "W000804",
+    "candidate_id": "H8VA01147",
+    "committees": [
+      "C00441014"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "womack, steve",
+    "bioguide_id": "W000809",
+    "candidate_id": "H0AR03055",
+    "committees": [
+      "C00477745"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "yakym, rudy",
+    "bioguide_id": "Y000067",
+    "candidate_id": "H2IN02295",
+    "committees": [
+      "C00822767"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "zinke, ryan k.",
+    "bioguide_id": "Z000018",
+    "candidate_id": "H4MT01041",
+    "committees": [
+      "C00778159",
+      "C00550871"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "alsobrooks, angela d.",
+    "bioguide_id": "A000382",
+    "candidate_id": "S4MD00327",
+    "committees": [
+      "C00840017"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "baldwin, tammy",
+    "bioguide_id": "B001230",
+    "candidate_id": "S2WI00219",
+    "committees": [
+      "C00326801"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "banks, jim",
+    "bioguide_id": "B001299",
+    "candidate_id": "S4IN00196",
+    "committees": [
+      "C00577999"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "barrasso, john",
+    "bioguide_id": "B001261",
+    "candidate_id": "S6WY00068",
+    "committees": [
+      "C00436386",
+      "C00310482"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "bennet, michael f.",
+    "bioguide_id": "B001267",
+    "candidate_id": "S0CO00211",
+    "committees": [
+      "C00458398"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "blackburn, marsha",
+    "bioguide_id": "B001243",
+    "candidate_id": "S8TN00337",
+    "committees": [
+      "C00376939"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "blumenthal, richard",
+    "bioguide_id": "B001277",
+    "candidate_id": "S0CT00177",
+    "committees": [
+      "C00492991",
+      "C00473587"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "blunt rochester, lisa",
+    "bioguide_id": "B001303",
+    "candidate_id": "S4DE00060",
+    "committees": [
+      "C00843391"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "booker, cory a.",
+    "bioguide_id": "B001288",
+    "candidate_id": "S4NJ00185",
+    "committees": [
+      "C00540500"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "boozman, john",
+    "bioguide_id": "B001236",
+    "candidate_id": "S0AR00150",
+    "committees": [
+      "C00476317"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "britt, katie boyd",
+    "bioguide_id": "B001319",
+    "candidate_id": "S2AL00145",
+    "committees": [
+      "C00781443"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "britt, katie boyd",
+    "bioguide_id": "B001319",
+    "candidate_id": "S2AL00145",
+    "committees": [
+      "C00781443"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "budd, ted",
+    "bioguide_id": "B001305",
+    "candidate_id": "S2NC00505",
+    "committees": [
+      "C00614776"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "cantwell, maria",
+    "bioguide_id": "C000127",
+    "candidate_id": "S8WA00194",
+    "committees": [
+      "C00349506"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "capito, shelley moore",
+    "bioguide_id": "C001047",
+    "candidate_id": "S4WV00159",
+    "committees": [
+      "C00539825"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "capito, shelley moore",
+    "bioguide_id": "C001047",
+    "candidate_id": "S4WV00159",
+    "committees": [
+      "C00539825"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "cassidy, bill",
+    "bioguide_id": "C001075",
+    "candidate_id": "S4LA00107",
+    "committees": [
+      "C00543983"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "collins, susan m.",
+    "bioguide_id": "C001035",
+    "candidate_id": "S6ME00159",
+    "committees": [
+      "C00314575"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "coons, christopher a.",
+    "bioguide_id": "C001088",
+    "candidate_id": "S0DE00092",
+    "committees": [
+      "C00475392"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "cornyn, john",
+    "bioguide_id": "C001056",
+    "candidate_id": "S2TX00106",
+    "committees": [
+      "C00369033"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "cortez masto, catherine",
+    "bioguide_id": "C001113",
+    "candidate_id": "S6NV00200",
+    "committees": [
+      "C00575548"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "cotton, tom",
+    "bioguide_id": "C001095",
+    "candidate_id": "S4AR00103",
+    "committees": [
+      "C00499988"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "cramer, kevin",
+    "bioguide_id": "C001096",
+    "candidate_id": "S8ND00120",
+    "committees": [
+      "C00504704"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "crapo, mike",
+    "bioguide_id": "C000880",
+    "candidate_id": "S8ID00027",
+    "committees": [
+      "C00330886"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "cruz, ted",
+    "bioguide_id": "C001098",
+    "candidate_id": "S2TX00312",
+    "committees": [
+      "C00492785"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "curtis, john r.",
+    "bioguide_id": "C001114",
+    "candidate_id": "S4UT00282",
+    "committees": [
+      "C00647339"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "daines, steve",
+    "bioguide_id": "D000618",
+    "candidate_id": "S2MT00096",
+    "committees": [
+      "C00491357"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "duckworth, tammy",
+    "bioguide_id": "D000622",
+    "candidate_id": "S6IL00292",
+    "committees": [
+      "C00574889"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "durbin, richard j.",
+    "bioguide_id": "D000563",
+    "candidate_id": "S6IL00151",
+    "committees": [
+      "C00148999"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "ernst, joni",
+    "bioguide_id": "E000295",
+    "candidate_id": "S4IA00129",
+    "committees": [
+      "C00546788"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "fetterman, john",
+    "bioguide_id": "F000479",
+    "candidate_id": "S6PA00274",
+    "committees": [
+      "C00765800",
+      "C00586578"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "fischer, deb",
+    "bioguide_id": "F000463",
+    "candidate_id": "S2NE00094",
+    "committees": [
+      "C00498907"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "gallego, ruben",
+    "bioguide_id": "G000574",
+    "candidate_id": "S4AZ00139",
+    "committees": [
+      "C00558627"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "gillibrand, kirsten e.",
+    "bioguide_id": "G000555",
+    "candidate_id": "S0NY00410",
+    "committees": [
+      "C00413914"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "graham, lindsey",
+    "bioguide_id": "G000359",
+    "candidate_id": "S0SC00149",
+    "committees": [
+      "C00458828",
+      "C00364505"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "grassley, chuck",
+    "bioguide_id": "G000386",
+    "candidate_id": "S0IA00028",
+    "committees": [
+      "C00230482",
+      "C00109223"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "hagerty, bill",
+    "bioguide_id": "H000601",
+    "candidate_id": "S0TN00169",
+    "committees": [
+      "C00718627"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "hassan, margaret wood",
+    "bioguide_id": "H001076",
+    "candidate_id": "S6NH00091",
+    "committees": [
+      "C00588772"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "hassan, margaret wood",
+    "bioguide_id": "H001076",
+    "candidate_id": "S6NH00091",
+    "committees": [
+      "C00588772"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "hawley, josh",
+    "bioguide_id": "H001089",
+    "candidate_id": "S8MO00160",
+    "committees": [
+      "C00652727"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "heinrich, martin",
+    "bioguide_id": "H001046",
+    "candidate_id": "S2NM00088",
+    "committees": [
+      "C00434563"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "hickenlooper, john w.",
+    "bioguide_id": "H000273",
+    "candidate_id": "S0CO00575",
+    "committees": [
+      "C00716720"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "hirono, mazie k.",
+    "bioguide_id": "H001042",
+    "candidate_id": "S2HI00106",
+    "committees": [
+      "C00420760"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "hoeven, john",
+    "bioguide_id": "H001061",
+    "candidate_id": "S0ND00093",
+    "committees": [
+      "C00473371"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "hyde-smith, cindy",
+    "bioguide_id": "H001079",
+    "candidate_id": "S8MS00261",
+    "committees": [
+      "C00675348"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "johnson, ron",
+    "bioguide_id": "J000293",
+    "candidate_id": "S0WI00197",
+    "committees": [
+      "C00482984"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "justice, james c.",
+    "bioguide_id": "J000312",
+    "candidate_id": "S4WV00332",
+    "committees": [
+      "C00839100"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "kaine, tim",
+    "bioguide_id": "K000384",
+    "candidate_id": "S2VA00142",
+    "committees": [
+      "C00495358"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "kelly, mark",
+    "bioguide_id": "K000377",
+    "candidate_id": "S0AZ00350",
+    "committees": [
+      "C00696526"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "kennedy, john",
+    "bioguide_id": "K000393",
+    "candidate_id": "S4LA00065",
+    "committees": [
+      "C00608398",
+      "C00396044"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "kim, andy",
+    "bioguide_id": "K000394",
+    "candidate_id": "S4NJ00466",
+    "committees": [
+      "C00648220"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "king, angus s., jr.",
+    "bioguide_id": "K000383",
+    "candidate_id": "S2ME00109",
+    "committees": [
+      "C00516047"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "klobuchar, amy",
+    "bioguide_id": "K000367",
+    "candidate_id": "S6MN00267",
+    "committees": [
+      "C00431353",
+      "C00410191"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "lankford, james",
+    "bioguide_id": "L000575",
+    "candidate_id": "S4OK00232",
+    "committees": [
+      "C00466482"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "lee, mike",
+    "bioguide_id": "L000577",
+    "candidate_id": "S0UT00165",
+    "committees": [
+      "C00473827"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "lujan, ben ray",
+    "bioguide_id": "L000570",
+    "candidate_id": "S0NM00058",
+    "committees": [
+      "C00443689"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "lujan, ben ray",
+    "bioguide_id": "L000570",
+    "candidate_id": "S0NM00058",
+    "committees": [
+      "C00443689"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "lummis, cynthia m.",
+    "bioguide_id": "L000571",
+    "candidate_id": "S0WY00137",
+    "committees": [
+      "C00443580"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "markey, edward j.",
+    "bioguide_id": "M000133",
+    "candidate_id": "S4MA00028",
+    "committees": [
+      "C00196774",
+      "C00175059"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "marshall, roger",
+    "bioguide_id": "M001198",
+    "candidate_id": "S0KS00315",
+    "committees": [
+      "C00576173"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "mcconnell, mitch",
+    "bioguide_id": "M000355",
+    "candidate_id": "S2KY00012",
+    "committees": [
+      "C00193342",
+      "C00155051"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "mccormick, david",
+    "bioguide_id": "M001243",
+    "candidate_id": "S2PA00661",
+    "committees": [
+      "C00851980",
+      "C00800623"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "merkley, jeff",
+    "bioguide_id": "M001176",
+    "candidate_id": "S8OR00207",
+    "committees": [
+      "C00437277"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "moran, jerry",
+    "bioguide_id": "M000934",
+    "candidate_id": "S0KS00091",
+    "committees": [
+      "C00458315"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "moreno, bernie",
+    "bioguide_id": "M001242",
+    "candidate_id": "S4OH00192",
+    "committees": [
+      "C00837484"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "mullin, markwayne",
+    "bioguide_id": "M001190",
+    "candidate_id": "S2OK00186",
+    "committees": [
+      "C00498345"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "murkowski, lisa",
+    "bioguide_id": "M001153",
+    "candidate_id": "S4AK00099",
+    "committees": [
+      "C00384529"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "murphy, christopher",
+    "bioguide_id": "M001169",
+    "candidate_id": "S2CT00132",
+    "committees": [
+      "C00492645"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "murray, patty",
+    "bioguide_id": "M001111",
+    "candidate_id": "S2WA00189",
+    "committees": [
+      "C00257642"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "ossoff, jon",
+    "bioguide_id": "O000174",
+    "candidate_id": "S8GA00180",
+    "committees": [
+      "C00718866"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "padilla, alex",
+    "bioguide_id": "P000145",
+    "candidate_id": "S2CA00955",
+    "committees": [
+      "C00765164"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "paul, rand",
+    "bioguide_id": "P000603",
+    "candidate_id": "S0KY00156",
+    "committees": [
+      "C00496075",
+      "C00462069"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "peters, gary c.",
+    "bioguide_id": "P000595",
+    "candidate_id": "S4MI00355",
+    "committees": [
+      "C00437889"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "reed, jack",
+    "bioguide_id": "R000122",
+    "candidate_id": "S6RI00163",
+    "committees": [
+      "C00238907"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "ricketts, pete",
+    "bioguide_id": "R000618",
+    "candidate_id": "S6NE00129",
+    "committees": [
+      "C00832436",
+      "C00414375"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "risch, james e.",
+    "bioguide_id": "R000584",
+    "candidate_id": "S8ID00092",
+    "committees": [
+      "C00440362"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "rosen, jacky",
+    "bioguide_id": "R000608",
+    "candidate_id": "S8NV00156",
+    "committees": [
+      "C00606939"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "rounds, mike",
+    "bioguide_id": "R000605",
+    "candidate_id": "S4SD00049",
+    "committees": [
+      "C00532465"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "sanders, bernard",
+    "bioguide_id": "S000033",
+    "candidate_id": "S4VT00033",
+    "committees": [
+      "C00411330"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "schatz, brian",
+    "bioguide_id": "S001194",
+    "candidate_id": "S4HI00136",
+    "committees": [
+      "C00540732"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "schiff, adam b.",
+    "bioguide_id": "S001150",
+    "candidate_id": "S4CA00555",
+    "committees": [
+      "C00343871"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "schmitt, eric",
+    "bioguide_id": "S001227",
+    "candidate_id": "S2MO00544",
+    "committees": [
+      "C00775015"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "schumer, charles e.",
+    "bioguide_id": "S000148",
+    "candidate_id": "S8NY00082",
+    "committees": [
+      "C00346312",
+      "C00327270"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "scott, rick",
+    "bioguide_id": "S001217",
+    "candidate_id": "S8FL00273",
+    "committees": [
+      "C00676965"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "scott, tim",
+    "bioguide_id": "S001184",
+    "candidate_id": "S4SC00240",
+    "committees": [
+      "C00540302"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "shaheen, jeanne",
+    "bioguide_id": "S001181",
+    "candidate_id": "S0NH00219",
+    "committees": [
+      "C00457325",
+      "C00368506"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "sheehy, tim",
+    "bioguide_id": "S001232",
+    "candidate_id": "S4MT00183",
+    "committees": [
+      "C00844159"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "slotkin, elissa",
+    "bioguide_id": "S001208",
+    "candidate_id": "S4MI00470",
+    "committees": [
+      "C00834218"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "smith, tina",
+    "bioguide_id": "S001203",
+    "candidate_id": "S8MN00578",
+    "committees": [
+      "C00663781"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "sullivan, dan",
+    "bioguide_id": "S001198",
+    "candidate_id": "S4AK00214",
+    "committees": [
+      "C00570994",
+      "C00551093"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "thune, john",
+    "bioguide_id": "T000250",
+    "candidate_id": "S2SD00068",
+    "committees": [
+      "C00409581",
+      "C00395228",
+      "C00307165"
+    ],
+    "committees_len": 3
+  },
+  {
+    "name": "tillis, thomas",
+    "bioguide_id": "T000476",
+    "candidate_id": "S4NC00162",
+    "committees": [
+      "C00545772"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "tuberville, tommy",
+    "bioguide_id": "T000278",
+    "candidate_id": "S0AL00230",
+    "committees": [
+      "C00701672"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "van hollen, chris",
+    "bioguide_id": "V000128",
+    "candidate_id": "S6MD03441",
+    "committees": [
+      "C00573758"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "warner, mark r.",
+    "bioguide_id": "W000805",
+    "candidate_id": "S6VA00093",
+    "committees": [
+      "C00438713",
+      "C00306555"
+    ],
+    "committees_len": 2
+  },
+  {
+    "name": "warnock, raphael g.",
+    "bioguide_id": "W000790",
+    "candidate_id": "S0GA00559",
+    "committees": [
+      "C00736876"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "warren, elizabeth",
+    "bioguide_id": "W000817",
+    "candidate_id": "S2MA00170",
+    "committees": [
+      "C00500843"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "welch, peter",
+    "bioguide_id": "W000800",
+    "candidate_id": "S2VT00235",
+    "committees": [
+      "C00795252"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "whitehouse, sheldon",
+    "bioguide_id": "W000802",
+    "candidate_id": "S6RI00221",
+    "committees": [
+      "C00410803"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "wicker, roger f.",
+    "bioguide_id": "W000437",
+    "candidate_id": "S8MS00196",
+    "committees": [
+      "C00443218"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "wyden, ron",
+    "bioguide_id": "W000779",
+    "candidate_id": "S6OR00110",
+    "committees": [
+      "C00308676"
+    ],
+    "committees_len": 1
+  },
+  {
+    "name": "young, todd",
+    "bioguide_id": "Y000064",
+    "candidate_id": "S6IN00191",
+    "committees": [
+      "C00459255"
+    ],
+    "committees_len": 1
+  }
+]
