@@ -1,0 +1,1213 @@
+2025-11-24 13:17:14,882 - modify_votes.py - INFO - Success getting senate bioguide to senate_id dict
+2025-11-24 13:17:15,024 - modify_votes.py - INFO - 282 house votes, 530 senate votes, for total of 812 votes
+2025-11-24 13:17:15,088 - modify_votes.py - INFO - 444 house reps, 102 senators, for total of 546 people
+2025-11-24 13:17:15,625 - modify_votes.py - WARNING - Some congressmen are missing voter information unexpectedly: ['H001104' 'J000312' 'M001244' 'W000831']
+2025-11-24 13:17:15,692 - modify_reps.py - DEBUG - There are 537 NA endyears
+2025-11-24 13:17:15,694 - modify_reps.py - DEBUG - Added yes to 537 members
+2025-11-24 13:17:15,696 - modify_reps.py - INFO - After processing, there are 0 na endYears
+2025-11-24 13:17:16,239 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for House
+2025-11-24 13:17:16,239 - gen_committees.py - INFO - Success getting list of (sub)committee names for comcode
+2025-11-24 13:17:16,239 - gen_committees.py - WARNING - Comcode not found for P000197, Nonetype returned.
+2025-11-24 13:17:16,240 - gen_committees.py - WARNING - Comcode not found for S001176, Nonetype returned.
+2025-11-24 13:17:16,240 - gen_committees.py - WARNING - Comcode not found for J000299, Nonetype returned.
+2025-11-24 13:17:16,240 - gen_committees.py - WARNING - Comcode not found for C001101, Nonetype returned.
+2025-11-24 13:17:16,241 - gen_committees.py - WARNING - Comcode not found for None, Nonetype returned.
+2025-11-24 13:17:16,241 - gen_committees.py - WARNING - Comcode not found for J000294, Nonetype returned.
+2025-11-24 13:17:16,345 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for senate
+2025-11-24 13:17:25,566 - gen_cards.py - DEBUG - Success image pull for Mark B. Messmer
+2025-11-24 13:17:25,671 - gen_cards.py - INFO - No military record for Mark B. Messmer. Skip.
+2025-11-24 13:17:25,671 - gen_cards.py - WARNING - No congressional stats found for Mark B. Messmer. Skip.
+2025-11-24 13:17:25,671 - gen_cards.py - WARNING - No awards found for Mark B. Messmer. Skip.
+2025-11-24 13:17:25,803 - gen_cards.py - ERROR - Text box 2 for Mark B. Messmer exceeds card dimensions by 159.0 pixels
+2025-11-24 13:17:25,959 - gen_cards.py - INFO - Created card: cards\mark_b_messmer_card.png
+2025-11-24 13:17:26,381 - gen_cards.py - DEBUG - Success image pull for Delia C. Ramirez
+2025-11-24 13:17:26,780 - gen_cards.py - INFO - No military record for Delia C. Ramirez. Skip.
+2025-11-24 13:17:26,780 - gen_cards.py - WARNING - No congressional stats found for Delia C. Ramirez. Skip.
+2025-11-24 13:17:26,781 - gen_cards.py - WARNING - No awards found for Delia C. Ramirez. Skip.
+2025-11-24 13:17:27,023 - gen_cards.py - INFO - Created card: cards\delia_c_ramirez_card.png
+2025-11-24 13:17:27,373 - gen_cards.py - DEBUG - Success image pull for Tim Sheehy
+2025-11-24 13:17:27,376 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (180, 225)
+2025-11-24 13:17:27,407 - gen_cards.py - INFO - Tim Sheehy has never disagreed
+2025-11-24 13:17:27,429 - gen_cards.py - WARNING - No work history found for Tim Sheehy. Skip.
+2025-11-24 13:17:27,430 - gen_cards.py - WARNING - No congressional stats found for Tim Sheehy. Skip.
+2025-11-24 13:17:27,430 - gen_cards.py - WARNING - No awards found for Tim Sheehy. Skip.
+2025-11-24 13:17:27,608 - gen_cards.py - INFO - Created card: cards\tim_sheehy_card.png
+2025-11-24 13:17:28,204 - gen_cards.py - DEBUG - Success image pull for Ben Ray Luján
+2025-11-24 13:17:28,546 - gen_cards.py - WARNING - Birthdate unknown for Ben Ray Luján
+2025-11-24 13:17:28,613 - gen_cards.py - INFO - No military record for Ben Ray Luján. Skip.
+2025-11-24 13:17:28,613 - gen_cards.py - WARNING - No work history found for Ben Ray Luján. Skip.
+2025-11-24 13:17:28,613 - gen_cards.py - WARNING - No awards found for Ben Ray Luján. Skip.
+2025-11-24 13:17:28,816 - gen_cards.py - INFO - Created card: cards\ben_ray_luján_card.png
+2025-11-24 13:17:29,147 - gen_cards.py - DEBUG - Success image pull for Josh Hawley
+2025-11-24 13:17:29,150 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (180, 225)
+2025-11-24 13:17:29,161 - gen_cards.py - WARNING - Birthdate unknown for Josh Hawley
+2025-11-24 13:17:29,211 - gen_cards.py - INFO - No military record for Josh Hawley. Skip.
+2025-11-24 13:17:29,211 - gen_cards.py - WARNING - No congressional stats found for Josh Hawley. Skip.
+2025-11-24 13:17:29,211 - gen_cards.py - WARNING - No awards found for Josh Hawley. Skip.
+2025-11-24 13:17:29,460 - gen_cards.py - INFO - Created card: cards\josh_hawley_card.png
+2025-11-24 13:17:29,686 - gen_cards.py - DEBUG - Success image pull for Peter Welch
+2025-11-24 13:17:30,006 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (173, 216)
+2025-11-24 13:17:30,073 - gen_cards.py - INFO - No military record for Peter Welch. Skip.
+2025-11-24 13:17:30,073 - gen_cards.py - WARNING - No congressional stats found for Peter Welch. Skip.
+2025-11-24 13:17:30,074 - gen_cards.py - WARNING - No awards found for Peter Welch. Skip.
+2025-11-24 13:17:30,278 - gen_cards.py - INFO - Created card: cards\peter_welch_card.png
+2025-11-24 13:17:30,393 - gen_cards.py - DEBUG - Success image pull for Bernie Moreno
+2025-11-24 13:17:30,399 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (180, 225)
+2025-11-24 13:17:30,431 - gen_cards.py - INFO - Bernie Moreno has never been absent
+2025-11-24 13:17:30,456 - gen_cards.py - INFO - No military record for Bernie Moreno. Skip.
+2025-11-24 13:17:30,456 - gen_cards.py - WARNING - No work history found for Bernie Moreno. Skip.
+2025-11-24 13:17:30,457 - gen_cards.py - WARNING - No congressional stats found for Bernie Moreno. Skip.
+2025-11-24 13:17:30,457 - gen_cards.py - WARNING - No awards found for Bernie Moreno. Skip.
+2025-11-24 13:17:30,662 - gen_cards.py - INFO - Created card: cards\bernie_moreno_card.png
+2025-11-24 13:17:31,189 - gen_cards.py - DEBUG - Success image pull for LaMonica McIver
+2025-11-24 13:17:31,557 - gen_cards.py - INFO - LaMonica McIver has never been absent
+2025-11-24 13:17:31,582 - gen_cards.py - INFO - No military record for LaMonica McIver. Skip.
+2025-11-24 13:17:31,582 - gen_cards.py - WARNING - No congressional stats found for LaMonica McIver. Skip.
+2025-11-24 13:17:31,583 - gen_cards.py - WARNING - No awards found for LaMonica McIver. Skip.
+2025-11-24 13:17:31,707 - gen_cards.py - ERROR - Text box 2 for LaMonica McIver exceeds card dimensions by 152.0 pixels
+2025-11-24 13:17:31,862 - gen_cards.py - INFO - Created card: cards\lamonica_mciver_card.png
+2025-11-24 13:17:32,359 - gen_cards.py - DEBUG - Success image pull for Chrissy Houlahan
+2025-11-24 13:17:32,756 - gen_cards.py - INFO - Chrissy Houlahan has never disagreed
+2025-11-24 13:17:32,777 - gen_cards.py - WARNING - No congressional stats found for Chrissy Houlahan. Skip.
+2025-11-24 13:17:32,777 - gen_cards.py - WARNING - No awards found for Chrissy Houlahan. Skip.
+2025-11-24 13:17:32,876 - gen_cards.py - ERROR - Text box 2 for Chrissy Houlahan exceeds card dimensions by 94.0 pixels
+2025-11-24 13:17:33,034 - gen_cards.py - INFO - Created card: cards\chrissy_houlahan_card.png
+2025-11-24 13:17:33,034 - gen_cards.py - INFO - Trying backup image for Ashley Moody
+2025-11-24 13:17:33,034 - gen_cards.py - DEBUG - No image found for Ashley Moody
+2025-11-24 13:17:33,085 - gen_cards.py - INFO - Ashley Moody has never been absent
+2025-11-24 13:17:33,110 - gen_cards.py - INFO - No military record for Ashley Moody. Skip.
+2025-11-24 13:17:33,110 - gen_cards.py - WARNING - No congressional stats found for Ashley Moody. Skip.
+2025-11-24 13:17:33,111 - gen_cards.py - WARNING - No awards found for Ashley Moody. Skip.
+2025-11-24 13:17:33,182 - gen_cards.py - ERROR - Text box 2 for Ashley Moody exceeds card dimensions by 50.0 pixels
+2025-11-24 13:17:33,258 - gen_cards.py - INFO - Created card: cards\ashley_moody_card.png
+2025-11-24 13:17:33,817 - gen_cards.py - DEBUG - Success image pull for Robert Menendez
+2025-11-24 13:17:34,204 - gen_cards.py - INFO - Robert Menendez has never been absent
+2025-11-24 13:17:34,229 - gen_cards.py - INFO - No military record for Robert Menendez. Skip.
+2025-11-24 13:17:34,229 - gen_cards.py - WARNING - No congressional stats found for Robert Menendez. Skip.
+2025-11-24 13:17:34,230 - gen_cards.py - WARNING - No awards found for Robert Menendez. Skip.
+2025-11-24 13:17:34,435 - gen_cards.py - INFO - Created card: cards\robert_menendez_card.png
+2025-11-24 13:17:34,841 - gen_cards.py - DEBUG - Success image pull for Valerie P. Foushee
+2025-11-24 13:17:35,243 - gen_cards.py - INFO - No military record for Valerie P. Foushee. Skip.
+2025-11-24 13:17:35,244 - gen_cards.py - WARNING - No congressional stats found for Valerie P. Foushee. Skip.
+2025-11-24 13:17:35,244 - gen_cards.py - WARNING - No awards found for Valerie P. Foushee. Skip.
+2025-11-24 13:17:35,496 - gen_cards.py - INFO - Created card: cards\valerie_p_foushee_card.png
+2025-11-24 13:17:35,790 - gen_cards.py - DEBUG - Success image pull for Shri Thanedar
+2025-11-24 13:17:36,200 - gen_cards.py - INFO - No military record for Shri Thanedar. Skip.
+2025-11-24 13:17:36,200 - gen_cards.py - WARNING - No congressional stats found for Shri Thanedar. Skip.
+2025-11-24 13:17:36,201 - gen_cards.py - WARNING - No awards found for Shri Thanedar. Skip.
+2025-11-24 13:17:36,267 - gen_cards.py - ERROR - Text box 2 for Shri Thanedar exceeds card dimensions by 41.0 pixels
+2025-11-24 13:17:36,428 - gen_cards.py - INFO - Created card: cards\shri_thanedar_card.png
+2025-11-24 13:17:36,652 - gen_cards.py - DEBUG - Success image pull for Jimmy Patronis
+2025-11-24 13:17:36,727 - gen_cards.py - INFO - Jimmy Patronis has never been absent
+2025-11-24 13:17:36,754 - gen_cards.py - INFO - No military record for Jimmy Patronis. Skip.
+2025-11-24 13:17:36,754 - gen_cards.py - WARNING - No congressional stats found for Jimmy Patronis. Skip.
+2025-11-24 13:17:36,754 - gen_cards.py - WARNING - No awards found for Jimmy Patronis. Skip.
+2025-11-24 13:17:36,885 - gen_cards.py - ERROR - Text box 2 for Jimmy Patronis exceeds card dimensions by 108.0 pixels
+2025-11-24 13:17:37,047 - gen_cards.py - INFO - Created card: cards\jimmy_patronis_card.png
+2025-11-24 13:17:37,245 - gen_cards.py - DEBUG - Success image pull for Randy Fine
+2025-11-24 13:17:37,320 - gen_cards.py - INFO - No military record for Randy Fine. Skip.
+2025-11-24 13:17:37,320 - gen_cards.py - WARNING - No congressional stats found for Randy Fine. Skip.
+2025-11-24 13:17:37,320 - gen_cards.py - WARNING - No awards found for Randy Fine. Skip.
+2025-11-24 13:17:37,557 - gen_cards.py - INFO - Created card: cards\randy_fine_card.png
+2025-11-24 13:17:37,676 - gen_cards.py - DEBUG - Success image pull for Hillary J. Scholten
+2025-11-24 13:17:38,023 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:17:38,070 - gen_cards.py - INFO - Hillary J. Scholten has never disagreed
+2025-11-24 13:17:38,094 - gen_cards.py - INFO - No military record for Hillary J. Scholten. Skip.
+2025-11-24 13:17:38,094 - gen_cards.py - WARNING - No congressional stats found for Hillary J. Scholten. Skip.
+2025-11-24 13:17:38,094 - gen_cards.py - WARNING - No awards found for Hillary J. Scholten. Skip.
+2025-11-24 13:17:38,236 - gen_cards.py - ERROR - Text box 2 for Hillary J. Scholten exceeds card dimensions by 89.0 pixels
+2025-11-24 13:17:38,409 - gen_cards.py - INFO - Created card: cards\hillary_j_scholten_card.png
+2025-11-24 13:17:38,586 - gen_cards.py - DEBUG - Success image pull for Mike Johnson
+2025-11-24 13:17:38,642 - gen_cards.py - INFO - Mike Johnson has never disagreed
+2025-11-24 13:17:38,642 - gen_cards.py - INFO - Mike Johnson has never been absent
+2025-11-24 13:17:38,662 - gen_cards.py - INFO - No military record for Mike Johnson. Skip.
+2025-11-24 13:17:38,662 - gen_cards.py - WARNING - No awards found for Mike Johnson. Skip.
+2025-11-24 13:17:38,663 - gen_cards.py - WARNING - No committees found for Mike Johnson. Skip.
+2025-11-24 13:17:38,864 - gen_cards.py - INFO - Created card: cards\mike_johnson_card.png
+2025-11-24 13:17:39,190 - gen_cards.py - DEBUG - Success image pull for Emily Randall
+2025-11-24 13:17:39,645 - gen_cards.py - INFO - No military record for Emily Randall. Skip.
+2025-11-24 13:17:39,645 - gen_cards.py - WARNING - No congressional stats found for Emily Randall. Skip.
+2025-11-24 13:17:39,645 - gen_cards.py - WARNING - No awards found for Emily Randall. Skip.
+2025-11-24 13:17:39,926 - gen_cards.py - INFO - Created card: cards\emily_randall_card.png
+2025-11-24 13:17:40,220 - gen_cards.py - DEBUG - Success image pull for Riley M. Moore
+2025-11-24 13:17:40,340 - gen_cards.py - INFO - No military record for Riley M. Moore. Skip.
+2025-11-24 13:17:40,340 - gen_cards.py - WARNING - No congressional stats found for Riley M. Moore. Skip.
+2025-11-24 13:17:40,340 - gen_cards.py - WARNING - No awards found for Riley M. Moore. Skip.
+2025-11-24 13:17:40,603 - gen_cards.py - INFO - Created card: cards\riley_m_moore_card.png
+2025-11-24 13:17:40,879 - gen_cards.py - DEBUG - Success image pull for Michael Baumgartner
+2025-11-24 13:17:40,963 - gen_cards.py - INFO - Michael Baumgartner has never disagreed
+2025-11-24 13:17:40,986 - gen_cards.py - INFO - No military record for Michael Baumgartner. Skip.
+2025-11-24 13:17:40,986 - gen_cards.py - WARNING - No congressional stats found for Michael Baumgartner. Skip.
+2025-11-24 13:17:40,987 - gen_cards.py - WARNING - No awards found for Michael Baumgartner. Skip.
+2025-11-24 13:17:41,139 - gen_cards.py - ERROR - Text box 2 for Michael Baumgartner exceeds card dimensions by 89.0 pixels
+2025-11-24 13:17:41,319 - gen_cards.py - INFO - Created card: cards\michael_baumgartner_card.png
+2025-11-24 13:17:41,670 - gen_cards.py - DEBUG - Success image pull for Tony Wied
+2025-11-24 13:17:41,747 - gen_cards.py - INFO - Tony Wied has never been absent
+2025-11-24 13:17:41,774 - gen_cards.py - INFO - No military record for Tony Wied. Skip.
+2025-11-24 13:17:41,774 - gen_cards.py - WARNING - No congressional stats found for Tony Wied. Skip.
+2025-11-24 13:17:41,774 - gen_cards.py - WARNING - No awards found for Tony Wied. Skip.
+2025-11-24 13:17:41,913 - gen_cards.py - ERROR - Text box 2 for Tony Wied exceeds card dimensions by 53.0 pixels
+2025-11-24 13:17:42,048 - gen_cards.py - INFO - Created card: cards\tony_wied_card.png
+2025-11-24 13:17:42,201 - gen_cards.py - DEBUG - Success image pull for Derrick Van Orden
+2025-11-24 13:17:42,204 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:17:42,268 - gen_cards.py - WARNING - No congressional stats found for Derrick Van Orden. Skip.
+2025-11-24 13:17:42,269 - gen_cards.py - WARNING - No awards found for Derrick Van Orden. Skip.
+2025-11-24 13:17:42,373 - gen_cards.py - ERROR - Text box 2 for Derrick Van Orden exceeds card dimensions by 18.0 pixels
+2025-11-24 13:17:42,567 - gen_cards.py - INFO - Created card: cards\derrick_van_orden_card.png
+2025-11-24 13:17:42,778 - gen_cards.py - DEBUG - Success image pull for Marie Gluesenkamp Perez
+2025-11-24 13:17:43,120 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:17:43,156 - gen_cards.py - INFO - Marie Gluesenkamp Perez has never disagreed
+2025-11-24 13:17:43,180 - gen_cards.py - INFO - No military record for Marie Gluesenkamp Perez. Skip.
+2025-11-24 13:17:43,180 - gen_cards.py - WARNING - No congressional stats found for Marie Gluesenkamp Perez. Skip.
+2025-11-24 13:17:43,180 - gen_cards.py - WARNING - No awards found for Marie Gluesenkamp Perez. Skip.
+2025-11-24 13:17:43,386 - gen_cards.py - INFO - Created card: cards\marie_gluesenkamp_perez_card.png
+2025-11-24 13:17:43,526 - gen_cards.py - DEBUG - Success image pull for Harriet M. Hageman
+2025-11-24 13:17:43,530 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:17:43,584 - gen_cards.py - INFO - Harriet M. Hageman has never been absent
+2025-11-24 13:17:43,614 - gen_cards.py - INFO - No military record for Harriet M. Hageman. Skip.
+2025-11-24 13:17:43,614 - gen_cards.py - WARNING - No awards found for Harriet M. Hageman. Skip.
+2025-11-24 13:17:43,936 - gen_cards.py - ERROR - Text box 2 for Harriet M. Hageman exceeds card dimensions by 313.0 pixels
+2025-11-24 13:17:44,147 - gen_cards.py - INFO - Created card: cards\harriet_m_hageman_card.png
+2025-11-24 13:17:44,366 - gen_cards.py - DEBUG - Success image pull for Becca Balint
+2025-11-24 13:17:44,805 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:17:44,894 - gen_cards.py - INFO - No military record for Becca Balint. Skip.
+2025-11-24 13:17:44,894 - gen_cards.py - WARNING - No congressional stats found for Becca Balint. Skip.
+2025-11-24 13:17:44,894 - gen_cards.py - WARNING - No awards found for Becca Balint. Skip.
+2025-11-24 13:17:44,980 - gen_cards.py - ERROR - Text box 2 for Becca Balint exceeds card dimensions by 75.0 pixels
+2025-11-24 13:17:45,146 - gen_cards.py - INFO - Created card: cards\becca_balint_card.png
+2025-11-24 13:17:45,270 - gen_cards.py - DEBUG - Success image pull for Marilyn Strickland
+2025-11-24 13:17:45,618 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:17:45,659 - gen_cards.py - INFO - Marilyn Strickland has never disagreed
+2025-11-24 13:17:45,682 - gen_cards.py - INFO - No military record for Marilyn Strickland. Skip.
+2025-11-24 13:17:45,682 - gen_cards.py - WARNING - No congressional stats found for Marilyn Strickland. Skip.
+2025-11-24 13:17:45,682 - gen_cards.py - WARNING - No awards found for Marilyn Strickland. Skip.
+2025-11-24 13:17:45,942 - gen_cards.py - INFO - Created card: cards\marilyn_strickland_card.png
+2025-11-24 13:17:46,134 - gen_cards.py - DEBUG - Success image pull for Scott Fitzgerald
+2025-11-24 13:17:46,137 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:17:46,207 - gen_cards.py - WARNING - No congressional stats found for Scott Fitzgerald. Skip.
+2025-11-24 13:17:46,207 - gen_cards.py - WARNING - No awards found for Scott Fitzgerald. Skip.
+2025-11-24 13:17:46,482 - gen_cards.py - INFO - Created card: cards\scott_fitzgerald_card.png
+2025-11-24 13:17:46,667 - gen_cards.py - DEBUG - Success image pull for Thomas P. Tiffany
+2025-11-24 13:17:46,670 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:17:46,748 - gen_cards.py - INFO - No military record for Thomas P. Tiffany. Skip.
+2025-11-24 13:17:46,748 - gen_cards.py - WARNING - No congressional stats found for Thomas P. Tiffany. Skip.
+2025-11-24 13:17:46,748 - gen_cards.py - WARNING - No awards found for Thomas P. Tiffany. Skip.
+2025-11-24 13:17:47,037 - gen_cards.py - INFO - Created card: cards\thomas_p_tiffany_card.png
+2025-11-24 13:17:47,219 - gen_cards.py - DEBUG - Success image pull for Carol D. Miller
+2025-11-24 13:17:47,223 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 263)
+2025-11-24 13:17:47,304 - gen_cards.py - INFO - No military record for Carol D. Miller. Skip.
+2025-11-24 13:17:47,304 - gen_cards.py - WARNING - No work history found for Carol D. Miller. Skip.
+2025-11-24 13:17:47,304 - gen_cards.py - WARNING - No congressional stats found for Carol D. Miller. Skip.
+2025-11-24 13:17:47,304 - gen_cards.py - WARNING - No awards found for Carol D. Miller. Skip.
+2025-11-24 13:17:47,515 - gen_cards.py - INFO - Created card: cards\carol_d_miller_card.png
+2025-11-24 13:17:47,728 - gen_cards.py - DEBUG - Success image pull for Bryan Steil
+2025-11-24 13:17:47,738 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 235)
+2025-11-24 13:17:47,789 - gen_cards.py - INFO - Bryan Steil has never disagreed
+2025-11-24 13:17:47,789 - gen_cards.py - INFO - Bryan Steil has never been absent
+2025-11-24 13:17:47,809 - gen_cards.py - INFO - No military record for Bryan Steil. Skip.
+2025-11-24 13:17:47,810 - gen_cards.py - WARNING - No awards found for Bryan Steil. Skip.
+2025-11-24 13:17:48,107 - gen_cards.py - INFO - Created card: cards\bryan_steil_card.png
+2025-11-24 13:17:48,284 - gen_cards.py - DEBUG - Success image pull for Kim Schrier
+2025-11-24 13:17:48,634 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 263)
+2025-11-24 13:17:48,681 - gen_cards.py - INFO - Kim Schrier has never disagreed
+2025-11-24 13:17:48,705 - gen_cards.py - INFO - No military record for Kim Schrier. Skip.
+2025-11-24 13:17:48,705 - gen_cards.py - WARNING - No work history found for Kim Schrier. Skip.
+2025-11-24 13:17:48,705 - gen_cards.py - WARNING - No congressional stats found for Kim Schrier. Skip.
+2025-11-24 13:17:48,705 - gen_cards.py - WARNING - No awards found for Kim Schrier. Skip.
+2025-11-24 13:17:48,921 - gen_cards.py - INFO - Created card: cards\kim_schrier_card.png
+2025-11-24 13:17:49,100 - gen_cards.py - DEBUG - Success image pull for Pramila Jayapal
+2025-11-24 13:17:49,499 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 263)
+2025-11-24 13:17:49,573 - gen_cards.py - INFO - No military record for Pramila Jayapal. Skip.
+2025-11-24 13:17:49,573 - gen_cards.py - WARNING - No congressional stats found for Pramila Jayapal. Skip.
+2025-11-24 13:17:49,574 - gen_cards.py - WARNING - No awards found for Pramila Jayapal. Skip.
+2025-11-24 13:17:49,877 - gen_cards.py - INFO - Created card: cards\pramila_jayapal_card.png
+2025-11-24 13:17:50,055 - gen_cards.py - DEBUG - Success image pull for Glenn Grothman
+2025-11-24 13:17:50,059 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:17:50,192 - gen_cards.py - INFO - No military record for Glenn Grothman. Skip.
+2025-11-24 13:17:50,192 - gen_cards.py - WARNING - No congressional stats found for Glenn Grothman. Skip.
+2025-11-24 13:17:50,193 - gen_cards.py - WARNING - No awards found for Glenn Grothman. Skip.
+2025-11-24 13:17:50,393 - gen_cards.py - ERROR - Text box 2 for Glenn Grothman exceeds card dimensions by 217.0 pixels
+2025-11-24 13:17:50,559 - gen_cards.py - INFO - Created card: cards\glenn_grothman_card.png
+2025-11-24 13:17:50,718 - gen_cards.py - DEBUG - Success image pull for Dan Newhouse
+2025-11-24 13:17:50,722 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 263)
+2025-11-24 13:17:50,760 - gen_cards.py - INFO - Dan Newhouse has never disagreed
+2025-11-24 13:17:50,786 - gen_cards.py - INFO - No military record for Dan Newhouse. Skip.
+2025-11-24 13:17:50,786 - gen_cards.py - WARNING - No congressional stats found for Dan Newhouse. Skip.
+2025-11-24 13:17:50,787 - gen_cards.py - WARNING - No awards found for Dan Newhouse. Skip.
+2025-11-24 13:17:51,102 - gen_cards.py - INFO - Created card: cards\dan_newhouse_card.png
+2025-11-24 13:17:51,439 - gen_cards.py - DEBUG - Success image pull for Stacey E. Plaskett
+2025-11-24 13:17:51,798 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 194)
+2025-11-24 13:17:51,845 - gen_cards.py - INFO - Stacey E. Plaskett has never disagreed
+2025-11-24 13:17:51,877 - gen_cards.py - INFO - No military record for Stacey E. Plaskett. Skip.
+2025-11-24 13:17:51,878 - gen_cards.py - WARNING - No awards found for Stacey E. Plaskett. Skip.
+2025-11-24 13:17:52,125 - gen_cards.py - ERROR - Text box 2 for Stacey E. Plaskett exceeds card dimensions by 226.0 pixels
+2025-11-24 13:17:52,233 - gen_cards.py - INFO - Created card: cards\stacey_e_plaskett_card.png
+2025-11-24 13:17:52,419 - gen_cards.py - DEBUG - Success image pull for Mark Pocan
+2025-11-24 13:17:52,798 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 263)
+2025-11-24 13:17:52,869 - gen_cards.py - INFO - No military record for Mark Pocan. Skip.
+2025-11-24 13:17:52,869 - gen_cards.py - WARNING - No congressional stats found for Mark Pocan. Skip.
+2025-11-24 13:17:52,869 - gen_cards.py - WARNING - No awards found for Mark Pocan. Skip.
+2025-11-24 13:17:53,136 - gen_cards.py - INFO - Created card: cards\mark_pocan_card.png
+2025-11-24 13:17:53,269 - gen_cards.py - DEBUG - Success image pull for Suzan K. DelBene
+2025-11-24 13:17:53,618 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 263)
+2025-11-24 13:17:53,666 - gen_cards.py - INFO - Suzan K. DelBene has never disagreed
+2025-11-24 13:17:53,694 - gen_cards.py - INFO - No military record for Suzan K. DelBene. Skip.
+2025-11-24 13:17:53,694 - gen_cards.py - WARNING - No awards found for Suzan K. DelBene. Skip.
+2025-11-24 13:17:53,923 - gen_cards.py - INFO - Created card: cards\suzan_k_delbene_card.png
+2025-11-24 13:17:54,061 - gen_cards.py - DEBUG - Success image pull for Adam Smith
+2025-11-24 13:17:54,460 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 232)
+2025-11-24 13:17:54,508 - gen_cards.py - INFO - Adam Smith has never disagreed
+2025-11-24 13:17:54,543 - gen_cards.py - INFO - No military record for Adam Smith. Skip.
+2025-11-24 13:17:54,544 - gen_cards.py - WARNING - No awards found for Adam Smith. Skip.
+2025-11-24 13:17:54,775 - gen_cards.py - INFO - Created card: cards\adam_smith_card.png
+2025-11-24 13:17:54,917 - gen_cards.py - DEBUG - Success image pull for Gwen Moore
+2025-11-24 13:17:55,397 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 222)
+2025-11-24 13:17:55,492 - gen_cards.py - INFO - No military record for Gwen Moore. Skip.
+2025-11-24 13:17:55,492 - gen_cards.py - WARNING - No congressional stats found for Gwen Moore. Skip.
+2025-11-24 13:17:55,492 - gen_cards.py - WARNING - No awards found for Gwen Moore. Skip.
+2025-11-24 13:17:55,797 - gen_cards.py - INFO - Created card: cards\gwen_moore_card.png
+2025-11-24 13:17:56,123 - gen_cards.py - DEBUG - Success image pull for Rick Larsen
+2025-11-24 13:17:56,488 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:17:56,536 - gen_cards.py - INFO - Rick Larsen has never disagreed
+2025-11-24 13:17:56,564 - gen_cards.py - INFO - No military record for Rick Larsen. Skip.
+2025-11-24 13:17:56,565 - gen_cards.py - WARNING - No work history found for Rick Larsen. Skip.
+2025-11-24 13:17:56,565 - gen_cards.py - WARNING - No congressional stats found for Rick Larsen. Skip.
+2025-11-24 13:17:56,565 - gen_cards.py - WARNING - No awards found for Rick Larsen. Skip.
+2025-11-24 13:17:56,741 - gen_cards.py - INFO - Created card: cards\rick_larsen_card.png
+2025-11-24 13:17:57,018 - gen_cards.py - DEBUG - Success image pull for Eugene Simon Vindman
+2025-11-24 13:17:57,504 - gen_cards.py - INFO - Eugene Simon Vindman has never disagreed
+2025-11-24 13:17:57,536 - gen_cards.py - WARNING - No congressional stats found for Eugene Simon Vindman. Skip.
+2025-11-24 13:17:57,536 - gen_cards.py - WARNING - No awards found for Eugene Simon Vindman. Skip.
+2025-11-24 13:17:57,638 - gen_cards.py - ERROR - Text box 2 for Eugene Simon Vindman exceeds card dimensions by 6.0 pixels
+2025-11-24 13:17:57,812 - gen_cards.py - INFO - Created card: cards\eugene_simon_vindman_card.png
+2025-11-24 13:17:58,559 - gen_cards.py - DEBUG - Success image pull for Suhas Subramanyam
+2025-11-24 13:17:59,079 - gen_cards.py - INFO - Suhas Subramanyam has never disagreed
+2025-11-24 13:17:59,104 - gen_cards.py - INFO - No military record for Suhas Subramanyam. Skip.
+2025-11-24 13:17:59,104 - gen_cards.py - WARNING - No congressional stats found for Suhas Subramanyam. Skip.
+2025-11-24 13:17:59,104 - gen_cards.py - WARNING - No awards found for Suhas Subramanyam. Skip.
+2025-11-24 13:17:59,281 - gen_cards.py - ERROR - Text box 2 for Suhas Subramanyam exceeds card dimensions by 133.0 pixels
+2025-11-24 13:17:59,454 - gen_cards.py - INFO - Created card: cards\suhas_subramanyam_card.png
+2025-11-24 13:17:59,784 - gen_cards.py - DEBUG - Success image pull for John J. McGuire
+2025-11-24 13:17:59,933 - gen_cards.py - WARNING - No congressional stats found for John J. McGuire. Skip.
+2025-11-24 13:17:59,933 - gen_cards.py - WARNING - No awards found for John J. McGuire. Skip.
+2025-11-24 13:18:00,078 - gen_cards.py - ERROR - Text box 2 for John J. McGuire exceeds card dimensions by 134.0 pixels
+2025-11-24 13:18:00,265 - gen_cards.py - INFO - Created card: cards\john_j_mcguire_card.png
+2025-11-24 13:18:00,578 - gen_cards.py - DEBUG - Success image pull for Mike Kennedy
+2025-11-24 13:18:00,695 - gen_cards.py - INFO - No military record for Mike Kennedy. Skip.
+2025-11-24 13:18:00,695 - gen_cards.py - WARNING - No congressional stats found for Mike Kennedy. Skip.
+2025-11-24 13:18:00,696 - gen_cards.py - WARNING - No awards found for Mike Kennedy. Skip.
+2025-11-24 13:18:00,865 - gen_cards.py - ERROR - Text box 2 for Mike Kennedy exceeds card dimensions by 383.0 pixels
+2025-11-24 13:18:01,040 - gen_cards.py - INFO - Created card: cards\mike_kennedy_card.png
+2025-11-24 13:18:01,363 - gen_cards.py - DEBUG - Success image pull for Julie Johnson
+2025-11-24 13:18:01,796 - gen_cards.py - INFO - Julie Johnson has never disagreed
+2025-11-24 13:18:01,818 - gen_cards.py - INFO - No military record for Julie Johnson. Skip.
+2025-11-24 13:18:01,818 - gen_cards.py - WARNING - No congressional stats found for Julie Johnson. Skip.
+2025-11-24 13:18:01,818 - gen_cards.py - WARNING - No awards found for Julie Johnson. Skip.
+2025-11-24 13:18:02,098 - gen_cards.py - INFO - Created card: cards\julie_johnson_card.png
+2025-11-24 13:18:02,585 - gen_cards.py - DEBUG - Success image pull for Brandon Gill
+2025-11-24 13:18:02,681 - gen_cards.py - INFO - No military record for Brandon Gill. Skip.
+2025-11-24 13:18:02,681 - gen_cards.py - WARNING - No congressional stats found for Brandon Gill. Skip.
+2025-11-24 13:18:02,682 - gen_cards.py - WARNING - No awards found for Brandon Gill. Skip.
+2025-11-24 13:18:02,798 - gen_cards.py - ERROR - Text box 2 for Brandon Gill exceeds card dimensions by 85.0 pixels
+2025-11-24 13:18:02,988 - gen_cards.py - INFO - Created card: cards\brandon_gill_card.png
+2025-11-24 13:18:03,155 - gen_cards.py - DEBUG - Success image pull for Celeste Maloy
+2025-11-24 13:18:03,158 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 263)
+2025-11-24 13:18:03,247 - gen_cards.py - INFO - No military record for Celeste Maloy. Skip.
+2025-11-24 13:18:03,247 - gen_cards.py - WARNING - No congressional stats found for Celeste Maloy. Skip.
+2025-11-24 13:18:03,248 - gen_cards.py - WARNING - No awards found for Celeste Maloy. Skip.
+2025-11-24 13:18:03,395 - gen_cards.py - ERROR - Text box 2 for Celeste Maloy exceeds card dimensions by 173.0 pixels
+2025-11-24 13:18:03,551 - gen_cards.py - INFO - Created card: cards\celeste_maloy_card.png
+2025-11-24 13:18:03,829 - gen_cards.py - DEBUG - Success image pull for Jennifer L. McClellan
+2025-11-24 13:18:04,178 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:18:04,226 - gen_cards.py - INFO - Jennifer L. McClellan has never disagreed
+2025-11-24 13:18:04,226 - gen_cards.py - INFO - Jennifer L. McClellan has never been absent
+2025-11-24 13:18:04,246 - gen_cards.py - INFO - No military record for Jennifer L. McClellan. Skip.
+2025-11-24 13:18:04,246 - gen_cards.py - WARNING - No congressional stats found for Jennifer L. McClellan. Skip.
+2025-11-24 13:18:04,246 - gen_cards.py - WARNING - No awards found for Jennifer L. McClellan. Skip.
+2025-11-24 13:18:04,443 - gen_cards.py - INFO - Created card: cards\jennifer_l_mcclellan_card.png
+2025-11-24 13:18:05,014 - gen_cards.py - DEBUG - Success image pull for Jennifer A. Kiggans
+2025-11-24 13:18:05,017 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (480, 600)
+2025-11-24 13:18:05,087 - gen_cards.py - INFO - Jennifer A. Kiggans has never disagreed
+2025-11-24 13:18:05,111 - gen_cards.py - WARNING - No congressional stats found for Jennifer A. Kiggans. Skip.
+2025-11-24 13:18:05,111 - gen_cards.py - WARNING - No awards found for Jennifer A. Kiggans. Skip.
+2025-11-24 13:18:05,255 - gen_cards.py - ERROR - Text box 2 for Jennifer A. Kiggans exceeds card dimensions by 192.0 pixels
+2025-11-24 13:18:05,434 - gen_cards.py - INFO - Created card: cards\jennifer_a_kiggans_card.png
+2025-11-24 13:18:05,598 - gen_cards.py - DEBUG - Success image pull for Wesley Hunt
+2025-11-24 13:18:05,603 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:18:05,689 - gen_cards.py - WARNING - No work history found for Wesley Hunt. Skip.
+2025-11-24 13:18:05,689 - gen_cards.py - WARNING - No congressional stats found for Wesley Hunt. Skip.
+2025-11-24 13:18:05,690 - gen_cards.py - WARNING - No awards found for Wesley Hunt. Skip.
+2025-11-24 13:18:05,777 - gen_cards.py - ERROR - Text box 2 for Wesley Hunt exceeds card dimensions by 7.0 pixels
+2025-11-24 13:18:05,945 - gen_cards.py - INFO - Created card: cards\wesley_hunt_card.png
+2025-11-24 13:18:06,101 - gen_cards.py - DEBUG - Success image pull for Jasmine Crockett
+2025-11-24 13:18:06,453 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:18:06,543 - gen_cards.py - INFO - No military record for Jasmine Crockett. Skip.
+2025-11-24 13:18:06,543 - gen_cards.py - WARNING - No congressional stats found for Jasmine Crockett. Skip.
+2025-11-24 13:18:06,543 - gen_cards.py - WARNING - No awards found for Jasmine Crockett. Skip.
+2025-11-24 13:18:06,648 - gen_cards.py - ERROR - Text box 2 for Jasmine Crockett exceeds card dimensions by 85.0 pixels
+2025-11-24 13:18:06,810 - gen_cards.py - INFO - Created card: cards\jasmine_crockett_card.png
+2025-11-24 13:18:06,948 - gen_cards.py - DEBUG - Success image pull for Greg Casar
+2025-11-24 13:18:07,322 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:18:07,391 - gen_cards.py - INFO - No military record for Greg Casar. Skip.
+2025-11-24 13:18:07,391 - gen_cards.py - WARNING - No congressional stats found for Greg Casar. Skip.
+2025-11-24 13:18:07,392 - gen_cards.py - WARNING - No awards found for Greg Casar. Skip.
+2025-11-24 13:18:07,675 - gen_cards.py - INFO - Created card: cards\greg_casar_card.png
+2025-11-24 13:18:07,989 - gen_cards.py - DEBUG - Success image pull for Beth Van Duyne
+2025-11-24 13:18:08,064 - gen_cards.py - INFO - Beth Van Duyne has never been absent
+2025-11-24 13:18:08,092 - gen_cards.py - INFO - No military record for Beth Van Duyne. Skip.
+2025-11-24 13:18:08,092 - gen_cards.py - WARNING - No congressional stats found for Beth Van Duyne. Skip.
+2025-11-24 13:18:08,092 - gen_cards.py - WARNING - No awards found for Beth Van Duyne. Skip.
+2025-11-24 13:18:08,368 - gen_cards.py - INFO - Created card: cards\beth_van_duyne_card.png
+2025-11-24 13:18:08,538 - gen_cards.py - DEBUG - Success image pull for Burgess Owens
+2025-11-24 13:18:08,541 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:18:08,614 - gen_cards.py - INFO - No military record for Burgess Owens. Skip.
+2025-11-24 13:18:08,614 - gen_cards.py - WARNING - No congressional stats found for Burgess Owens. Skip.
+2025-11-24 13:18:08,614 - gen_cards.py - WARNING - No awards found for Burgess Owens. Skip.
+2025-11-24 13:18:08,739 - gen_cards.py - ERROR - Text box 2 for Burgess Owens exceeds card dimensions by 129.0 pixels
+2025-11-24 13:18:08,906 - gen_cards.py - INFO - Created card: cards\burgess_owens_card.png
+2025-11-24 13:18:09,062 - gen_cards.py - DEBUG - Success image pull for Troy E. Nehls
+2025-11-24 13:18:09,064 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:18:09,138 - gen_cards.py - WARNING - No congressional stats found for Troy E. Nehls. Skip.
+2025-11-24 13:18:09,139 - gen_cards.py - WARNING - No awards found for Troy E. Nehls. Skip.
+2025-11-24 13:18:09,300 - gen_cards.py - ERROR - Text box 2 for Troy E. Nehls exceeds card dimensions by 368.0 pixels
+2025-11-24 13:18:09,461 - gen_cards.py - INFO - Created card: cards\troy_e_nehls_card.png
+2025-11-24 13:18:09,609 - gen_cards.py - DEBUG - Success image pull for Blake D. Moore
+2025-11-24 13:18:09,616 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:18:09,674 - gen_cards.py - INFO - Blake D. Moore has never disagreed
+2025-11-24 13:18:09,674 - gen_cards.py - INFO - Blake D. Moore has never been absent
+2025-11-24 13:18:09,701 - gen_cards.py - INFO - No military record for Blake D. Moore. Skip.
+2025-11-24 13:18:09,701 - gen_cards.py - WARNING - No congressional stats found for Blake D. Moore. Skip.
+2025-11-24 13:18:09,701 - gen_cards.py - WARNING - No awards found for Blake D. Moore. Skip.
+2025-11-24 13:18:09,912 - gen_cards.py - INFO - Created card: cards\blake_d_moore_card.png
+2025-11-24 13:18:10,091 - gen_cards.py - DEBUG - Success image pull for Tony Gonzales
+2025-11-24 13:18:10,093 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:18:10,143 - gen_cards.py - INFO - Tony Gonzales has never disagreed
+2025-11-24 13:18:10,170 - gen_cards.py - WARNING - No congressional stats found for Tony Gonzales. Skip.
+2025-11-24 13:18:10,171 - gen_cards.py - WARNING - No awards found for Tony Gonzales. Skip.
+2025-11-24 13:18:10,311 - gen_cards.py - ERROR - Text box 2 for Tony Gonzales exceeds card dimensions by 216.0 pixels
+2025-11-24 13:18:10,489 - gen_cards.py - INFO - Created card: cards\tony_gonzales_card.png
+2025-11-24 13:18:10,635 - gen_cards.py - DEBUG - Success image pull for Ben Cline
+2025-11-24 13:18:10,638 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 263)
+2025-11-24 13:18:10,685 - gen_cards.py - INFO - Ben Cline has never been absent
+2025-11-24 13:18:10,711 - gen_cards.py - INFO - No military record for Ben Cline. Skip.
+2025-11-24 13:18:10,712 - gen_cards.py - WARNING - No awards found for Ben Cline. Skip.
+2025-11-24 13:18:10,947 - gen_cards.py - ERROR - Text box 2 for Ben Cline exceeds card dimensions by 513.0 pixels
+2025-11-24 13:18:11,120 - gen_cards.py - INFO - Created card: cards\ben_cline_card.png
+2025-11-24 13:18:11,274 - gen_cards.py - DEBUG - Success image pull for Sylvia R. Garcia
+2025-11-24 13:18:11,620 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:18:11,698 - gen_cards.py - INFO - No military record for Sylvia R. Garcia. Skip.
+2025-11-24 13:18:11,698 - gen_cards.py - WARNING - No awards found for Sylvia R. Garcia. Skip.
+2025-11-24 13:18:11,807 - gen_cards.py - ERROR - Text box 2 for Sylvia R. Garcia exceeds card dimensions by 56.0 pixels
+2025-11-24 13:18:11,992 - gen_cards.py - INFO - Created card: cards\sylvia_r_garcia_card.png
+2025-11-24 13:18:12,159 - gen_cards.py - DEBUG - Success image pull for Chip Roy
+2025-11-24 13:18:12,162 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 262)
+2025-11-24 13:18:12,291 - gen_cards.py - INFO - No military record for Chip Roy. Skip.
+2025-11-24 13:18:12,291 - gen_cards.py - WARNING - No congressional stats found for Chip Roy. Skip.
+2025-11-24 13:18:12,291 - gen_cards.py - WARNING - No awards found for Chip Roy. Skip.
+2025-11-24 13:18:12,494 - gen_cards.py - ERROR - Text box 2 for Chip Roy exceeds card dimensions by 339.0 pixels
+2025-11-24 13:18:12,700 - gen_cards.py - INFO - Created card: cards\chip_roy_card.png
+2025-11-24 13:18:12,700 - gen_cards.py - INFO - Trying backup image for Michael Cloud
+2025-11-24 13:18:12,861 - gen_cards.py - DEBUG - Success image pull for Michael Cloud
+2025-11-24 13:18:12,865 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (200, 244)
+2025-11-24 13:18:12,880 - gen_cards.py - WARNING - Birthdate unknown for Michael Cloud
+2025-11-24 13:18:12,880 - gen_cards.py - WARNING - No education for Michael Cloud. Skip this section.
+2025-11-24 13:18:12,948 - gen_cards.py - INFO - No military record for Michael Cloud. Skip.
+2025-11-24 13:18:12,948 - gen_cards.py - WARNING - No work history found for Michael Cloud. Skip.
+2025-11-24 13:18:12,948 - gen_cards.py - WARNING - No congressional stats found for Michael Cloud. Skip.
+2025-11-24 13:18:12,948 - gen_cards.py - WARNING - No awards found for Michael Cloud. Skip.
+2025-11-24 13:18:13,225 - gen_cards.py - INFO - Created card: cards\michael_cloud_card.png
+2025-11-24 13:18:13,719 - gen_cards.py - DEBUG - Success image pull for Vicente Gonzalez
+2025-11-24 13:18:14,153 - gen_cards.py - INFO - Vicente Gonzalez has never disagreed
+2025-11-24 13:18:14,177 - gen_cards.py - INFO - No military record for Vicente Gonzalez. Skip.
+2025-11-24 13:18:14,177 - gen_cards.py - WARNING - No congressional stats found for Vicente Gonzalez. Skip.
+2025-11-24 13:18:14,177 - gen_cards.py - WARNING - No awards found for Vicente Gonzalez. Skip.
+2025-11-24 13:18:14,363 - gen_cards.py - INFO - Created card: cards\vicente_gonzalez_card.png
+2025-11-24 13:18:14,524 - gen_cards.py - DEBUG - Success image pull for Donald S. Beyer
+2025-11-24 13:18:14,872 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:18:14,931 - gen_cards.py - INFO - No military record for Donald S. Beyer. Skip.
+2025-11-24 13:18:14,931 - gen_cards.py - WARNING - No work history found for Donald S. Beyer. Skip.
+2025-11-24 13:18:14,931 - gen_cards.py - WARNING - No awards found for Donald S. Beyer. Skip.
+2025-11-24 13:18:15,135 - gen_cards.py - INFO - Created card: cards\donald_s_beyer_card.png
+2025-11-24 13:18:15,302 - gen_cards.py - DEBUG - Success image pull for Brian Babin
+2025-11-24 13:18:15,310 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 214)
+2025-11-24 13:18:15,391 - gen_cards.py - WARNING - No awards found for Brian Babin. Skip.
+2025-11-24 13:18:15,493 - gen_cards.py - ERROR - Text box 2 for Brian Babin exceeds card dimensions by 115.0 pixels
+2025-11-24 13:18:15,644 - gen_cards.py - INFO - Created card: cards\brian_babin_card.png
+2025-11-24 13:18:15,851 - gen_cards.py - DEBUG - Success image pull for Marc A. Veasey
+2025-11-24 13:18:16,201 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 263)
+2025-11-24 13:18:16,237 - gen_cards.py - INFO - Marc A. Veasey has never disagreed
+2025-11-24 13:18:16,237 - gen_cards.py - INFO - Marc A. Veasey has never been absent
+2025-11-24 13:18:16,256 - gen_cards.py - INFO - No military record for Marc A. Veasey. Skip.
+2025-11-24 13:18:16,256 - gen_cards.py - WARNING - No congressional stats found for Marc A. Veasey. Skip.
+2025-11-24 13:18:16,256 - gen_cards.py - WARNING - No awards found for Marc A. Veasey. Skip.
+2025-11-24 13:18:16,505 - gen_cards.py - INFO - Created card: cards\marc_a_veasey_card.png
+2025-11-24 13:18:16,636 - gen_cards.py - DEBUG - Success image pull for Roger Williams
+2025-11-24 13:18:16,639 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 222)
+2025-11-24 13:18:16,712 - gen_cards.py - INFO - No military record for Roger Williams. Skip.
+2025-11-24 13:18:16,713 - gen_cards.py - WARNING - No awards found for Roger Williams. Skip.
+2025-11-24 13:18:16,954 - gen_cards.py - INFO - Created card: cards\roger_williams_card.png
+2025-11-24 13:18:17,134 - gen_cards.py - DEBUG - Success image pull for Robert J. Wittman
+2025-11-24 13:18:17,136 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:18:17,182 - gen_cards.py - INFO - Robert J. Wittman has never disagreed
+2025-11-24 13:18:17,204 - gen_cards.py - INFO - No military record for Robert J. Wittman. Skip.
+2025-11-24 13:18:17,204 - gen_cards.py - WARNING - No congressional stats found for Robert J. Wittman. Skip.
+2025-11-24 13:18:17,205 - gen_cards.py - WARNING - No awards found for Robert J. Wittman. Skip.
+2025-11-24 13:18:17,474 - gen_cards.py - INFO - Created card: cards\robert_j_wittman_card.png
+2025-11-24 13:18:17,884 - gen_cards.py - DEBUG - Success image pull for H. Morgan Griffith
+2025-11-24 13:18:17,943 - gen_cards.py - INFO - H. Morgan Griffith has never been absent
+2025-11-24 13:18:17,970 - gen_cards.py - INFO - No military record for H. Morgan Griffith. Skip.
+2025-11-24 13:18:17,970 - gen_cards.py - WARNING - No congressional stats found for H. Morgan Griffith. Skip.
+2025-11-24 13:18:17,970 - gen_cards.py - WARNING - No awards found for H. Morgan Griffith. Skip.
+2025-11-24 13:18:18,265 - gen_cards.py - INFO - Created card: cards\h_morgan_griffith_card.png
+2025-11-24 13:18:18,418 - gen_cards.py - DEBUG - Success image pull for Robert C. "Bobby" Scott
+2025-11-24 13:18:18,912 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 263)
+2025-11-24 13:18:19,019 - gen_cards.py - WARNING - No awards found for Robert C. "Bobby" Scott. Skip.
+2025-11-24 13:18:19,260 - gen_cards.py - INFO - Created card: cards\robert_c_bobby_scott_card.png
+2025-11-24 13:18:19,382 - gen_cards.py - DEBUG - Success image pull for Henry Cuellar
+2025-11-24 13:18:19,784 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 269)
+2025-11-24 13:18:19,862 - gen_cards.py - INFO - Henry Cuellar has never disagreed
+2025-11-24 13:18:19,891 - gen_cards.py - INFO - No military record for Henry Cuellar. Skip.
+2025-11-24 13:18:19,891 - gen_cards.py - WARNING - No congressional stats found for Henry Cuellar. Skip.
+2025-11-24 13:18:19,891 - gen_cards.py - WARNING - No awards found for Henry Cuellar. Skip.
+2025-11-24 13:18:20,168 - gen_cards.py - INFO - Created card: cards\henry_cuellar_card.png
+2025-11-24 13:18:20,350 - gen_cards.py - DEBUG - Success image pull for John R. Carter
+2025-11-24 13:18:20,356 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 263)
+2025-11-24 13:18:20,427 - gen_cards.py - INFO - John R. Carter has never disagreed
+2025-11-24 13:18:20,479 - gen_cards.py - INFO - No military record for John R. Carter. Skip.
+2025-11-24 13:18:20,479 - gen_cards.py - WARNING - No congressional stats found for John R. Carter. Skip.
+2025-11-24 13:18:20,479 - gen_cards.py - WARNING - No awards found for John R. Carter. Skip.
+2025-11-24 13:18:20,789 - gen_cards.py - INFO - Created card: cards\john_r_carter_card.png
+2025-11-24 13:18:20,920 - gen_cards.py - DEBUG - Success image pull for Lloyd Doggett
+2025-11-24 13:18:21,354 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 214)
+2025-11-24 13:18:21,431 - gen_cards.py - INFO - No military record for Lloyd Doggett. Skip.
+2025-11-24 13:18:21,431 - gen_cards.py - WARNING - No congressional stats found for Lloyd Doggett. Skip.
+2025-11-24 13:18:21,431 - gen_cards.py - WARNING - No awards found for Lloyd Doggett. Skip.
+2025-11-24 13:18:21,671 - gen_cards.py - INFO - Created card: cards\lloyd_doggett_card.png
+2025-11-24 13:18:23,814 - gen_cards.py - DEBUG - Success image pull for Craig A. Goldman
+2025-11-24 13:18:23,884 - gen_cards.py - INFO - Craig A. Goldman has never been absent
+2025-11-24 13:18:23,910 - gen_cards.py - INFO - No military record for Craig A. Goldman. Skip.
+2025-11-24 13:18:23,910 - gen_cards.py - WARNING - No congressional stats found for Craig A. Goldman. Skip.
+2025-11-24 13:18:23,911 - gen_cards.py - WARNING - No awards found for Craig A. Goldman. Skip.
+2025-11-24 13:18:24,170 - gen_cards.py - INFO - Created card: cards\craig_a_goldman_card.png
+2025-11-24 13:18:24,458 - gen_cards.py - DEBUG - Success image pull for Sheri Biggs
+2025-11-24 13:18:24,537 - gen_cards.py - INFO - Sheri Biggs has never been absent
+2025-11-24 13:18:24,563 - gen_cards.py - WARNING - No work history found for Sheri Biggs. Skip.
+2025-11-24 13:18:24,563 - gen_cards.py - WARNING - No congressional stats found for Sheri Biggs. Skip.
+2025-11-24 13:18:24,564 - gen_cards.py - WARNING - No awards found for Sheri Biggs. Skip.
+2025-11-24 13:18:24,837 - gen_cards.py - INFO - Created card: cards\sheri_biggs_card.png
+2025-11-24 13:18:25,037 - gen_cards.py - DEBUG - Success image pull for Keith Self
+2025-11-24 13:18:25,041 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:18:25,139 - gen_cards.py - WARNING - No congressional stats found for Keith Self. Skip.
+2025-11-24 13:18:25,139 - gen_cards.py - WARNING - No awards found for Keith Self. Skip.
+2025-11-24 13:18:25,273 - gen_cards.py - ERROR - Text box 2 for Keith Self exceeds card dimensions by 222.0 pixels
+2025-11-24 13:18:25,436 - gen_cards.py - INFO - Created card: cards\keith_self_card.png
+2025-11-24 13:18:25,588 - gen_cards.py - DEBUG - Success image pull for Andrew Ogles
+2025-11-24 13:18:25,591 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:18:25,664 - gen_cards.py - INFO - No military record for Andrew Ogles. Skip.
+2025-11-24 13:18:25,664 - gen_cards.py - WARNING - No congressional stats found for Andrew Ogles. Skip.
+2025-11-24 13:18:25,665 - gen_cards.py - WARNING - No awards found for Andrew Ogles. Skip.
+2025-11-24 13:18:25,811 - gen_cards.py - ERROR - Text box 2 for Andrew Ogles exceeds card dimensions by 217.0 pixels
+2025-11-24 13:18:25,981 - gen_cards.py - INFO - Created card: cards\andrew_ogles_card.png
+2025-11-24 13:18:26,239 - gen_cards.py - DEBUG - Success image pull for Nathaniel Moran
+2025-11-24 13:18:26,332 - gen_cards.py - INFO - No military record for Nathaniel Moran. Skip.
+2025-11-24 13:18:26,332 - gen_cards.py - WARNING - No congressional stats found for Nathaniel Moran. Skip.
+2025-11-24 13:18:26,332 - gen_cards.py - WARNING - No awards found for Nathaniel Moran. Skip.
+2025-11-24 13:18:26,434 - gen_cards.py - ERROR - Text box 2 for Nathaniel Moran exceeds card dimensions by 173.0 pixels
+2025-11-24 13:18:26,615 - gen_cards.py - INFO - Created card: cards\nathaniel_moran_card.png
+2025-11-24 13:18:26,774 - gen_cards.py - DEBUG - Success image pull for Morgan Luttrell
+2025-11-24 13:18:26,777 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:18:26,862 - gen_cards.py - WARNING - No congressional stats found for Morgan Luttrell. Skip.
+2025-11-24 13:18:26,862 - gen_cards.py - WARNING - No awards found for Morgan Luttrell. Skip.
+2025-11-24 13:18:27,006 - gen_cards.py - ERROR - Text box 2 for Morgan Luttrell exceeds card dimensions by 432.0 pixels
+2025-11-24 13:18:27,175 - gen_cards.py - INFO - Created card: cards\morgan_luttrell_card.png
+2025-11-24 13:18:27,364 - gen_cards.py - DEBUG - Success image pull for Russell Fry
+2025-11-24 13:18:27,367 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:18:27,416 - gen_cards.py - INFO - Russell Fry has never been absent
+2025-11-24 13:18:27,444 - gen_cards.py - INFO - No military record for Russell Fry. Skip.
+2025-11-24 13:18:27,444 - gen_cards.py - WARNING - No congressional stats found for Russell Fry. Skip.
+2025-11-24 13:18:27,445 - gen_cards.py - WARNING - No awards found for Russell Fry. Skip.
+2025-11-24 13:18:27,588 - gen_cards.py - ERROR - Text box 2 for Russell Fry exceeds card dimensions by 30.0 pixels
+2025-11-24 13:18:27,796 - gen_cards.py - INFO - Created card: cards\russell_fry_card.png
+2025-11-24 13:18:28,429 - gen_cards.py - DEBUG - Success image pull for Monica De La Cruz
+2025-11-24 13:18:28,543 - gen_cards.py - INFO - No military record for Monica De La Cruz. Skip.
+2025-11-24 13:18:28,543 - gen_cards.py - WARNING - No congressional stats found for Monica De La Cruz. Skip.
+2025-11-24 13:18:28,543 - gen_cards.py - WARNING - No awards found for Monica De La Cruz. Skip.
+2025-11-24 13:18:28,834 - gen_cards.py - INFO - Created card: cards\monica_de_la_cruz_card.png
+2025-11-24 13:18:29,002 - gen_cards.py - DEBUG - Success image pull for Jake Ellzey
+2025-11-24 13:18:29,006 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:18:29,047 - gen_cards.py - INFO - Jake Ellzey has never disagreed
+2025-11-24 13:18:29,070 - gen_cards.py - WARNING - No congressional stats found for Jake Ellzey. Skip.
+2025-11-24 13:18:29,071 - gen_cards.py - WARNING - No awards found for Jake Ellzey. Skip.
+2025-11-24 13:18:29,359 - gen_cards.py - INFO - Created card: cards\jake_ellzey_card.png
+2025-11-24 13:18:29,544 - gen_cards.py - DEBUG - Success image pull for August Pfluger
+2025-11-24 13:18:29,548 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:18:29,611 - gen_cards.py - INFO - August Pfluger has never disagreed
+2025-11-24 13:18:29,654 - gen_cards.py - WARNING - No awards found for August Pfluger. Skip.
+2025-11-24 13:18:29,791 - gen_cards.py - ERROR - Text box 2 for August Pfluger exceeds card dimensions by 289.0 pixels
+2025-11-24 13:18:29,971 - gen_cards.py - INFO - Created card: cards\august_pfluger_card.png
+2025-11-24 13:18:30,226 - gen_cards.py - DEBUG - Success image pull for Ronny Jackson
+2025-11-24 13:18:30,229 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:18:30,321 - gen_cards.py - WARNING - No congressional stats found for Ronny Jackson. Skip.
+2025-11-24 13:18:30,321 - gen_cards.py - WARNING - No awards found for Ronny Jackson. Skip.
+2025-11-24 13:18:30,502 - gen_cards.py - ERROR - Text box 2 for Ronny Jackson exceeds card dimensions by 632.0 pixels
+2025-11-24 13:18:30,664 - gen_cards.py - INFO - Created card: cards\ronny_jackson_card.png
+2025-11-24 13:18:30,841 - gen_cards.py - DEBUG - Success image pull for Diana Harshbarger
+2025-11-24 13:18:30,843 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:18:30,917 - gen_cards.py - INFO - No military record for Diana Harshbarger. Skip.
+2025-11-24 13:18:30,917 - gen_cards.py - WARNING - No congressional stats found for Diana Harshbarger. Skip.
+2025-11-24 13:18:30,917 - gen_cards.py - WARNING - No awards found for Diana Harshbarger. Skip.
+2025-11-24 13:18:31,142 - gen_cards.py - INFO - Created card: cards\diana_harshbarger_card.png
+2025-11-24 13:18:31,333 - gen_cards.py - DEBUG - Success image pull for Pat Fallon
+2025-11-24 13:18:31,335 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:18:31,412 - gen_cards.py - WARNING - No congressional stats found for Pat Fallon. Skip.
+2025-11-24 13:18:31,412 - gen_cards.py - WARNING - No awards found for Pat Fallon. Skip.
+2025-11-24 13:18:31,581 - gen_cards.py - ERROR - Text box 2 for Pat Fallon exceeds card dimensions by 388.0 pixels
+2025-11-24 13:18:31,772 - gen_cards.py - INFO - Created card: cards\pat_fallon_card.png
+2025-11-24 13:18:31,939 - gen_cards.py - DEBUG - Success image pull for Veronica Escobar
+2025-11-24 13:18:32,342 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:18:32,432 - gen_cards.py - INFO - No military record for Veronica Escobar. Skip.
+2025-11-24 13:18:32,432 - gen_cards.py - WARNING - No congressional stats found for Veronica Escobar. Skip.
+2025-11-24 13:18:32,432 - gen_cards.py - WARNING - No awards found for Veronica Escobar. Skip.
+2025-11-24 13:18:32,654 - gen_cards.py - INFO - Created card: cards\veronica_escobar_card.png
+2025-11-24 13:18:33,143 - gen_cards.py - DEBUG - Success image pull for Lizzie Fletcher
+2025-11-24 13:18:33,565 - gen_cards.py - INFO - No military record for Lizzie Fletcher. Skip.
+2025-11-24 13:18:33,566 - gen_cards.py - WARNING - No congressional stats found for Lizzie Fletcher. Skip.
+2025-11-24 13:18:33,566 - gen_cards.py - WARNING - No awards found for Lizzie Fletcher. Skip.
+2025-11-24 13:18:33,795 - gen_cards.py - INFO - Created card: cards\lizzie_fletcher_card.png
+2025-11-24 13:18:33,960 - gen_cards.py - DEBUG - Success image pull for Lance Gooden
+2025-11-24 13:18:33,970 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:18:34,050 - gen_cards.py - INFO - No military record for Lance Gooden. Skip.
+2025-11-24 13:18:34,050 - gen_cards.py - WARNING - No congressional stats found for Lance Gooden. Skip.
+2025-11-24 13:18:34,050 - gen_cards.py - WARNING - No awards found for Lance Gooden. Skip.
+2025-11-24 13:18:34,172 - gen_cards.py - ERROR - Text box 2 for Lance Gooden exceeds card dimensions by 85.0 pixels
+2025-11-24 13:18:34,336 - gen_cards.py - INFO - Created card: cards\lance_gooden_card.png
+2025-11-24 13:18:34,493 - gen_cards.py - DEBUG - Success image pull for Dan Crenshaw
+2025-11-24 13:18:34,495 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 263)
+2025-11-24 13:18:34,535 - gen_cards.py - INFO - Dan Crenshaw has never disagreed
+2025-11-24 13:18:34,558 - gen_cards.py - WARNING - No work history found for Dan Crenshaw. Skip.
+2025-11-24 13:18:34,558 - gen_cards.py - WARNING - No congressional stats found for Dan Crenshaw. Skip.
+2025-11-24 13:18:34,558 - gen_cards.py - WARNING - No awards found for Dan Crenshaw. Skip.
+2025-11-24 13:18:34,843 - gen_cards.py - INFO - Created card: cards\dan_crenshaw_card.png
+2025-11-24 13:18:35,015 - gen_cards.py - DEBUG - Success image pull for John W. Rose
+2025-11-24 13:18:35,020 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 263)
+2025-11-24 13:18:35,105 - gen_cards.py - INFO - No military record for John W. Rose. Skip.
+2025-11-24 13:18:35,105 - gen_cards.py - WARNING - No congressional stats found for John W. Rose. Skip.
+2025-11-24 13:18:35,105 - gen_cards.py - WARNING - No awards found for John W. Rose. Skip.
+2025-11-24 13:18:35,229 - gen_cards.py - ERROR - Text box 2 for John W. Rose exceeds card dimensions by 207.0 pixels
+2025-11-24 13:18:35,419 - gen_cards.py - INFO - Created card: cards\john_w_rose_card.png
+2025-11-24 13:18:35,571 - gen_cards.py - DEBUG - Success image pull for Tim Burchett
+2025-11-24 13:18:35,582 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 263)
+2025-11-24 13:18:35,664 - gen_cards.py - INFO - No military record for Tim Burchett. Skip.
+2025-11-24 13:18:35,664 - gen_cards.py - WARNING - No congressional stats found for Tim Burchett. Skip.
+2025-11-24 13:18:35,664 - gen_cards.py - WARNING - No awards found for Tim Burchett. Skip.
+2025-11-24 13:18:35,838 - gen_cards.py - ERROR - Text box 2 for Tim Burchett exceeds card dimensions by 227.0 pixels
+2025-11-24 13:18:36,019 - gen_cards.py - INFO - Created card: cards\tim_burchett_card.png
+2025-11-24 13:18:36,170 - gen_cards.py - DEBUG - Success image pull for Dusty Johnson
+2025-11-24 13:18:36,177 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:18:36,249 - gen_cards.py - INFO - Dusty Johnson has never disagreed
+2025-11-24 13:18:36,288 - gen_cards.py - INFO - No military record for Dusty Johnson. Skip.
+2025-11-24 13:18:36,289 - gen_cards.py - WARNING - No congressional stats found for Dusty Johnson. Skip.
+2025-11-24 13:18:36,289 - gen_cards.py - WARNING - No awards found for Dusty Johnson. Skip.
+2025-11-24 13:18:36,567 - gen_cards.py - ERROR - Text box 2 for Dusty Johnson exceeds card dimensions by 113.0 pixels
+2025-11-24 13:18:36,779 - gen_cards.py - INFO - Created card: cards\dusty_johnson_card.png
+2025-11-24 13:18:36,974 - gen_cards.py - DEBUG - Success image pull for William R. Timmons
+2025-11-24 13:18:36,978 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:18:37,089 - gen_cards.py - WARNING - No congressional stats found for William R. Timmons. Skip.
+2025-11-24 13:18:37,089 - gen_cards.py - WARNING - No awards found for William R. Timmons. Skip.
+2025-11-24 13:18:37,276 - gen_cards.py - ERROR - Text box 2 for William R. Timmons exceeds card dimensions by 422.0 pixels
+2025-11-24 13:18:37,455 - gen_cards.py - INFO - Created card: cards\william_r_timmons_card.png
+2025-11-24 13:18:37,865 - gen_cards.py - DEBUG - Success image pull for Ralph Norman
+2025-11-24 13:18:37,870 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 263)
+2025-11-24 13:18:37,984 - gen_cards.py - INFO - No military record for Ralph Norman. Skip.
+2025-11-24 13:18:37,984 - gen_cards.py - WARNING - No congressional stats found for Ralph Norman. Skip.
+2025-11-24 13:18:37,985 - gen_cards.py - WARNING - No awards found for Ralph Norman. Skip.
+2025-11-24 13:18:38,333 - gen_cards.py - INFO - Created card: cards\ralph_norman_card.png
+2025-11-24 13:18:38,508 - gen_cards.py - DEBUG - Success image pull for Jodey C. Arrington
+2025-11-24 13:18:38,512 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 233)
+2025-11-24 13:18:38,645 - gen_cards.py - INFO - No military record for Jodey C. Arrington. Skip.
+2025-11-24 13:18:38,645 - gen_cards.py - WARNING - No awards found for Jodey C. Arrington. Skip.
+2025-11-24 13:18:39,005 - gen_cards.py - INFO - Created card: cards\jodey_c_arrington_card.png
+2025-11-24 13:18:39,246 - gen_cards.py - DEBUG - Success image pull for David Kustoff
+2025-11-24 13:18:39,250 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 263)
+2025-11-24 13:18:39,336 - gen_cards.py - INFO - No military record for David Kustoff. Skip.
+2025-11-24 13:18:39,336 - gen_cards.py - WARNING - No congressional stats found for David Kustoff. Skip.
+2025-11-24 13:18:39,337 - gen_cards.py - WARNING - No awards found for David Kustoff. Skip.
+2025-11-24 13:18:39,542 - gen_cards.py - INFO - Created card: cards\david_kustoff_card.png
+2025-11-24 13:18:40,036 - gen_cards.py - DEBUG - Success image pull for Joaquin Castro
+2025-11-24 13:18:40,469 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 221)
+2025-11-24 13:18:40,549 - gen_cards.py - INFO - No military record for Joaquin Castro. Skip.
+2025-11-24 13:18:40,549 - gen_cards.py - WARNING - No awards found for Joaquin Castro. Skip.
+2025-11-24 13:18:40,718 - gen_cards.py - ERROR - Text box 2 for Joaquin Castro exceeds card dimensions by 212.0 pixels
+2025-11-24 13:18:40,889 - gen_cards.py - INFO - Created card: cards\joaquin_castro_card.png
+2025-11-24 13:18:41,036 - gen_cards.py - DEBUG - Success image pull for Randy K. Sr. Weber
+2025-11-24 13:18:41,039 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:18:41,113 - gen_cards.py - INFO - No military record for Randy K. Sr. Weber. Skip.
+2025-11-24 13:18:41,114 - gen_cards.py - WARNING - No congressional stats found for Randy K. Sr. Weber. Skip.
+2025-11-24 13:18:41,114 - gen_cards.py - WARNING - No awards found for Randy K. Sr. Weber. Skip.
+2025-11-24 13:18:41,389 - gen_cards.py - INFO - Created card: cards\randy_k_sr_weber_card.png
+2025-11-24 13:18:41,538 - gen_cards.py - DEBUG - Success image pull for Scott DesJarlais
+2025-11-24 13:18:41,542 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 228)
+2025-11-24 13:18:41,627 - gen_cards.py - INFO - No military record for Scott DesJarlais. Skip.
+2025-11-24 13:18:41,627 - gen_cards.py - WARNING - No congressional stats found for Scott DesJarlais. Skip.
+2025-11-24 13:18:41,627 - gen_cards.py - WARNING - No awards found for Scott DesJarlais. Skip.
+2025-11-24 13:18:41,860 - gen_cards.py - INFO - Created card: cards\scott_desjarlais_card.png
+2025-11-24 13:18:42,038 - gen_cards.py - DEBUG - Success image pull for Charles J. "Chuck" Fleischmann
+2025-11-24 13:18:42,041 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 263)
+2025-11-24 13:18:42,094 - gen_cards.py - INFO - Charles J. "Chuck" Fleischmann has never disagreed
+2025-11-24 13:18:42,094 - gen_cards.py - INFO - Charles J. "Chuck" Fleischmann has never been absent
+2025-11-24 13:18:42,115 - gen_cards.py - INFO - No military record for Charles J. "Chuck" Fleischmann. Skip.
+2025-11-24 13:18:42,115 - gen_cards.py - WARNING - No congressional stats found for Charles J. "Chuck" Fleischmann. Skip.
+2025-11-24 13:18:42,115 - gen_cards.py - WARNING - No awards found for Charles J. "Chuck" Fleischmann. Skip.
+2025-11-24 13:18:42,395 - gen_cards.py - INFO - Created card: cards\charles_j_chuck_fleischmann_card.png
+2025-11-24 13:18:42,561 - gen_cards.py - DEBUG - Success image pull for Steve Cohen
+2025-11-24 13:18:42,940 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 204)
+2025-11-24 13:18:42,995 - gen_cards.py - INFO - Steve Cohen has never disagreed
+2025-11-24 13:18:43,018 - gen_cards.py - INFO - No military record for Steve Cohen. Skip.
+2025-11-24 13:18:43,018 - gen_cards.py - WARNING - No congressional stats found for Steve Cohen. Skip.
+2025-11-24 13:18:43,019 - gen_cards.py - WARNING - No awards found for Steve Cohen. Skip.
+2025-11-24 13:18:43,153 - gen_cards.py - ERROR - Text box 2 for Steve Cohen exceeds card dimensions by 147.0 pixels
+2025-11-24 13:18:43,306 - gen_cards.py - INFO - Created card: cards\steve_cohen_card.png
+2025-11-24 13:18:43,662 - gen_cards.py - DEBUG - Success image pull for Pete Sessions
+2025-11-24 13:18:43,665 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 245)
+2025-11-24 13:18:43,703 - gen_cards.py - INFO - Pete Sessions has never been absent
+2025-11-24 13:18:43,734 - gen_cards.py - INFO - No military record for Pete Sessions. Skip.
+2025-11-24 13:18:43,734 - gen_cards.py - WARNING - No awards found for Pete Sessions. Skip.
+2025-11-24 13:18:44,097 - gen_cards.py - INFO - Created card: cards\pete_sessions_card.png
+2025-11-24 13:18:44,319 - gen_cards.py - DEBUG - Success image pull for Michael T. McCaul
+2025-11-24 13:18:44,329 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 235)
+2025-11-24 13:18:44,380 - gen_cards.py - INFO - Michael T. McCaul has never disagreed
+2025-11-24 13:18:44,403 - gen_cards.py - INFO - No military record for Michael T. McCaul. Skip.
+2025-11-24 13:18:44,403 - gen_cards.py - WARNING - No awards found for Michael T. McCaul. Skip.
+2025-11-24 13:18:44,748 - gen_cards.py - INFO - Created card: cards\michael_t_mccaul_card.png
+2025-11-24 13:18:44,909 - gen_cards.py - DEBUG - Success image pull for Al Green
+2025-11-24 13:18:45,295 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 198)
+2025-11-24 13:18:45,378 - gen_cards.py - INFO - No military record for Al Green. Skip.
+2025-11-24 13:18:45,378 - gen_cards.py - WARNING - No congressional stats found for Al Green. Skip.
+2025-11-24 13:18:45,378 - gen_cards.py - WARNING - No awards found for Al Green. Skip.
+2025-11-24 13:18:45,630 - gen_cards.py - INFO - Created card: cards\al_green_card.png
+2025-11-24 13:18:46,134 - gen_cards.py - DEBUG - Success image pull for James E. Clyburn
+2025-11-24 13:18:46,614 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 245)
+2025-11-24 13:18:46,697 - gen_cards.py - INFO - No military record for James E. Clyburn. Skip.
+2025-11-24 13:18:46,881 - gen_cards.py - ERROR - Text box 2 for James E. Clyburn exceeds card dimensions by 227.0 pixels
+2025-11-24 13:18:47,087 - gen_cards.py - INFO - Created card: cards\james_e_clyburn_card.png
+2025-11-24 13:18:47,572 - gen_cards.py - DEBUG - Success image pull for Ryan Mackenzie
+2025-11-24 13:18:47,672 - gen_cards.py - INFO - Ryan Mackenzie has never been absent
+2025-11-24 13:18:47,710 - gen_cards.py - INFO - No military record for Ryan Mackenzie. Skip.
+2025-11-24 13:18:47,711 - gen_cards.py - WARNING - No congressional stats found for Ryan Mackenzie. Skip.
+2025-11-24 13:18:47,711 - gen_cards.py - WARNING - No awards found for Ryan Mackenzie. Skip.
+2025-11-24 13:18:47,899 - gen_cards.py - ERROR - Text box 2 for Ryan Mackenzie exceeds card dimensions by 274.0 pixels
+2025-11-24 13:18:48,120 - gen_cards.py - INFO - Created card: cards\ryan_mackenzie_card.png
+2025-11-24 13:18:49,217 - gen_cards.py - DEBUG - Success image pull for Pablo Jose Hernández
+2025-11-24 13:18:49,703 - gen_cards.py - INFO - Pablo Jose Hernández has never disagreed
+2025-11-24 13:18:49,726 - gen_cards.py - INFO - No military record for Pablo Jose Hernández. Skip.
+2025-11-24 13:18:49,727 - gen_cards.py - WARNING - No congressional stats found for Pablo Jose Hernández. Skip.
+2025-11-24 13:18:49,727 - gen_cards.py - WARNING - No awards found for Pablo Jose Hernández. Skip.
+2025-11-24 13:18:50,024 - gen_cards.py - INFO - Created card: cards\pablo_jose_hernández_card.png
+2025-11-24 13:18:50,353 - gen_cards.py - DEBUG - Success image pull for Maxine Dexter
+2025-11-24 13:18:51,073 - gen_cards.py - INFO - No military record for Maxine Dexter. Skip.
+2025-11-24 13:18:51,074 - gen_cards.py - WARNING - No congressional stats found for Maxine Dexter. Skip.
+2025-11-24 13:18:51,074 - gen_cards.py - WARNING - No awards found for Maxine Dexter. Skip.
+2025-11-24 13:18:51,366 - gen_cards.py - INFO - Created card: cards\maxine_dexter_card.png
+2025-11-24 13:18:51,906 - gen_cards.py - DEBUG - Success image pull for Robert P. Bresnahan
+2025-11-24 13:18:51,977 - gen_cards.py - INFO - Robert P. Bresnahan has never disagreed
+2025-11-24 13:18:52,012 - gen_cards.py - INFO - No military record for Robert P. Bresnahan. Skip.
+2025-11-24 13:18:52,012 - gen_cards.py - WARNING - No congressional stats found for Robert P. Bresnahan. Skip.
+2025-11-24 13:18:52,012 - gen_cards.py - WARNING - No awards found for Robert P. Bresnahan. Skip.
+2025-11-24 13:18:52,156 - gen_cards.py - ERROR - Text box 2 for Robert P. Bresnahan exceeds card dimensions by 79.0 pixels
+2025-11-24 13:18:52,317 - gen_cards.py - INFO - Created card: cards\robert_p_bresnahan_card.png
+2025-11-24 13:18:52,728 - gen_cards.py - DEBUG - Success image pull for Janelle S. Bynum
+2025-11-24 13:18:53,164 - gen_cards.py - INFO - Janelle S. Bynum has never disagreed
+2025-11-24 13:18:53,164 - gen_cards.py - INFO - Janelle S. Bynum has never been absent
+2025-11-24 13:18:53,183 - gen_cards.py - INFO - No military record for Janelle S. Bynum. Skip.
+2025-11-24 13:18:53,184 - gen_cards.py - WARNING - No congressional stats found for Janelle S. Bynum. Skip.
+2025-11-24 13:18:53,184 - gen_cards.py - WARNING - No awards found for Janelle S. Bynum. Skip.
+2025-11-24 13:18:53,374 - gen_cards.py - INFO - Created card: cards\janelle_s_bynum_card.png
+2025-11-24 13:18:53,612 - gen_cards.py - DEBUG - Success image pull for Gabe Amo
+2025-11-24 13:18:54,020 - gen_cards.py - INFO - Gabe Amo has never disagreed
+2025-11-24 13:18:54,020 - gen_cards.py - INFO - Gabe Amo has never been absent
+2025-11-24 13:18:54,044 - gen_cards.py - INFO - No military record for Gabe Amo. Skip.
+2025-11-24 13:18:54,044 - gen_cards.py - WARNING - No congressional stats found for Gabe Amo. Skip.
+2025-11-24 13:18:54,044 - gen_cards.py - WARNING - No awards found for Gabe Amo. Skip.
+2025-11-24 13:18:54,370 - gen_cards.py - INFO - Created card: cards\gabe_amo_card.png
+2025-11-24 13:18:54,518 - gen_cards.py - DEBUG - Success image pull for Andrea Salinas
+2025-11-24 13:18:54,878 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:18:54,916 - gen_cards.py - INFO - Andrea Salinas has never disagreed
+2025-11-24 13:18:54,943 - gen_cards.py - INFO - No military record for Andrea Salinas. Skip.
+2025-11-24 13:18:54,944 - gen_cards.py - WARNING - No congressional stats found for Andrea Salinas. Skip.
+2025-11-24 13:18:54,944 - gen_cards.py - WARNING - No awards found for Andrea Salinas. Skip.
+2025-11-24 13:18:55,089 - gen_cards.py - ERROR - Text box 2 for Andrea Salinas exceeds card dimensions by 11.0 pixels
+2025-11-24 13:18:55,267 - gen_cards.py - INFO - Created card: cards\andrea_salinas_card.png
+2025-11-24 13:18:55,423 - gen_cards.py - DEBUG - Success image pull for Seth Magaziner
+2025-11-24 13:18:55,762 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:18:55,801 - gen_cards.py - INFO - Seth Magaziner has never disagreed
+2025-11-24 13:18:55,829 - gen_cards.py - INFO - No military record for Seth Magaziner. Skip.
+2025-11-24 13:18:55,829 - gen_cards.py - WARNING - No congressional stats found for Seth Magaziner. Skip.
+2025-11-24 13:18:55,829 - gen_cards.py - WARNING - No awards found for Seth Magaziner. Skip.
+2025-11-24 13:18:56,099 - gen_cards.py - INFO - Created card: cards\seth_magaziner_card.png
+2025-11-24 13:18:56,245 - gen_cards.py - DEBUG - Success image pull for Summer L. Lee
+2025-11-24 13:18:56,590 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:18:56,640 - gen_cards.py - INFO - Summer L. Lee has never been absent
+2025-11-24 13:18:56,666 - gen_cards.py - INFO - No military record for Summer L. Lee. Skip.
+2025-11-24 13:18:56,666 - gen_cards.py - WARNING - No congressional stats found for Summer L. Lee. Skip.
+2025-11-24 13:18:56,667 - gen_cards.py - WARNING - No awards found for Summer L. Lee. Skip.
+2025-11-24 13:18:56,967 - gen_cards.py - INFO - Created card: cards\summer_l_lee_card.png
+2025-11-24 13:18:57,164 - gen_cards.py - DEBUG - Success image pull for Val T. Hoyle
+2025-11-24 13:18:57,531 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:18:57,574 - gen_cards.py - INFO - Val T. Hoyle has never disagreed
+2025-11-24 13:18:57,598 - gen_cards.py - INFO - No military record for Val T. Hoyle. Skip.
+2025-11-24 13:18:57,598 - gen_cards.py - WARNING - No congressional stats found for Val T. Hoyle. Skip.
+2025-11-24 13:18:57,598 - gen_cards.py - WARNING - No awards found for Val T. Hoyle. Skip.
+2025-11-24 13:18:57,876 - gen_cards.py - INFO - Created card: cards\val_t_hoyle_card.png
+2025-11-24 13:18:58,053 - gen_cards.py - DEBUG - Success image pull for Christopher R. Deluzio
+2025-11-24 13:18:58,421 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:18:58,470 - gen_cards.py - INFO - Christopher R. Deluzio has never disagreed
+2025-11-24 13:18:58,470 - gen_cards.py - INFO - Christopher R. Deluzio has never been absent
+2025-11-24 13:18:58,492 - gen_cards.py - WARNING - No congressional stats found for Christopher R. Deluzio. Skip.
+2025-11-24 13:18:58,492 - gen_cards.py - WARNING - No awards found for Christopher R. Deluzio. Skip.
+2025-11-24 13:18:58,749 - gen_cards.py - INFO - Created card: cards\christopher_r_deluzio_card.png
+2025-11-24 13:18:58,931 - gen_cards.py - DEBUG - Success image pull for Josh Brecheen
+2025-11-24 13:18:58,933 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:18:59,015 - gen_cards.py - INFO - No military record for Josh Brecheen. Skip.
+2025-11-24 13:18:59,015 - gen_cards.py - WARNING - No congressional stats found for Josh Brecheen. Skip.
+2025-11-24 13:18:59,015 - gen_cards.py - WARNING - No awards found for Josh Brecheen. Skip.
+2025-11-24 13:18:59,098 - gen_cards.py - ERROR - Text box 2 for Josh Brecheen exceeds card dimensions by 41.0 pixels
+2025-11-24 13:18:59,263 - gen_cards.py - INFO - Created card: cards\josh_brecheen_card.png
+2025-11-24 13:18:59,393 - gen_cards.py - DEBUG - Success image pull for Nancy Mace
+2025-11-24 13:18:59,397 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:18:59,507 - gen_cards.py - INFO - No military record for Nancy Mace. Skip.
+2025-11-24 13:18:59,507 - gen_cards.py - WARNING - No congressional stats found for Nancy Mace. Skip.
+2025-11-24 13:18:59,507 - gen_cards.py - WARNING - No awards found for Nancy Mace. Skip.
+2025-11-24 13:18:59,684 - gen_cards.py - ERROR - Text box 2 for Nancy Mace exceeds card dimensions by 505.0 pixels
+2025-11-24 13:18:59,848 - gen_cards.py - INFO - Created card: cards\nancy_mace_card.png
+2025-11-24 13:19:00,041 - gen_cards.py - DEBUG - Success image pull for Stephanie I. Bice
+2025-11-24 13:19:00,045 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:19:00,088 - gen_cards.py - INFO - Stephanie I. Bice has never disagreed
+2025-11-24 13:19:00,120 - gen_cards.py - INFO - No military record for Stephanie I. Bice. Skip.
+2025-11-24 13:19:00,120 - gen_cards.py - WARNING - No congressional stats found for Stephanie I. Bice. Skip.
+2025-11-24 13:19:00,120 - gen_cards.py - WARNING - No awards found for Stephanie I. Bice. Skip.
+2025-11-24 13:19:00,433 - gen_cards.py - INFO - Created card: cards\stephanie_i_bice_card.png
+2025-11-24 13:19:00,571 - gen_cards.py - DEBUG - Success image pull for Cliff Bentz
+2025-11-24 13:19:00,575 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:19:00,650 - gen_cards.py - INFO - Cliff Bentz has never disagreed
+2025-11-24 13:19:00,651 - gen_cards.py - INFO - Cliff Bentz has never been absent
+2025-11-24 13:19:00,670 - gen_cards.py - INFO - No military record for Cliff Bentz. Skip.
+2025-11-24 13:19:00,670 - gen_cards.py - WARNING - No congressional stats found for Cliff Bentz. Skip.
+2025-11-24 13:19:00,670 - gen_cards.py - WARNING - No awards found for Cliff Bentz. Skip.
+2025-11-24 13:19:00,955 - gen_cards.py - INFO - Created card: cards\cliff_bentz_card.png
+2025-11-24 13:19:01,183 - gen_cards.py - DEBUG - Success image pull for Guy Reschenthaler
+2025-11-24 13:19:01,187 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:19:01,270 - gen_cards.py - WARNING - No congressional stats found for Guy Reschenthaler. Skip.
+2025-11-24 13:19:01,270 - gen_cards.py - WARNING - No awards found for Guy Reschenthaler. Skip.
+2025-11-24 13:19:01,365 - gen_cards.py - ERROR - Text box 2 for Guy Reschenthaler exceeds card dimensions by 46.0 pixels
+2025-11-24 13:19:01,537 - gen_cards.py - INFO - Created card: cards\guy_reschenthaler_card.png
+2025-11-24 13:19:01,692 - gen_cards.py - DEBUG - Success image pull for John Joyce
+2025-11-24 13:19:01,695 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:19:01,753 - gen_cards.py - INFO - John Joyce has never been absent
+2025-11-24 13:19:01,782 - gen_cards.py - INFO - No military record for John Joyce. Skip.
+2025-11-24 13:19:01,782 - gen_cards.py - WARNING - No work history found for John Joyce. Skip.
+2025-11-24 13:19:01,782 - gen_cards.py - WARNING - No congressional stats found for John Joyce. Skip.
+2025-11-24 13:19:01,782 - gen_cards.py - WARNING - No awards found for John Joyce. Skip.
+2025-11-24 13:19:01,989 - gen_cards.py - INFO - Created card: cards\john_joyce_card.png
+2025-11-24 13:19:02,637 - gen_cards.py - DEBUG - Success image pull for Daniel Meuser
+2025-11-24 13:19:02,720 - gen_cards.py - INFO - Daniel Meuser has never disagreed
+2025-11-24 13:19:02,742 - gen_cards.py - INFO - No military record for Daniel Meuser. Skip.
+2025-11-24 13:19:02,743 - gen_cards.py - WARNING - No congressional stats found for Daniel Meuser. Skip.
+2025-11-24 13:19:02,743 - gen_cards.py - WARNING - No awards found for Daniel Meuser. Skip.
+2025-11-24 13:19:03,014 - gen_cards.py - INFO - Created card: cards\daniel_meuser_card.png
+2025-11-24 13:19:03,181 - gen_cards.py - DEBUG - Success image pull for Madeleine Dean
+2025-11-24 13:19:03,516 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:19:03,589 - gen_cards.py - INFO - Madeleine Dean has never disagreed
+2025-11-24 13:19:03,612 - gen_cards.py - INFO - No military record for Madeleine Dean. Skip.
+2025-11-24 13:19:03,612 - gen_cards.py - WARNING - No awards found for Madeleine Dean. Skip.
+2025-11-24 13:19:03,764 - gen_cards.py - ERROR - Text box 2 for Madeleine Dean exceeds card dimensions by 264.0 pixels
+2025-11-24 13:19:03,931 - gen_cards.py - INFO - Created card: cards\madeleine_dean_card.png
+2025-11-24 13:19:04,087 - gen_cards.py - DEBUG - Success image pull for Kevin Hern
+2025-11-24 13:19:04,095 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 227)
+2025-11-24 13:19:04,175 - gen_cards.py - INFO - No military record for Kevin Hern. Skip.
+2025-11-24 13:19:04,176 - gen_cards.py - WARNING - "b" not a registered number, adding whatever number we've found up until now.
+2025-11-24 13:19:04,176 - gen_cards.py - WARNING - "november" not a registered number, adding whatever number we've found up until now.
+2025-11-24 13:19:04,176 - gen_cards.py - WARNING - "13" not a registered number, adding whatever number we've found up until now.
+2025-11-24 13:19:04,176 - gen_cards.py - WARNING - "2018-present" not a registered number, adding whatever number we've found up until now.
+2025-11-24 13:19:04,177 - gen_cards.py - WARNING - No awards found for Kevin Hern. Skip.
+2025-11-24 13:19:04,317 - gen_cards.py - ERROR - Text box 2 for Kevin Hern exceeds card dimensions by 56.0 pixels
+2025-11-24 13:19:04,497 - gen_cards.py - INFO - Created card: cards\kevin_hern_card.png
+2025-11-24 13:19:04,628 - gen_cards.py - DEBUG - Success image pull for Mary Gay Scanlon
+2025-11-24 13:19:04,992 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 263)
+2025-11-24 13:19:05,069 - gen_cards.py - INFO - No military record for Mary Gay Scanlon. Skip.
+2025-11-24 13:19:05,069 - gen_cards.py - WARNING - No congressional stats found for Mary Gay Scanlon. Skip.
+2025-11-24 13:19:05,070 - gen_cards.py - WARNING - No awards found for Mary Gay Scanlon. Skip.
+2025-11-24 13:19:05,350 - gen_cards.py - INFO - Created card: cards\mary_gay_scanlon_card.png
+2025-11-24 13:19:05,483 - gen_cards.py - DEBUG - Success image pull for Lloyd Smucker
+2025-11-24 13:19:05,487 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 263)
+2025-11-24 13:19:05,541 - gen_cards.py - INFO - Lloyd Smucker has never disagreed
+2025-11-24 13:19:05,568 - gen_cards.py - INFO - No military record for Lloyd Smucker. Skip.
+2025-11-24 13:19:05,568 - gen_cards.py - WARNING - No congressional stats found for Lloyd Smucker. Skip.
+2025-11-24 13:19:05,569 - gen_cards.py - WARNING - No awards found for Lloyd Smucker. Skip.
+2025-11-24 13:19:05,815 - gen_cards.py - INFO - Created card: cards\lloyd_smucker_card.png
+2025-11-24 13:19:05,985 - gen_cards.py - DEBUG - Success image pull for Brian K. Fitzpatrick
+2025-11-24 13:19:05,988 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 263)
+2025-11-24 13:19:06,061 - gen_cards.py - INFO - Brian K. Fitzpatrick has never disagreed
+2025-11-24 13:19:06,087 - gen_cards.py - INFO - No military record for Brian K. Fitzpatrick. Skip.
+2025-11-24 13:19:06,087 - gen_cards.py - WARNING - No congressional stats found for Brian K. Fitzpatrick. Skip.
+2025-11-24 13:19:06,088 - gen_cards.py - WARNING - No awards found for Brian K. Fitzpatrick. Skip.
+2025-11-24 13:19:06,192 - gen_cards.py - ERROR - Text box 2 for Brian K. Fitzpatrick exceeds card dimensions by 25.0 pixels
+2025-11-24 13:19:06,366 - gen_cards.py - INFO - Created card: cards\brian_k_fitzpatrick_card.png
+2025-11-24 13:19:06,524 - gen_cards.py - DEBUG - Success image pull for Dwight Evans
+2025-11-24 13:19:06,902 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 262)
+2025-11-24 13:19:06,985 - gen_cards.py - INFO - No military record for Dwight Evans. Skip.
+2025-11-24 13:19:06,985 - gen_cards.py - WARNING - No congressional stats found for Dwight Evans. Skip.
+2025-11-24 13:19:06,986 - gen_cards.py - WARNING - No awards found for Dwight Evans. Skip.
+2025-11-24 13:19:07,206 - gen_cards.py - INFO - Created card: cards\dwight_evans_card.png
+2025-11-24 13:19:07,333 - gen_cards.py - DEBUG - Success image pull for Brendan F. Boyle
+2025-11-24 13:19:07,691 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 263)
+2025-11-24 13:19:07,749 - gen_cards.py - INFO - Brendan F. Boyle has never disagreed
+2025-11-24 13:19:07,772 - gen_cards.py - INFO - No military record for Brendan F. Boyle. Skip.
+2025-11-24 13:19:07,772 - gen_cards.py - WARNING - No congressional stats found for Brendan F. Boyle. Skip.
+2025-11-24 13:19:07,772 - gen_cards.py - WARNING - No awards found for Brendan F. Boyle. Skip.
+2025-11-24 13:19:07,991 - gen_cards.py - INFO - Created card: cards\brendan_f_boyle_card.png
+2025-11-24 13:19:08,213 - gen_cards.py - DEBUG - Success image pull for Scott Perry
+2025-11-24 13:19:08,316 - gen_cards.py - WARNING - No congressional stats found for Scott Perry. Skip.
+2025-11-24 13:19:08,316 - gen_cards.py - WARNING - No awards found for Scott Perry. Skip.
+2025-11-24 13:19:08,547 - gen_cards.py - ERROR - Text box 2 for Scott Perry exceeds card dimensions by 456.0 pixels
+2025-11-24 13:19:08,726 - gen_cards.py - INFO - Created card: cards\scott_perry_card.png
+2025-11-24 13:19:08,856 - gen_cards.py - DEBUG - Success image pull for Suzanne Bonamici
+2025-11-24 13:19:09,392 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 263)
+2025-11-24 13:19:09,552 - gen_cards.py - INFO - No military record for Suzanne Bonamici. Skip.
+2025-11-24 13:19:09,552 - gen_cards.py - WARNING - No congressional stats found for Suzanne Bonamici. Skip.
+2025-11-24 13:19:09,553 - gen_cards.py - WARNING - No awards found for Suzanne Bonamici. Skip.
+2025-11-24 13:19:09,772 - gen_cards.py - ERROR - Text box 2 for Suzanne Bonamici exceeds card dimensions by 139.0 pixels
+2025-11-24 13:19:09,979 - gen_cards.py - INFO - Created card: cards\suzanne_bonamici_card.png
+2025-11-24 13:19:10,152 - gen_cards.py - DEBUG - Success image pull for Mike Kelly
+2025-11-24 13:19:10,156 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 263)
+2025-11-24 13:19:10,199 - gen_cards.py - INFO - Mike Kelly has never disagreed
+2025-11-24 13:19:10,227 - gen_cards.py - INFO - No military record for Mike Kelly. Skip.
+2025-11-24 13:19:10,227 - gen_cards.py - WARNING - No congressional stats found for Mike Kelly. Skip.
+2025-11-24 13:19:10,228 - gen_cards.py - WARNING - No awards found for Mike Kelly. Skip.
+2025-11-24 13:19:10,460 - gen_cards.py - INFO - Created card: cards\mike_kelly_card.png
+2025-11-24 13:19:10,623 - gen_cards.py - DEBUG - Success image pull for Glenn Thompson
+2025-11-24 13:19:10,628 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 260)
+2025-11-24 13:19:10,681 - gen_cards.py - INFO - Glenn Thompson has never disagreed
+2025-11-24 13:19:10,704 - gen_cards.py - INFO - No military record for Glenn Thompson. Skip.
+2025-11-24 13:19:10,704 - gen_cards.py - WARNING - No awards found for Glenn Thompson. Skip.
+2025-11-24 13:19:10,955 - gen_cards.py - INFO - Created card: cards\glenn_thompson_card.png
+2025-11-24 13:19:11,086 - gen_cards.py - DEBUG - Success image pull for Frank D. Lucas
+2025-11-24 13:19:11,090 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 175)
+2025-11-24 13:19:11,132 - gen_cards.py - INFO - Frank D. Lucas has never disagreed
+2025-11-24 13:19:11,155 - gen_cards.py - INFO - No military record for Frank D. Lucas. Skip.
+2025-11-24 13:19:11,155 - gen_cards.py - WARNING - No awards found for Frank D. Lucas. Skip.
+2025-11-24 13:19:11,423 - gen_cards.py - INFO - Created card: cards\frank_d_lucas_card.png
+2025-11-24 13:19:11,553 - gen_cards.py - DEBUG - Success image pull for Tom Cole
+2025-11-24 13:19:11,556 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 263)
+2025-11-24 13:19:11,623 - gen_cards.py - INFO - Tom Cole has never disagreed
+2025-11-24 13:19:11,646 - gen_cards.py - INFO - No military record for Tom Cole. Skip.
+2025-11-24 13:19:11,646 - gen_cards.py - WARNING - No awards found for Tom Cole. Skip.
+2025-11-24 13:19:11,739 - gen_cards.py - ERROR - Text box 2 for Tom Cole exceeds card dimensions by 60.0 pixels
+2025-11-24 13:19:11,907 - gen_cards.py - INFO - Created card: cards\tom_cole_card.png
+2025-11-24 13:19:12,092 - gen_cards.py - DEBUG - Success image pull for Joe Wilson
+2025-11-24 13:19:12,095 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 217)
+2025-11-24 13:19:12,179 - gen_cards.py - WARNING - No congressional stats found for Joe Wilson. Skip.
+2025-11-24 13:19:12,179 - gen_cards.py - WARNING - No awards found for Joe Wilson. Skip.
+2025-11-24 13:19:12,350 - gen_cards.py - ERROR - Text box 2 for Joe Wilson exceeds card dimensions by 296.0 pixels
+2025-11-24 13:19:12,525 - gen_cards.py - INFO - Created card: cards\joe_wilson_card.png
+2025-11-24 13:19:12,849 - gen_cards.py - DEBUG - Success image pull for David J. Taylor
+2025-11-24 13:19:12,919 - gen_cards.py - INFO - David J. Taylor has never been absent
+2025-11-24 13:19:12,944 - gen_cards.py - INFO - No military record for David J. Taylor. Skip.
+2025-11-24 13:19:12,944 - gen_cards.py - WARNING - No congressional stats found for David J. Taylor. Skip.
+2025-11-24 13:19:12,945 - gen_cards.py - WARNING - No awards found for David J. Taylor. Skip.
+2025-11-24 13:19:13,251 - gen_cards.py - INFO - Created card: cards\david_j_taylor_card.png
+2025-11-24 13:19:13,652 - gen_cards.py - DEBUG - Success image pull for Josh Riley
+2025-11-24 13:19:14,060 - gen_cards.py - INFO - Josh Riley has never disagreed
+2025-11-24 13:19:14,083 - gen_cards.py - INFO - No military record for Josh Riley. Skip.
+2025-11-24 13:19:14,083 - gen_cards.py - WARNING - No congressional stats found for Josh Riley. Skip.
+2025-11-24 13:19:14,083 - gen_cards.py - WARNING - No awards found for Josh Riley. Skip.
+2025-11-24 13:19:14,334 - gen_cards.py - INFO - Created card: cards\josh_riley_card.png
+2025-11-24 13:19:14,642 - gen_cards.py - DEBUG - Success image pull for John W. Mannion
+2025-11-24 13:19:15,074 - gen_cards.py - INFO - John W. Mannion has never disagreed
+2025-11-24 13:19:15,096 - gen_cards.py - INFO - No military record for John W. Mannion. Skip.
+2025-11-24 13:19:15,096 - gen_cards.py - WARNING - No congressional stats found for John W. Mannion. Skip.
+2025-11-24 13:19:15,097 - gen_cards.py - WARNING - No awards found for John W. Mannion. Skip.
+2025-11-24 13:19:15,396 - gen_cards.py - INFO - Created card: cards\john_w_mannion_card.png
+2025-11-24 13:19:15,687 - gen_cards.py - DEBUG - Success image pull for George Latimer
+2025-11-24 13:19:16,098 - gen_cards.py - INFO - George Latimer has never disagreed
+2025-11-24 13:19:16,120 - gen_cards.py - INFO - No military record for George Latimer. Skip.
+2025-11-24 13:19:16,120 - gen_cards.py - WARNING - No congressional stats found for George Latimer. Skip.
+2025-11-24 13:19:16,120 - gen_cards.py - WARNING - No awards found for George Latimer. Skip.
+2025-11-24 13:19:16,410 - gen_cards.py - INFO - Created card: cards\george_latimer_card.png
+2025-11-24 13:19:16,775 - gen_cards.py - DEBUG - Success image pull for Michael A. Rulli
+2025-11-24 13:19:16,777 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 263)
+2025-11-24 13:19:16,845 - gen_cards.py - INFO - No military record for Michael A. Rulli. Skip.
+2025-11-24 13:19:16,845 - gen_cards.py - WARNING - No congressional stats found for Michael A. Rulli. Skip.
+2025-11-24 13:19:16,845 - gen_cards.py - WARNING - No awards found for Michael A. Rulli. Skip.
+2025-11-24 13:19:17,071 - gen_cards.py - INFO - Created card: cards\michael_a_rulli_card.png
+2025-11-24 13:19:17,534 - gen_cards.py - DEBUG - Success image pull for Timothy M. Kennedy
+2025-11-24 13:19:17,977 - gen_cards.py - INFO - Timothy M. Kennedy has never disagreed
+2025-11-24 13:19:17,977 - gen_cards.py - INFO - Timothy M. Kennedy has never been absent
+2025-11-24 13:19:17,998 - gen_cards.py - INFO - No military record for Timothy M. Kennedy. Skip.
+2025-11-24 13:19:17,998 - gen_cards.py - WARNING - No congressional stats found for Timothy M. Kennedy. Skip.
+2025-11-24 13:19:17,998 - gen_cards.py - WARNING - No awards found for Timothy M. Kennedy. Skip.
+2025-11-24 13:19:18,240 - gen_cards.py - INFO - Created card: cards\timothy_m_kennedy_card.png
+2025-11-24 13:19:18,390 - gen_cards.py - DEBUG - Success image pull for Emilia Strong Sykes
+2025-11-24 13:19:18,843 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 252)
+2025-11-24 13:19:18,894 - gen_cards.py - INFO - Emilia Strong Sykes has never disagreed
+2025-11-24 13:19:18,894 - gen_cards.py - INFO - Emilia Strong Sykes has never been absent
+2025-11-24 13:19:18,945 - gen_cards.py - INFO - No military record for Emilia Strong Sykes. Skip.
+2025-11-24 13:19:18,946 - gen_cards.py - WARNING - No congressional stats found for Emilia Strong Sykes. Skip.
+2025-11-24 13:19:18,946 - gen_cards.py - WARNING - No awards found for Emilia Strong Sykes. Skip.
+2025-11-24 13:19:19,299 - gen_cards.py - INFO - Created card: cards\emilia_strong_sykes_card.png
+2025-11-24 13:19:19,853 - gen_cards.py - DEBUG - Success image pull for Max L. Miller
+2025-11-24 13:19:19,912 - gen_cards.py - INFO - Max L. Miller has never disagreed
+2025-11-24 13:19:19,935 - gen_cards.py - WARNING - No congressional stats found for Max L. Miller. Skip.
+2025-11-24 13:19:19,935 - gen_cards.py - WARNING - No awards found for Max L. Miller. Skip.
+2025-11-24 13:19:20,179 - gen_cards.py - INFO - Created card: cards\max_l_miller_card.png
+2025-11-24 13:19:20,400 - gen_cards.py - DEBUG - Success image pull for Michael Lawler
+2025-11-24 13:19:20,409 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:19:20,461 - gen_cards.py - INFO - Michael Lawler has never disagreed
+2025-11-24 13:19:20,483 - gen_cards.py - INFO - No military record for Michael Lawler. Skip.
+2025-11-24 13:19:20,483 - gen_cards.py - WARNING - No congressional stats found for Michael Lawler. Skip.
+2025-11-24 13:19:20,483 - gen_cards.py - WARNING - No awards found for Michael Lawler. Skip.
+2025-11-24 13:19:20,743 - gen_cards.py - INFO - Created card: cards\michael_lawler_card.png
+2025-11-24 13:19:21,146 - gen_cards.py - DEBUG - Success image pull for Nicholas A. Langworthy
+2025-11-24 13:19:21,224 - gen_cards.py - INFO - No military record for Nicholas A. Langworthy. Skip.
+2025-11-24 13:19:21,224 - gen_cards.py - WARNING - No congressional stats found for Nicholas A. Langworthy. Skip.
+2025-11-24 13:19:21,224 - gen_cards.py - WARNING - No awards found for Nicholas A. Langworthy. Skip.
+2025-11-24 13:19:21,353 - gen_cards.py - ERROR - Text box 2 for Nicholas A. Langworthy exceeds card dimensions by 27.0 pixels
+2025-11-24 13:19:21,528 - gen_cards.py - INFO - Created card: cards\nicholas_a_langworthy_card.png
+2025-11-24 13:19:21,669 - gen_cards.py - DEBUG - Success image pull for Greg Landsman
+2025-11-24 13:19:22,021 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:19:22,060 - gen_cards.py - INFO - Greg Landsman has never disagreed
+2025-11-24 13:19:22,082 - gen_cards.py - INFO - No military record for Greg Landsman. Skip.
+2025-11-24 13:19:22,082 - gen_cards.py - WARNING - No congressional stats found for Greg Landsman. Skip.
+2025-11-24 13:19:22,082 - gen_cards.py - WARNING - No awards found for Greg Landsman. Skip.
+2025-11-24 13:19:22,315 - gen_cards.py - INFO - Created card: cards\greg_landsman_card.png
+2025-11-24 13:19:22,463 - gen_cards.py - DEBUG - Success image pull for Patrick Ryan
+2025-11-24 13:19:22,805 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:19:22,853 - gen_cards.py - INFO - Patrick Ryan has never disagreed
+2025-11-24 13:19:22,853 - gen_cards.py - INFO - Patrick Ryan has never been absent
+2025-11-24 13:19:22,872 - gen_cards.py - WARNING - No congressional stats found for Patrick Ryan. Skip.
+2025-11-24 13:19:22,872 - gen_cards.py - WARNING - No awards found for Patrick Ryan. Skip.
+2025-11-24 13:19:23,156 - gen_cards.py - INFO - Created card: cards\patrick_ryan_card.png
+2025-11-24 13:19:23,283 - gen_cards.py - DEBUG - Success image pull for Mike Carey
+2025-11-24 13:19:23,289 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 262)
+2025-11-24 13:19:23,337 - gen_cards.py - INFO - Mike Carey has never disagreed
+2025-11-24 13:19:23,361 - gen_cards.py - WARNING - No congressional stats found for Mike Carey. Skip.
+2025-11-24 13:19:23,361 - gen_cards.py - WARNING - No awards found for Mike Carey. Skip.
+2025-11-24 13:19:23,475 - gen_cards.py - ERROR - Text box 2 for Mike Carey exceeds card dimensions by 36.0 pixels
+2025-11-24 13:19:23,663 - gen_cards.py - INFO - Created card: cards\mike_carey_card.png
+2025-11-24 13:19:23,878 - gen_cards.py - DEBUG - Success image pull for Shontel M. Brown
+2025-11-24 13:19:24,213 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:19:24,245 - gen_cards.py - INFO - Shontel M. Brown has never been absent
+2025-11-24 13:19:24,271 - gen_cards.py - INFO - No military record for Shontel M. Brown. Skip.
+2025-11-24 13:19:24,271 - gen_cards.py - WARNING - No congressional stats found for Shontel M. Brown. Skip.
+2025-11-24 13:19:24,271 - gen_cards.py - WARNING - No awards found for Shontel M. Brown. Skip.
+2025-11-24 13:19:24,537 - gen_cards.py - INFO - Created card: cards\shontel_m_brown_card.png
+2025-11-24 13:19:24,935 - gen_cards.py - DEBUG - Success image pull for Ritchie Torres
+2025-11-24 13:19:25,292 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:19:25,330 - gen_cards.py - INFO - Ritchie Torres has never disagreed
+2025-11-24 13:19:25,352 - gen_cards.py - INFO - No military record for Ritchie Torres. Skip.
+2025-11-24 13:19:25,352 - gen_cards.py - WARNING - No congressional stats found for Ritchie Torres. Skip.
+2025-11-24 13:19:25,353 - gen_cards.py - WARNING - No awards found for Ritchie Torres. Skip.
+2025-11-24 13:19:25,614 - gen_cards.py - INFO - Created card: cards\ritchie_torres_card.png
+2025-11-24 13:19:25,788 - gen_cards.py - DEBUG - Success image pull for Alexandria Ocasio-Cortez
+2025-11-24 13:19:26,124 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:19:26,188 - gen_cards.py - INFO - No military record for Alexandria Ocasio-Cortez. Skip.
+2025-11-24 13:19:26,188 - gen_cards.py - WARNING - No work history found for Alexandria Ocasio-Cortez. Skip.
+2025-11-24 13:19:26,188 - gen_cards.py - WARNING - No congressional stats found for Alexandria Ocasio-Cortez. Skip.
+2025-11-24 13:19:26,189 - gen_cards.py - WARNING - No awards found for Alexandria Ocasio-Cortez. Skip.
+2025-11-24 13:19:26,374 - gen_cards.py - INFO - Created card: cards\alexandria_ocasio-cortez_card.png
+2025-11-24 13:19:26,918 - gen_cards.py - DEBUG - Success image pull for Joseph D. Morelle
+2025-11-24 13:19:27,317 - gen_cards.py - INFO - Joseph D. Morelle has never disagreed
+2025-11-24 13:19:27,341 - gen_cards.py - INFO - No military record for Joseph D. Morelle. Skip.
+2025-11-24 13:19:27,341 - gen_cards.py - WARNING - No congressional stats found for Joseph D. Morelle. Skip.
+2025-11-24 13:19:27,341 - gen_cards.py - WARNING - No awards found for Joseph D. Morelle. Skip.
+2025-11-24 13:19:27,567 - gen_cards.py - INFO - Created card: cards\joseph_d_morelle_card.png
+2025-11-24 13:19:27,567 - gen_cards.py - INFO - Trying backup image for Troy Balderson
+2025-11-24 13:19:27,721 - gen_cards.py - DEBUG - Success image pull for Troy Balderson
+2025-11-24 13:19:27,724 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (200, 244)
+2025-11-24 13:19:27,735 - gen_cards.py - WARNING - Birthdate unknown for Troy Balderson
+2025-11-24 13:19:27,735 - gen_cards.py - WARNING - No education for Troy Balderson. Skip this section.
+2025-11-24 13:19:27,750 - gen_cards.py - INFO - Troy Balderson has never been absent
+2025-11-24 13:19:27,776 - gen_cards.py - INFO - No military record for Troy Balderson. Skip.
+2025-11-24 13:19:27,776 - gen_cards.py - WARNING - No work history found for Troy Balderson. Skip.
+2025-11-24 13:19:27,777 - gen_cards.py - WARNING - No congressional stats found for Troy Balderson. Skip.
+2025-11-24 13:19:27,777 - gen_cards.py - WARNING - No awards found for Troy Balderson. Skip.
+2025-11-24 13:19:27,960 - gen_cards.py - INFO - Created card: cards\troy_balderson_card.png
+2025-11-24 13:19:28,096 - gen_cards.py - DEBUG - Success image pull for Claudia Tenney
+2025-11-24 13:19:28,106 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:19:28,160 - gen_cards.py - INFO - Claudia Tenney has never disagreed
+2025-11-24 13:19:28,182 - gen_cards.py - INFO - No military record for Claudia Tenney. Skip.
+2025-11-24 13:19:28,183 - gen_cards.py - WARNING - No congressional stats found for Claudia Tenney. Skip.
+2025-11-24 13:19:28,183 - gen_cards.py - WARNING - No awards found for Claudia Tenney. Skip.
+2025-11-24 13:19:28,296 - gen_cards.py - ERROR - Text box 2 for Claudia Tenney exceeds card dimensions by 21.0 pixels
+2025-11-24 13:19:28,486 - gen_cards.py - INFO - Created card: cards\claudia_tenney_card.png
+2025-11-24 13:19:28,629 - gen_cards.py - DEBUG - Success image pull for Adriano Espaillat
+2025-11-24 13:19:28,994 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 263)
+2025-11-24 13:19:29,047 - gen_cards.py - INFO - Adriano Espaillat has never been absent
+2025-11-24 13:19:29,072 - gen_cards.py - INFO - No military record for Adriano Espaillat. Skip.
+2025-11-24 13:19:29,072 - gen_cards.py - WARNING - No congressional stats found for Adriano Espaillat. Skip.
+2025-11-24 13:19:29,072 - gen_cards.py - WARNING - No awards found for Adriano Espaillat. Skip.
+2025-11-24 13:19:29,290 - gen_cards.py - INFO - Created card: cards\adriano_espaillat_card.png
+2025-11-24 13:19:29,459 - gen_cards.py - DEBUG - Success image pull for Warren Davidson
+2025-11-24 13:19:29,462 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 263)
+2025-11-24 13:19:29,544 - gen_cards.py - WARNING - No congressional stats found for Warren Davidson. Skip.
+2025-11-24 13:19:29,544 - gen_cards.py - WARNING - No awards found for Warren Davidson. Skip.
+2025-11-24 13:19:29,641 - gen_cards.py - ERROR - Text box 2 for Warren Davidson exceeds card dimensions by 32.0 pixels
+2025-11-24 13:19:29,830 - gen_cards.py - INFO - Created card: cards\warren_davidson_card.png
+2025-11-24 13:19:30,021 - gen_cards.py - DEBUG - Success image pull for Elise M. Stefanik
+2025-11-24 13:19:30,024 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 216)
+2025-11-24 13:19:30,057 - gen_cards.py - INFO - Elise M. Stefanik has never disagreed
+2025-11-24 13:19:30,079 - gen_cards.py - INFO - No military record for Elise M. Stefanik. Skip.
+2025-11-24 13:19:30,080 - gen_cards.py - WARNING - No awards found for Elise M. Stefanik. Skip.
+2025-11-24 13:19:30,224 - gen_cards.py - ERROR - Text box 2 for Elise M. Stefanik exceeds card dimensions by 148.0 pixels
+2025-11-24 13:19:30,399 - gen_cards.py - INFO - Created card: cards\elise_m_stefanik_card.png
+2025-11-24 13:19:30,517 - gen_cards.py - DEBUG - Success image pull for David P. Joyce
+2025-11-24 13:19:30,519 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:19:30,565 - gen_cards.py - INFO - David P. Joyce has never disagreed
+2025-11-24 13:19:30,603 - gen_cards.py - INFO - No military record for David P. Joyce. Skip.
+2025-11-24 13:19:30,603 - gen_cards.py - WARNING - No work history found for David P. Joyce. Skip.
+2025-11-24 13:19:30,603 - gen_cards.py - WARNING - No congressional stats found for David P. Joyce. Skip.
+2025-11-24 13:19:30,603 - gen_cards.py - WARNING - No awards found for David P. Joyce. Skip.
+2025-11-24 13:19:30,808 - gen_cards.py - INFO - Created card: cards\david_p_joyce_card.png
+2025-11-24 13:19:30,991 - gen_cards.py - DEBUG - Success image pull for Joyce Beatty
+2025-11-24 13:19:31,326 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 240)
+2025-11-24 13:19:31,379 - gen_cards.py - INFO - Joyce Beatty has never disagreed
+2025-11-24 13:19:31,401 - gen_cards.py - INFO - No military record for Joyce Beatty. Skip.
+2025-11-24 13:19:31,401 - gen_cards.py - WARNING - No congressional stats found for Joyce Beatty. Skip.
+2025-11-24 13:19:31,401 - gen_cards.py - WARNING - No awards found for Joyce Beatty. Skip.
+2025-11-24 13:19:31,644 - gen_cards.py - INFO - Created card: cards\joyce_beatty_card.png
+2025-11-24 13:19:31,802 - gen_cards.py - DEBUG - Success image pull for Robert E. Latta
+2025-11-24 13:19:31,805 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 253)
+2025-11-24 13:19:31,839 - gen_cards.py - INFO - Robert E. Latta has never disagreed
+2025-11-24 13:19:31,839 - gen_cards.py - INFO - Robert E. Latta has never been absent
+2025-11-24 13:19:31,866 - gen_cards.py - INFO - No military record for Robert E. Latta. Skip.
+2025-11-24 13:19:31,866 - gen_cards.py - WARNING - No congressional stats found for Robert E. Latta. Skip.
+2025-11-24 13:19:31,867 - gen_cards.py - WARNING - No awards found for Robert E. Latta. Skip.
+2025-11-24 13:19:32,145 - gen_cards.py - INFO - Created card: cards\robert_e_latta_card.png
+2025-11-24 13:19:32,294 - gen_cards.py - DEBUG - Success image pull for Jim Jordan
+2025-11-24 13:19:32,301 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 205)
+2025-11-24 13:19:32,379 - gen_cards.py - INFO - No military record for Jim Jordan. Skip.
+2025-11-24 13:19:32,379 - gen_cards.py - WARNING - No congressional stats found for Jim Jordan. Skip.
+2025-11-24 13:19:32,590 - gen_cards.py - INFO - Created card: cards\jim_jordan_card.png
+2025-11-24 13:19:32,700 - gen_cards.py - DEBUG - Success image pull for Paul Tonko
+2025-11-24 13:19:33,036 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 263)
+2025-11-24 13:19:33,097 - gen_cards.py - INFO - No military record for Paul Tonko. Skip.
+2025-11-24 13:19:33,097 - gen_cards.py - WARNING - No congressional stats found for Paul Tonko. Skip.
+2025-11-24 13:19:33,097 - gen_cards.py - WARNING - No awards found for Paul Tonko. Skip.
+2025-11-24 13:19:33,319 - gen_cards.py - INFO - Created card: cards\paul_tonko_card.png
+2025-11-24 13:19:33,459 - gen_cards.py - DEBUG - Success image pull for Jerrold Nadler
+2025-11-24 13:19:33,808 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 175)
+2025-11-24 13:19:33,880 - gen_cards.py - INFO - No military record for Jerrold Nadler. Skip.
+2025-11-24 13:19:33,880 - gen_cards.py - WARNING - No awards found for Jerrold Nadler. Skip.
+2025-11-24 13:19:34,043 - gen_cards.py - ERROR - Text box 2 for Jerrold Nadler exceeds card dimensions by 246.0 pixels
+2025-11-24 13:19:34,177 - gen_cards.py - INFO - Created card: cards\jerrold_nadler_card.png
+2025-11-24 13:19:34,577 - gen_cards.py - DEBUG - Success image pull for Michael R. Turner
+2025-11-24 13:19:34,659 - gen_cards.py - INFO - Michael R. Turner has never disagreed
+2025-11-24 13:19:34,682 - gen_cards.py - INFO - No military record for Michael R. Turner. Skip.
+2025-11-24 13:19:34,682 - gen_cards.py - WARNING - No awards found for Michael R. Turner. Skip.
+2025-11-24 13:19:34,766 - gen_cards.py - ERROR - Text box 2 for Michael R. Turner exceeds card dimensions by 16.0 pixels
+2025-11-24 13:19:34,901 - gen_cards.py - INFO - Created card: cards\michael_r_turner_card.png
+2025-11-24 13:19:35,233 - gen_cards.py - DEBUG - Success image pull for Marcy Kaptur
+2025-11-24 13:19:35,602 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 263)
+2025-11-24 13:19:35,658 - gen_cards.py - INFO - Marcy Kaptur has never disagreed
+2025-11-24 13:19:35,686 - gen_cards.py - INFO - No military record for Marcy Kaptur. Skip.
+2025-11-24 13:19:35,686 - gen_cards.py - WARNING - No congressional stats found for Marcy Kaptur. Skip.
+2025-11-24 13:19:35,686 - gen_cards.py - WARNING - No awards found for Marcy Kaptur. Skip.
+2025-11-24 13:19:35,979 - gen_cards.py - INFO - Created card: cards\marcy_kaptur_card.png
+2025-11-24 13:19:36,380 - gen_cards.py - DEBUG - Success image pull for Nellie Pou
+2025-11-24 13:19:36,797 - gen_cards.py - INFO - Nellie Pou has never disagreed
+2025-11-24 13:19:36,798 - gen_cards.py - INFO - Nellie Pou has never been absent
+2025-11-24 13:19:36,817 - gen_cards.py - INFO - No military record for Nellie Pou. Skip.
+2025-11-24 13:19:36,817 - gen_cards.py - WARNING - No congressional stats found for Nellie Pou. Skip.
+2025-11-24 13:19:36,817 - gen_cards.py - WARNING - No awards found for Nellie Pou. Skip.
+2025-11-24 13:19:37,108 - gen_cards.py - INFO - Created card: cards\nellie_pou_card.png
+2025-11-24 13:19:37,669 - gen_cards.py - DEBUG - Success image pull for Maggie Goodlander
+2025-11-24 13:19:38,056 - gen_cards.py - INFO - Maggie Goodlander has never disagreed
+2025-11-24 13:19:38,056 - gen_cards.py - INFO - Maggie Goodlander has never been absent
+2025-11-24 13:19:38,076 - gen_cards.py - WARNING - No congressional stats found for Maggie Goodlander. Skip.
+2025-11-24 13:19:38,076 - gen_cards.py - WARNING - No awards found for Maggie Goodlander. Skip.
+2025-11-24 13:19:38,336 - gen_cards.py - ERROR - Text box 2 for Maggie Goodlander exceeds card dimensions by 517.0 pixels
+2025-11-24 13:19:38,514 - gen_cards.py - INFO - Created card: cards\maggie_goodlander_card.png
+2025-11-24 13:19:38,865 - gen_cards.py - DEBUG - Success image pull for Laura Gillen
+2025-11-24 13:19:39,300 - gen_cards.py - INFO - Laura Gillen has never disagreed
+2025-11-24 13:19:39,323 - gen_cards.py - INFO - No military record for Laura Gillen. Skip.
+2025-11-24 13:19:39,323 - gen_cards.py - WARNING - No congressional stats found for Laura Gillen. Skip.
+2025-11-24 13:19:39,323 - gen_cards.py - WARNING - No awards found for Laura Gillen. Skip.
+2025-11-24 13:19:39,579 - gen_cards.py - INFO - Created card: cards\laura_gillen_card.png
+2025-11-24 13:19:39,893 - gen_cards.py - DEBUG - Success image pull for Herbert C. Conaway
+2025-11-24 13:19:40,318 - gen_cards.py - INFO - Herbert C. Conaway has never disagreed
+2025-11-24 13:19:40,356 - gen_cards.py - WARNING - No congressional stats found for Herbert C. Conaway. Skip.
+2025-11-24 13:19:40,356 - gen_cards.py - WARNING - No awards found for Herbert C. Conaway. Skip.
+2025-11-24 13:19:40,487 - gen_cards.py - ERROR - Text box 2 for Herbert C. Conaway exceeds card dimensions by 16.0 pixels
+2025-11-24 13:19:40,691 - gen_cards.py - INFO - Created card: cards\herbert_c_conaway_card.png
+2025-11-24 13:19:40,853 - gen_cards.py - DEBUG - Success image pull for Gabe Vasquez
+2025-11-24 13:19:41,430 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:19:41,477 - gen_cards.py - INFO - Gabe Vasquez has never disagreed
+2025-11-24 13:19:41,501 - gen_cards.py - INFO - No military record for Gabe Vasquez. Skip.
+2025-11-24 13:19:41,501 - gen_cards.py - WARNING - No congressional stats found for Gabe Vasquez. Skip.
+2025-11-24 13:19:41,502 - gen_cards.py - WARNING - No awards found for Gabe Vasquez. Skip.
+2025-11-24 13:19:41,758 - gen_cards.py - INFO - Created card: cards\gabe_vasquez_card.png
+2025-11-24 13:19:41,903 - gen_cards.py - DEBUG - Success image pull for Nick LaLota
+2025-11-24 13:19:41,910 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:19:41,965 - gen_cards.py - INFO - Nick LaLota has never disagreed
+2025-11-24 13:19:41,987 - gen_cards.py - WARNING - No congressional stats found for Nick LaLota. Skip.
+2025-11-24 13:19:41,987 - gen_cards.py - WARNING - No awards found for Nick LaLota. Skip.
+2025-11-24 13:19:42,139 - gen_cards.py - ERROR - Text box 2 for Nick LaLota exceeds card dimensions by 294.0 pixels
+2025-11-24 13:19:42,320 - gen_cards.py - INFO - Created card: cards\nick_lalota_card.png
+2025-11-24 13:19:42,571 - gen_cards.py - DEBUG - Success image pull for Thomas H. Kean
+2025-11-24 13:19:42,574 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:19:42,616 - gen_cards.py - INFO - Thomas H. Kean has never disagreed
+2025-11-24 13:19:42,639 - gen_cards.py - INFO - No military record for Thomas H. Kean. Skip.
+2025-11-24 13:19:42,639 - gen_cards.py - WARNING - No congressional stats found for Thomas H. Kean. Skip.
+2025-11-24 13:19:42,639 - gen_cards.py - WARNING - No awards found for Thomas H. Kean. Skip.
+2025-11-24 13:19:42,815 - gen_cards.py - ERROR - Text box 2 for Thomas H. Kean exceeds card dimensions by 133.0 pixels
+2025-11-24 13:19:42,973 - gen_cards.py - INFO - Created card: cards\thomas_h_kean_card.png
+2025-11-24 13:19:43,159 - gen_cards.py - DEBUG - Success image pull for Daniel S. Goldman
+2025-11-24 13:19:43,497 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:19:43,548 - gen_cards.py - INFO - Daniel S. Goldman has never disagreed
+2025-11-24 13:19:43,570 - gen_cards.py - INFO - No military record for Daniel S. Goldman. Skip.
+2025-11-24 13:19:43,570 - gen_cards.py - WARNING - No congressional stats found for Daniel S. Goldman. Skip.
+2025-11-24 13:19:43,570 - gen_cards.py - WARNING - No awards found for Daniel S. Goldman. Skip.
+2025-11-24 13:19:43,722 - gen_cards.py - ERROR - Text box 2 for Daniel S. Goldman exceeds card dimensions by 45.0 pixels
+2025-11-24 13:19:43,879 - gen_cards.py - INFO - Created card: cards\daniel_s_goldman_card.png
+2025-11-24 13:19:44,027 - gen_cards.py - DEBUG - Success image pull for Melanie A. Stansbury
+2025-11-24 13:19:44,364 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:19:44,443 - gen_cards.py - INFO - No military record for Melanie A. Stansbury. Skip.
+2025-11-24 13:19:44,443 - gen_cards.py - WARNING - No congressional stats found for Melanie A. Stansbury. Skip.
+2025-11-24 13:19:44,444 - gen_cards.py - WARNING - No awards found for Melanie A. Stansbury. Skip.
+2025-11-24 13:19:44,571 - gen_cards.py - ERROR - Text box 2 for Melanie A. Stansbury exceeds card dimensions by 129.0 pixels
+2025-11-24 13:19:44,711 - gen_cards.py - INFO - Created card: cards\melanie_a_stansbury_card.png
+2025-11-24 13:19:44,858 - gen_cards.py - DEBUG - Success image pull for Nicole Malliotakis
+2025-11-24 13:19:44,863 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:19:44,928 - gen_cards.py - INFO - Nicole Malliotakis has never disagreed
+2025-11-24 13:19:44,950 - gen_cards.py - INFO - No military record for Nicole Malliotakis. Skip.
+2025-11-24 13:19:44,951 - gen_cards.py - WARNING - No congressional stats found for Nicole Malliotakis. Skip.
+2025-11-24 13:19:44,951 - gen_cards.py - WARNING - No awards found for Nicole Malliotakis. Skip.
+2025-11-24 13:19:45,184 - gen_cards.py - INFO - Created card: cards\nicole_malliotakis_card.png
+2025-11-24 13:19:45,357 - gen_cards.py - DEBUG - Success image pull for Teresa Leger Fernandez
+2025-11-24 13:19:45,689 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:19:45,761 - gen_cards.py - INFO - No military record for Teresa Leger Fernandez. Skip.
+2025-11-24 13:19:45,761 - gen_cards.py - WARNING - No congressional stats found for Teresa Leger Fernandez. Skip.
+2025-11-24 13:19:45,761 - gen_cards.py - WARNING - No awards found for Teresa Leger Fernandez. Skip.
+2025-11-24 13:19:45,981 - gen_cards.py - INFO - Created card: cards\teresa_leger_fernandez_card.png
+2025-11-24 13:19:46,161 - gen_cards.py - DEBUG - Success image pull for Andrew R. Garbarino
+2025-11-24 13:19:46,164 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:19:46,210 - gen_cards.py - INFO - Andrew R. Garbarino has never disagreed
+2025-11-24 13:19:46,237 - gen_cards.py - INFO - No military record for Andrew R. Garbarino. Skip.
+2025-11-24 13:19:46,237 - gen_cards.py - WARNING - No awards found for Andrew R. Garbarino. Skip.
+2025-11-24 13:19:46,368 - gen_cards.py - ERROR - Text box 2 for Andrew R. Garbarino exceeds card dimensions by 60.0 pixels
+2025-11-24 13:19:46,543 - gen_cards.py - INFO - Created card: cards\andrew_r_garbarino_card.png
+2025-11-24 13:19:46,667 - gen_cards.py - DEBUG - Success image pull for Susie Lee
+2025-11-24 13:19:47,013 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-11-24 13:19:47,047 - gen_cards.py - INFO - Susie Lee has never disagreed
+2025-11-24 13:19:47,070 - gen_cards.py - INFO - No military record for Susie Lee. Skip.
+2025-11-24 13:19:47,070 - gen_cards.py - WARNING - No congressional stats found for Susie Lee. Skip.
+2025-11-24 13:19:47,070 - gen_cards.py - WARNING - No awards found for Susie Lee. Skip.
+2025-11-24 13:19:47,300 - gen_cards.py - INFO - Created card: cards\susie_lee_card.png
+2025-11-24 13:19:47,955 - gen_cards.py - DEBUG - Success image pull for Mikie Sherrill
+2025-11-24 13:19:48,315 - gen_cards.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 263)
+2025-11-24 13:19:48,358 - gen_cards.py - INFO - Mikie Sherrill has never disagreed
+2025-11-24 13:19:48,380 - gen_cards.py - WARNING - No congressional stats found for Mikie Sherrill. Skip.
+2025-11-24 13:19:48,380 - gen_cards.py - WARNING - No awards found for Mikie Sherrill. Skip.
+2025-11-24 16:00:46,725 - gen_temp_for_javascript.py - INFO - Running in debug mode. Just printing one card.
+2025-11-24 16:00:46,729 - gen_temp_for_javascript.py - INFO - Card generation complete!
+2025-11-24 16:03:01,754 - gen_temp_for_javascript.py - INFO - Running in debug mode. Just printing one card.
+2025-11-24 16:03:01,759 - gen_temp_for_javascript.py - INFO - Card generation complete!
