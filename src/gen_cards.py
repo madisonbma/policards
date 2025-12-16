@@ -6,7 +6,7 @@ from io import BytesIO
 from datetime import date, datetime
 import re
 from requests.exceptions import RequestException, HTTPError
-from init_logger import my_logger
+from src.init_logger import my_logger
 
 # --- Configuration ---
 TEMPLATE_PATH = 'template.png'

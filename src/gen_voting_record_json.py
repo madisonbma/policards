@@ -6,7 +6,7 @@ import os
 import json
 import time
 import xml.etree.ElementTree as ET
-from init_logger import my_logger
+from src.init_logger import my_logger
 
 # --- Configuration ---
 CONGRESS_API_KEY = os.getenv("CONGRESS_API_KEY")

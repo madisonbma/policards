@@ -3,13 +3,13 @@ import os
 import json
 import time
 import pandas as pd
-import add_bioguide
-import gen_committees
+import src.add_bioguide
+import src.gen_committees
 import sys
 import os
 from datetime import date
 import numpy as np
-from init_logger import my_logger
+from src.init_logger import my_logger
 
 
 
@@ -214,11 +214,12 @@ def get_voter_rank(merged_df):
     """
 
     #Then want to rank them based on their with_party_count / vote_count
+    #vote_count = BOTH + NEITHER + WITH_D + WITH_R + ABSENT + ABSTAIN
     #removing BOTH and NEITHER (bipartisan consensus) from the denominator
-    #removing ABSENT and ABSTAIN from the denominator since showing elsewhere
-    merged_df['with_D_percent'] = (merged_df['with_D'] / (merged_df['with_D'] + merged_df['with_R']))*100
-    merged_df['with_R_percent'] = (merged_df['with_R'] / (merged_df['with_D'] + merged_df['with_R']))*100
-    merged_df['absent_percent'] = (merged_df['Absent'] / (merged_df['vote_count']))*100
+    merged_df['with_D_percent'] = (merged_df['with_D'] / (merged_df['vote_count'] - merged_df['Both'] - merged_df['Neither']))*100
+    merged_df['with_R_percent'] = (merged_df['with_R'] / (merged_df['vote_count'] - merged_df['Both'] - merged_df['Neither']))*100
+    merged_df['absent_percent'] = (merged_df['Absent'] / (merged_df['vote_count'] - merged_df['Both'] - merged_df['Neither']))*100
+
     merged_df['neither_percent'] = (merged_df['Neither'] / (merged_df['vote_count'] - merged_df['Absent']))*100
 
     #with_party_count == Raw count of times they voted with their party
@@ -270,6 +271,102 @@ def merge_in_comms(df, comms_dict):
     df['committees'] = df['bioguideID'].map(comms_dict)
 
     return df
+
+
+def get_absolute_stats(df, input_json_f):
+    """
+    Docstring for get_absolute_stats
+    Get the absolute values for congress that doesn't need to be duplicated. i.e.:
+    - number of members in each chamber
+    - max tenure per chamber
+    - max tenure per chamber per party
+    - party all time count
+    - party current count
+
+    :param df: input df of reps that's about to be spit out into congressmen_mod.json
+
+    Will spit out its own json file
+    """
+
+    #1: get pivot table for max tenure by house and party
+    max_tenure_by_house = df.groupby(['chamber', 'partyName'])['duration'].max()
+    max_tenure_by_house = max_tenure_by_house.reset_index()
+    max_tenure_by_house['dummy'] = 1
+
+    df_pivot = max_tenure_by_house.pivot_table(
+        index='dummy', # Use a dummy index since we want all data in one row
+        columns=['chamber', 'partyName'],
+        values='duration'
+    )
+
+    df_pivot = df_pivot.reset_index(drop=True)
+    df_pivot.columns = ['_'.join(map(str, col)).replace(' ', '_') for col in df_pivot.columns]
+
+    df_pivot.rename(columns=lambda x: x.replace('House_of_Representatives', 'max_tenure_H')
+                                    .replace('Senate', 'max_tenure_S')
+                                    .replace('_Democrat', '_D')
+                                    .replace('_Republican', '_R')
+                                    .replace('_Independent', '_I')
+                                    .replace('0_', '', 1) # Remove the dummy index column name part
+                                    , inplace=True)
+
+    df_pivot = df_pivot.reset_index(drop=True)
+    df_pivot = df_pivot.astype(int)
+
+
+    #2: get table for counts of individuals by party
+    current_count = df.groupby('partyName')['bioguideID'].nunique()
+
+    current_count = current_count.reset_index()
+    df_count_pivot = current_count.set_index('partyName').T # T transposes (swaps rows and columns)
+    df_count_pivot.columns = [f"count_{col[0]}" for col in df_count_pivot.columns] # count_D, count_I, count_R
+    df_count_pivot = df_count_pivot.reset_index(drop=True)
+
+
+    #3: get table for average vote by party and chamber
+    avg_vote = df.groupby(['chamber', 'partyName'])[['with_D_percent', 'with_R_percent']].mean()
+    avg_vote = avg_vote.reset_index()
+    avg_vote['dummy'] = 1
+
+    avg_vote_pivot = avg_vote.pivot_table(
+        index='dummy', # Use a dummy index since we want all data in one row
+        columns=['chamber', 'partyName'],
+        values=['with_D_percent', 'with_R_percent']
+    )
+
+    avg_vote_pivot = avg_vote_pivot.reset_index(drop=True)
+    avg_vote_pivot.columns = ['_'.join(map(str, col)).replace(' ', '_') for col in avg_vote_pivot.columns]
+
+    avg_vote_pivot.rename(columns=lambda x: x.replace('House_of_Representatives', 'avg_vote_H')
+                                    .replace('Senate', 'avg_vote_S')
+                                    .replace('_Democrat', '_D')
+                                    .replace('_Republican', '_R')
+                                    .replace('_Independent', '_I')
+                                    .replace('with_D_percent', 'with_D')
+                                    .replace('with_R_percent', 'with_R')
+                                    .replace('0_', '', 1) # Remove the dummy index column name part
+                                    , inplace=True)
+
+    avg_vote_pivot = avg_vote_pivot.reset_index(drop=True)
+  
+    # 4. Merge the two single-row tables (using index)
+    final_result = pd.concat([df_pivot, df_count_pivot, avg_vote_pivot], axis=1)
+
+    #Final replacements
+    final_result['H_members'] = len(df[df['chamber']=="House of Representatives"])
+    final_result['S_members'] = len(df[df['chamber']=="Senate"])
+
+    #final_result = final_result.T
+
+    #now write to json file
+    absolute_stats_path = os.path.join(os.path.dirname(input_json_f), 'absolute_stats.json')
+
+    final_result.to_json(path_or_buf=absolute_stats_path, orient='records', indent=4)
+
+    print(f"Wrote some absolute stats to {absolute_stats_path}")
+
+
+
 ####################################################################################################
 
 
@@ -316,8 +413,11 @@ def modify_reps(input_json_f, vote_f):
     #Functions you need to do on merged vote and reps:
     df = get_voter_rank(df)
 
-    comm_dict = gen_committees.gen_committees()
+    comm_dict = src.gen_committees.gen_committees()
     df = merge_in_comms(df, comm_dict)
+
+
+    get_absolute_stats(df, input_json_f)
 
 
     print(f"Exporting {len(df)} congressmen")
@@ -325,7 +425,10 @@ def modify_reps(input_json_f, vote_f):
     con_json = df.to_json(indent=2, orient='records')
     print("Starting the add_bioguide")
     #Last, modify the JSON with add_bioguide.py
-    modified_congressmen_json = add_bioguide.add_bioguide(con_json) #list of dicts python Obj
+    modified_congressmen_json = src.add_bioguide.add_bioguide(con_json) #list of dicts python Obj
+
+
+    ####Write to file
     congressmen_mod_json_path = os.path.join(os.path.dirname(input_json_f), 'congressmen_mod.json')
     with open(congressmen_mod_json_path, 'w') as json_file:
         json.dump(modified_congressmen_json, json_file, indent=4) # indent for pretty printing

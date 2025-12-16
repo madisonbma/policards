@@ -1,9 +1,9 @@
-import gen_reps_json
-import gen_voting_record_json
-import modify_reps
-import modify_votes
-import gen_xls
-import gen_cards
+import src.gen_reps_json
+import src.gen_voting_record_json
+import src.modify_reps
+import src.modify_votes
+import src.gen_xls
+import src.gen_cards
 import sys
 import os
 import time
@@ -35,12 +35,12 @@ if __name__ == "__main__":
 
         if get_yes_no_input(f"congressmen.json already exists, was created on {readable_time}. Do you want to force regeneration?"):
             print("Regenerating congressmen.json")
-            gen_reps_json.gen_reps_json()
+            src.gen_reps_json.gen_reps_json()
         else:
             print("Not regenerating, running with pre-existing congressmen.json.")    
     else:
         print("src/generated_outputs/congressmen.json does not exist. Generating...")
-        gen_reps_json.gen_reps_json()
+        src.gen_reps_json.gen_reps_json()
 
     #Generate the voting record json if it doesn't exist or if forcing override.
     voting_json = os.path.join(root, "src", "generated_outputs", "voting_records.json")
@@ -50,31 +50,31 @@ if __name__ == "__main__":
 
         if get_yes_no_input(f"voting_records.json already exists, was created on {readable_time}. Do you want to pull the votes since then?"):
             print("Pulling new voting_records.json")
-            gen_voting_record_json.gen_voting_record_json() 
+            src.gen_voting_record_json.gen_voting_record_json() 
         else:
             print("Not regenerating, running with pre-existing voting_records.json.")    
     else:
         print("voting_records.json does not exist. Generating...")
-        gen_voting_record_json.gen_voting_record_json()    
+        src.gen_voting_record_json.gen_voting_record_json()    
 
 
     #Now perform data analytics on pulled raw data.
     voting_senate_json = os.path.join(root, "src", "generated_outputs", "voting_records_senate.json")
     vote_avg_json = os.path.join(root, "src", "generated_outputs", "vote_avg.json")
     congressmen_mod_json = os.path.join(root, "src", "generated_outputs", "congressmen_mod.json")
-    modify_votes.modify_votes(voting_json, voting_senate_json)
-    modify_reps.modify_reps(congressmen_json, vote_avg_json)
+    src.modify_votes.modify_votes(voting_json, voting_senate_json)
+    src.modify_reps.modify_reps(congressmen_json, vote_avg_json)
 
 
     #Now generate cards
     if get_yes_no_input(f"Proceed with card creation on congressmen size above?"):
         print("Generating cards")
-        gen_cards.gen_cards(congressmen_mod_json, test_card=False, dummy_img=False)
+        src.gen_cards.gen_cards(congressmen_mod_json, test_card=False, dummy_img=False)
     else:
         if get_yes_no_input(f"Single card debug?"):
-            gen_cards.gen_cards(congressmen_mod_json, test_card=True, dummy_img=False)
+            src.gen_cards.gen_cards(congressmen_mod_json, test_card=True, dummy_img=False)
         else:
             print("Batch debug, disabling photo pull")
-            gen_cards.gen_cards(congressmen_mod_json, test_card=False, dummy_img=True)
+            src.gen_cards.gen_cards(congressmen_mod_json, test_card=False, dummy_img=True)
 
         

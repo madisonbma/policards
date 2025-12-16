@@ -39,6 +39,506 @@ def load_json(filepath):
 
 
 ############################################
+    
+
+
+
+def map_school_names(university, city=None):
+    """
+    Docstring for map_school_names
+    Will map an input university long name to a shorter one
+    
+    :param university: input string, university name
+    :param city: input string (optional), the city if it's a school with multiple locations
+    """
+
+    #check the name mappings:
+    if university == " University of California":
+        #change to UC City
+        if city:
+            return f" U.C.{city}"
+        else:
+            return university
+    elif university == " California State University":
+        #change to CSU City
+        if city:
+            return f" C.S.U.{city}"
+        else:
+            return university
+    elif university == " Massachusetts Institute of Technology":
+        return " M.I.T."
+    elif university == " University of North Carolina at Chapel Hill":
+        return " University of North Carolina"
+    elif university == " Florida Agricultural and Mechanical University":
+        return " Florida A&M University"
+    elif university == " Harvard University Kennedy School of Government":
+        return " Harvard Kennedy School" #could also just be Harvard University?
+    elif university == " D'Youville College (now D'Youville University)":
+        return " D'Youville University"
+    elif university == " North Carolina Agricultural and Technical University":
+        return " NC A&T State University"
+    elif university == " North Carolina Agricultural and Technical State University":
+        return " NC A&T State University"
+    elif university == " Washington University School of Dental Medicine":
+        return " WashU School of Dental Medicine"
+    elif university == " Mount Vernon College (now the George Washington University)":
+        return " George Washington University"
+    elif university == " California School of Professional Psychology":
+        return " CA School of Professional Psych"
+    elif university == " Oklahoma State University Institute of Technology":
+        return " O.S.U.I.T."
+    elif university == " Columbus College (now Columbus State University)":
+        return " Columbus State University"
+    elif university == " University of Bombay (now University of Mumbai)":
+        return " University of Mumbai"
+    elif university == " Gulf Coast Community College (now Gulf Coast State College)":
+        return " Gulf Coast State College"
+    elif university == " Georgetown University School of Foreign Service":
+        return " Georgetown University"
+    elif university == " Georgetown University School of Medicine":
+        return " Georgetown University"
+    elif university == " Indiana University Kelley School of Business":
+        return " Indiana University"
+    elif university == " Federal Bureau of Investigation National Academy":
+        return " FBI National Academy"
+    elif university == " New York Maritime University (now SUNY Maritime College)":
+        return "SUNY Maritime College"
+    else:
+        return university
+
+
+
+def exempt_from_hs(university):
+    """
+    These are schools that get flagged as high schools
+    Return None if known high school
+    Else Return the university name
+    """
+    known_hs = (
+        " Pinecrest Academy in Florida", " Notre Dame Academy", " Sacred Heart Academy", 
+        " Woodward Academy", " Osceola County School for the Arts", " LaSalle Academy"
+    )
+    
+    if "high school" in university.lower():
+        return None
+    elif university in known_hs:
+        return None
+    elif "Preparatory School" in university:
+        return None
+    elif "University" in university:
+        return university
+    elif "College" in university:
+        return university
+    elif "Law School" in university:
+        return university
+    elif "School of Law" in university:
+        return university
+    elif "Postgraduate" in university:
+        return university
+    elif "Seminary" in university:
+        return university
+    elif "United States" in university:
+        return university
+    elif "West Point" in university:
+        return university
+    elif "School of Business" in university:
+        return university
+    elif university == " Yale Divinity School":
+        return university
+    elif  "School of Economics" in university:
+        return university
+    elif university == " Virginia Polytechnic Institute":
+        return university
+    elif university == " Marion Military Institute":
+        return university
+    elif university == " SUNY Geneseo":
+        return university
+    elif "School of Theology" in university:
+        return university
+    elif university == " Wentworth Institute":
+        return university
+    elif "School of Medicine" in university:
+        return university
+    elif "Institute of Technology" in university:
+        return university
+    elif university == " Union Institute":
+        return university
+    else:
+        return None
+    
+
+
+
+def get_user_input_hs(university, city=None):
+    university_filtered = map_school_names(university, city=city)
+    if university != university_filtered:
+        #then a definite university, skip high school check
+        return university_filtered
+    else:
+        parsed_for_hs = exempt_from_hs(university_filtered)
+
+    if parsed_for_hs is None:
+        #TODO: ask for user input to approve
+        return None
+    else:
+        return university_filtered
+    
+
+
+
+
+
+def check_education(education_list):
+    """
+    Education should come in the following formats:
+        "graduated from The Master's Academy, Oviedo, Fla., 1995",
+        "attended Troy State University, Troy, Ala.",
+        "Rhodes Scholar, Ph.D., Oxford University, Oxford, England, 2010"
+        "J.D., University of Oregon Law School in Eugene 1974"
+        "M.Div., M.Phil., and Ph.D., Union Theological Seminary, New York, N.Y."
+        "J.D., University of Mississippi, University, Miss. 1975"
+        "M.F.S. and J.D., Georgetown University, 1993"
+
+    education is too long if it's 50 or longer.
+    """
+    target_length = len(education_list)
+    #print(f"S {target_length}: {education_list}")
+    new_education = ""
+    return_me = []
+
+    #loop through all the educations in education_list
+    for education in education_list:
+
+        #before splitting by comma - if it ends in year and is missing the comma, add it
+        pattern = r"(.*)([a-zA-Z\.])\s(\d{4})$"
+        replacement = r"\1\2,\3"
+        education = re.sub(pattern, replacement, education)
+
+        #now that we've cleaned any typos at the end, look for dates in the middle of the string
+        education_mega = []
+        date_matches = re.finditer(r"\d{4}(\-\d{4})?", education)
+        #if more than 1, split by it
+        date_index_start = 0
+        date_index_end = len(education)
+        for match in date_matches:
+            date_index_end = match.end()
+            education_mega.append(education[date_index_start:date_index_end])
+            date_index_start = match.end() + 2
+
+
+        if len(education_mega) == 0:
+            education_mega.append(education)
+            #print("No match found, appending outright")
+        elif len(education_mega) > 1:
+            print(f"|||Splitting {education} in {len(education_mega)}")
+        
+
+
+        #now have to loop through what we just made, most of the time this will just be once
+        for ed in education_mega:
+            #split by comma
+            education_by_comma = ed.split(",")
+
+            #check if it starts with a valid degree
+            if re.match(r"^[A-Z].*", education_by_comma[0]):
+                #####################################
+                #TYPO CHECK: look for missing typo between degree and next item
+                #####################################
+                #split by space. if len>1, might be a typo. check.
+                typo_check = education_by_comma[0].split(" ")
+                if len(typo_check) > 1:
+                    typo_found = 1
+                    if typo_check[1] == "and":
+                        #no problem, this is if they got 2 degrees, like "M.S. and B.S."
+                        typo_found = 0
+                    elif typo_check[1] == "candidate":
+                        #no problem, this is like "PhD candidate"
+                        typo_found = 0
+                    elif typo_check[1] == "in":
+                        # get rid of in, remaining words are the major
+                        typo_found = 1
+                        typo_check.pop(1)
+                    elif typo_check[0] == "Rhodes":
+                        #this is for "Rhodes Scholar", merge it with [1]
+                        education_by_comma[0] = education_by_comma[0] + education_by_comma.pop(1)
+                        typo_found = 0
+
+                    if typo_found:
+                        #then we need to add a comma between 0 and 1
+                        education_by_comma[0] = typo_check[0]
+                        typo_check[1] = f" {typo_check[1]}"
+                        education_by_comma.insert(1, " ".join(typo_check[1:]))
+                ############################################
+                # end typo check
+                ###########################################
+                sections = len(education_by_comma)
+
+                ############################################
+                #starts with degree, ends with year
+                ############################################
+                if re.match(r"\s?\d{4}", education_by_comma[-1]):
+
+                    #if len==3, should just be degree, university, year. keep it.
+                    if sections == 3:
+                        university = get_user_input_hs(education_by_comma[1])
+                        new_education = ",".join((education_by_comma[0], university, 
+                                                education_by_comma[2]))
+                        return_me.append(new_education)
+
+                    #if len==4, should follow degree, major, university, year
+                    elif sections == 4:
+                        
+                        if len(ed) < 50:
+                            #if it fits, keep the major
+                            return_me.append(ed)
+                            break
+                        else:
+                            #drop major to make it fit
+                            university = get_user_input_hs(education_by_comma[2])
+                            if university is None:
+                                #could be a weird edge case, like different countries. 
+                                # try if other indeces are universities
+                                university = get_user_input_hs(education_by_comma[1])
+                                if university is None:
+                                    print(f"Can't find a school: {ed}")
+
+                            
+                            new_education = ",".join((education_by_comma[0], university, 
+                                                    education_by_comma[3]))
+                    
+                        #if it's still too big, drop the year
+                        if len(new_education) < 50:
+                            return_me.append(new_education)
+                            break
+                        else:
+                            new_education = ",".join((education_by_comma[0], university))
+
+                        if len(new_education) > 50:
+                            return_me.append(new_education)
+                            print(f"TOO LONG: {ed}")
+                            break
+                        else:
+                            return_me.append(new_education)
+
+                    #if len==5, should follow degree, university, city, state., year
+                    elif sections == 5:   
+                        university = get_user_input_hs(education_by_comma[1], education_by_comma[2])
+                        #drop city and state to make it fit     
+                        if university is None:
+                            university = get_user_input_hs(education_by_comma[2])
+                        if university is None:
+                            university = get_user_input_hs(education_by_comma[3])
+                        if university is None:
+                            print(f"Can't find a school: {ed}")
+                        new_education = ",".join((education_by_comma[0], university, 
+                                                education_by_comma[4]))
+
+                        #if it's still too big, drop the year
+                        if len(new_education) < 50:
+                            return_me.append(new_education)
+                            break
+                        else:
+                            new_education = ",".join((education_by_comma[0], university))
+
+                        if len(new_education) > 50:
+                            print(f"TOO LONG: {ed}")
+                            return_me.append(new_education)
+                        else:
+                            return_me.append(new_education)
+
+                    #if len==6, should follow either 
+                    elif sections == 6:
+                        #i want degree, university, year
+                        #check for university, 
+                        for stat in education_by_comma:
+                            if "University" in stat:
+                                university = stat
+                            elif "College" in stat:
+                                university = stat
+                            elif "Massachusetts Institute of Technology" in stat:
+                                university = stat
+                        
+                        university = get_user_input_hs(university)
+                        new_education = ",".join((education_by_comma[0], university, 
+                                                education_by_comma[-1]))
+                        return_me.append(new_education)
+
+                    else:
+                        print(f"PROBLEM: {education_by_comma}")
+                ######################
+                # doesn't end in date
+                ######################
+                else:
+                    if sections == 2:
+                        #should just be degree, school. keep it
+                        university = get_user_input_hs(education_by_comma[1])
+                        new_education = ",".join((education_by_comma[0], university))
+                        if len(new_education) > 50:
+                            print(f"TOO LONG: {ed}")
+                            return_me.append(new_education)
+                        else:
+                            return_me.append(new_education)
+
+                    elif sections == 4:
+                        #should be degree, school, city, state
+                        university = get_user_input_hs(education_by_comma[1])
+                        new_education = ",".join((education_by_comma[0], university))
+                        if len(new_education) > 50:
+                            print(f"TOO LONG: {ed}")
+                            return_me.append(new_education)
+                        else:
+                            return_me.append(new_education)
+
+                    else:
+                        print(f"No date end: {ed}")
+
+            ################
+            # start section without degree
+            ####################
+            else: 
+                sections = len(education_by_comma)
+
+
+                #if it's just graduated, check [1]
+                if education_by_comma[0] == "graduated":
+                    university = get_user_input_hs(education_by_comma[1])
+                    if university is not None:
+                        new_education = ",".join((university, education_by_comma[-1]))
+                        return_me.append(new_education)
+                        break
+                    else:
+                        #high school.
+                        return_me.append(high_school())
+                        break
+
+
+                #first: "graduated ___" or "graduated from ___"
+                #get rid of the beginning, see if next line has University or College
+                #if not, change it to "high school diploma"
+                elif re.match(r"graduated( from)?(?P<school>.*)", education_by_comma[0]):
+
+                    matched = re.match(r"graduated( from)?(?P<school>.*)", education_by_comma[0])
+                    university = matched.group('school')
+                    #check if university is a high school or not:
+
+                    if sections == 1:
+                        university = get_user_input_hs(university)
+                        if university is not None:
+                            new_education = university
+                            if len(new_education) > 50:
+                                print(f"TOO LONG: {new_education}")
+                                return_me.append(new_education)
+                            else:
+                                return_me.append(new_education)
+                        else:
+                            return_me.append(high_school())
+
+                    elif sections == 2:
+                        #should be school, year
+                        #remove graduated 
+                        university = get_user_input_hs(university)
+                        if university is not None:
+                            new_education = ",".join((university, education_by_comma[-1]))
+                            return_me.append(new_education)
+                            break
+                        else:
+                            #high school.
+                            return_me.append(high_school())
+                            break
+
+
+
+                    elif sections == 3:
+                        #should be school, degree, year
+                        #change to degree, school, year
+                        university = get_user_input_hs(university)
+
+                        if university is not None:
+                            new_education = ",".join((education_by_comma[1], university, 
+                                                    education_by_comma[2]))
+                            if len(new_education) < 50:
+                                return_me.append(new_education)
+                                break
+                            else:
+                                print(f"TOO LONG: {ed}")
+                        else:
+                            #high school.
+                            return_me.append(high_school())
+                            break
+
+                        
+                    elif sections == 4:
+                        #school, city, state, year
+                        #check if school is high school or not
+                        university = get_user_input_hs(university)
+                        if university is not None:
+                            new_education = ",".join((university, education_by_comma[-1]))
+                            if len(new_education) < 50:
+                                return_me.append(new_education)
+                                break
+                            else:
+                                print(f"TOO LONG: {ed}")
+                        else:
+                            #high school.
+                            return_me.append(high_school())
+                            break
+
+                    elif sections == 5:
+                        #should be school, city, state, degree, year
+                        #change to degree, school, year
+                        university = get_user_input_hs(university)
+                        if university is not None:
+                            new_education = ",".join((education_by_comma[3], university, education_by_comma[4]))
+                            if len(new_education) < 50:
+                                return_me.append(new_education)
+                                break
+                            else:
+                                print(f"TOO LONG: {ed}")
+                        else:
+                            #high school.
+                            return_me.append(high_school())
+                            break
+                        
+
+                    else:
+                        print(f"Unmatched length: {ed}")
+
+                elif re.match(r"attended (.*)", education_by_comma[0]):
+                    matched = re.match(r"attended(?P<school>.*)", education_by_comma[0])
+                    university = matched.group('school')
+                    university = get_user_input_hs(university)
+
+                    if university is None:
+                        return_me.append(high_school())
+                    else:                    
+                        #if it ends in a date, join university, date
+                        if re.match(r"\s\d{4}(\-\d{4})?", education_by_comma[-1]):
+                            new_education = ",".join((university, education_by_comma[-1]))
+                        #else just return university
+                        else:
+                            new_education = university
+                        
+                        if len(new_education) > 50:
+                            print(f"TOO LONG: {ed}")
+                        else:
+                            return_me.append(new_education)
+
+                        
+
+                #if starts with attended, trim it down and add it
+                else: 
+                    
+                    print(f"unknown start: {ed}")
+
+    if target_length != len(return_me):
+        print(f"Mismatched lengths!!!")
+    #print(f"E {len(return_me)}: {return_me}")
+
+    return return_me
+    
+
+def high_school():
+    return "High school graduate"
 
 
 def add_bioguide_congress_data(list_of_dict):
@@ -185,7 +685,12 @@ def add_bioguide_congress_data(list_of_dict):
                 ###Get degrees
                 elif any (sub in fact for sub in valid_degrees):
                     #Degree listed, add to education
+                    fact = fact.replace("B. S.", "B.S.")
+                    fact = fact.replace("M. Div", "M.Div")
+                    fact = fact.replace("D. Div", "D.Div")
+                    fact = fact.replace("M. D.", "M.D.")
                     education.append(fact)
+
                 elif fact_lower.startswith("graduate"):
                     pattern = r"(?:graduated|graduate)(?! work)(.*)"
                     match = re.search(pattern, fact, re.I)
@@ -240,6 +745,11 @@ def add_bioguide_congress_data(list_of_dict):
                     continue
             #End looping through fact block
         
+
+        #update the education before appending
+        education = check_education(education)
+
+
         #Update the JSON
         rep.update({'birthDate': bioguide_data.get('birthDate')})
 
@@ -274,9 +784,9 @@ def add_bioguide(input_json):
 
     """
 
-        #Load in the JSON
-    #with open(input_json_f, 'r') as f:
-    #    congress_list = json.load(f)
+    #with open(input_file, 'r', encoding='utf-8') as file:
+    #    list_of_congressmen = json.load(file)
+        
 
     list_of_congressmen = json.loads(input_json) #From json_string to JSON dict
     

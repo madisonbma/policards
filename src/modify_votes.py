@@ -8,7 +8,7 @@ import os
 import numpy as np
 from datetime import date
 import xml.etree.ElementTree as ET
-from init_logger import my_logger
+from src.init_logger import my_logger
 
 def get_voting_record(df):
     """

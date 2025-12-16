@@ -6,7 +6,7 @@ import json
 import re
 from io import StringIO
 import csv
-from init_logger import my_logger
+from src.init_logger import my_logger
 
 FEC_API_KEY = os.getenv("FEC_API_KEY")
 if FEC_API_KEY is None:

@@ -1,0 +1,24 @@
+[
+    {
+        "max_tenure_H_D":46,
+        "max_tenure_H_R":46,
+        "max_tenure_S_D":36,
+        "max_tenure_S_I":24,
+        "max_tenure_S_R":48,
+        "count_D":260,
+        "count_I":2,
+        "count_R":275,
+        "with_D_avg_vote_H_D":91.1581395349,
+        "with_D_avg_vote_H_R":2.7117117117,
+        "with_D_avg_vote_S_D":91.5333333333,
+        "with_D_avg_vote_S_I":88.0,
+        "with_D_avg_vote_S_R":0.9056603774,
+        "with_R_avg_vote_H_D":3.9302325581,
+        "with_R_avg_vote_H_R":92.7837837838,
+        "with_R_avg_vote_S_D":5.1111111111,
+        "with_R_avg_vote_S_I":5.5,
+        "with_R_avg_vote_S_R":96.2641509434,
+        "H_members":437,
+        "S_members":100
+    }
+]
