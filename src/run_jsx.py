@@ -30,8 +30,8 @@ def run_photoshop_script(template, script):
 
 if __name__ == "__main__":
     print("Running Photoshop script...")
-    #run_photoshop_script("C:\\Users\\Owner\\policards\\templates\\Republican-House_Senate_Gov-Social.psd", 
-    #                     "C:\\Users\\Owner\\policards\\src\\fill_social_template.jsx")
+    run_photoshop_script("C:\\Users\\Owner\\policards\\templates\\Republican-House_Senate_Gov-Social.psd", 
+                         "C:\\Users\\Owner\\policards\\src\\fill_social_template.jsx")
     
-    run_photoshop_script("C:\\Users\\Owner\\policards\\templates\\Republican House_Senate-Newsletter.psd", 
-                         "C:\\Users\\Owner\\policards\\src\\fill_newsletter_template.jsx")
+    #run_photoshop_script("C:\\Users\\Owner\\policards\\templates\\Republican House_Senate-Newsletter.psd", 
+    #                     "C:\\Users\\Owner\\policards\\src\\fill_newsletter_template.jsx")

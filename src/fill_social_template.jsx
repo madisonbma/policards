@@ -1,10 +1,19 @@
 // Check if Photoshop is running
 #target photoshop
-var dataFilePath = "C:\\Users\\Owner\\policards\\src\\generated_outputs\\temp.txt";
-var picFilePath = "C:\\Users\\Owner\\policards\\src\\generated_outputs\\temp.png";
-var LogFilePath = "C:\\Users\\Owner\\policards\\src\\generated_outputs\\log_js.log";
-var CARD_WIDTH  = 1080;
 
+
+var rootdir = new File($.fileName);
+rootdir = rootdir.parent;
+var dataFilePath = rootdir + "/generated_outputs/temp.txt";
+var picFilePath = rootdir + "/generated_outputs/temp.png";
+var LogFilePath = rootdir + "generated_outputs/log_js.log";
+
+
+var CARD_WIDTH  = 1080;
+var BOTTOM = 1245.55+76.72;
+var MIDDLE = 537.14+-51.06;
+var LEFT = 33;
+var MAX_NAME_WIDTH = 482; //pixels
 
 
 /**
@@ -26,7 +35,44 @@ function log(message) {
     }
 }
 
-function move_age(name_info_layer) {
+
+
+function center(layer_to_be_centered, bound1, bound2, axis) {
+    /**
+     * given two layers, center between the 2
+     * layer1 should be the leftmost/topmost layer depending on axis
+     * axis = 0: vertical alignment
+     * axis = 1: horizontal alignment
+     */
+    if (axis == 0) {
+        var y = layer_to_be_centered.bounds[1].value;
+        var h_of_layer = layer_to_be_centered.bounds[3].value - layer_to_be_centered.bounds[1].value;
+        var h_of_space = bound2 - bound1;
+        var target = ((h_of_space -  h_of_layer) / 2 ) + bound1;
+
+        //translate from current position to splitting the top and bottom bound
+        //shift current_top - 
+        if (h_of_space > h_of_layer) {
+            layer_to_be_centered.translate(0, target - y);
+        }
+        else {
+            alert("height of text box is bigger than the allotted space");
+        }
+        
+    }
+    else {
+        var x = layer_to_be_centered.bounds[0].value;
+        var w_of_layer = layer_to_be_centered.bounds[2].value - layer_to_be_centered.bounds[0].value;
+        var w_of_space = bound2 - bound1;
+        var target = ((w_of_space -  w_of_layer) / 2 ) + bound1;
+
+        layer_to_be_centered.translate(target - x,0);
+
+    }
+
+}
+
+function move_age(name_info_layer, rep_info) {
     /** Push the age blocks to be after the Birthplace block
      * Will need to get end dims of birthplace, and offset Age accordingly
      * Then get dims of Age block, use this fixed parameter to offset the actual
@@ -36,7 +82,7 @@ function move_age(name_info_layer) {
     var birthplace_layer = name_info_layer.layers[6];
     var age_layer = name_info_layer.layers[4];
     var age_var_layer = name_info_layer.layers[5];
-    age_var_layer.textItem.contents = age_line;   
+    age_var_layer.textItem.contents = rep_info["age_line"];   
 
 
     //get end bounds so we can translate from here
@@ -57,23 +103,8 @@ function move_age(name_info_layer) {
     age_layer.translate(offset, 0);
     age_var_layer.translate(offset, 0);
 
-
-
 }
 
-//MAX WIDTHS:
-/**
- *  state = 253 * RESIZE
- *  name_line = 466 * WRAPAROUND
- *  chamber_line = no need?
- *  reelection_line = no need?
- *  born_age_line = 600 * no need?
- *  education_line = 600 *WRAPAROUND by entry
- *  vote_with_party_percentile = no need
- *  vote_with_party_text = no need
- *  tenure_percentile = no need
- *  tenure_percentile_formatted = no need
- */
 
 
 function write(layer, text){
@@ -97,42 +128,116 @@ function write(layer, text){
 }
 
 function write_bulleted_list(layer, text){
-    //1. if \r present in text, split by \r and turn into a list. 
-    // then combine the list elements by \r again.
-    //2. otherwise, just add the text to the layer
+    /**
+     * Take a list in and parse for delimiters.
+     * ||BREAK_DOT||: standard delimiter. each BREAK_DOT gets a bullet and its own line
+     *   -> ||BREAK||: if present in BREAK_DOT delimiting, line too long and ran over. 
+     *                 start a new line, indent by 4 spaces
+     *   -> ||BREAK_SUBDOT||: for committees specifically. 
+     *                        add 4 spaces before, don't add the bullet bc already there
+     */
     var addme = "";
     var bullet = String.fromCharCode(8226);
-    layer.textItem.leading = 8;
+    layer.textItem.leading = 7;
 
-
-    if (text.indexOf("||BREAK||") !== -1) {
-        log("||BREAK|| found in " + text);
-        var snippets = text.split("||BREAK||");
+    //start of bullet point
+    if (text.indexOf("||BREAK_DOT||") !== -1) {
+        log("||BREAK_DOT|| found in " + text);
+        var snippets = text.split("||BREAK_DOT||");
 
         var bulletizedLines = [];
-        // 2. Loop through the subcomponents
+        // 2. Loop through the subcomponents.
+        //check for BREAK to add indent, otherwise print normally with bullet
         for (var i = 0; i < snippets.length; i++) {
             var line = snippets[i]; 
-            
-            // 3. Skip empty lines that might result from splitting (e.g., "A,,B")
-            if (line.length > 0) {
-                // 4. Add the bullet and a space to the front
-                bulletizedLines.push(bullet + line);
+            if (line.indexOf("||BREAK||") !== -1) {
+                //if BREAK is present, split and indent
+                //this is either a subdot or intermediate line break,
+                //both of which are treated the same. add 4 space and return
+                var subsnips = line.split("||BREAK||");
+                for (var j = 0; j < subsnips.length; j++) {
+                    var subline = subsnips[j];
+                    
+                    //to start, don't indent but include bullet
+                    if (j == 0) {
+                        bulletizedLines.push(bullet + subline);
+                    }
+                    else if (subline.length > 0) {
+                        bulletizedLines.push("    " + subline);
+                    }
+                }
+            }
+            else {
+                // 3. Skip empty lines that might result from splitting (e.g., "A,,B")
+                if (line.length > 0) {
+                    // 4. Add the bullet and a space to the front
+                    bulletizedLines.push(bullet + line);
+                }
             }
         }
     
         addme = bulletizedLines.join("\r"); 
         log("Adding: "+addme);
         layer.textItem.contents = addme;
-        return snippets.length;
     }
     else {
         log("No ||BREAK|| present in " + text);
         addme = bullet + text;
         layer.textItem.contents = addme;
-        return 1;
     }
 }
+
+
+function distribute_layers(layer_list, bound1, bound2, axis) {
+/**
+ * Given input layers, shift them down and evenly distribute them
+ * bound1 is the topmost/leftmost bound
+ * bound2 is the bottommost/rightmost bound
+ * axis=0 means vertical, axis=1 is horizontal
+ */
+
+    var bounds_list = [];
+    var current_measurement = 0;
+    //go through the layers and get the bounds
+    for (var i = 0; i < layer_list.length; i++) {
+        bounds_list.push(layer_list[i].bounds);
+        if (axis == 0) {
+            current_measurement += (layer_list[i].bounds[3].value - layer_list[i].bounds[1].value);
+        }
+        else {
+            current_measurement += (layer_list[i].bounds[2].value - layer_list[i].bounds[0].value);
+        }
+    }
+
+    var fit_within_this = bound2 - bound1;
+    var spacing = (fit_within_this - current_measurement) / (layer_list.length+1);
+
+    log("Spacing: " + spacing + "from " + fit_within_this + "and" + current_measurement);
+
+
+    // now reformat using the spacing - throw an error if spacing is negative. then we have 
+    // too much content, it's impossible to fit
+    //bound1 + spacing
+    //bound1 + spacing + layer1 + spacing
+
+    var layer_start = bound1;
+    for (var j = 0; j < layer_list.length; j++) {
+        if (axis == 0) {
+            layer_start += spacing;
+            layer_list[j].translate(0, layer_start - layer_list[j].bounds[1].value);
+            log ("Placing " + layer_list[j] + "at " + layer_start);
+
+            layer_start += (layer_list[j].bounds[3].value - layer_list[j].bounds[1].value);
+        }
+        else {
+            layer_start += spacing;
+            layer_list[j].translate(layer_start - layer_list[j].bounds[0].value , 0);
+            layer_start += (layer_list[j].bounds[2].value - layer_list[j].bounds[0].value);
+        }
+    }
+}
+
+
 
 
 function save_file_as_png_export(save_file_path, doc) {
@@ -270,34 +375,37 @@ function resetSmartObjectTransform() {
     executeAction( idTrnf, desc, DialogModes.NO ); 
 }
 
-function format_stat_bars(statbar_layer) {
+function format_stat_bars(statbar_layer, line2, rep_info) {
     ////////////////////////////////////////////////////////////
     // New layer for stat bars 
     ////////////////////////////////////////////////////////////
 
     // Voting Stat Bar
     var voting_block = statbar_layer.layers.getByName("Voting Record");
-    move_stat_tracker(voting_block, vote_with_party_percentile);
-    write(voting_block.layers[4], vote_with_party_text);
+    move_stat_tracker(voting_block, rep_info["vote_with_party_percentile"]);
+    write(voting_block.layers[4], rep_info["vote_with_party_text"]);
 
     //Tenure Stat Bar
     var tenure_block = statbar_layer.layers.getByName("Tenure");
-    move_stat_tracker(tenure_block, tenure_percentile);
+    move_stat_tracker(tenure_block, rep_info["tenure_percentile"]);
 
-    write(tenure_block.layers.getByName("Text").layers[3], tenure_percentile_formatted);
-    write(tenure_block.layers.getByName("Text").layers[1], max_tenure);
+    write(tenure_block.layers.getByName("Text").layers[3], rep_info["tenure_percentile_formatted"]);
+    write(tenure_block.layers.getByName("Text").layers[1], rep_info["max_tenure"]);
 
     //Text below stat bars
-    write(statbar_layer.layers[2], avg_vote_text);
+    write(statbar_layer.layers[2], rep_info["avg_vote_text"]);
+
+
+    distribute_layers([statbar_layer.layers[2]], voting_block.layers[4].bounds[3].value, line2.bounds[1].value, 0);
 }
 
-function state_and_photo(photocard_layer) {
+function state_and_photo(photocard_layer, rep_info) {
     ///////////////////////////////////////////////////////////
     // STATE AND PHOTO CARD LAYER
     //////////////////////////////////////////////////////////
     var state_layer = photocard_layer.layers[0];
     var photo_layer = photocard_layer.layers.getByName("Photo").layers.getByName("photo");
-    write(state_layer, state);
+    write(state_layer, rep_info["state"]);
 
     log("Photo layer name and size before replacing photo: " + photo_layer.name + ", " + photo_layer.bounds);
 
@@ -321,8 +429,31 @@ function raise_bio_section(toplayer) {
 }
 
 
+function resize_name(name_layer) {
+    /**
+     * Check if name is gonna run into the logo
+     * If it is, reduce the font size until it won't anymore
+     * Also set the line spacing to 12 since might get reset
+     * 
+     */
 
-function name_and_title(name_and_info_layer) {
+    name_layer.textItem.leading = 12;
+
+    var name_w = name_layer.bounds[2] - name_layer.bounds[0];
+    if (name_w > MAX_NAME_WIDTH) {
+        // need to resize!
+        //defaults to 15.72pt. scale
+        //name_w / 15.72 = MAX_NAME_WIDTH / ans
+        var new_font_size = MAX_NAME_WIDTH * 15.72 / name_w;
+        var newUnit = "px"; // Can be "pt", "px", "in", "cm", "pica"
+        name_layer.textItem.size = new UnitValue(new_font_size, newUnit);
+        log("Resized name from 15.72pt to " + new_font_size);
+
+    }
+    //else do nothing
+}
+
+function name_and_title(name_and_info_layer, rep_info) {
     /**
      * Adds the name and title information. 
      * Layer order for newsletter template:
@@ -340,85 +471,157 @@ function name_and_title(name_and_info_layer) {
 
     //for name, need to change the default line spacing
 
-    write(name_and_info_layer.layers[0], name_line);
-    name_and_info_layer.layers[0].textItem.leading = 12;
+    write(name_and_info_layer.layers[0], rep_info["name_line"]);
+    resize_name(name_and_info_layer.layers[0]);
 
-    write(name_and_info_layer.layers[1], title_line);
-    write(name_and_info_layer.layers[2], chamber_line);
-    write(name_and_info_layer.layers[3], reelection_line);
+    write(name_and_info_layer.layers[1], rep_info["title_line"]);
+    write(name_and_info_layer.layers[2], rep_info["chamber_line"]);
+    write(name_and_info_layer.layers[3], rep_info["reelection_line"]);
 
-    write(name_and_info_layer.layers[6], birthplace_line);
+    write(name_and_info_layer.layers[6], rep_info["birthplace_line"]);
 
 
-    move_age(name_and_info_layer);
+    move_age(name_and_info_layer, rep_info);
 
-    education_size = write_bulleted_list(name_and_info_layer.layers[9], education_line);
+    education_size = write_bulleted_list(name_and_info_layer.layers[9], rep_info["education_line"]);
     return education_size;
 }
 
-try {
-    /*
-    temp contents:
-    NAME
-    House Representative OR Senator OR Governor
-    2025-Present | Up for re-election in 20XX
-    BORN: City, State    AGE: XX
-    EDUCATION: School 1, School 2*/
-    var datafile = new File(dataFilePath);
-    datafile.open('r');
 
-    var state = datafile.readln();
-    var name_line = datafile.readln();
-    var title_line = datafile.readln();
-    var chamber_line = datafile.readln();
-    var reelection_line = datafile.readln();
-    var birthplace_line = datafile.readln();
-    var age_line = datafile.readln();
-    var education_line = datafile.readln();
-    var vote_with_party_percentile = parseFloat(datafile.readln());
-    var vote_with_party_text = datafile.readln();
-    var avg_vote_text = datafile.readln();
-    var tenure_percentile = parseFloat(datafile.readln());
-    var tenure_percentile_formatted = datafile.readln();
-    var max_tenure = datafile.readln();
-    var file_save_path = datafile.readln();
+/////////////////////////////
+// Load in the temp input  //
+/////////////////////////////
 
-    datafile.close();
-} catch (e) {
-    alert("Error reading data file: " + e.toString());
+function load_temp_dict() {
+    try {
+
+        var datafile = new File(dataFilePath);
+        datafile.open('r');
+
+        var dict = {};
+        dict["state"] = datafile.readln();
+        dict["name_line"] = datafile.readln();
+        dict["title_line"] = datafile.readln();
+        dict["chamber_line"] = datafile.readln();
+        dict["reelection_line"] = datafile.readln();
+        dict["birthplace_line"] = datafile.readln();
+        dict["age_line"] = datafile.readln();
+        dict["education_line"] = datafile.readln();
+        dict["vote_with_party_percentile"] = parseFloat(datafile.readln());
+        dict["vote_with_party_text"] = datafile.readln();
+        dict["avg_vote_text"] = datafile.readln();
+        dict["tenure_percentile"] = parseFloat(datafile.readln());
+        dict["tenure_percentile_formatted"] = datafile.readln();
+        dict["max_tenure"] = datafile.readln();
+        dict["summary_stats"] = datafile.readln();
+        dict["committee_list"] = datafile.readln();
+        dict["work_history"] = datafile.readln();
+        dict["bonus_header"] = datafile.readln();
+        dict["bonus_text"] = datafile.readln();
+        dict["file_save_path"] = datafile.readln();
+        dict["template_path"] = datafile.readln();
+
+        datafile.close();
+        return dict;
+
+
+    } catch (e) {
+        alert("Error reading data file: " + e.toString());
+    }
+}
+
+
+/**
+ * Saves the active document with a new name in the same directory as the original.
+ * @param {string} newName - The desired name (e.g., "Student_John_Doe.psd")
+ */
+function saveAsNewFile(newPath) {
+
+    var outputFile = new File(newPath);
+
+    // 2. Define Photoshop Save Options
+    var psdOptions = new PhotoshopSaveOptions();
+    psdOptions.layers = true; // Keep your layers intact
+    psdOptions.embedColorProfile = true;
+    psdOptions.annotations = true;
+    psdOptions.alphaChannels = true;
+
+    // 3. Execute the Save As command
+    // Set 'asCopy' to true if you want to keep the original open
+    doc.saveAs(outputFile, psdOptions, false, Extension.LOWERCASE);
+    
+    // alert("File saved to: " + outputFile.fsName);
 }
 
 
 //////////////////////////////////////////////////////////////
+//Load in the variables I want
+var rep_info = load_temp_dict();
 
+//open the template designated in temp.txt
+var template_file = new File(rep_info['template_path']);
 
-if (app.documents.length > 0) {
-    // Get the active document (the PSD file you want to edit)
-    var doc = app.activeDocument;
+//
+
+if (template_file.exists) {
+    // 1. OPEN the file as a Photoshop Document
+    var doc = app.open(template_file); 
+    
+    // 2. MAKE it the active document (just to be safe)
+    app.activeDocument = doc;
+    app.preferences.rulerUnits = Units.PIXELS;
+
     var toplayer = doc.layers[0]; //Republican-House_Senate_Gov-Social
     var toplayer = toplayer.layers[0]; //MASTER FOLDER
     var layerNames = [];
 
+    var lines_layer = toplayer.layers.getByName("Divider Lines");
+    var social_media_layer = toplayer.layers.getByName("Social");
 
     var photocard_layer = toplayer.layers.getByName("PHOTO CARD");
-    state_and_photo(photocard_layer);
+    state_and_photo(photocard_layer, rep_info);
 
     var name_and_info_layer = toplayer.layers.getByName("NAME+INFO ");
-    name_and_title(name_and_info_layer);
+    name_and_title(name_and_info_layer, rep_info);
     if (education_size > 1) {
         raise_bio_section(toplayer);
     }
 
 
+
     var statbar_layer = toplayer.layers.getByName("Stat Bars");
-    format_stat_bars(statbar_layer);
+    format_stat_bars(statbar_layer, lines_layer.layers.getByName("Line 2"), rep_info);
+
+
+
+
+    var top_issues_layer = toplayer.layers.getByName("Top Issues");
+
+    var layer_list = [
+        statbar_layer, lines_layer.layers.getByName("Line 2"),
+        top_issues_layer, lines_layer.layers.getByName("Line 3"),
+        social_media_layer
+    ];
+
+    distribute_layers(layer_list, MIDDLE, BOTTOM, 0);
+    //move top donors to align with the new placement of top issues
+    var top_donors_layer = toplayer.layers.getByName("Top Donors");
+    var new_y = top_issues_layer.bounds[1].value;
+    var move = new_y - top_donors_layer.bounds[1].value;
+    top_donors_layer.translate(0, move);
+    lines_layer.layers.getByName("Line 4").translate(0, move);
 
 
     SaveOptions.DONOTSAVECHANGES;
+    saveAsNewFile(rep_info["file_save_path"]);
+
     //save_file_as_png_export(file_save_path, doc);
     //doc.save();
     alert("SUCCESS");
+
+
+
 } else {
-    alert("ERROR: No document is open.");
+    alert("File does not exist at path: " + template_file);
 }
 

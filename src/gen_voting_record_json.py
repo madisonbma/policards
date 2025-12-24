@@ -6,7 +6,7 @@ import os
 import json
 import time
 import xml.etree.ElementTree as ET
-from src.init_logger import my_logger
+from init_logger import my_logger
 
 # --- Configuration ---
 CONGRESS_API_KEY = os.getenv("CONGRESS_API_KEY")
@@ -288,7 +288,7 @@ def gen_voting_record_json(max_records=1000):
     print("##############################################")
     print("Calling gen_voting_record_json.py for House Data")
 
-    root = os.path.pardir(os.path.dirname(os.path.abspath(__file__)))
+    root =os.path.join(os.path.dirname(os.path.abspath(__file__)),  os.path.pardir)
     voting_records_json = os.path.join(root, "src", "generated_outputs", "voting_records.json")
     try:
         with open(voting_records_json, 'r') as file:

@@ -285,7 +285,7 @@ def gen_reps_json():
 
     members_json = flatten_user_terms(members_dict)
 
-    root = os.path.pardir(os.path.dirname(os.path.abspath(__file__)))
+    root = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.path.pardir)
     congressmen_json = os.path.join(root, "src", "generated_outputs", "congressmen.json")
 
 

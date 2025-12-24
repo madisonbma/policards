@@ -42,6 +42,23 @@ def load_json(filepath):
     
 
 
+def check_birthplace(birthplace):
+    """
+    Drop county of birthplace if 2 commas present
+    
+    :param birthplace: input string birthplace
+    """
+
+    if birthplace == None:
+        return ""
+    else:
+        birth_sections = birthplace.split(",")
+        if len(birth_sections) == 3:
+            return f"{birth_sections[0]},{birth_sections[2]}"
+        
+        else:
+            return birthplace
+
 
 def map_school_names(university, city=None):
     """
@@ -748,6 +765,8 @@ def add_bioguide_congress_data(list_of_dict):
 
         #update the education before appending
         education = check_education(education)
+
+        birthplace = check_birthplace(birthplace)
 
 
         #Update the JSON

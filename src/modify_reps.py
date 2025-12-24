@@ -94,11 +94,12 @@ def add_tenure(df):
 
     df['party_all_time_count'] = df.groupby('partyName')['bioguideID'].transform('count')
     df['party_current_count'] = df.groupby(['partyName', 'chamber', 'current_member'])['bioguideID'].transform('count')
+    df['chamber_current_count'] = df.groupby(['chamber', 'current_member'])['bioguideID'].transform('count')
 
     df['tenure_rank_current'] = df['tenure_rank_current'].astype(pd.Int64Dtype())
 
-    df['tenure_rank_current_party_percentile'] = np.where(df['current_member']=="yes", df.groupby(['current_member','chamber','partyName'])['duration'].rank(ascending=True,method='max'), np.nan)
-    df['tenure_rank_current_party_percentile'] = round(df['tenure_rank_current_party_percentile']/df['party_current_count']*100).astype(pd.Int64Dtype())
+    df['tenure_rank_current_percentile'] = np.where(df['current_member']=="yes", df.groupby(['current_member','chamber'])['duration'].rank(ascending=True,method='max'), np.nan)
+    df['tenure_rank_current_percentile'] = round(df['tenure_rank_current_percentile']/df['chamber_current_count']*100).astype(pd.Int64Dtype())
 
 
     return df
@@ -289,20 +290,20 @@ def get_absolute_stats(df, input_json_f):
     """
 
     #1: get pivot table for max tenure by house and party
-    max_tenure_by_house = df.groupby(['chamber', 'partyName'])['duration'].max()
+    max_tenure_by_house = df.groupby(['chamber'])['duration'].max()
     max_tenure_by_house = max_tenure_by_house.reset_index()
     max_tenure_by_house['dummy'] = 1
 
     df_pivot = max_tenure_by_house.pivot_table(
         index='dummy', # Use a dummy index since we want all data in one row
-        columns=['chamber', 'partyName'],
+        columns=['chamber'],
         values='duration'
     )
 
     df_pivot = df_pivot.reset_index(drop=True)
-    df_pivot.columns = ['_'.join(map(str, col)).replace(' ', '_') for col in df_pivot.columns]
+    #df_pivot.columns = ['_'.join(map(str, col)).replace(' ', '_') for col in df_pivot.columns]
 
-    df_pivot.rename(columns=lambda x: x.replace('House_of_Representatives', 'max_tenure_H')
+    df_pivot.rename(columns=lambda x: x.replace('House of Representatives', 'max_tenure_H')
                                     .replace('Senate', 'max_tenure_S')
                                     .replace('_Democrat', '_D')
                                     .replace('_Republican', '_R')

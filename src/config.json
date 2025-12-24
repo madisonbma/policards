@@ -1,0 +1,14 @@
+{
+    "settings": {
+        "photoshop_path": "C:/Program Files/Adobe/Adobe Photoshop 2026/Photoshop.exe",
+        "output_root": "./out"
+    },
+    "directories": {
+        "data_out": "generated_outputs",
+        "images_out": "cards_ps"
+    },
+    "get_congress_bioguide_data": {
+        "filename": "congressmen.json"
+    }
+
+}

@@ -224,7 +224,10 @@ def gen_summary_stats(rep_info):
         return_me += f"Tenure: {rep_info.get("duration")} years ({rep_info.get("tenure_rank_current")}/100)||BREAK_DOT||"
 
     ### ABSENT
-    return_me += f"Absent: {rep_info.get("Absent")} votes ({rep_info.get("absent_percent")}% of votes)||BREAK_DOT||"
+    novote_count = rep_info.get('Absent', 0) + rep_info.get("Abstained", 0)
+    novote_percent = novote_count / (rep_info.get('vote_count') - rep_info.get('Both', 0) - rep_info.get('Neither', 0)) * 100
+    novote_percent = int(novote_percent)
+    return_me += f"Not Voting: {novote_count} votes ({novote_percent}% of votes)||BREAK_DOT||"
 
     ### POPULATION
     return_me += f"Population: TBD||BREAK_DOT||"
@@ -239,8 +242,8 @@ def gen_summary_stats(rep_info):
 def gen_committee_list(rep_info):
     return_me = ""
     committees = rep_info.get("committees")
-    if committees is None:
-        return ""
+    if len(committees)==0:
+        return "\n"
     else:
         parent_com = []
         sub_com = []
@@ -260,7 +263,7 @@ def gen_committee_list(rep_info):
                 return_me += f"||BREAK_DOT||{pcom}"
                 for subcom in sub_com:
                     if pcom in subcom:
-                        return_me += f"||BREAK||- {subcom.split(": ")[1]}"
+                        return_me += f"||BREAK||-- {subcom.split(": ")[1]}"
         
         else:
             #otherwise get rid of subcoms
@@ -274,9 +277,9 @@ def gen_committee_list(rep_info):
 def get_work_history(rep_info, draw, font, max_width):
     return_me = ""
     new_ed = []
-    work_history = rep_info.get("work_history")
-    if work_history is None:
-        return ""
+    work_history = rep_info.get('work_history')
+    if len(work_history)==0:
+        return "\n"
     else:
         for work in work_history:
             new_ed.append(draw_wrapped_text(draw, work, font, max_width))
@@ -301,7 +304,18 @@ def create_vote_block(rep_info, absolute_stats):
 
     try:
         message = ""
-        message += f"Votes {rep_info.get('with_D_percent')}% Democrat, {rep_info.get("with_R_percent")}% Republican,||BREAK||Absent {rep_info.get("absent_percent")}%\n"
+        with_d = rep_info.get('with_D_percent')
+        with_r = rep_info.get('with_R_percent')
+        novote_count = rep_info.get('Absent', 0) + rep_info.get("Abstained", 0)
+        novote_percent = novote_count / (rep_info.get('vote_count') - rep_info.get('Both', 0) - rep_info.get('Neither', 0)) * 100
+        novote_percent = int(novote_percent)
+
+        if with_d > with_r:
+            message += f"Votes {with_d}% Democrat, {with_r}% Republican,||BREAK||Not Voting {novote_percent}%\n"
+        else:
+            message += f"Votes {with_r}% Republican, {with_d}% Democrat,||BREAK||Not Voting {novote_percent}%\n"
+
+
         #if they are D or R, show how often they vote with party:
         if party=="Republican":
             if chamber == "House of Representatives":
@@ -463,6 +477,7 @@ def create_temp(rep_info, absolute_stats):
         print(f"Warning: Could not load font from {font_tuple[1]}."
             "Ensure the font file exists and is accessible.")
 
+
     birthplace = draw_wrapped_text(draw, rep_info.get('birthplace', "Unknown"), font, max_width)
     text_block += f"{birthplace}\n"
 
@@ -507,12 +522,12 @@ def create_temp(rep_info, absolute_stats):
 
     text_block += create_vote_block(rep_info, absolute_stats)
 
-    key = f"max_tenure_{chamber[0].upper()}_{rep_info.get('partyName')[0].upper()}"
+    key = f"max_tenure_{chamber[0].upper()}"
     max_tenure = absolute_stats.get(key)
 
     duration = rep_info.get('duration', None)
     tenure_marker = int((duration/max_tenure)*100)
-    tenure_pct = rep_info.get("tenure_rank_current_party_percentile", None)
+    tenure_pct = rep_info.get("tenure_rank_current_percentile", None)
     if tenure_pct is not None:
         if duration is None:
             text_block += f"{tenure_marker}\n{num_to_percentile(tenure_pct)}\n"
@@ -543,25 +558,51 @@ def create_temp(rep_info, absolute_stats):
 
 
 
-
     #################################################
-    ####### Write to temp file
+    ####### Add in paths for save, template
     ################################################
+
     root = os.path.dirname(os.path.abspath(__file__))
     temp_file = os.path.join(root, "generated_outputs", "temp.txt")
+
 
     replacements = str.maketrans({",": "", "\"": "", ".":"", " ":"_"})
 
     output_filename = os.path.join(root, "..", "cards_ps", \
         f"{name.translate(replacements).lower()}_card.png")
     text_block += output_filename
+    text_block += "\n"
+
+    party = rep_info.get('partyName')
+    if party=="Republican":
+        text_block += os.path.join(root, os.path.pardir, "templates", "Republican-House_Senate_Gov-Social.psd")
+    elif party=="Democrat":
+        text_block += os.path.join(root, os.path.pardir, "templates", "Democrat-House_Senate_Gov-Social.psd")
+    else:
+        text_block += os.path.join(root, os.path.pardir, "templates", "Independent-House_Senate_Gov-Social.psd")
+
+
+
+    #################################################
+    ####### Write to temp file
+    ################################################
     with open(temp_file, 'w') as f:
         f.write(text_block)
         print(f"Successfully wrote {name} data to {temp_file}")
 
 
 
-def gen_temp_for_javascript(test_card=True):
+
+
+
+
+
+
+
+
+
+
+def gen_temp_for_javascript_old(test_card=True):
 
     current_dir = os.path.dirname(__file__)
     congressmen_f = os.path.join(current_dir, "generated_outputs", "congressmen_mod.json")
@@ -589,7 +630,7 @@ def gen_temp_for_javascript(test_card=True):
         comm_dict = {}
         my_logger.info("Running in debug mode. Just printing one card.")
         for rep in congressmen_json:
-            comm = rep.get('work_history', "a")
+            comm = rep.get('committees', "a")
             if comm is not None:
                 comm_len = len(comm)
                 comm_dict[comm_len] = comm_dict.get(comm_len, 0) + 1
@@ -599,25 +640,31 @@ def gen_temp_for_javascript(test_card=True):
             #Pelosi P000197
             #Hamadeh H001098
             #Sanders S000033
-            if rep.get('bioguideID')=='H001098': 
+            if rep.get('bioguideID')=='O000172': 
                 create_temp(rep, absolute_stats)
                 pull_pic_from_web(rep, dummy=False)
-                #face_img = pull_pic_from_web(rep)
-                #card = create_card_2(rep, face_img)
-                #display_card(card)
-                #save_card(card, rep['name'], option="1")
-        print(comm_dict)
+        #print(comm_dict)
     else:
         for rep in congressmen_json:
             create_temp(rep, absolute_stats)
-            #face_img = pull_pic_from_web(rep, dummy=dummy_img)
-            #card = create_card_2(rep, face_img)
-            #save_card(card, rep['name'])
 
 
 
+def gen_temp_for_javascript(rep_info):
+
+    current_dir = os.path.dirname(__file__)
+    abs_stat_f = os.path.join(current_dir, "generated_outputs", "absolute_stats.json")
 
 
-if __name__ == "__main__":
-    print("Generating temp file for Photoshop script...")
-    gen_temp_for_javascript(test_card=True)
+    #Load in the JSON
+    try: 
+        with open(abs_stat_f, 'r') as abs_f:
+            absolute_stats = json.load(abs_f)[0]
+    except Exception as e:
+        my_logger.error("There is an issue with the absolute_stats.json. Quitting.")
+        return
+
+
+    create_temp(rep_info, absolute_stats)
+    pull_pic_from_web(rep_info, dummy=False)
+

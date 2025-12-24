@@ -593,13 +593,14 @@ if (app.documents.length > 0) {
     var social_media_layer = toplayer.layers.getByName("Social");
 
     if (bonus_added) {
-        var layer_list = [toplayer.layers.getByName("Top Issues"), lines_layer.layers.getByName("Line 4"),
-            summary_stats_layer, lines_layer.layers.getByName("Line 3"), work_layer, lines_layer.layers.getByName("Line 0"),
+        var layer_list = [summary_stats_layer, lines_layer.layers.getByName("Line 3"),
+            toplayer.layers.getByName("Top Issues"), lines_layer.layers.getByName("Line 4"),
+            work_layer, lines_layer.layers.getByName("Line 0"),
             bonus_layer, lines_layer.layers.getByName("Line 6"), social_media_layer];
     }
     else {
-        var layer_list = [toplayer.layers.getByName("Top Issues"), lines_layer.layers.getByName("Line 4"),
-            summary_stats_layer, lines_layer.layers.getByName("Line 3"), work_layer,
+        var layer_list = [summary_stats_layer, lines_layer.layers.getByName("Line 3"), work_layer,
+            toplayer.layers.getByName("Top Issues"), lines_layer.layers.getByName("Line 4"),
             lines_layer.layers.getByName("Line 6"), social_media_layer];
     }
 
