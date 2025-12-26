@@ -180,7 +180,6 @@ def get_name_input(full_rep_info):
                     return rep_info
                 else:
                     did_you_mean.append(rep_name)
-                    print(f"Adding {rep_name}")
 
         #if we didn't get a match, will hit this print statement
         if len(did_you_mean)!=0:

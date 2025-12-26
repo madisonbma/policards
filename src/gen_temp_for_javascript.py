@@ -11,10 +11,16 @@ from init_logger import my_logger
 
 
 # --- Configuration (UPDATE THESE PATHS) ---
+current_dir = os.path.dirname(__file__)
+project_root = os.path.abspath(os.path.join(current_dir, ".."))
 
-NN_EXTRA_BOLD = "C:\\Users\\Owner\\policards\\fonts\\NeulisNeue\\NeulisNeue-ExtraBold.ttf"
-NN_MEDIUM = "C:\\Users\\Owner\\policards\\fonts\\NeulisNeue\\NeulisNeue-Medium.ttf"
-NN_BOLD_ITALIC = "C:\\Users\\Owner\\policards\\fonts\\NeulisNeue\\NeulisNeue-BoldItalic.ttf"
+NN_EXTRA_BOLD = os.path.join(project_root, "fonts", "NeulisNeue", "NeulisNeue-ExtraBold.ttf")
+NN_MEDIUM = os.path.join(project_root, "fonts", "NeulisNeue", "NeulisNeue-Medium.ttf")
+NN_BOLD_ITALIC = os.path.join(project_root, "fonts", "NeulisNeue", "NeulisNeue-BoldItalic.ttf")
+
+#"C:\\Users\\Owner\\policards\\fonts\\NeulisNeue\\NeulisNeue-ExtraBold.ttf"
+#NN_MEDIUM = "C:\\Users\\Owner\\policards\\fonts\\NeulisNeue\\NeulisNeue-Medium.ttf"
+#NN_BOLD_ITALIC = "C:\\Users\\Owner\\policards\\fonts\\NeulisNeue\\NeulisNeue-BoldItalic.ttf"
 
 FONT_CHECK_DICT = {
     "name": (100, NN_EXTRA_BOLD, 15.72),
