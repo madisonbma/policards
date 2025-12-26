@@ -87,54 +87,81 @@ def get_config_path():
     base_path = get_base_path()
     return os.path.join(base_path, CONFIG_NAME)
 
+#############
+import json
+import os
+import sys
+import platform
+import tkinter as tk
+from tkinter import filedialog
+
+CONFIG_NAME = "config.json"
+
+def get_config_path():
+    """Finds the config file next to the EXE/App or the Script."""
+    if getattr(sys, 'frozen', False):
+        # When running as a compiled executable
+        base_path = os.path.dirname(sys.executable)
+    else:
+        # When running as a raw .py script
+        base_path = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(base_path, CONFIG_NAME)
+
+
 
 def load_or_init_config():
     config_path = get_config_path()
     
-    # 1. Load existing or create empty dict
+    # 1. Load existing config or start fresh
     if os.path.exists(config_path):
         with open(config_path, 'r') as f:
             try:
                 config = json.load(f)
             except:
-                config = {}
+                config = {"settings": {}}
     else:
-        config = {}
+        config = {"settings": {}}
 
-    # 2. Ensure 'settings' structure exists
-    if "settings" not in config:
-        config["settings"] = {}
-
-    # 3. Check if photoshop_path is present and valid
     ps_path = config["settings"].get("photoshop_path")
 
+    # 2. Check if the path is missing or invalid
     if not ps_path or not os.path.exists(ps_path):
-        print("Photoshop path not found. Please select Photoshop.exe...")
-        print(f"""On PC, it should look something like C:\\Program Files\\Adobe\\Adobe Photoshop 2026\\Photoshop.exe\n
-                    on Mac it should be like /Applications/Adobe Photoshop [Version]/Adobe Photoshop [Version].app""")
+        print("Photoshop path not found. Opening selector...")
         
-        # Open File Dialog
         root = tk.Tk()
-        root.withdraw() # Hide the main tkinter window
-        root.attributes("-topmost", True) # Bring dialog to front
+        root.withdraw() 
+        root.attributes("-topmost", True)
+
+        # 3. Adjust file picker based on Operating System
+        current_os = platform.system() # 'Windows' or 'Darwin' (Mac)
         
-        selected_path = filedialog.askopenfilename(
-            title="Select Photoshop.exe",
-            filetypes=[("Executable Files", "*.exe"), ("All Files", "*.*")]
-        )
+        if current_os == "Windows":
+            file_types = [("Photoshop Executable", "Photoshop.exe"), ("All Files", "*.*")]
+            title = "Select Photoshop.exe"
+        elif current_os == "Darwin": # macOS
+            file_types = [("Applications", "*.app")]
+            title = "Select Adobe Photoshop.app"
+        else:
+            file_types = [("All Files", "*.*")]
+            title = "Select Photoshop Application"
+
+        selected_path = filedialog.askopenfilename(title=title, filetypes=file_types)
         root.destroy()
 
         if selected_path:
+            # On macOS, .app is actually a folder. Photoshop likes the path to the .app itself.
             config["settings"]["photoshop_path"] = selected_path
-            # 4. Save the updated config back to the file
+            
             with open(config_path, 'w') as f:
                 json.dump(config, f, indent=4)
             print(f"Path saved to {CONFIG_NAME}")
         else:
-            print("No file selected. Application cannot continue.")
+            print("Selection cancelled. Exiting.")
             sys.exit(1)
 
     return config
+
+
 
 
 ######################
