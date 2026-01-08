@@ -1,6 +1,7 @@
 cards/
 cards_ps/
 templates/
+__pycache__
 # Logs
 logs
 *.log
