@@ -2387,3 +2387,270 @@
 2025-12-16 10:34:56,891 - gen_temp_for_javascript.py - INFO - Running in debug mode. Just printing one card.
 2025-12-16 10:34:57,485 - gen_temp_for_javascript.py - INFO - Using primary image for Abraham J. Hamadeh
 2025-12-16 10:34:57,486 - gen_temp_for_javascript.py - DEBUG - Primary image for Abraham J. Hamadeh was sufficient.
+2025-12-31 16:18:08,983 - gen_temp_for_javascript.py - WARNING - Image for Ted Cruz is too small at (180, 225) instead of (342, 428). Trying backup image.
+2025-12-31 16:18:10,289 - gen_temp_for_javascript.py - WARNING - Image for Ted Cruz is too small at (180, 225) instead of (342, 428).
+2025-12-31 16:18:10,289 - gen_temp_for_javascript.py - DEBUG - Success image pull for Ted Cruz
+2025-12-31 16:18:10,289 - gen_temp_for_javascript.py - INFO - Both images too small for Ted Cruz. Using larger one at (180, 225).
+2025-12-31 16:18:10,289 - gen_temp_for_javascript.py - WARNING - Having to expand picture, could be poor quality. Original photo: (180, 225)
+2025-12-31 19:20:51,931 - modify_votes.py - INFO - Success getting senate bioguide to senate_id dict
+2025-12-31 19:20:52,160 - modify_votes.py - INFO - 362 house votes, 659 senate votes, for total of 1021 votes
+2025-12-31 19:20:52,234 - modify_votes.py - INFO - 446 house reps, 102 senators, for total of 548 people
+2025-12-31 19:20:52,736 - modify_votes.py - WARNING - Some congressmen are missing voter information unexpectedly: ['G000606' 'H001104' 'J000312' 'M001244' 'S001207' 'V000139' 'W000831']
+2025-12-31 19:20:52,789 - modify_reps.py - DEBUG - There are 537 NA endyears
+2025-12-31 19:20:52,790 - modify_reps.py - DEBUG - Added yes to 537 members
+2025-12-31 19:20:52,791 - modify_reps.py - INFO - After processing, there are 0 na endYears
+2025-12-31 19:20:54,082 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for House
+2025-12-31 19:20:54,083 - gen_committees.py - INFO - Success getting list of (sub)committee names for comcode
+2025-12-31 19:20:54,083 - gen_committees.py - WARNING - Comcode not found for P000197, Nonetype returned.
+2025-12-31 19:20:54,084 - gen_committees.py - WARNING - Comcode not found for S001176, Nonetype returned.
+2025-12-31 19:20:54,084 - gen_committees.py - WARNING - Comcode not found for J000299, Nonetype returned.
+2025-12-31 19:20:54,085 - gen_committees.py - WARNING - Comcode not found for C001101, Nonetype returned.
+2025-12-31 19:20:54,085 - gen_committees.py - WARNING - Comcode not found for None, Nonetype returned.
+2025-12-31 19:20:54,086 - gen_committees.py - WARNING - Comcode not found for J000294, Nonetype returned.
+2025-12-31 19:20:54,086 - gen_committees.py - WARNING - Comcode not found for V000139, Nonetype returned.
+2025-12-31 19:20:54,742 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for senate
+2025-12-31 19:24:01,940 - modify_votes.py - INFO - Success getting senate bioguide to senate_id dict
+2025-12-31 19:24:02,101 - modify_votes.py - INFO - 362 house votes, 659 senate votes, for total of 1021 votes
+2025-12-31 19:24:02,167 - modify_votes.py - INFO - 446 house reps, 102 senators, for total of 548 people
+2025-12-31 19:24:02,669 - modify_votes.py - WARNING - Some congressmen are missing voter information unexpectedly: ['G000606' 'H001104' 'J000312' 'M001244' 'S001207' 'V000139' 'W000831']
+2025-12-31 19:24:02,745 - modify_reps.py - DEBUG - There are 537 NA endyears
+2025-12-31 19:24:02,746 - modify_reps.py - DEBUG - Added yes to 537 members
+2025-12-31 19:24:02,747 - modify_reps.py - INFO - After processing, there are 0 na endYears
+2025-12-31 19:24:04,424 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for House
+2025-12-31 19:24:04,425 - gen_committees.py - INFO - Success getting list of (sub)committee names for comcode
+2025-12-31 19:24:04,425 - gen_committees.py - WARNING - Comcode not found for P000197, Nonetype returned.
+2025-12-31 19:24:04,426 - gen_committees.py - WARNING - Comcode not found for S001176, Nonetype returned.
+2025-12-31 19:24:04,426 - gen_committees.py - WARNING - Comcode not found for J000299, Nonetype returned.
+2025-12-31 19:24:04,427 - gen_committees.py - WARNING - Comcode not found for C001101, Nonetype returned.
+2025-12-31 19:24:04,427 - gen_committees.py - WARNING - Comcode not found for None, Nonetype returned.
+2025-12-31 19:24:04,428 - gen_committees.py - WARNING - Comcode not found for J000294, Nonetype returned.
+2025-12-31 19:24:04,428 - gen_committees.py - WARNING - Comcode not found for V000139, Nonetype returned.
+2025-12-31 19:24:05,042 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for senate
+2025-12-31 19:30:10,441 - modify_votes.py - INFO - Success getting senate bioguide to senate_id dict
+2025-12-31 19:30:10,636 - modify_votes.py - INFO - 362 house votes, 659 senate votes, for total of 1021 votes
+2025-12-31 19:30:10,724 - modify_votes.py - INFO - 446 house reps, 102 senators, for total of 548 people
+2025-12-31 19:30:11,151 - modify_votes.py - WARNING - Some congressmen are missing voter information unexpectedly: ['G000606' 'H001104' 'J000312' 'M001244' 'S001207' 'V000139' 'W000831']
+2025-12-31 19:30:11,203 - modify_reps.py - DEBUG - There are 537 NA endyears
+2025-12-31 19:30:11,204 - modify_reps.py - DEBUG - Added yes to 537 members
+2025-12-31 19:30:11,205 - modify_reps.py - INFO - After processing, there are 0 na endYears
+2025-12-31 19:30:12,397 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for House
+2025-12-31 19:30:12,398 - gen_committees.py - INFO - Success getting list of (sub)committee names for comcode
+2025-12-31 19:30:12,398 - gen_committees.py - WARNING - Comcode not found for P000197, Nonetype returned.
+2025-12-31 19:30:12,399 - gen_committees.py - WARNING - Comcode not found for S001176, Nonetype returned.
+2025-12-31 19:30:12,399 - gen_committees.py - WARNING - Comcode not found for J000299, Nonetype returned.
+2025-12-31 19:30:12,400 - gen_committees.py - WARNING - Comcode not found for C001101, Nonetype returned.
+2025-12-31 19:30:12,400 - gen_committees.py - WARNING - Comcode not found for None, Nonetype returned.
+2025-12-31 19:30:12,401 - gen_committees.py - WARNING - Comcode not found for J000294, Nonetype returned.
+2025-12-31 19:30:12,401 - gen_committees.py - WARNING - Comcode not found for V000139, Nonetype returned.
+2025-12-31 19:30:13,151 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for senate
+2025-12-31 19:36:10,409 - gen_temp_for_javascript.py - WARNING - Image for Ted Cruz is too small at (180, 225) instead of (342, 428). Trying backup image.
+2025-12-31 19:36:11,115 - gen_temp_for_javascript.py - WARNING - Image for Ted Cruz is too small at (180, 225) instead of (342, 428).
+2025-12-31 19:36:11,116 - gen_temp_for_javascript.py - DEBUG - Success image pull for Ted Cruz
+2025-12-31 19:36:11,116 - gen_temp_for_javascript.py - INFO - Both images too small for Ted Cruz. Using larger one at (180, 225).
+2025-12-31 19:36:11,116 - gen_temp_for_javascript.py - WARNING - Having to expand picture, could be poor quality. Original photo: (180, 225)
+2025-12-31 19:39:52,143 - gen_temp_for_javascript.py - WARNING - Image for Ted Cruz is too small at (180, 225) instead of (342, 428). Trying backup image.
+2025-12-31 19:39:52,723 - gen_temp_for_javascript.py - WARNING - Image for Ted Cruz is too small at (180, 225) instead of (342, 428).
+2025-12-31 19:39:52,725 - gen_temp_for_javascript.py - DEBUG - Success image pull for Ted Cruz
+2025-12-31 19:39:52,725 - gen_temp_for_javascript.py - INFO - Both images too small for Ted Cruz. Using larger one at (180, 225).
+2025-12-31 19:39:52,725 - gen_temp_for_javascript.py - WARNING - Having to expand picture, could be poor quality. Original photo: (180, 225)
+2025-12-31 19:44:42,207 - gen_temp_for_javascript.py - WARNING - Image for Ted Cruz is too small at (180, 225) instead of (342, 428). Trying backup image.
+2025-12-31 19:44:42,749 - gen_temp_for_javascript.py - WARNING - Image for Ted Cruz is too small at (180, 225) instead of (342, 428).
+2025-12-31 19:44:42,750 - gen_temp_for_javascript.py - DEBUG - Success image pull for Ted Cruz
+2025-12-31 19:44:42,750 - gen_temp_for_javascript.py - INFO - Both images too small for Ted Cruz. Using larger one at (180, 225).
+2025-12-31 19:44:42,750 - gen_temp_for_javascript.py - WARNING - Having to expand picture, could be poor quality. Original photo: (180, 225)
+2025-12-31 19:45:39,316 - gen_temp_for_javascript.py - WARNING - Image for Ted Cruz is too small at (180, 225) instead of (342, 428). Trying backup image.
+2025-12-31 19:45:39,705 - gen_temp_for_javascript.py - WARNING - Image for Ted Cruz is too small at (180, 225) instead of (342, 428).
+2025-12-31 19:45:39,705 - gen_temp_for_javascript.py - DEBUG - Success image pull for Ted Cruz
+2025-12-31 19:45:39,706 - gen_temp_for_javascript.py - INFO - Both images too small for Ted Cruz. Using larger one at (180, 225).
+2025-12-31 19:45:39,706 - gen_temp_for_javascript.py - WARNING - Having to expand picture, could be poor quality. Original photo: (180, 225)
+2025-12-31 19:46:37,079 - gen_temp_for_javascript.py - WARNING - Image for Ted Cruz is too small at (180, 225) instead of (342, 428). Trying backup image.
+2025-12-31 19:46:37,679 - gen_temp_for_javascript.py - WARNING - Image for Ted Cruz is too small at (180, 225) instead of (342, 428).
+2025-12-31 19:46:37,680 - gen_temp_for_javascript.py - DEBUG - Success image pull for Ted Cruz
+2025-12-31 19:46:37,680 - gen_temp_for_javascript.py - INFO - Both images too small for Ted Cruz. Using larger one at (180, 225).
+2025-12-31 19:46:37,680 - gen_temp_for_javascript.py - WARNING - Having to expand picture, could be poor quality. Original photo: (180, 225)
+2025-12-31 19:48:07,780 - gen_temp_for_javascript.py - WARNING - Image for Alexandria Ocasio-Cortez is too small at (175, 219) instead of (342, 428). Trying backup image.
+2025-12-31 19:48:08,755 - gen_temp_for_javascript.py - WARNING - Image for Alexandria Ocasio-Cortez is too small at (175, 219) instead of (342, 428).
+2025-12-31 19:48:08,755 - gen_temp_for_javascript.py - DEBUG - Success image pull for Alexandria Ocasio-Cortez
+2025-12-31 19:48:08,755 - gen_temp_for_javascript.py - INFO - Both images too small for Alexandria Ocasio-Cortez. Using larger one at (175, 219).
+2025-12-31 19:48:08,755 - gen_temp_for_javascript.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-12-31 19:50:20,783 - gen_temp_for_javascript.py - WARNING - Image for Alexandria Ocasio-Cortez is too small at (175, 219) instead of (342, 428). Trying backup image.
+2025-12-31 19:50:21,645 - gen_temp_for_javascript.py - WARNING - Image for Alexandria Ocasio-Cortez is too small at (175, 219) instead of (342, 428).
+2025-12-31 19:50:21,645 - gen_temp_for_javascript.py - DEBUG - Success image pull for Alexandria Ocasio-Cortez
+2025-12-31 19:50:21,645 - gen_temp_for_javascript.py - INFO - Both images too small for Alexandria Ocasio-Cortez. Using larger one at (175, 219).
+2025-12-31 19:50:21,645 - gen_temp_for_javascript.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-12-31 19:51:23,729 - gen_temp_for_javascript.py - WARNING - Image for Ted Cruz is too small at (180, 225) instead of (342, 428). Trying backup image.
+2025-12-31 19:51:28,046 - gen_temp_for_javascript.py - WARNING - Image for Ted Cruz is too small at (180, 225) instead of (342, 428).
+2025-12-31 19:51:28,047 - gen_temp_for_javascript.py - DEBUG - Success image pull for Ted Cruz
+2025-12-31 19:51:28,047 - gen_temp_for_javascript.py - INFO - Both images too small for Ted Cruz. Using larger one at (180, 225).
+2025-12-31 19:51:28,047 - gen_temp_for_javascript.py - WARNING - Having to expand picture, could be poor quality. Original photo: (180, 225)
+2025-12-31 19:52:19,031 - gen_temp_for_javascript.py - WARNING - Image for Alexandria Ocasio-Cortez is too small at (175, 219) instead of (342, 428). Trying backup image.
+2025-12-31 19:52:20,043 - gen_temp_for_javascript.py - WARNING - Image for Alexandria Ocasio-Cortez is too small at (175, 219) instead of (342, 428).
+2025-12-31 19:52:20,043 - gen_temp_for_javascript.py - DEBUG - Success image pull for Alexandria Ocasio-Cortez
+2025-12-31 19:52:20,044 - gen_temp_for_javascript.py - INFO - Both images too small for Alexandria Ocasio-Cortez. Using larger one at (175, 219).
+2025-12-31 19:52:20,044 - gen_temp_for_javascript.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-12-31 19:52:55,196 - gen_temp_for_javascript.py - WARNING - Image for Marjorie Taylor Greene is too small at (175, 222) instead of (342, 428). Trying backup image.
+2025-12-31 19:52:56,165 - gen_temp_for_javascript.py - WARNING - Image for Marjorie Taylor Greene is too small at (175, 222) instead of (342, 428).
+2025-12-31 19:52:56,166 - gen_temp_for_javascript.py - DEBUG - Success image pull for Marjorie Taylor Greene
+2025-12-31 19:52:56,166 - gen_temp_for_javascript.py - INFO - Both images too small for Marjorie Taylor Greene. Using larger one at (175, 222).
+2025-12-31 19:52:56,167 - gen_temp_for_javascript.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 222)
+2025-12-31 19:55:54,208 - gen_temp_for_javascript.py - WARNING - Image for Jasmine Crockett is too small at (175, 219) instead of (342, 428). Trying backup image.
+2025-12-31 19:55:55,327 - gen_temp_for_javascript.py - WARNING - Image for Jasmine Crockett is too small at (175, 219) instead of (342, 428).
+2025-12-31 19:55:55,328 - gen_temp_for_javascript.py - DEBUG - Success image pull for Jasmine Crockett
+2025-12-31 19:55:55,328 - gen_temp_for_javascript.py - INFO - Both images too small for Jasmine Crockett. Using larger one at (175, 219).
+2025-12-31 19:55:55,328 - gen_temp_for_javascript.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 219)
+2025-12-31 19:56:49,572 - gen_temp_for_javascript.py - WARNING - Image for John Fetterman is too small at (180, 225) instead of (342, 428). Trying backup image.
+2025-12-31 19:56:52,139 - gen_temp_for_javascript.py - WARNING - Image for John Fetterman is too small at (180, 225) instead of (342, 428).
+2025-12-31 19:56:52,140 - gen_temp_for_javascript.py - DEBUG - Success image pull for John Fetterman
+2025-12-31 19:56:52,140 - gen_temp_for_javascript.py - INFO - Both images too small for John Fetterman. Using larger one at (180, 225).
+2025-12-31 19:56:52,140 - gen_temp_for_javascript.py - WARNING - Having to expand picture, could be poor quality. Original photo: (180, 225)
+2025-12-31 19:57:31,077 - gen_temp_for_javascript.py - INFO - Using primary image for Mike Johnson
+2025-12-31 19:57:31,077 - gen_temp_for_javascript.py - DEBUG - Primary image for Mike Johnson was sufficient.
+2025-12-31 19:58:14,081 - gen_temp_for_javascript.py - WARNING - Image for Bernard Sanders is too small at (180, 225) instead of (342, 428). Trying backup image.
+2025-12-31 19:58:20,176 - gen_temp_for_javascript.py - WARNING - Image for Bernard Sanders is too small at (180, 225) instead of (342, 428).
+2025-12-31 19:58:20,177 - gen_temp_for_javascript.py - DEBUG - Success image pull for Bernard Sanders
+2025-12-31 19:58:20,177 - gen_temp_for_javascript.py - INFO - Both images too small for Bernard Sanders. Using larger one at (180, 225).
+2025-12-31 19:58:20,177 - gen_temp_for_javascript.py - WARNING - Having to expand picture, could be poor quality. Original photo: (180, 225)
+2025-12-31 19:59:40,479 - gen_temp_for_javascript.py - ERROR - Request exception occurred: ('Connection aborted.', ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None))
+2025-12-31 19:59:40,480 - gen_temp_for_javascript.py - DEBUG - Primary image for Thomas Massie was sufficient.
+2025-12-31 19:59:40,480 - gen_temp_for_javascript.py - ERROR - Unexpected error pulling image for Thomas Massie: cannot access local variable 'dims_1' where it is not associated with a value
+2025-12-31 20:00:53,854 - gen_temp_for_javascript.py - WARNING - Image for Thomas Massie is too small at (175, 210) instead of (342, 428). Trying backup image.
+2025-12-31 20:00:55,181 - gen_temp_for_javascript.py - WARNING - Image for Thomas Massie is too small at (175, 210) instead of (342, 428).
+2025-12-31 20:00:55,182 - gen_temp_for_javascript.py - DEBUG - Success image pull for Thomas Massie
+2025-12-31 20:00:55,182 - gen_temp_for_javascript.py - INFO - Both images too small for Thomas Massie. Using larger one at (175, 210).
+2025-12-31 20:00:55,182 - gen_temp_for_javascript.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 210)
+2026-01-07 19:29:49,604 - gen_temp_for_javascript.py - WARNING - Image for Amy Klobuchar is too small at (180, 225) instead of (342, 428). Trying backup image.
+2026-01-07 19:29:50,192 - gen_temp_for_javascript.py - WARNING - Image for Amy Klobuchar is too small at (180, 225) instead of (342, 428).
+2026-01-07 19:29:50,192 - gen_temp_for_javascript.py - DEBUG - Success image pull for Amy Klobuchar
+2026-01-07 19:29:50,193 - gen_temp_for_javascript.py - INFO - Both images too small for Amy Klobuchar. Using larger one at (180, 225).
+2026-01-07 19:29:50,193 - gen_temp_for_javascript.py - WARNING - Having to expand picture, could be poor quality. Original photo: (180, 225)
+2026-01-08 10:56:51,331 - modify_votes.py - INFO - Success getting senate bioguide to senate_id dict
+2026-01-08 10:56:51,830 - modify_votes.py - INFO - 362 house votes, 659 senate votes, for total of 1021 votes
+2026-01-08 10:56:52,100 - modify_votes.py - INFO - 446 house reps, 102 senators, for total of 548 people
+2026-01-08 10:56:52,954 - modify_votes.py - WARNING - Some congressmen are missing voter information unexpectedly: ['G000606' 'H001104' 'J000312' 'M001244' 'S001207' 'V000139' 'W000831']
+2026-01-08 10:56:53,093 - modify_reps.py - DEBUG - There are 537 NA endyears
+2026-01-08 10:56:53,095 - modify_reps.py - DEBUG - Added yes to 537 members
+2026-01-08 10:56:53,098 - modify_reps.py - INFO - After processing, there are 0 na endYears
+2026-01-08 10:56:54,358 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for House
+2026-01-08 10:56:54,358 - gen_committees.py - INFO - Success getting list of (sub)committee names for comcode
+2026-01-08 10:56:54,358 - gen_committees.py - WARNING - Comcode not found for None, Nonetype returned.
+2026-01-08 10:56:54,358 - gen_committees.py - WARNING - Comcode not found for P000197, Nonetype returned.
+2026-01-08 10:56:54,359 - gen_committees.py - WARNING - Comcode not found for S001176, Nonetype returned.
+2026-01-08 10:56:54,359 - gen_committees.py - WARNING - Comcode not found for J000299, Nonetype returned.
+2026-01-08 10:56:54,359 - gen_committees.py - WARNING - Comcode not found for C001101, Nonetype returned.
+2026-01-08 10:56:54,360 - gen_committees.py - WARNING - Comcode not found for J000294, Nonetype returned.
+2026-01-08 10:56:55,404 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for senate
+2026-01-08 11:00:39,447 - modify_votes.py - INFO - Success getting senate bioguide to senate_id dict
+2026-01-08 11:00:39,816 - modify_votes.py - INFO - 362 house votes, 659 senate votes, for total of 1021 votes
+2026-01-08 11:00:39,948 - modify_votes.py - INFO - 446 house reps, 102 senators, for total of 548 people
+2026-01-08 11:00:40,926 - modify_votes.py - WARNING - Some congressmen are missing voter information unexpectedly: ['G000606' 'H001104' 'J000312' 'M001244' 'S001207' 'V000139' 'W000831']
+2026-01-08 11:00:40,984 - modify_reps.py - DEBUG - There are 537 NA endyears
+2026-01-08 11:00:40,984 - modify_reps.py - DEBUG - Added yes to 537 members
+2026-01-08 11:00:40,986 - modify_reps.py - INFO - After processing, there are 0 na endYears
+2026-01-08 11:00:42,733 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for House
+2026-01-08 11:00:42,734 - gen_committees.py - INFO - Success getting list of (sub)committee names for comcode
+2026-01-08 11:00:42,735 - gen_committees.py - WARNING - Comcode not found for None, Nonetype returned.
+2026-01-08 11:00:42,736 - gen_committees.py - WARNING - Comcode not found for P000197, Nonetype returned.
+2026-01-08 11:00:42,738 - gen_committees.py - WARNING - Comcode not found for S001176, Nonetype returned.
+2026-01-08 11:00:42,739 - gen_committees.py - WARNING - Comcode not found for J000299, Nonetype returned.
+2026-01-08 11:00:42,740 - gen_committees.py - WARNING - Comcode not found for C001101, Nonetype returned.
+2026-01-08 11:00:42,741 - gen_committees.py - WARNING - Comcode not found for J000294, Nonetype returned.
+2026-01-08 11:00:43,452 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for senate
+2026-01-08 11:01:03,265 - modify_votes.py - INFO - Success getting senate bioguide to senate_id dict
+2026-01-08 11:01:03,800 - modify_votes.py - INFO - 362 house votes, 659 senate votes, for total of 1021 votes
+2026-01-08 11:01:04,070 - modify_votes.py - INFO - 446 house reps, 102 senators, for total of 548 people
+2026-01-08 11:01:05,882 - modify_votes.py - WARNING - Some congressmen are missing voter information unexpectedly: ['G000606' 'H001104' 'J000312' 'M001244' 'S001207' 'V000139' 'W000831']
+2026-01-08 11:01:05,989 - modify_reps.py - DEBUG - There are 537 NA endyears
+2026-01-08 11:01:05,995 - modify_reps.py - DEBUG - Added yes to 537 members
+2026-01-08 11:01:06,001 - modify_reps.py - INFO - After processing, there are 0 na endYears
+2026-01-08 11:01:07,720 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for House
+2026-01-08 11:01:07,721 - gen_committees.py - INFO - Success getting list of (sub)committee names for comcode
+2026-01-08 11:01:07,721 - gen_committees.py - WARNING - Comcode not found for None, Nonetype returned.
+2026-01-08 11:01:07,723 - gen_committees.py - WARNING - Comcode not found for P000197, Nonetype returned.
+2026-01-08 11:01:07,725 - gen_committees.py - WARNING - Comcode not found for S001176, Nonetype returned.
+2026-01-08 11:01:07,726 - gen_committees.py - WARNING - Comcode not found for J000299, Nonetype returned.
+2026-01-08 11:01:07,728 - gen_committees.py - WARNING - Comcode not found for C001101, Nonetype returned.
+2026-01-08 11:01:07,730 - gen_committees.py - WARNING - Comcode not found for J000294, Nonetype returned.
+2026-01-08 11:01:09,086 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for senate
+2026-01-08 11:06:27,209 - modify_votes.py - INFO - Success getting senate bioguide to senate_id dict
+2026-01-08 11:06:27,362 - modify_votes.py - INFO - 362 house votes, 659 senate votes, for total of 1021 votes
+2026-01-08 11:06:27,437 - modify_votes.py - INFO - 446 house reps, 102 senators, for total of 548 people
+2026-01-08 11:06:27,927 - modify_votes.py - WARNING - Some congressmen are missing voter information unexpectedly: ['G000606' 'H001104' 'J000312' 'M001244' 'S001207' 'V000139' 'W000831']
+2026-01-08 11:06:27,986 - modify_reps.py - DEBUG - There are 537 NA endyears
+2026-01-08 11:06:27,987 - modify_reps.py - DEBUG - Added yes to 537 members
+2026-01-08 11:06:27,989 - modify_reps.py - INFO - After processing, there are 0 na endYears
+2026-01-08 11:06:28,949 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for House
+2026-01-08 11:06:28,950 - gen_committees.py - INFO - Success getting list of (sub)committee names for comcode
+2026-01-08 11:06:28,950 - gen_committees.py - WARNING - Comcode not found for None, Nonetype returned.
+2026-01-08 11:06:28,951 - gen_committees.py - WARNING - Comcode not found for P000197, Nonetype returned.
+2026-01-08 11:06:28,953 - gen_committees.py - WARNING - Comcode not found for S001176, Nonetype returned.
+2026-01-08 11:06:28,954 - gen_committees.py - WARNING - Comcode not found for J000299, Nonetype returned.
+2026-01-08 11:06:28,955 - gen_committees.py - WARNING - Comcode not found for C001101, Nonetype returned.
+2026-01-08 11:06:28,956 - gen_committees.py - WARNING - Comcode not found for J000294, Nonetype returned.
+2026-01-08 11:06:29,418 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for senate
+2026-01-08 11:06:45,253 - modify_votes.py - INFO - Success getting senate bioguide to senate_id dict
+2026-01-08 11:06:45,864 - modify_votes.py - INFO - 362 house votes, 659 senate votes, for total of 1021 votes
+2026-01-08 11:06:46,082 - modify_votes.py - INFO - 446 house reps, 102 senators, for total of 548 people
+2026-01-08 11:06:47,486 - modify_votes.py - WARNING - Some congressmen are missing voter information unexpectedly: ['G000606' 'H001104' 'J000312' 'M001244' 'S001207' 'V000139' 'W000831']
+2026-01-08 11:06:47,707 - modify_reps.py - DEBUG - There are 537 NA endyears
+2026-01-08 11:06:47,712 - modify_reps.py - DEBUG - Added yes to 537 members
+2026-01-08 11:06:47,717 - modify_reps.py - INFO - After processing, there are 0 na endYears
+2026-01-08 11:06:49,096 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for House
+2026-01-08 11:06:49,097 - gen_committees.py - INFO - Success getting list of (sub)committee names for comcode
+2026-01-08 11:06:49,098 - gen_committees.py - WARNING - Comcode not found for None, Nonetype returned.
+2026-01-08 11:06:49,099 - gen_committees.py - WARNING - Comcode not found for P000197, Nonetype returned.
+2026-01-08 11:06:49,101 - gen_committees.py - WARNING - Comcode not found for S001176, Nonetype returned.
+2026-01-08 11:06:49,102 - gen_committees.py - WARNING - Comcode not found for J000299, Nonetype returned.
+2026-01-08 11:06:49,102 - gen_committees.py - WARNING - Comcode not found for C001101, Nonetype returned.
+2026-01-08 11:06:49,103 - gen_committees.py - WARNING - Comcode not found for J000294, Nonetype returned.
+2026-01-08 11:06:49,762 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for senate
+2026-01-08 11:35:22,421 - modify_votes.py - INFO - Success getting senate bioguide to senate_id dict
+2026-01-08 11:35:23,064 - modify_votes.py - INFO - 362 house votes, 659 senate votes, for total of 1021 votes
+2026-01-08 11:35:23,323 - modify_votes.py - INFO - 446 house reps, 102 senators, for total of 548 people
+2026-01-08 11:35:24,756 - modify_votes.py - WARNING - Some congressmen are missing voter information unexpectedly: ['G000606' 'H001104' 'J000312' 'M001244' 'S001207' 'V000139' 'W000831']
+2026-01-08 11:35:24,930 - modify_reps.py - DEBUG - There are 537 NA endyears
+2026-01-08 11:35:24,935 - modify_reps.py - DEBUG - Added yes to 537 members
+2026-01-08 11:35:24,943 - modify_reps.py - INFO - After processing, there are 0 na endYears
+2026-01-08 11:35:26,919 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for House
+2026-01-08 11:35:26,921 - gen_committees.py - INFO - Success getting list of (sub)committee names for comcode
+2026-01-08 11:35:26,922 - gen_committees.py - WARNING - Comcode not found for None, Nonetype returned.
+2026-01-08 11:35:26,923 - gen_committees.py - WARNING - Comcode not found for P000197, Nonetype returned.
+2026-01-08 11:35:26,925 - gen_committees.py - WARNING - Comcode not found for S001176, Nonetype returned.
+2026-01-08 11:35:26,927 - gen_committees.py - WARNING - Comcode not found for J000299, Nonetype returned.
+2026-01-08 11:35:26,928 - gen_committees.py - WARNING - Comcode not found for C001101, Nonetype returned.
+2026-01-08 11:35:26,930 - gen_committees.py - WARNING - Comcode not found for J000294, Nonetype returned.
+2026-01-08 11:35:28,282 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for senate
+2026-01-08 11:39:30,684 - modify_votes.py - INFO - Success getting senate bioguide to senate_id dict
+2026-01-08 11:39:30,926 - modify_votes.py - INFO - 362 house votes, 659 senate votes, for total of 1021 votes
+2026-01-08 11:39:31,013 - modify_votes.py - INFO - 446 house reps, 102 senators, for total of 548 people
+2026-01-08 11:39:31,639 - modify_votes.py - WARNING - Some congressmen are missing voter information unexpectedly: ['G000606' 'H001104' 'J000312' 'M001244' 'S001207' 'V000139' 'W000831']
+2026-01-08 11:39:31,741 - modify_reps.py - DEBUG - There are 537 NA endyears
+2026-01-08 11:39:31,743 - modify_reps.py - DEBUG - Added yes to 537 members
+2026-01-08 11:39:31,745 - modify_reps.py - INFO - After processing, there are 0 na endYears
+2026-01-08 11:39:33,615 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for House
+2026-01-08 11:39:33,616 - gen_committees.py - INFO - Success getting list of (sub)committee names for comcode
+2026-01-08 11:39:33,617 - gen_committees.py - WARNING - Comcode not found for None, Nonetype returned.
+2026-01-08 11:39:33,618 - gen_committees.py - WARNING - Comcode not found for P000197, Nonetype returned.
+2026-01-08 11:39:33,620 - gen_committees.py - WARNING - Comcode not found for S001176, Nonetype returned.
+2026-01-08 11:39:33,621 - gen_committees.py - WARNING - Comcode not found for J000299, Nonetype returned.
+2026-01-08 11:39:33,622 - gen_committees.py - WARNING - Comcode not found for C001101, Nonetype returned.
+2026-01-08 11:39:33,624 - gen_committees.py - WARNING - Comcode not found for J000294, Nonetype returned.
+2026-01-08 11:39:34,806 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for senate
+2026-01-08 11:40:18,306 - modify_votes.py - INFO - Success getting senate bioguide to senate_id dict
+2026-01-08 11:40:18,764 - modify_votes.py - INFO - 362 house votes, 659 senate votes, for total of 1021 votes
+2026-01-08 11:40:19,004 - modify_votes.py - INFO - 446 house reps, 102 senators, for total of 548 people
+2026-01-08 11:40:20,387 - modify_votes.py - WARNING - Some congressmen are missing voter information unexpectedly: ['G000606' 'H001104' 'J000312' 'M001244' 'S001207' 'V000139' 'W000831']
+2026-01-08 11:40:20,470 - modify_reps.py - DEBUG - There are 537 NA endyears
+2026-01-08 11:40:20,471 - modify_reps.py - DEBUG - Added yes to 537 members
+2026-01-08 11:40:20,474 - modify_reps.py - INFO - After processing, there are 0 na endYears
+2026-01-08 11:40:22,242 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for House
+2026-01-08 11:40:22,244 - gen_committees.py - INFO - Success getting list of (sub)committee names for comcode
+2026-01-08 11:40:22,244 - gen_committees.py - WARNING - Comcode not found for None, Nonetype returned.
+2026-01-08 11:40:22,246 - gen_committees.py - WARNING - Comcode not found for P000197, Nonetype returned.
+2026-01-08 11:40:22,249 - gen_committees.py - WARNING - Comcode not found for S001176, Nonetype returned.
+2026-01-08 11:40:22,251 - gen_committees.py - WARNING - Comcode not found for J000299, Nonetype returned.
+2026-01-08 11:40:22,253 - gen_committees.py - WARNING - Comcode not found for C001101, Nonetype returned.
+2026-01-08 11:40:22,257 - gen_committees.py - WARNING - Comcode not found for J000294, Nonetype returned.
+2026-01-08 11:40:23,631 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for senate
+2026-01-08 13:20:31,065 - gen_supplement.py - ERROR - There is an issue loading in the supplement.json. Quitting.
+2026-01-08 13:22:36,592 - gen_supplement.py - ERROR - There is an issue loading in the supplement.json. Quitting.
+2026-01-08 13:22:59,976 - gen_supplement.py - ERROR - There is an issue loading in the supplement.json. Quitting.

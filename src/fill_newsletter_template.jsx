@@ -428,8 +428,8 @@ function name_and_title(name_and_info_layer) {
     write(name_and_info_layer.layers[7], chamber_line);
     write(name_and_info_layer.layers[6], reelection_line);
     write(name_and_info_layer.layers[4], birthplace_line);
-    move_age(name_and_info_layer)
-    write_bulleted_list(name_and_info_layer.layers[8], education_line)
+    move_age(name_and_info_layer);
+    write_bulleted_list(name_and_info_layer.layers[8], education_line);
 
 }
 

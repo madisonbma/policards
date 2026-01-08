@@ -75,22 +75,16 @@ Zain: LINE_SPACING=1.0, FONT_SIZES['text'] = 35, FONT_SIZES['headers'] = 40, FON
 try:
     font_text = ImageFont.truetype(TEXT_FONT, FONT_SIZES['text'])
 except IOError:
-    print(f"Warning: Could not load font from {TEXT_FONT}. Using default Pillow font. "
-        "Ensure the font file exists and is accessible.")
     font_text = ImageFont.load_default()
 
 try:
     font_header = ImageFont.truetype(HEADER_FONT, FONT_SIZES['headers'])
 except IOError:
-    print(f"Warning: Could not load font from {HEADER_FONT}. Using default Pillow font. "
-        "Ensure the font file exists and is accessible.")
     font_header = ImageFont.load_default()
 
 try:
     font_name = ImageFont.truetype(TITLE_FONT, FONT_SIZES['name'])
 except IOError:
-    print(f"Warning: Could not load font from {TITLE_FONT}. Using default Pillow font. "
-        "Ensure the font file exists and is accessible.")
     font_name = ImageFont.load_default()
 
 

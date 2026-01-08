@@ -52,10 +52,13 @@ def check_birthplace(birthplace):
     if birthplace == None:
         return ""
     else:
+        birthplace = birthplace.removesuffix(", ")
+        birthplace = birthplace.replace("on the north side of", "")
+
+        birthplace = to_state_code(birthplace, ", ", True) #first convert to state code
         birth_sections = birthplace.split(",")
         if len(birth_sections) == 3:
             return f"{birth_sections[0]},{birth_sections[2]}"
-        
         else:
             return birthplace
 
@@ -611,6 +614,8 @@ def add_bioguide_congress_data(list_of_dict):
         seen_rep.append(rep.get('bioguideID'))
         newjson_path = os.path.join(root, os.path.pardir, "bioguide_data", f"{rep.get('bioguideID')}.json")
         bioguide_data = load_json(newjson_path)
+        if bioguide_data is None:
+            print(f"{rep.get('bioguideID')} has no info")
         photo_url = ""
         
         #Get the URL for the photo
@@ -763,10 +768,12 @@ def add_bioguide_congress_data(list_of_dict):
             #End looping through fact block
         
 
-        #update the education before appending
+        #final updates to clean things up
         education = check_education(education)
-
         birthplace = check_birthplace(birthplace)
+        work_history = [to_state_code(job, None, False) for job in work_history]
+
+
 
 
         #Update the JSON
@@ -788,7 +795,109 @@ def add_bioguide_congress_data(list_of_dict):
 
 ############################################
 
+def to_state_code (str_in, delimiter, swap_full_state):
+    """
+    Convert to normal state codes. 
+    States abbrs can be found in birthplace, work history
 
+    Inputs:
+        str_in: input string to be parsed
+        delimiter: input string to split words by
+        swap_full_state: boolean to indicate if you want to swap 
+            full names to state codes
+
+    Return:
+        <str> parsed string
+
+    """
+    full_state_to_code = {
+        "Alaska": "AK",
+        "Arkansas": "AR",
+        "Hawaii": "HI",
+        "Florida": "FL",
+        "Maine": "ME",
+        "Idaho": "ID",
+        "New Hampshire": "NH",
+        "Ohio": "OH",
+        "Texas": "TX",
+        "Utah": "UT",
+        "Iowa": "IA",
+
+    }
+    state_to_code = {
+        "Ala.": "AL",
+        "Ariz.": "AZ",
+        "Ark.": "AR",
+        "Calif.": "CA",
+        "Colo.": "CO",
+        "Conn.": "CT",
+        "Del.": "DE",
+        "Fla.": "FL",
+        "Ga.": "GA",
+        "Territory of Hawai": "HI",
+        "Ill.": "IL",
+        "Ind.": "IN",
+        "Kans.": "KS",
+        "Ky.": "KY",
+        "La.": "LA",
+        "Md.": "MD",
+        "Mass.": "MA",
+        "Mich.": "MI",
+        "Minn.": "MN",
+        "Miss.": "MS",
+        "Mo.": "MO",
+        "Mont.": "MT",
+        "Nebr.": "NE",
+        "Neb.": "NE",
+        "Nev.": "NV", 
+        "N.H.": "NH",
+        "N.J.": "NJ",
+        "N.Mex.": "NM",
+        "N. Mex.": "NM",
+        "N.Y.": "NY",
+        "King": "NY",
+        "N.C.": "NC",
+        "N. Dak.": "ND",
+        "N.D.": "ND",
+        "Okla.": "OK",
+        "Oreg.": "OR",
+        "Ore.": "OR",
+        "Pa.": "PA",
+        "Penn.": "PA",
+        "R.I.": "RI",
+        "S.C.": "SC",
+        "S.Dak.": "SD",
+        "S. Dak.": "SD",
+        "Tenn.": "TN",
+        "Tex.": "TX",
+        "Vt.": "VT",
+        "Va.": "VA",
+        "Wash.": "WA",
+        "W. Va.": "WV",
+        "W.Va.": "WV",
+        "Wis.": "WI",
+        "Wyo.": "WY"
+    }
+
+    #For cases where blindly search string, like work history
+    if  delimiter is None:
+        for key,val in state_to_code.items():
+            str_in = str_in.replace(key, val)
+        if swap_full_state:
+            for key,val in full_state_to_code.items():
+                str_in = str_in.replace(key, val)
+        return str_in
+    
+    #Else split by delimiter
+    else:
+        words = str_in.split(delimiter)
+        new_words = [state_to_code.get(word, word) for word in words]
+
+        if swap_full_state:
+            new_words = [full_state_to_code.get(word, word) for word in new_words]
+
+        new_sentence = delimiter.join(new_words)
+        return new_sentence
 
 
 ####################################################################################################

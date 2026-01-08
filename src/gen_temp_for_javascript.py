@@ -325,31 +325,31 @@ def create_vote_block(rep_info, absolute_stats):
         #if they are D or R, show how often they vote with party:
         if party=="Republican":
             if chamber == "House of Representatives":
-                message += f"The average Republican votes {absolute_stats.get('with_R_avg_vote_H_R'):.{3}g}% Republican\n"
+                message += f"The average House Republican votes {absolute_stats.get('with_R_avg_vote_H_R'):.{3}g}% Republican||BREAK||and is not voting {absolute_stats.get('absent_percent_avg_vote_H_R'):.{3}g}% of the time\n"
             else:
-                message += f"The average Republican votes {absolute_stats.get('with_R_avg_vote_S_R'):.{3}g}% Republican\n"
+                message += f"The average Senate Republican votes {absolute_stats.get('with_R_avg_vote_S_R'):.{3}g}% Republican||BREAK||and is not voting {absolute_stats.get('absent_percent_avg_vote_S_R'):.{3}g}% of the time\n"
     
         elif party=="Democrat":
             if chamber == "House of Representatives":
-                message += f"The average Democrat votes {absolute_stats.get('with_D_avg_vote_H_D'):.{3}g}% Democrat\n"
+                message += f"The average House Democrat votes {absolute_stats.get('with_D_avg_vote_H_D'):.{3}g}% Democrat||BREAK||and is not voting {absolute_stats.get('absent_percent_avg_vote_H_D'):.{3}g}% of the time\n"
             else:
-                message += f"The average Democrat votes {absolute_stats.get('with_D_avg_vote_S_D'):.{3}g}% Democrat\n"
+                message += f"The average Senate Democrat votes {absolute_stats.get('with_D_avg_vote_S_D'):.{3}g}% Democrat||BREAK||and is not voting {absolute_stats.get('absent_percent_avg_vote_S_D'):.{3}g}% of the time\n"
 
         else: #if they're not D or R, show which party they vote with more often:
             if rep_info['with_D'] > rep_info['with_R']:
                 #Vote more often with democrats
                 if chamber == "House of Representatives":
-                    message += f"Votes more often with Democrats, who on average vote {absolute_stats.get('with_D_avg_vote_H_D'):.{3}g}% Democrat\n"
+                    message += f"Votes more often with House Democrats, who on average vote {absolute_stats.get('with_D_avg_vote_H_D'):.{3}g}% Democrat||BREAK||and is not voting {absolute_stats.get('absent_percent_avg_vote_H_D'):.{3}g}% of the time\n"
                 else:
-                    message += f"Votes more often with Democrats, who on average vote {absolute_stats.get('with_D_avg_vote_S_D'):.{3}g}% Democrat\n"
+                    message += f"Votes more often with Senate Democrats, who on average vote {absolute_stats.get('with_D_avg_vote_S_D'):.{3}g}% Democrat||BREAK||and is not voting {absolute_stats.get('absent_percent_avg_vote_S_D'):.{3}g}% of the time\n"
             elif rep_info['with_D'] == rep_info['with_R']:
                 message += "Votes with Democrats and Republicans 50% of the time\n"
             else:
                 #Vote more often with republicans
                 if chamber == "House of Representatives":
-                    message += f"Votes more often with Democrats, who on average vote {absolute_stats.get('with_R_avg_vote_H_R'):.{3}g}% Democrat\n"
+                    message += f"Votes more often with House Republicans, who on average vote {absolute_stats.get('with_R_avg_vote_H_R'):.{3}g}% Democrat||BREAK||and is not voting {absolute_stats.get('absent_percent_avg_vote_H_R'):.{3}g}% of the time\n"
                 else:
-                    message += f"Votes more often with Democrats, who on average vote {absolute_stats.get('with_R_avg_vote_S_R'):.{3}g}% Democrat\n"
+                    message += f"Votes more often with Senate Republicans, who on average vote {absolute_stats.get('with_R_avg_vote_S_R'):.{3}g}% Democrat||BREAK||and is not voting {absolute_stats.get('absent_percent_avg_vote_S_R'):.{3}g}% of the time\n"
 
  
 

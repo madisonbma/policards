@@ -6,7 +6,13 @@ import os
 import json
 import time
 import xml.etree.ElementTree as ET
-from init_logger import my_logger
+import sys
+
+current_dir = os.path.dirname(__file__)
+project_root = os.path.abspath(os.path.join(current_dir, ".."))
+sys.path.insert(0, project_root)
+
+from src.init_logger import my_logger
 
 # --- Configuration ---
 CONGRESS_API_KEY = os.getenv("CONGRESS_API_KEY")

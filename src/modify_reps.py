@@ -325,14 +325,14 @@ def get_absolute_stats(df, input_json_f):
 
 
     #3: get table for average vote by party and chamber
-    avg_vote = df.groupby(['chamber', 'partyName'])[['with_D_percent', 'with_R_percent']].mean()
+    avg_vote = df.groupby(['chamber', 'partyName'])[['with_D_percent', 'with_R_percent', 'absent_percent']].mean()
     avg_vote = avg_vote.reset_index()
     avg_vote['dummy'] = 1
 
     avg_vote_pivot = avg_vote.pivot_table(
         index='dummy', # Use a dummy index since we want all data in one row
         columns=['chamber', 'partyName'],
-        values=['with_D_percent', 'with_R_percent']
+        values=['with_D_percent', 'with_R_percent', 'absent_percent']
     )
 
     avg_vote_pivot = avg_vote_pivot.reset_index(drop=True)
