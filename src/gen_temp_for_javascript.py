@@ -581,11 +581,11 @@ def create_temp(rep_info, absolute_stats):
 
     party = rep_info.get('partyName')
     if party=="Republican":
-        text_block += os.path.join(root, os.path.pardir, "templates", "Republican-House_Senate_Gov-Social.psd")
+        text_block += os.path.join(root, os.path.pardir, os.path.pardir, "politician_pages_assets", "templates", "Republican-House_Senate_Gov-Social.psd")
     elif party=="Democrat":
-        text_block += os.path.join(root, os.path.pardir, "templates", "Democrat-House_Senate_Gov-Social.psd")
+        text_block += os.path.join(root, os.path.pardir, os.path.pardir, "politician_pages_assets", "templates", "Democrat-House_Senate_Gov-Social.psd")
     else:
-        text_block += os.path.join(root, os.path.pardir, "templates", "Independent-House_Senate_Gov-Social.psd")
+        text_block += os.path.join(root, os.path.pardir, os.path.pardir, "politician_pages_assets", "templates", "Independent-House_Senate_Gov-Social.psd")
 
 
 

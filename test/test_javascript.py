@@ -3,8 +3,8 @@ import os
 
 # --- Configuration (UPDATE THESE PATHS) ---
 PHOTOSHOP_EXE_PATH = "C:\\Program Files\\Adobe\\Adobe Photoshop 2026\\Photoshop.exe" 
-PSD_FILE_TO_OPEN = "C:\\Users\\Owner\\policards\\templates\\Republican-House_Senate_Gov-Social.psd"
-JSX_SCRIPT_PATH = "C:\\Users\\Owner\\policards\\scripts\\move_layer.jsx"
+PSD_FILE_TO_OPEN = "C:\\Users\\Owner\\repos\\politician_pages_assets\\templates\\Republican-House_Senate_Gov-Social.psd"
+JSX_SCRIPT_PATH = "C:\\Users\\Owner\\repos\\politician_pages\\src\\fill_social_template.jsx"
 # --- End Configuration ---
 
 def run_photoshop_script():
