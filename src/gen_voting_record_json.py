@@ -15,11 +15,33 @@ sys.path.insert(0, project_root)
 from src.init_logger import my_logger
 
 # --- Configuration ---
-CONGRESS_API_KEY = os.getenv("CONGRESS_API_KEY")
-if CONGRESS_API_KEY is None:
-    my_logger.error("Error: CONGRESS_API_KEY environment variable not set.")
-    my_logger.error("Please get an API key from https://api.data.gov/signup/ and set it.")
-    exit() # Exit if no API key is found
+# 1. Try to load from the private config repo
+try:
+    # Get path to parent directory, then into the private repo folder
+    # Assumes structure: 
+    # ./public_repo/script.py
+    # ./private_config_repo/config.py
+    parent_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+    config_path = os.path.join(parent_dir, "politician_pages_assets")
+    print(f"adding {config_path} to path")
+    
+    sys.path.insert(0, config_path)
+    from permissions import CONGRESS_API_KEY
+    print("Loaded CONGRESS_API_KEY from config.py")
+
+# 2. Fallback to environment variables if file/repo is missing
+except (ImportError, ModuleNotFoundError):
+    CONGRESS_API_KEY = os.getenv("FEC_API_KEY")
+    
+    if not CONGRESS_API_KEY:
+        print("Error: Neither config.py nor environment variables found.")
+    else:
+        print("Loaded CONGRESS_API_KEY from environment variables")
+
+# Finally, remove the path to keep the environment clean
+finally:
+    if 'config_path' in locals() and config_path in sys.path:
+        sys.path.remove(config_path)
 
 BASE_URL = "https://api.congress.gov/v3/"
 HEADERS = {

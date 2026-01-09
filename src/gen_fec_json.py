@@ -6,13 +6,37 @@ import json
 import re
 from io import StringIO
 import csv
-from src.init_logger import my_logger
+import sys
+from init_logger import my_logger
 
-FEC_API_KEY = os.getenv("FEC_API_KEY")
-if FEC_API_KEY is None:
-    print("Error: FEC_API_KEY environment variable not set.")
-    print("Please get an API key from https://api.open.fec.gov/developers/ and set it.")
-    exit() # Exit if no API key is found
+
+# 1. Try to load from the private config repo
+try:
+    # Get path to parent directory, then into the private repo folder
+    # Assumes structure: 
+    # ./public_repo/script.py
+    # ./private_config_repo/config.py
+    parent_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+    config_path = os.path.join(parent_dir, "politician_pages_assets")
+    
+    sys.path.insert(0, config_path)
+    from permissions import FEC_API_KEY
+    print("Loaded FEC_API_KEY from config.py")
+
+# 2. Fallback to environment variables if file/repo is missing
+except (ImportError, ModuleNotFoundError):
+    FEC_API_KEY = os.getenv("FEC_API_KEY")
+    
+    if not FEC_API_KEY:
+        print("Error: Neither config.py nor environment variables found.")
+    else:
+        print("Loaded FEC_API_KEY from environment variables")
+
+# Finally, remove the path to keep the environment clean
+finally:
+    if 'config_path' in locals() and config_path in sys.path:
+        sys.path.remove(config_path)
+
 
 BASE_URL = "https://api.open.fec.gov/v1/"
 HEADERS = {
