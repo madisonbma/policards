@@ -55,15 +55,23 @@ def modify_reps_standalone():
         src.modify_reps.modify_reps(congressmen, vote_avg)   
 
 def add_bioguide_standalone():
-    """
-    This actually might not work anymore... don't use this
-    """
+
     congressmen = os.path.join("..", "src", "generated_outputs", "congressmen.json")
-    if not os.path.exists(congressmen):
-        print(f"Error: File not found at '{congressmen}'")
-        return None
-    else:
-        src.add_bioguide.add_bioguide(congressmen)
+    try: 
+        with open(congressmen, 'r', encoding='utf-8') as file:
+            list_of_congressmen = json.load(file)
+    except Exception as e:
+        print("There is an issue loading in the congressmen.json. Quitting.")
+
+    final_result = src.add_bioguide.add_bioguide(list_of_congressmen)
+
+    debug_me = os.path.join("..", "src", "generated_outputs", "debug_bioguide.log") 
+    with open(debug_me, 'w') as f:
+        json.dump(final_result, f, indent=4)
+
+
+
+
 
 def gen_committees_standalone():
     print(src.gen_committees.gen_committees())
@@ -162,4 +170,5 @@ if __name__ == "__main__":
     #gen_cards_standalone()
     #check_check_education_bioguide()
 
+    #add_bioguide_standalone()
 

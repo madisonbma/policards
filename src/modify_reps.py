@@ -15,22 +15,35 @@ from src.init_logger import my_logger
 
 ####################################################################################################
 
-def mod_json(list_of_dict):
-    """
-    Converts endYear==NA to startYear+2 or +6 based on chamber
-    This is because current members have no end year.
-    Done inplace.
+def combine_on_bioguideID():
+    from collections import defaultdict
 
-    DEPRECATED FUNCTION
-    """
-    for rep in list_of_dict:
-        #Pad the NAs for endYear
-        if 'endYear' not in rep:
-            if rep['chamber'].lower()=="Senate".lower():
-                rep.update({'endYear':rep['startYear']+6}) #6 year terms for senate
-            elif rep['chamber'].lower()=="House of Representatives".lower():
-                rep.update({'endYear':rep['startYear']+2}) #2 year terms for house
-    
+    input_data = [
+        {"bioguideID": "A000001", "field1": "value1a", "field2": "value2a"},
+        {"bioguideID": "B000002", "field1": "value1b", "field2": "value2b"},
+        {"bioguideID": "A000001", "field1": "value1c", "field2": "value2c"}
+    ]
+
+    merged_data = defaultdict(list)
+
+    # 1. Iterate through the input data and group by bioguideID
+    for item in input_data:
+        bioguide_id = item['bioguideID']
+        # Create a tuple of the desired fields (Python tuples are ordered and immutable)
+        fields_tuple = (item['field1'], item['field2'])
+        merged_data[bioguide_id].append(fields_tuple)
+
+    # 2. Reformat the grouped data into the desired output structure
+    output_data = []
+    for bioguide_id, tuples_list in merged_data.items():
+        output_data.append({
+            "bioguideID": bioguide_id,
+            "combined_fields": tuples_list
+        })
+
+    # 3. Convert the result back to a JSON formatted string
+    output_json = json.dumps(output_data, indent=4)
+    print(output_json)
 
 
 ############################################
@@ -220,7 +233,7 @@ def get_voter_rank(merged_df):
     merged_df['with_D_percent'] = (merged_df['with_D'] / (merged_df['vote_count'] - merged_df['Both'] - merged_df['Neither']))*100
     merged_df['with_R_percent'] = (merged_df['with_R'] / (merged_df['vote_count'] - merged_df['Both'] - merged_df['Neither']))*100
     merged_df['absent_percent'] = (merged_df['Absent'] / (merged_df['vote_count'] - merged_df['Both'] - merged_df['Neither']))*100
-
+    merged_df['for_bar'] = (merged_df['with_R'] / (merged_df['with_R'] + merged_df['with_D']))*100
     merged_df['neither_percent'] = (merged_df['Neither'] / (merged_df['vote_count'] - merged_df['Absent']))*100
 
     #with_party_count == Raw count of times they voted with their party
@@ -290,14 +303,14 @@ def get_absolute_stats(df, input_json_f):
     """
 
     #1: get pivot table for max tenure by house and party
-    max_tenure_by_house = df.groupby(['chamber'])['duration'].max()
+    max_tenure_by_house = df.groupby(['chamber'])['bg_duration'].max()
     max_tenure_by_house = max_tenure_by_house.reset_index()
     max_tenure_by_house['dummy'] = 1
 
     df_pivot = max_tenure_by_house.pivot_table(
         index='dummy', # Use a dummy index since we want all data in one row
         columns=['chamber'],
-        values='duration'
+        values='bg_duration'
     )
 
     df_pivot = df_pivot.reset_index(drop=True)
@@ -367,6 +380,45 @@ def get_absolute_stats(df, input_json_f):
     print(f"Wrote some absolute stats to {absolute_stats_path}")
 
 
+def add_bioguide_tenure_ranks(modified_congressmen_json):
+    df = pd.DataFrame(modified_congressmen_json)
+    df['terms_start_date'] = df['terms'].str[0]
+    df['terms_start_date'] = df['terms_start_date'].fillna(df['startYear'].astype(str)+"-01-03")
+    df['terms_start_date'] = pd.to_datetime(df['terms_start_date'])
+    df['terms_end_date'] = df['terms'].str[1]
+    df['terms_end_date'] = df['terms_end_date'].fillna(df['endYear'].astype(str)+"-01-03")
+    df['terms_end_date'] = pd.to_datetime(df['terms_end_date'])
+
+    today = pd.Timestamp.now()
+    effective_end_date = np.where(df['terms_end_date'] > today, today, df['terms_end_date'])
+    df['bg_duration'] = (pd.to_datetime(effective_end_date) - df['terms_start_date']).dt.days
+
+    df['bg_duration'] = df['bg_duration'].astype(int)
+    df['bg_duration'] = df['bg_duration'] / 365
+    df['bg_duration'] = df['bg_duration'].astype(int)
+
+
+    #tenure_all_time is across everyone, and across all time
+    df['bg_tenure_rank_all_time']  = df['bg_duration'].rank(ascending=False, method='min').astype(int)
+    df['bg_tenure_rank_all_time_party'] = df.groupby('partyName')['bg_duration'].rank(ascending=False, method='min').astype(int)
+
+    #tenure_current is just for current members, if they're not current members will be nan
+    df['bg_tenure_rank_current'] = np.where(df['current_member']=="yes", df.groupby(['current_member', 'chamber'])['bg_duration'].rank(ascending=False,method='min'), np.nan)
+    df['bg_tenure_rank_current_party'] = np.where(df['current_member']=="yes", df.groupby(['current_member', 'chamber','partyName'])['bg_duration'].rank(ascending=False,method='min'), np.nan)
+    df['bg_tenure_rank_current_party'] = df['bg_tenure_rank_current_party'].astype(pd.Int64Dtype())
+
+    df['bg_tenure_rank_current'] = df['bg_tenure_rank_current'].astype(pd.Int64Dtype())
+
+    df['bg_tenure_rank_current_percentile'] = np.where(df['current_member']=="yes", df.groupby(['current_member','chamber'])['bg_duration'].rank(ascending=True,method='max'), np.nan)
+    df['bg_tenure_rank_current_percentile'] = round(df['bg_tenure_rank_current_percentile']/df['chamber_current_count']*100).astype(pd.Int64Dtype())
+
+    df['bg_endYear'] = df['terms_end_date'].dt.year.astype(int)
+    df['bg_startYear'] = df['terms_start_date'].dt.year.astype(int)
+    df.drop(columns=['terms_start_date', 'terms_end_date'], inplace=True)
+
+    return df
+
+
 
 ####################################################################################################
 
@@ -418,7 +470,6 @@ def modify_reps(input_json_f, vote_f):
     df = merge_in_comms(df, comm_dict)
 
 
-    get_absolute_stats(df, input_json_f)
 
 
     print(f"Exporting {len(df)} congressmen")
@@ -426,9 +477,13 @@ def modify_reps(input_json_f, vote_f):
     con_json = df.to_json(indent=2, orient='records')
     print("Starting the add_bioguide")
     #Last, modify the JSON with add_bioguide.py
-    modified_congressmen_json = src.add_bioguide.add_bioguide(con_json) #list of dicts python Obj
+    modified_congressmen_json_pre = src.add_bioguide.add_bioguide(con_json) #list of dicts python Obj
 
 
+    tenure_df = add_bioguide_tenure_ranks(modified_congressmen_json_pre)
+    get_absolute_stats(tenure_df, input_json_f)
+
+    modified_congressmen_json = tenure_df.replace({np.nan: None}).to_dict(orient='records')
     ####Write to file
     congressmen_mod_json_path = os.path.join(os.path.dirname(input_json_f), 'congressmen_mod.json')
     with open(congressmen_mod_json_path, 'w') as json_file:

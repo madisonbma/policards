@@ -14,39 +14,14 @@
   "author": "madisonbma",
   "type": "commonjs",
   "main": "main.js",
-  "build": {
-    "appId": "com.cardgenerator.app",
-    "productName": "Card Generator",
-    "files": [
-      "main.js",
-      "preload.js",
-      "renderer/index.html",
-      "renderer/update.html",
-      "renderer/styles.css",
-      "renderer/update.css",
-      "renderer/renderer.js",
-      "renderer/update-renderer.js"
-    ],
-    "directories": {
-      "output": "dist"
-    },
-    "win": {
-      "target": "nsis",
-      "icon": "icon.ico"
-    },
-    "mac": {
-      "target": "dmg",
-      "icon": "icon.icns"
-    }
-  },
   "scripts": {
-    "start": "electron-forge start",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "package": "electron-forge package",
-    "make": "electron-forge make",
+    "start": "electron .",
     "build": "electron-builder",
     "build:win": "electron-builder --win",
     "build:mac": "electron-builder --mac"
+  },
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.1"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.10.2",
@@ -59,7 +34,24 @@
     "@electron/fuses": "^1.8.0",
     "electron": "^39.2.7"
   },
-  "dependencies": {
-    "electron-squirrel-startup": "^1.0.1"
+  "build": {
+    "appId": "com.cardgenerator.app",
+    "productName": "Card Generator",
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer/**/*"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "icon.ico"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "icon.icns"
+    }
   }
 }

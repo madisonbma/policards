@@ -5,6 +5,7 @@ import requests
 import os
 import json
 import time
+from datetime import date
 import xml.etree.ElementTree as ET
 import sys
 
@@ -119,7 +120,7 @@ def get_house_vote_members(vote_number, congress=119, session=1, limit=250, offs
     return data.get('houseRollCallVoteMemberVotes')
 
 
-def get_voting_record(old_votes, max_records=1000, start_vote=1):
+def get_voting_record(old_votes, congress, session, max_records=1000, start_vote=1):
     """
     This will query house voting records up to max_records. 
 
@@ -134,7 +135,7 @@ def get_voting_record(old_votes, max_records=1000, start_vote=1):
     my_logger.info(f"Starting from vote {i} for house pull")
     while i < max:
         try: 
-            vote_record_i = get_house_vote_members(i)
+            vote_record_i = get_house_vote_members(i, congress=congress, session=session)
             ###Postprocesses the vote_record_test JSON to flatten the "results" column
             parent_fields = {
                 'congress': vote_record_i.get('congress'),
@@ -170,11 +171,8 @@ def get_voting_record(old_votes, max_records=1000, start_vote=1):
 
             time.sleep(RATE_LIMIT_DELAY_SECONDS)
             i = i + 1
-        except requests.exceptions.HTTPError as e:
-            my_logger.error(f"Voting record {i} does not exist, quitting" )
-            break
         except UnboundLocalError as e:
-            my_logger.error(f"Voting record not found for {i}, likely timeout issue. Quitting.")
+            my_logger.error(f"Voting record not found for {i}, either timeout or doesn't exist.")
             break
         except Exception as e:
             my_logger.error(f"An unhandled error occurred: {e}")
@@ -196,14 +194,14 @@ def get_root(url):
 
 
 
-def get_voting_record_senate(old_votes, max_records=1000, start_vote=1):
+def get_voting_record_senate(old_votes, congress, session, max_records=1000, start_vote=1):
     # url example: https://www.senate.gov/legislative/LIS/roll_call_votes/vote1191/vote_119_1_00001.xml 
     # 1. Iterate over all the vote paths.
     # 2. Add same content as for house: congress, identifier, result, voteQuestion, voteType, bioguideID, voteCast, voteParty
     # 3. Add to a JSON
     # 
     #  
-    url_base = "https://www.senate.gov/legislative/LIS/roll_call_votes/vote1191/vote_119_1_"
+    url_base = f"https://www.senate.gov/legislative/LIS/roll_call_votes/vote{congress}{session}/vote_{congress}_{session}_"
     full_voting_record = old_votes
     i = start_vote
     max = start_vote+max_records
@@ -217,7 +215,6 @@ def get_voting_record_senate(old_votes, max_records=1000, start_vote=1):
             num_to_string = "0"*(5 - len(num_to_string)) + num_to_string + ".xml"
 
         try:
-
             url = url_base + num_to_string
             root = get_root(url)
 
@@ -226,6 +223,7 @@ def get_voting_record_senate(old_votes, max_records=1000, start_vote=1):
                 break
 
             dict_i['congress'] = root.find('congress').text
+            dict_i['session'] = root.find('session').text
             dict_i['identifier'] = root.find('vote_number').text
             dict_i['result'] = root.find('vote_result').text
             dict_i['voteQuestion'] = root.find('question').text
@@ -276,25 +274,45 @@ def get_starting_point(starting_file):
     try:
         with open(starting_file, 'r') as f:
             data = json.load(f)
+
         n = str(data[-1].get('identifier'))
         if len(n) > 8: #house formatting (e.g. 11912025111), get rid of first 8
-            n = int(n[8:])
+            id = int(n[8:])
+            congress = int(n[0:3])
+            session = int(n[3])
+
         else:
-            n = int(n)
-        return n+1
+            id = int(n)
+            congress = int(data[-1].get('congress'))
+            session = int(data[-1].get('session'))
+        print(congress, session, id+1)
+        return congress, session, id+1
 
     except FileNotFoundError:
         print(f"Error: The file {starting_file} was not found. Starting from vote 1.")
-        return 1
+        return 119, 1, 1
     except json.JSONDecodeError:
         print("Error: Failed to decode JSON from the file. Check if the JSON is well-formed.")
         return None
     except Exception as e:
-        print(f"An unexpected error occurred: {e}")
+        print(f"An unexpected error occurred in get_starting_point: {e}")
         return None
 
     
-
+def get_stop_point():
+    """
+    Docstring for get_stop_point
+    Get how far we need to go in records.
+    Increments congress# and session# for us.
+    """
+    current_year = date.today().year
+    if current_year % 2 == 0:
+        session = 1
+    else:
+        session = 0
+    
+    congress = (current_year - 1787 - session )/2
+    return (congress, session)
 
 def gen_voting_record_json(max_records=1000):
     """
@@ -325,8 +343,23 @@ def gen_voting_record_json(max_records=1000):
         file_house_votes = []
 
     #Read pre-existing voting records to pick up where you left off.
-    house_start = get_starting_point(voting_records_json)
-    new_house_data = get_voting_record(file_house_votes, max_records=max_records, start_vote=house_start)
+    congress, session, house_start = get_starting_point(voting_records_json) #session 1/2
+    max_congress, max_session = get_stop_point() #session 0/1
+
+    while True:
+        new_house_data = get_voting_record(file_house_votes, congress, session, max_records=max_records, start_vote=house_start)
+        
+        if congress == max_congress:
+            if session == max_session+1:
+                break
+            else:
+                session = 1 + (session % 2)
+        else:
+            congress += 1
+            session = 1 + (session % 2)
+        print(f"Now proceeding for congress {congress} session {session}")
+        house_start = 1
+
 
     #Now save with full voting records
     with open(voting_records_json, 'w') as file:
@@ -348,8 +381,21 @@ def gen_voting_record_json(max_records=1000):
         file_senate_votes = []
 
     #Read pre-existing voting records to pick up where you left off
-    senate_start = get_starting_point(voting_records_senate_json)
-    new_senate_data = get_voting_record_senate(file_senate_votes, max_records=max_records, start_vote=senate_start)
+    congress, session, senate_start = get_starting_point(voting_records_senate_json)
+
+    while True:
+        new_senate_data = get_voting_record_senate(file_senate_votes, congress, session, max_records=max_records, start_vote=senate_start)
+        
+        if congress == max_congress:
+            if session == max_session+1:
+                break
+            else:
+                session = 1 + (session % 2)
+        else:
+            congress += 1
+            session = 1 + (session % 2)
+
+        senate_start = 1
 
     #Now save with full voting records
     with open(voting_records_senate_json, 'w') as file:

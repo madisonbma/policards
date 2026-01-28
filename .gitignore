@@ -2,6 +2,10 @@ cards/
 cards_ps/
 templates/
 __pycache__
+src/gen_cards.log
+temp.png
+temp.txt
+
 # Logs
 logs
 *.log

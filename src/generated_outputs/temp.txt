@@ -1,20 +1,22 @@
-Arizona
-Abraham J.||BREAK||Hamadeh
+Maryland
+Jamie Raskin
 Congress
 House of Representatives:
-2025 - Present | Up for re-election in 2026
-Chicago, Cook County, Ill.
-34
-||BREAK_DOT||B.S., Arizona State University, 2012||BREAK_DOT||J.D., University of Arizona, 2016
-97
-Votes 1% Democrat, 97% Republican,||BREAK||Absent 2%
-The average Republican votes 92.8% Republican
-4
-16th percentile (2 years)
-46
-Tenure: 2 years (367/535)||BREAK_DOT||Absent: 4 votes (2% of votes)||BREAK_DOT||Population: TBD||BREAK_DOT||District Size: TBD
-||BREAK_DOT||Armed Services||BREAK||- Tactical Air and Land Forces||BREAK||- Intelligence and Special Operations||BREAK||- Strategic Forces||BREAK_DOT||Veterans' Affairs||BREAK||- Health||BREAK||- Economic Opportunity
-||BREAK_DOT||staff, Maricopa County, Ariz.,||BREAK||attorney's office, 2017-2021
-MILITARY SERVICE
-||BREAK_DOT||United States Army Reserves,||BREAK||2016-2022
-C:\Users\Owner\policards\src\..\cards_ps\abraham_j_hamadeh_card.png
+2017 - Present | Up for re-election this year
+Washington, D.C.
+63
+||BREAK_DOT||A.B., Harvard University, 1983||BREAK_DOT||J.D., Harvard University, 1987
+0.3649635036
+1
+Votes 98% Democrat, 0% Republican,||BREAK||Not Voting 1%
+The average House Democrat votes 91.7% Democrat||BREAK||and is not voting 4.32% of the time
+20
+66th percentile (9 years)
+45
+Tenure: 9 years (151/535)||BREAK_DOT||Not Voting: 4 votes (1% of votes)||BREAK_DOT||Population: TBD||BREAK_DOT||District Size: TBD
+||BREAK_DOT||the Judiciary
+||BREAK_DOT||assistant attorney general,||BREAK||office of the MA state||BREAK||attorney general, 1987-1989||BREAK_DOT||professor, American||BREAK||University Washington||BREAK||College of Law, Washington,||BREAK||D.C., 1990-2017||BREAK_DOT||member of the Maryland||BREAK||state senate, 2007-2016,||BREAK||majority whip, 2012-2016
+
+
+C:\Users\madis\repos\politician_pages\src\..\cards_ps\jamie_raskin_card.psd
+C:\Users\madis\repos\politician_pages\src\..\..\politician_pages_assets\templates\Democrat-House_Senate_Gov-Social.psd

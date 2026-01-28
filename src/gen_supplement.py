@@ -6,7 +6,6 @@ current_dir = os.path.dirname(__file__)
 project_root = os.path.abspath(os.path.join(current_dir, ".."))
 sys.path.insert(0, project_root)
 
-from src.init_logger import my_logger
 
 
 def get_yes_no_input(prompt):
@@ -166,7 +165,7 @@ if __name__ == "__main__":
         with open(congressmen_mod_json, 'r') as f:
             full_rep_info = json.load(f)
     except Exception as e:
-        my_logger.error("There is an issue loading in the congressmen_mod.json. Quitting.")
+        print("There is an issue loading in the congressmen_mod.json. Quitting.")
         sys.exit()
 
     try:
@@ -179,7 +178,7 @@ if __name__ == "__main__":
     except FileNotFoundError:
         supplement = []
     except Exception as e:
-        my_logger.error("There is an issue loading in the supplement.json. Quitting.")
+        print("There is an issue loading in the supplement.json. Quitting.")
         sys.exit()
 
     #Ask user for person and field to update

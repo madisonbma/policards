@@ -1,0 +1,84 @@
+{
+  "data": {
+    "usCongressBioId": "V000139",
+    "familyName": "Van Epps",
+    "givenName": "Matt",
+    "unaccentedFamilyName": "Van Epps",
+    "unaccentedGivenName": "Matt",
+    "birthDate": "1983-03-29",
+    "birthCirca": false,
+    "birthDateUnknown": false,
+    "deathCirca": false,
+    "image": [
+      {
+        "contentUrl": "/bioguide-staging/assets/6931b7d5f478c0f1228e9abe.jpg",
+        "caption": "Image courtesy of the Member",
+        "name": "V000139_001"
+      }
+    ],
+    "profileText": "a Representative from Tennessee; born in Ohio, March 29, 1983; graduated from Mentor High School, Mentor, Ohio, 2001; graduated from United States Military Academy, West Point, N.Y.; U.S. Army; Tennessee Army National Guard; consultant; staff, office of Governor Bill Lee of Tennessee; elected as a Republican to the One Hundred Nineteenth Congress, by special election, to fill a vacancy caused by the resignation of United States Representative Mark E. Green (December 2, 2025-present).",
+    "relationship": [],
+    "asset": [
+      {
+        "name": "V000139_001",
+        "assetType": "Image",
+        "contentUrl": "/bioguide-published/assets/6931b7d5f478c0f1228e9abe.jpg",
+        "creditLine": "Image courtesy of the Member",
+        "associatedEntity": [],
+        "accessionNumber": "PA2025.12.0001a",
+        "usageRight": [
+          "Import to Congress.gov",
+          "Restricted"
+        ],
+        "uploadDate": "2025-12-04T11:35:05.636",
+        "uploadDateISO": "2025-12-04T16:35:05.636Z"
+      }
+    ],
+    "jobPositions": [
+      {
+        "job": {
+          "name": "Representative",
+          "jobType": "CongressMemberJob"
+        },
+        "startDate": "2025-12-02",
+        "startCirca": false,
+        "endCirca": false,
+        "congressAffiliation": {
+          "congress": {
+            "name": "The 119th United States Congress",
+            "congressNumber": 119,
+            "congressType": "USCongress",
+            "startDate": "2025-01-03"
+          },
+          "partyAffiliation": [
+            {
+              "party": {
+                "name": "Republican"
+              },
+              "startCirca": false,
+              "endCirca": false
+            }
+          ],
+          "caucusAffiliation": [
+            {
+              "party": {
+                "name": "Republican"
+              },
+              "startCirca": false,
+              "endCirca": false
+            }
+          ],
+          "represents": {
+            "regionType": "DistrictRegion",
+            "regionCode": "TN"
+          }
+        }
+      }
+    ],
+    "creativeWork": [],
+    "researchRecord": [],
+    "deleted": false,
+    "publishedDate": "2025-12-04T11:36:18.828",
+    "publishedDateISO": "2025-12-04T16:36:18.828Z"
+  }
+}

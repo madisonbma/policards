@@ -1,13 +1,14 @@
 const genCardBtn = document.getElementById('genCardBtn');
 const updateDataBtn = document.getElementById('updateDataBtn');
-const status = document.getElementById('status');
+const status_doc = document.getElementById('status');
 const spinner = document.getElementById('spinner');
 
+//STATUS
 function showStatus(message, isSuccess) {
-  status.textContent = message;
-  status.className = 'status show ' + (isSuccess ? 'success' : 'error');
+  status_doc.textContent = message;
+  status_doc.className = 'status show ' + (isSuccess ? 'success' : 'error');
   setTimeout(() => {
-    status.className = 'status';
+    status_doc.className = 'status';
   }, 5000);
 }
 
@@ -20,6 +21,10 @@ function setLoading(isLoading) {
     spinner.classList.remove('show');
   }
 }
+
+
+
+//EVENT LISTENERS
 
 genCardBtn.addEventListener('click', async () => {
   setLoading(true);

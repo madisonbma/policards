@@ -6,5 +6,25 @@
     {
         "name": "Bernard Sanders",
         "birthDate": "1941-09-08"
+    },
+    {
+        "name": "Elizabeth Warren",
+        "birthDate": "1949-06-22"
+    },
+    {
+        "name": "Cory A. Booker",
+        "birthDate": "1969-04-27"
+    },
+    {
+        "name": "Tom Cotton",
+        "birthDate": "1977-05-13"
+    },
+    {
+        "name": "Trent Kelly",
+        "birthplace": "Union, Mississippi"
+    },
+    {
+        "name": "Michael Guest",
+        "birthplace": "Woodbury, NJ"
     }
 ]

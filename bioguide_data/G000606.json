@@ -1,0 +1,106 @@
+{
+  "data": {
+    "usCongressBioId": "G000606",
+    "familyName": "Grijalva",
+    "givenName": "Adelita",
+    "middleName": "S.",
+    "unaccentedFamilyName": "Grijalva",
+    "unaccentedGivenName": "Adelita",
+    "unaccentedMiddleName": "S.",
+    "birthDate": "1970-10-30",
+    "birthCirca": false,
+    "birthDateUnknown": false,
+    "deathCirca": false,
+    "image": [
+      {
+        "contentUrl": "/bioguide-staging/assets/6915fa2585b49de40f52cacb.jpg",
+        "caption": "Image courtesy of the Member",
+        "name": "G000606_001"
+      }
+    ],
+    "profileText": "A Representative from Arizona; born in Tucson, Pima County, Ariz., October 30, 1970; graduated from Pueblo High School, Tucson, Ariz., 1989; B.A., University of Arizona, Tucson, Ariz., 1995; non-profit staff; member of the Tucson, Ariz., unified school board, 2003-2023; member of the Pima County, Ariz. board of supervisors, 2021-2025, chair, 2023-2025; elected as a Democrat to the One Hundred Nineteenth Congress, by special election, to fill the vacancy caused by the death of United States Representative Ra&uacute;l M. Grijalva (September 23, 2025-present).",
+    "relationship": [
+      {
+        "relationshipType": "daughter",
+        "relatedTo": {
+          "usCongressBioId": "G000551",
+          "familyName": "Grijalva",
+          "givenName": "Raúl",
+          "middleName": "M.",
+          "unaccentedFamilyName": "Grijalva",
+          "unaccentedGivenName": "Raul",
+          "unaccentedMiddleName": "M.",
+          "birthDate": "1948-02-19",
+          "birthCirca": false,
+          "birthDateUnknown": false,
+          "deathDate": "2025-03-13",
+          "deathCirca": false,
+          "deleted": false
+        }
+      }
+    ],
+    "asset": [
+      {
+        "name": "G000606_001",
+        "assetType": "Image",
+        "contentUrl": "/bioguide-published/assets/6915fa2585b49de40f52cacb.jpg",
+        "creditLine": "Image courtesy of the Member",
+        "associatedEntity": [],
+        "accessionNumber": "PA2025.11.0001a",
+        "usageRight": [
+          "Import to Congress.gov",
+          "Restricted"
+        ],
+        "uploadDate": "2025-11-13T10:34:01.807",
+        "uploadDateISO": "2025-11-13T15:34:01.807Z"
+      }
+    ],
+    "jobPositions": [
+      {
+        "job": {
+          "name": "Representative",
+          "jobType": "CongressMemberJob"
+        },
+        "startDate": "2025-09-23",
+        "startCirca": false,
+        "endCirca": false,
+        "congressAffiliation": {
+          "congress": {
+            "name": "The 119th United States Congress",
+            "congressNumber": 119,
+            "congressType": "USCongress",
+            "startDate": "2025-01-03"
+          },
+          "electionType": "Special",
+          "partyAffiliation": [
+            {
+              "party": {
+                "name": "Democrat"
+              },
+              "startCirca": false,
+              "endCirca": false
+            }
+          ],
+          "caucusAffiliation": [
+            {
+              "party": {
+                "name": "Democrat"
+              },
+              "startCirca": false,
+              "endCirca": false
+            }
+          ],
+          "represents": {
+            "regionType": "DistrictRegion",
+            "regionCode": "AZ"
+          }
+        }
+      }
+    ],
+    "creativeWork": [],
+    "researchRecord": [],
+    "deleted": false,
+    "publishedDate": "2025-11-13T10:34:34.638",
+    "publishedDateISO": "2025-11-13T15:34:34.638Z"
+  }
+}

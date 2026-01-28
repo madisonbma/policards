@@ -78,7 +78,7 @@ def pull_pic_from_web(rep, dummy=False):
             img = Image.new('RGB', (PIC_WIDTH, PIC_HEIGHT), color = 'lightgray')
             my_logger.debug(f'Dummy Image for {rep['name']}')
         else:
-            face_path = rep['photo']
+            face_path = rep.get('photo', None)
 
             # Get the face in rep['photo'] if it exists, check the size of image
             if face_path is None:
@@ -225,9 +225,9 @@ def gen_summary_stats(rep_info):
     chamber = rep_info.get("chamber")
     ### TENURE
     if chamber == "House of Representatives":
-        return_me += f"Tenure: {rep_info.get("duration")} years ({rep_info.get("tenure_rank_current")}/535)||BREAK_DOT||"
+        return_me += f"Tenure: {rep_info.get("bg_duration")} years ({rep_info.get("bg_tenure_rank_current")}/535)||BREAK_DOT||"
     else:
-        return_me += f"Tenure: {rep_info.get("duration")} years ({rep_info.get("tenure_rank_current")}/100)||BREAK_DOT||"
+        return_me += f"Tenure: {rep_info.get("bg_duration")} years ({rep_info.get("bg_tenure_rank_current")}/100)||BREAK_DOT||"
 
     ### ABSENT
     novote_count = rep_info.get('Absent', 0) + rep_info.get("Abstained", 0)
@@ -315,7 +315,7 @@ def create_vote_block(rep_info, absolute_stats):
         novote_count = rep_info.get('Absent', 0) + rep_info.get("Abstained", 0)
         novote_percent = novote_count / (rep_info.get('vote_count') - rep_info.get('Both', 0) - rep_info.get('Neither', 0)) * 100
         novote_percent = int(novote_percent)
-
+        message += f"{novote_percent}\n"
         if with_d > with_r:
             message += f"Votes {with_d}% Democrat, {with_r}% Republican,||BREAK||Not Voting {novote_percent}%\n"
         else:
@@ -461,11 +461,11 @@ def create_temp(rep_info, absolute_stats):
     #tenure = f"{rep_info['tenure_rank_current_party']}/{rep_info['party_current_count']}"
     #party = rep_info['partyName']
 
-    if (rep_info['endYear'] - 1 > date.today().year):
+    if (rep_info['bg_endYear'] - 1 > date.today().year):
         range = str(rep_info['startYear']) + " - Present"
-        text_block += f"{range} | Up for re-election in {str(rep_info['endYear']-1)}\n"
-    elif (rep_info['endYear'] - 1 < date.today().year):
-        range = f"{rep_info['startYear']} - {rep_info['endYear']}"
+        text_block += f"{range} | Up for re-election in {str(rep_info['bg_endYear']-1)}\n"
+    elif (rep_info['bg_endYear'] - 1 < date.today().year):
+        range = f"{rep_info['startYear']} - {rep_info['bg_endYear']}"
         text_block += f"Served from {range}\n"
     else:
         range = str(rep_info['startYear']) + " - Present"
@@ -483,9 +483,12 @@ def create_temp(rep_info, absolute_stats):
         print(f"Warning: Could not load font from {font_tuple[1]}."
             "Ensure the font file exists and is accessible.")
 
-
-    birthplace = draw_wrapped_text(draw, rep_info.get('birthplace', "Unknown"), font, max_width)
-    text_block += f"{birthplace}\n"
+    birthplace = rep_info.get('birthplace')
+    if birthplace == "":
+        text_block += f"Unknown\n"
+    else:
+        birthplace = draw_wrapped_text(draw, birthplace, font, max_width)
+        text_block += f"{birthplace}\n"
 
     birthday = rep_info.get('birthDate', 0)
     today = date.today()
@@ -521,7 +524,8 @@ def create_temp(rep_info, absolute_stats):
     #Voting Record: %f percentage
     #Tenure: %f percentage
     #Historically has voted with party %n, Democratic %n, Republican %n
-    voting_pct = rep_info.get('with_R_percent', None)
+    #voting_pct = rep_info.get('with_R_percent', None)
+    voting_pct = rep_info.get('for_bar', None)
 
     if voting_pct is not None:
         text_block += f"{voting_pct}\n"
@@ -531,12 +535,21 @@ def create_temp(rep_info, absolute_stats):
     key = f"max_tenure_{chamber[0].upper()}"
     max_tenure = absolute_stats.get(key)
 
-    duration = rep_info.get('duration', None)
+    duration = rep_info.get('bg_duration', None)
     tenure_marker = int((duration/max_tenure)*100)
-    tenure_pct = rep_info.get("tenure_rank_current_percentile", None)
+    tenure_pct = rep_info.get("bg_tenure_rank_current_percentile", None)
     if tenure_pct is not None:
         if duration is None:
             text_block += f"{tenure_marker}\n{num_to_percentile(tenure_pct)}\n"
+        elif duration < 1:
+            duration = duration*12
+            if duration < 1: #if less than 1 month
+                text_block += f"{tenure_marker}\n{num_to_percentile(tenure_pct)} (<1 month)\n"
+
+            else:
+
+                text_block += f"{tenure_marker}\n{num_to_percentile(tenure_pct)} ({duration:.{2}g} months)\n"
+
         else:
             text_block += f"{tenure_marker}\n{num_to_percentile(tenure_pct)} ({duration} years)\n"
 
@@ -575,7 +588,7 @@ def create_temp(rep_info, absolute_stats):
     replacements = str.maketrans({",": "", "\"": "", ".":"", " ":"_"})
 
     output_filename = os.path.join(root, "..", "cards_ps", \
-        f"{name.translate(replacements).lower()}_card.png")
+        f"{name.translate(replacements).lower()}_card.psd")
     text_block += output_filename
     text_block += "\n"
 
@@ -601,9 +614,17 @@ def create_temp(rep_info, absolute_stats):
 
 
 
+def merge_in_supplement(rep_info, supplement):
+    """
+    Supplemental data to merge into rep_info by name.
+    """
+    for supplement_data in supplement:
+        if rep_info.get('name') == supplement_data.get('name'):
+            for key in supplement_data:
+                rep_info[key] = supplement_data[key]
+                print(f"Using supplement data for {key}: {supplement_data[key]}")
 
-
-
+    return rep_info
 
 
 
@@ -660,17 +681,26 @@ def gen_temp_for_javascript(rep_info):
 
     current_dir = os.path.dirname(__file__)
     abs_stat_f = os.path.join(current_dir, "generated_outputs", "absolute_stats.json")
+    supplement_f = os.path.join(current_dir, "generated_outputs", "supplement_congressmen.json")
 
-
-    #Load in the JSON
+    #Load in the absolute_stats JSON
     try: 
         with open(abs_stat_f, 'r') as abs_f:
             absolute_stats = json.load(abs_f)[0]
     except Exception as e:
         my_logger.error("There is an issue with the absolute_stats.json. Quitting.")
         return
+    
+    #Load in the supplement JSON
+    try: 
+        with open(supplement_f, 'r') as supp_f:
+            supplement_data = json.load(supp_f)
+    except Exception as e:
+        my_logger.error("There is an issue with the supplement_congressmen.json. Quitting.")
+        return
 
 
+    rep_info = merge_in_supplement(rep_info, supplement_data)
     create_temp(rep_info, absolute_stats)
     pull_pic_from_web(rep_info, dummy=False)
 

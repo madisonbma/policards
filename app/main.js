@@ -176,3 +176,47 @@ ipcMain.handle('gen-supplement', async () => {
     return { success: false, message: error.toString() };
   }
 });
+
+// Load congressmen data for manual entry
+ipcMain.handle('load-congressmen-data', async () => {
+  try {
+    const congressmenModPath = path.join(__dirname, '../src/generated_outputs/congressmen_mod.json');
+    const supplementPath = path.join(__dirname, '../src/generated_outputs/supplement_congressmen.json');
+
+    let congressmenMod = [];
+    let supplement = [];
+
+    // Load congressmen_mod.json
+    if (fs.existsSync(congressmenModPath)) {
+      const congressmenData = fs.readFileSync(congressmenModPath, 'utf8');
+      congressmenMod = JSON.parse(congressmenData);
+    } else {
+      throw new Error(`congressmen_mod.json not found. Looking at ${congressmenModPath}`);
+    }
+
+    // Load supplement_congressmen.json
+    if (fs.existsSync(supplementPath)) {
+      const supplementData = fs.readFileSync(supplementPath, 'utf8');
+      if (supplementData.trim().length > 0) {
+        supplement = JSON.parse(supplementData);
+      }
+    }
+
+    return { congressmenMod, supplement };
+  } catch (error) {
+    throw new Error(`Failed to load data: ${error.message}`);
+  }
+});
+
+// Save supplement data
+ipcMain.handle('save-supplement', async (event, supplementData) => {
+  try {
+    const supplementPath = path.join(__dirname, '../src/generated_outputs/supplement_congressmen.json');
+    
+    fs.writeFileSync(supplementPath, JSON.stringify(supplementData, null, 4), 'utf8');
+    
+    return { success: true, message: 'Data saved successfully!' };
+  } catch (error) {
+    return { success: false, message: error.toString() };
+  }
+});
