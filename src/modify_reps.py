@@ -1,15 +1,13 @@
-import requests
 import os
 import json
-import time
 import pandas as pd
-import src.add_bioguide
-import src.gen_committees
+import add_bioguide
+import gen_committees
 import sys
 import os
 from datetime import date
 import numpy as np
-from src.init_logger import my_logger
+from init_logger import my_logger
 
 
 
@@ -466,7 +464,7 @@ def modify_reps(input_json_f, vote_f):
     #Functions you need to do on merged vote and reps:
     df = get_voter_rank(df)
 
-    comm_dict = src.gen_committees.gen_committees()
+    comm_dict = gen_committees.gen_committees()
     df = merge_in_comms(df, comm_dict)
 
 
@@ -477,7 +475,7 @@ def modify_reps(input_json_f, vote_f):
     con_json = df.to_json(indent=2, orient='records')
     print("Starting the add_bioguide")
     #Last, modify the JSON with add_bioguide.py
-    modified_congressmen_json_pre = src.add_bioguide.add_bioguide(con_json) #list of dicts python Obj
+    modified_congressmen_json_pre = add_bioguide.add_bioguide(con_json) #list of dicts python Obj
 
 
     tenure_df = add_bioguide_tenure_ranks(modified_congressmen_json_pre)

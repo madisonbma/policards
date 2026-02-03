@@ -1,6 +1,6 @@
 import xml.etree.ElementTree as ET
 import requests
-from src.init_logger import my_logger
+from init_logger import my_logger
 
 # Define the XML content as a string for this example
 # In your case, you would load this from a file or a web request

@@ -23,17 +23,9 @@ function setLoading(isLoading) {
 }
 
 
-
 //EVENT LISTENERS
-
 genCardBtn.addEventListener('click', async () => {
-  setLoading(true);
-  status.className = 'status';
-  
-  const result = await window.electronAPI.genCard();
-  
-  setLoading(false);
-  showStatus(result.message, result.success);
+  await window.electronAPI.openGenCard();
 });
 
 updateDataBtn.addEventListener('click', async () => {

@@ -8,32 +8,47 @@ import time
 import sys
 
 # --- Configuration ---
-# 1. Try to load from the private config repo
-try:
-    # Get path to parent directory, then into the private repo folder
-    # Assumes structure: 
-    # ./public_repo/script.py
-    # ./private_config_repo/config.py
-    parent_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+if getattr(sys, 'frozen', False):
+    application_path = os.path.dirname(sys.executable)
+    parent_dir = os.path.join(application_path, os.path.pardir, os.path.pardir, os.path.pardir)
     config_path = os.path.join(parent_dir, "politician_pages_assets")
+    config_file = os.path.join(config_path, "config.json")
     
-    sys.path.insert(0, config_path)
-    from permissions import CONGRESS_API_KEY
-    print("Loaded CONGRESS_API_KEY from config.py")
+    try:
+        with open(config_file, 'r') as f:
+            config = json.load(f)
+            CONGRESS_API_KEY = config.get('CONGRESS_API_KEY')
+            print("Loaded API key from config.json")
+    except FileNotFoundError:
+        print(f"Error: {config_file} not found")
+        CONGRESS_API_KEY = None
+        sys.exit()
+else:
+    # 1. Try to load from the private config repo
+    try:
+        application_path = os.path.dirname(__file__)
+        parent_dir = os.path.join(application_path, os.path.pardir, os.path.pardir)
+        config_path = os.path.join(parent_dir, "politician_pages_assets")
+        config_file = os.path.join(config_path, "config.json")
+        
+        with open(config_file, 'r') as f:
+            config = json.load(f)
+            CONGRESS_API_KEY = config.get('CONGRESS_API_KEY')
+            print("Loaded API key from config.json")
 
-# 2. Fallback to environment variables if file/repo is missing
-except (ImportError, ModuleNotFoundError):
-    CONGRESS_API_KEY = os.getenv("FEC_API_KEY")
-    
-    if not CONGRESS_API_KEY:
-        print("Error: Neither config.py nor environment variables found.")
-    else:
-        print("Loaded CONGRESS_API_KEY from environment variables")
+    # 2. Fallback to environment variables if file/repo is missing
+    except (ImportError, ModuleNotFoundError, FileNotFoundError):
+        CONGRESS_API_KEY = os.getenv("CONGRESS_API_KEY")
+        
+        if not CONGRESS_API_KEY:
+            print("Error: Neither config.json nor environment variables found.")
+        else:
+            print("Loaded CONGRESS_API_KEY from environment variables")
 
-# Finally, remove the path to keep the environment clean
-finally:
-    if 'config_path' in locals() and config_path in sys.path:
-        sys.path.remove(config_path)
+    # Finally, remove the path to keep the environment clean
+    finally:
+        if 'config_path' in locals() and config_path in sys.path:
+            sys.path.remove(config_path)
 
 BASE_URL = "https://api.congress.gov/v3/"
 HEADERS = {
@@ -288,14 +303,6 @@ def flatten_user_terms(users_list):
     return all_flattened_terms
 
 
-
-
-###############################################
-#main loop. generate the xls
-###############################################
-#Run to get the starting JSON. Don't need to do this every time, can just load in a pre-existing.
-#Do this only once in a while. So first line is to save, second line is to load the file in
-#if __name__ == "__main__":
 def gen_reps_json():
     """
     This script pulls all congressmen data from the Congress.gov API.
@@ -307,7 +314,17 @@ def gen_reps_json():
 
     members_json = flatten_user_terms(members_dict)
 
-    root = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.path.pardir)
+    # Fix for PyInstaller executables
+    if getattr(sys, 'frozen', False):
+        # Running as compiled executable
+        # Move up extra level because exe in dist
+        application_path = os.path.dirname(sys.executable)
+        application_path = os.path.join(application_path, os.path.pardir)
+    else:
+        # Running as normal Python script
+        application_path = os.path.dirname(os.path.abspath(__file__))
+
+    root = os.path.join(application_path, os.path.pardir)
     congressmen_json = os.path.join(root, "src", "generated_outputs", "congressmen.json")
 
 
@@ -315,3 +332,39 @@ def gen_reps_json():
         json.dump(members_json, f, indent=2)
 
     print(f"Wrote to file {congressmen_json}")
+
+###############################################
+#main loop. generate the xls
+###############################################
+#Run to get the starting JSON. Don't need to do this every time, can just load in a pre-existing.
+#Do this only once in a while. So first line is to save, second line is to load the file in
+if __name__ == "__main__":
+    """
+    This script pulls all congressmen data from the Congress.gov API.
+    The output is "congressmen.json", which is a json with info about each representative.
+    Use the output of this to generate the dataframe to merge with voting records.
+    Only needs to be run when there is a change in representatives
+    """
+    members_dict = get_congress_members()
+
+    members_json = flatten_user_terms(members_dict)
+
+    # Fix for PyInstaller executables
+    if getattr(sys, 'frozen', False):
+        # Running as compiled executable
+        application_path = os.path.dirname(sys.executable)
+        application_path = os.path.join(application_path, os.path.pardir)
+
+    else:
+        # Running as normal Python script
+        application_path = os.path.dirname(os.path.abspath(__file__))
+
+    root = os.path.join(application_path, os.path.pardir)
+    congressmen_json = os.path.join(root, "src", "generated_outputs", "congressmen.json")
+
+
+    with open(congressmen_json, 'w') as f:
+        json.dump(members_json, f, indent=2)
+
+    print(f"Wrote to file {congressmen_json}")
+

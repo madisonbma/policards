@@ -10,33 +10,47 @@ import sys
 from init_logger import my_logger
 
 
-# 1. Try to load from the private config repo
-try:
-    # Get path to parent directory, then into the private repo folder
-    # Assumes structure: 
-    # ./public_repo/script.py
-    # ./private_config_repo/config.py
-    parent_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+if getattr(sys, 'frozen', False):
+    application_path = os.path.dirname(sys.executable)
+    parent_dir = os.path.join(application_path, os.path.pardir, os.path.pardir, os.path.pardir)
     config_path = os.path.join(parent_dir, "politician_pages_assets")
+    config_file = os.path.join(config_path, "config.json")
     
-    sys.path.insert(0, config_path)
-    from permissions import FEC_API_KEY
-    print("Loaded FEC_API_KEY from config.py")
+    try:
+        with open(config_file, 'r') as f:
+            config = json.load(f)
+            FEC_API_KEY = config.get('FEC_API_KEY')
+            print("Loaded API key from config.json")
+    except FileNotFoundError:
+        print(f"Error: {config_file} not found")
+        FEC_API_KEY = None
+        sys.exit()
+else:
+    # 1. Try to load from the private config repo
+    try:
+        application_path = os.path.dirname(__file__)
+        parent_dir = os.path.join(application_path, os.path.pardir, os.path.pardir)
+        config_path = os.path.join(parent_dir, "politician_pages_assets")
+        config_file = os.path.join(config_path, "config.json")
+        
+        with open(config_file, 'r') as f:
+            config = json.load(f)
+            FEC_API_KEY = config.get('FEC_API_KEY')
+            print("Loaded API key from config.json")
 
-# 2. Fallback to environment variables if file/repo is missing
-except (ImportError, ModuleNotFoundError):
-    FEC_API_KEY = os.getenv("FEC_API_KEY")
-    
-    if not FEC_API_KEY:
-        print("Error: Neither config.py nor environment variables found.")
-    else:
-        print("Loaded FEC_API_KEY from environment variables")
+    # 2. Fallback to environment variables if file/repo is missing
+    except (ImportError, ModuleNotFoundError, FileNotFoundError):
+        FEC_API_KEY = os.getenv("FEC_API_KEY")
+        
+        if not FEC_API_KEY:
+            print("Error: Neither config.json nor environment variables found.")
+        else:
+            print("Loaded FEC_API_KEY from environment variables")
 
-# Finally, remove the path to keep the environment clean
-finally:
-    if 'config_path' in locals() and config_path in sys.path:
-        sys.path.remove(config_path)
-
+    # Finally, remove the path to keep the environment clean
+    finally:
+        if 'config_path' in locals() and config_path in sys.path:
+            sys.path.remove(config_path)
 
 BASE_URL = "https://api.open.fec.gov/v1/"
 HEADERS = {
@@ -817,26 +831,27 @@ def get_lobbyist_amounts(f3l):
         return None
 
 
-def get_lobbyists():
+def get_lobbyists(gen_outputs):
     temp = get_lobbyist_receipts()
-    with open('lobbyist_data.json', 'w') as f:
+    with open(os.path.join(gen_outputs, 'lobbyist_data.json'), 'w') as f:
         json.dump(temp, f, indent=2)
 
 
-def get_bioguide_map(regenerate=0, save=0, append=0):
+def get_bioguide_map(gen_outputs, regenerate=0, save=0, append=0):
     ### Regenerate / reload data block
+    
     if regenerate:
         print("Getting all house members from 2024")
         house_records = get_candidates_and_committees("H", page_start=1)
         if append: 
             try:
-                with open('house_names.json', 'r') as file:
+                with open(os.path.join(gen_outputs, 'house_names.json'), 'r') as file:
                     house_records_og = json.load(file)
             except FileNotFoundError:
                 house_records_og = []
             house_records.extend(house_records_og)
         if save:
-            with open('house_names.json', 'w') as f:
+            with open(os.path.join(gen_outputs, 'house_names.json'), 'w') as f:
                 json.dump(house_records, f, indent=2)
             print("Saved this master file to house_names.json")
 
@@ -844,31 +859,31 @@ def get_bioguide_map(regenerate=0, save=0, append=0):
         senate_records = get_candidates_and_committees("S", page_start=1)
         if append: 
             try:
-                with open('senate_names.json', 'r') as file:
+                with open(os.path.join(gen_outputs, 'senate_names.json'), 'r') as file:
                     senate_records_og = json.load(file)
             except FileNotFoundError:
                 senate_records_og = []
             senate_records.extend(senate_records_og)
         if save:
-            with open('senate_names.json', 'w') as f:
+            with open(os.path.join(gen_outputs, 'senate_names.json'), 'w') as f:
                 json.dump(senate_records, f, indent=2)
             print("Saved this master file to senate_names.json")
 
     else:
         try:
-            with open('house_names.json', 'r') as file:
+            with open(os.path.join(gen_outputs, 'house_names.json'), 'r') as file:
                 house_records = json.load(file)
         except FileNotFoundError:
             house_records = []
         try:
-            with open('senate_names.json', 'r') as file:
+            with open(os.path.join(gen_outputs, 'senate_names.json'), 'r') as file:
                 senate_records = json.load(file)
         except FileNotFoundError:
             senate_records = []
         
     ### Create dict of current congressmen with mapping table for IDs and comms to look up for step 3
     try:
-        with open('congressmen.json', 'r') as file:
+        with open(os.path.join(gen_outputs, 'congressmen.json'), 'r') as file:
             nonfec_record = json.load(file)
     except FileNotFoundError:
         print("WARNING: congressmen.json not loaded")
@@ -883,54 +898,68 @@ def get_bioguide_map(regenerate=0, save=0, append=0):
     current_member_fec_mapping = current_member_fec_mapping_h + current_member_fec_mapping_s
     current_member_fec_mapping = remove_duplicates(current_member_fec_mapping, 'name')
     if save:
-        with open('fec_mapping.json', 'w') as f:
+        with open(os.path.join(gen_outputs,'fec_mapping.json'), 'w') as f:
             json.dump(current_member_fec_mapping, f, indent=2)
         print("Saved new dict from bioguide to fec in fec_mapping.json")
 
 
 if __name__ == "__main__":
-    if os.path.exists('fec_mapping.json'):
+    if getattr(sys, 'frozen', False):
+        # Running as compiled executable
+        # Move up extra level because exe in dist
+        application_path = os.path.dirname(sys.executable)
+        application_path = os.path.join(application_path, os.path.pardir)
+    else:
+        # Running as normal Python script
+        application_path = os.path.dirname(os.path.abspath(__file__))
+    root = os.path.join(application_path, os.path.pardir)
+    gen_outputs = os.path.join(root, 'src', 'generated_outputs')
+
+    #STEP 1: Map person (candidate/committee_id to bioguide_id)
+    fec_mapping_json = os.path.join(gen_outputs, "fec_mapping.json")
+    if os.path.exists(fec_mapping_json):
         print("Already have bioguide mapping. Skipping regeneration.")
     else:
         print("Could not find fec_mapping.json - regenerating bioguide mapping.")
-        get_bioguide_map()
+        get_bioguide_map(gen_outputs)
 
-    if os.path.exists('lobbyist_data.json'):
+    #STEP 2: Get F3L reports (>$23K bundled)
+    if os.path.exists(os.path.join(gen_outputs, 'lobbyist_data.json')):
         print("Lobbyist data already exists. Skipping regeneration.")
     else:
         print("Could not find lobbyist_data.json - regenerating lobbyist data")
-        get_lobbyists()
+        get_lobbyists(gen_outputs)
 
     # get PAC independent expenditures
-    if os.path.exists('independent_expenditures.json'):
+    if os.path.exists(os.path.join(gen_outputs, 'independent_expenditures.json')):
         print("Already have independent expenditures. Skipping regeneration.")
     else:
         print("Generating independent_expenditures.json")
-        with open ('fec_mapping.json', 'r') as f:
+        with open (os.path.join(gen_outputs, 'fec_mapping.json'), 'r') as f:
             fec = json.load(f)
         fec = remove_duplicates(fec, 'name')
         ie = get_independent_expenditures(fec)
 
-        with open ('independent_expenditures.json', 'w') as f:
+        with open (os.path.join(gen_outputs, 'independent_expenditures.json'), 'w') as f:
             json.dump(ie, f, indent=2)
 
     # TODO: get bundles of non-registered groups - not everyone will have, just should cap at 3300
-    with open ('fec_mapping.json', 'r') as f:
+    with open (os.path.join(gen_outputs, 'fec_mapping.json'), 'r') as f:
         fec = json.load(f)
     fec = remove_duplicates(fec, 'name')
 
-    if os.path.exists('nr_bundles.json'):
+    if os.path.exists(os.path.join(gen_outputs, 'nr_bundles.json')):
         print("Loading pre-existing nr_bundles.json")
-        with open ('nr_bundles.json', 'r') as f:
+        with open (os.path.join(gen_outputs, 'nr_bundles.json'), 'r') as f:
             nr_bundles = json.load(f)
     else:
         nr_bundles = get_nonregistered_bundles(fec)        
-        with open ('nr_bundles.json', 'w') as f:
+        with open (os.path.join(gen_outputs, 'nr_bundles.json'), 'w') as f:
             json.dump(nr_bundles, f, indent=2)
 
     bundles = get_bundle_amounts(nr_bundles)
 
-    with open ('bundles.json', 'w') as f:
+    with open (os.path.join(gen_outputs, 'bundles.json'), 'w') as f:
         json.dump(bundles, f, indent=2)
 
 

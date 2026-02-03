@@ -26,5 +26,9 @@
     {
         "name": "Michael Guest",
         "birthplace": "Woodbury, NJ"
+    },
+    {
+        "name": "Thomas Tillis",
+        "birthDate": "1960-08-30"
     }
 ]

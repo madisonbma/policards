@@ -2243,7 +2243,7 @@ def add_bioguide_congress_data(list_of_dict):
         #print(f"new_terms: {new_terms}")
         if new_terms is not None:
             rep.update({"terms": new_terms[-1]})
-            print(f"{rep.get('name')}: {new_terms}")
+            #print(f"{rep.get('name')}: {new_terms}")
         else:
             print(f"new_terms not found for {rep.get('name')}")
         rep.update({"valid_roles": valid_roles})

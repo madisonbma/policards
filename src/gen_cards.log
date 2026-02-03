@@ -10568,3 +10568,357 @@
 2026-01-22 14:19:55,718 - gen_temp_for_javascript.py - DEBUG - Success image pull for Jamie Raskin
 2026-01-22 14:19:55,718 - gen_temp_for_javascript.py - INFO - Both images too small for Jamie Raskin. Using larger one at (175, 227).
 2026-01-22 14:19:55,718 - gen_temp_for_javascript.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 227)
+2026-01-27 18:57:52,026 - gen_voting_record_json.py - INFO - Starting from vote 34 for house pull
+2026-01-27 18:57:52,038 - gen_voting_record_json.py - INFO - Requesting members for vote: Congress 119, Session 2, Vote #34
+2026-01-27 18:57:52,038 - gen_voting_record_json.py - INFO -   - Querying: https://api.congress.gov/v3/house-vote/119/2/34/members with offset=0
+2026-01-27 18:57:56,383 - gen_voting_record_json.py - INFO -   - Fetched 431 member votes. Total: 431
+2026-01-27 18:57:56,586 - gen_voting_record_json.py - INFO - Requesting members for vote: Congress 119, Session 2, Vote #35
+2026-01-27 18:57:56,586 - gen_voting_record_json.py - INFO -   - Querying: https://api.congress.gov/v3/house-vote/119/2/35/members with offset=0
+2026-01-27 18:58:00,442 - gen_voting_record_json.py - INFO -   - Fetched 431 member votes. Total: 431
+2026-01-27 18:58:00,643 - gen_voting_record_json.py - INFO - Requesting members for vote: Congress 119, Session 2, Vote #36
+2026-01-27 18:58:00,643 - gen_voting_record_json.py - INFO -   - Querying: https://api.congress.gov/v3/house-vote/119/2/36/members with offset=0
+2026-01-27 18:58:04,640 - gen_voting_record_json.py - INFO -   - Fetched 431 member votes. Total: 431
+2026-01-27 18:58:04,842 - gen_voting_record_json.py - INFO - Requesting members for vote: Congress 119, Session 2, Vote #37
+2026-01-27 18:58:04,842 - gen_voting_record_json.py - INFO -   - Querying: https://api.congress.gov/v3/house-vote/119/2/37/members with offset=0
+2026-01-27 18:58:09,050 - gen_voting_record_json.py - INFO -   - Fetched 431 member votes. Total: 431
+2026-01-27 18:58:09,254 - gen_voting_record_json.py - INFO - Requesting members for vote: Congress 119, Session 2, Vote #38
+2026-01-27 18:58:09,255 - gen_voting_record_json.py - INFO -   - Querying: https://api.congress.gov/v3/house-vote/119/2/38/members with offset=0
+2026-01-27 18:58:13,451 - gen_voting_record_json.py - INFO -   - Fetched 431 member votes. Total: 431
+2026-01-27 18:58:13,655 - gen_voting_record_json.py - INFO - Requesting members for vote: Congress 119, Session 2, Vote #39
+2026-01-27 18:58:13,656 - gen_voting_record_json.py - INFO -   - Querying: https://api.congress.gov/v3/house-vote/119/2/39/members with offset=0
+2026-01-27 18:58:17,722 - gen_voting_record_json.py - INFO -   - Fetched 431 member votes. Total: 431
+2026-01-27 18:58:17,923 - gen_voting_record_json.py - INFO - Requesting members for vote: Congress 119, Session 2, Vote #40
+2026-01-27 18:58:17,924 - gen_voting_record_json.py - INFO -   - Querying: https://api.congress.gov/v3/house-vote/119/2/40/members with offset=0
+2026-01-27 18:58:21,847 - gen_voting_record_json.py - INFO -   - Fetched 431 member votes. Total: 431
+2026-01-27 18:58:22,049 - gen_voting_record_json.py - INFO - Requesting members for vote: Congress 119, Session 2, Vote #41
+2026-01-27 18:58:22,049 - gen_voting_record_json.py - INFO -   - Querying: https://api.congress.gov/v3/house-vote/119/2/41/members with offset=0
+2026-01-27 18:58:26,252 - gen_voting_record_json.py - INFO -   - Fetched 431 member votes. Total: 431
+2026-01-27 18:58:26,454 - gen_voting_record_json.py - INFO - Requesting members for vote: Congress 119, Session 2, Vote #42
+2026-01-27 18:58:26,454 - gen_voting_record_json.py - INFO -   - Querying: https://api.congress.gov/v3/house-vote/119/2/42/members with offset=0
+2026-01-27 18:58:30,653 - gen_voting_record_json.py - INFO -   - Fetched 431 member votes. Total: 431
+2026-01-27 18:58:30,855 - gen_voting_record_json.py - INFO - Requesting members for vote: Congress 119, Session 2, Vote #43
+2026-01-27 18:58:30,856 - gen_voting_record_json.py - INFO -   - Querying: https://api.congress.gov/v3/house-vote/119/2/43/members with offset=0
+2026-01-27 18:58:35,057 - gen_voting_record_json.py - INFO -   - Fetched 436 member votes. Total: 436
+2026-01-27 18:58:35,259 - gen_voting_record_json.py - INFO - Requesting members for vote: Congress 119, Session 2, Vote #44
+2026-01-27 18:58:35,259 - gen_voting_record_json.py - INFO -   - Querying: https://api.congress.gov/v3/house-vote/119/2/44/members with offset=0
+2026-01-27 18:58:39,562 - gen_voting_record_json.py - INFO -   - Fetched 436 member votes. Total: 436
+2026-01-27 18:58:39,764 - gen_voting_record_json.py - INFO - Requesting members for vote: Congress 119, Session 2, Vote #45
+2026-01-27 18:58:39,765 - gen_voting_record_json.py - INFO -   - Querying: https://api.congress.gov/v3/house-vote/119/2/45/members with offset=0
+2026-01-27 18:58:43,966 - gen_voting_record_json.py - INFO -   - Fetched 431 member votes. Total: 431
+2026-01-27 18:58:44,170 - gen_voting_record_json.py - INFO - Requesting members for vote: Congress 119, Session 2, Vote #46
+2026-01-27 18:58:44,171 - gen_voting_record_json.py - INFO -   - Querying: https://api.congress.gov/v3/house-vote/119/2/46/members with offset=0
+2026-01-27 18:58:48,258 - gen_voting_record_json.py - INFO -   - Fetched 431 member votes. Total: 431
+2026-01-27 18:58:48,462 - gen_voting_record_json.py - INFO - Requesting members for vote: Congress 119, Session 2, Vote #47
+2026-01-27 18:58:48,463 - gen_voting_record_json.py - INFO -   - Querying: https://api.congress.gov/v3/house-vote/119/2/47/members with offset=0
+2026-01-27 18:58:53,055 - gen_voting_record_json.py - INFO -   - Fetched 431 member votes. Total: 431
+2026-01-27 18:58:53,259 - gen_voting_record_json.py - INFO - Requesting members for vote: Congress 119, Session 2, Vote #48
+2026-01-27 18:58:53,260 - gen_voting_record_json.py - INFO -   - Querying: https://api.congress.gov/v3/house-vote/119/2/48/members with offset=0
+2026-01-27 18:58:57,482 - gen_voting_record_json.py - INFO -   - Fetched 431 member votes. Total: 431
+2026-01-27 18:58:57,684 - gen_voting_record_json.py - INFO - Requesting members for vote: Congress 119, Session 2, Vote #49
+2026-01-27 18:58:57,684 - gen_voting_record_json.py - INFO -   - Querying: https://api.congress.gov/v3/house-vote/119/2/49/members with offset=0
+2026-01-27 18:58:58,208 - gen_voting_record_json.py - ERROR - HTTP Error for vote members: 404 - {
+    "error": "No Vote matches the given query.",
+    "request": {
+        "congress": "119",
+        "contentType": "application/json",
+        "format": "json",
+        "session": "2"
+    }
+}
+2026-01-27 18:58:58,208 - gen_voting_record_json.py - ERROR -   - Vote not found or invalid congress/session/voteNumber combination.
+2026-01-27 18:58:58,208 - gen_voting_record_json.py - ERROR - Voting record not found for 49, either timeout or doesn't exist.
+2026-01-27 18:59:00,476 - gen_voting_record_json.py - INFO - Done generating C:\Users\madis\repos\politician_pages\src\..\src\generated_outputs\voting_records.json
+2026-01-27 18:59:00,710 - gen_voting_record_json.py - INFO - Starting from vote 12 for senate pull
+2026-01-27 18:59:01,475 - gen_voting_record_json.py - INFO - Success getting votes for vote 00012.xml for Senate
+2026-01-27 18:59:02,326 - gen_voting_record_json.py - ERROR - XML 13 doesn't exist yet. Quitting.
+2026-01-27 18:59:03,153 - gen_voting_record_json.py - INFO - Done generating C:\Users\madis\repos\politician_pages\src\..\src\generated_outputs\voting_records_senate.json
+2026-01-27 18:59:04,415 - modify_votes.py - INFO - Success getting senate bioguide to senate_id dict
+2026-01-27 18:59:04,623 - modify_votes.py - INFO - 410 house votes, 659 senate votes, for total of 1069 votes
+2026-01-27 18:59:04,747 - modify_votes.py - INFO - 446 house reps, 102 senators, for total of 548 people
+2026-01-27 18:59:05,315 - modify_votes.py - WARNING - Some congressmen are missing voter information unexpectedly: ['A000382' 'B001230' 'B001236' 'B001243' 'B001261' 'B001267' 'B001277'
+ 'B001288' 'B001299' 'B001303' 'B001305' 'B001319' 'C000127' 'C000880'
+ 'C001035' 'C001047' 'C001056' 'C001075' 'C001088' 'C001095' 'C001096'
+ 'C001098' 'C001113' 'C001114' 'D000563' 'D000618' 'D000622' 'E000295'
+ 'F000463' 'F000479' 'G000359' 'G000386' 'G000555' 'G000574' 'G000596'
+ 'G000606' 'H000273' 'H000601' 'H001042' 'H001046' 'H001061' 'H001076'
+ 'H001079' 'H001089' 'H001104' 'J000293' 'J000312' 'K000367' 'K000377'
+ 'K000383' 'K000384' 'K000393' 'K000394' 'L000570' 'L000571' 'L000575'
+ 'L000577' 'L000578' 'M000133' 'M000355' 'M000934' 'M001111' 'M001153'
+ 'M001169' 'M001176' 'M001190' 'M001198' 'M001242' 'M001243' 'M001244'
+ 'O000174' 'P000145' 'P000595' 'P000603' 'R000122' 'R000584' 'R000605'
+ 'R000608' 'R000618' 'S000033' 'S000148' 'S001150' 'S001181' 'S001184'
+ 'S001194' 'S001198' 'S001203' 'S001207' 'S001208' 'S001217' 'S001227'
+ 'S001232' 'T000250' 'T000278' 'T000476' 'V000128' 'V000139' 'W000437'
+ 'W000779' 'W000790' 'W000800' 'W000802' 'W000805' 'W000817' 'W000831'
+ 'Y000064']
+2026-01-27 18:59:05,394 - modify_reps.py - DEBUG - There are 537 NA endyears
+2026-01-27 18:59:05,397 - modify_reps.py - DEBUG - Added yes to 537 members
+2026-01-27 18:59:05,399 - modify_reps.py - INFO - After processing, there are 0 na endYears
+2026-01-27 18:59:06,328 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for House
+2026-01-27 18:59:06,329 - gen_committees.py - INFO - Success getting list of (sub)committee names for comcode
+2026-01-27 18:59:06,329 - gen_committees.py - WARNING - Comcode not found for None, Nonetype returned.
+2026-01-27 18:59:06,329 - gen_committees.py - WARNING - Comcode not found for P000197, Nonetype returned.
+2026-01-27 18:59:06,330 - gen_committees.py - WARNING - Comcode not found for S001176, Nonetype returned.
+2026-01-27 18:59:06,330 - gen_committees.py - WARNING - Comcode not found for J000299, Nonetype returned.
+2026-01-27 18:59:06,330 - gen_committees.py - WARNING - Comcode not found for C001101, Nonetype returned.
+2026-01-27 18:59:06,331 - gen_committees.py - WARNING - Comcode not found for J000294, Nonetype returned.
+2026-01-27 18:59:06,674 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for senate
+2026-01-27 18:59:48,743 - gen_temp_for_javascript.py - WARNING - Image for Thomas Tillis is too small at (180, 225) instead of (342, 428). Trying backup image.
+2026-01-27 18:59:49,062 - gen_temp_for_javascript.py - WARNING - Image for Thomas Tillis is too small at (180, 225) instead of (342, 428).
+2026-01-27 18:59:49,063 - gen_temp_for_javascript.py - DEBUG - Success image pull for Thomas Tillis
+2026-01-27 18:59:49,063 - gen_temp_for_javascript.py - INFO - Both images too small for Thomas Tillis. Using larger one at (180, 225).
+2026-01-27 18:59:49,063 - gen_temp_for_javascript.py - WARNING - Having to expand picture, could be poor quality. Original photo: (180, 225)
+2026-01-27 19:04:40,425 - gen_temp_for_javascript.py - WARNING - Image for Thomas Tillis is too small at (180, 225) instead of (342, 428). Trying backup image.
+2026-01-27 19:04:40,868 - gen_temp_for_javascript.py - WARNING - Image for Thomas Tillis is too small at (180, 225) instead of (342, 428).
+2026-01-27 19:04:40,868 - gen_temp_for_javascript.py - DEBUG - Success image pull for Thomas Tillis
+2026-01-27 19:04:40,868 - gen_temp_for_javascript.py - INFO - Both images too small for Thomas Tillis. Using larger one at (180, 225).
+2026-01-27 19:04:40,868 - gen_temp_for_javascript.py - WARNING - Having to expand picture, could be poor quality. Original photo: (180, 225)
+2026-01-29 13:08:32,917 - modify_votes.py - INFO - Success getting senate bioguide to senate_id dict
+2026-01-29 13:08:33,195 - modify_votes.py - INFO - 410 house votes, 659 senate votes, for total of 1069 votes
+2026-01-29 13:08:33,308 - modify_votes.py - INFO - 446 house reps, 102 senators, for total of 548 people
+2026-01-29 13:08:34,286 - modify_votes.py - WARNING - Some congressmen are missing voter information unexpectedly: ['A000382' 'B001230' 'B001236' 'B001243' 'B001261' 'B001267' 'B001277'
+ 'B001288' 'B001299' 'B001303' 'B001305' 'B001319' 'C000127' 'C000880'
+ 'C001035' 'C001047' 'C001056' 'C001075' 'C001088' 'C001095' 'C001096'
+ 'C001098' 'C001113' 'C001114' 'D000563' 'D000618' 'D000622' 'E000295'
+ 'F000463' 'F000479' 'G000359' 'G000386' 'G000555' 'G000574' 'G000596'
+ 'G000606' 'H000273' 'H000601' 'H001042' 'H001046' 'H001061' 'H001076'
+ 'H001079' 'H001089' 'H001104' 'J000293' 'J000312' 'K000367' 'K000377'
+ 'K000383' 'K000384' 'K000393' 'K000394' 'L000570' 'L000571' 'L000575'
+ 'L000577' 'L000578' 'M000133' 'M000355' 'M000934' 'M001111' 'M001153'
+ 'M001169' 'M001176' 'M001190' 'M001198' 'M001242' 'M001243' 'M001244'
+ 'O000174' 'P000145' 'P000595' 'P000603' 'R000122' 'R000584' 'R000605'
+ 'R000608' 'R000618' 'S000033' 'S000148' 'S001150' 'S001181' 'S001184'
+ 'S001194' 'S001198' 'S001203' 'S001207' 'S001208' 'S001217' 'S001227'
+ 'S001232' 'T000250' 'T000278' 'T000476' 'V000128' 'V000139' 'W000437'
+ 'W000779' 'W000790' 'W000800' 'W000802' 'W000805' 'W000817' 'W000831'
+ 'Y000064']
+2026-01-29 13:08:34,372 - modify_reps.py - DEBUG - There are 537 NA endyears
+2026-01-29 13:08:34,374 - modify_reps.py - DEBUG - Added yes to 537 members
+2026-01-29 13:08:34,379 - modify_reps.py - INFO - After processing, there are 0 na endYears
+2026-01-29 13:09:38,233 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for House
+2026-01-29 13:09:38,235 - gen_committees.py - INFO - Success getting list of (sub)committee names for comcode
+2026-01-29 13:09:38,236 - gen_committees.py - WARNING - Comcode not found for None, Nonetype returned.
+2026-01-29 13:09:38,237 - gen_committees.py - WARNING - Comcode not found for P000197, Nonetype returned.
+2026-01-29 13:09:38,238 - gen_committees.py - WARNING - Comcode not found for S001176, Nonetype returned.
+2026-01-29 13:09:38,238 - gen_committees.py - WARNING - Comcode not found for J000299, Nonetype returned.
+2026-01-29 13:09:38,238 - gen_committees.py - WARNING - Comcode not found for C001101, Nonetype returned.
+2026-01-29 13:09:38,239 - gen_committees.py - WARNING - Comcode not found for J000294, Nonetype returned.
+2026-01-29 13:09:39,288 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for senate
+2026-01-29 13:12:47,729 - modify_votes.py - INFO - Success getting senate bioguide to senate_id dict
+2026-01-29 13:12:47,959 - modify_votes.py - INFO - 410 house votes, 659 senate votes, for total of 1069 votes
+2026-01-29 13:12:48,084 - modify_votes.py - INFO - 446 house reps, 102 senators, for total of 548 people
+2026-01-29 13:12:48,919 - modify_votes.py - WARNING - Some congressmen are missing voter information unexpectedly: ['A000382' 'B001230' 'B001236' 'B001243' 'B001261' 'B001267' 'B001277'
+ 'B001288' 'B001299' 'B001303' 'B001305' 'B001319' 'C000127' 'C000880'
+ 'C001035' 'C001047' 'C001056' 'C001075' 'C001088' 'C001095' 'C001096'
+ 'C001098' 'C001113' 'C001114' 'D000563' 'D000618' 'D000622' 'E000295'
+ 'F000463' 'F000479' 'G000359' 'G000386' 'G000555' 'G000574' 'G000596'
+ 'G000606' 'H000273' 'H000601' 'H001042' 'H001046' 'H001061' 'H001076'
+ 'H001079' 'H001089' 'H001104' 'J000293' 'J000312' 'K000367' 'K000377'
+ 'K000383' 'K000384' 'K000393' 'K000394' 'L000570' 'L000571' 'L000575'
+ 'L000577' 'L000578' 'M000133' 'M000355' 'M000934' 'M001111' 'M001153'
+ 'M001169' 'M001176' 'M001190' 'M001198' 'M001242' 'M001243' 'M001244'
+ 'O000174' 'P000145' 'P000595' 'P000603' 'R000122' 'R000584' 'R000605'
+ 'R000608' 'R000618' 'S000033' 'S000148' 'S001150' 'S001181' 'S001184'
+ 'S001194' 'S001198' 'S001203' 'S001207' 'S001208' 'S001217' 'S001227'
+ 'S001232' 'T000250' 'T000278' 'T000476' 'V000128' 'V000139' 'W000437'
+ 'W000779' 'W000790' 'W000800' 'W000802' 'W000805' 'W000817' 'W000831'
+ 'Y000064']
+2026-01-29 13:12:49,008 - modify_reps.py - DEBUG - There are 537 NA endyears
+2026-01-29 13:12:49,011 - modify_reps.py - DEBUG - Added yes to 537 members
+2026-01-29 13:12:49,016 - modify_reps.py - INFO - After processing, there are 0 na endYears
+2026-01-29 13:12:50,510 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for House
+2026-01-29 13:12:50,511 - gen_committees.py - INFO - Success getting list of (sub)committee names for comcode
+2026-01-29 13:12:50,511 - gen_committees.py - WARNING - Comcode not found for None, Nonetype returned.
+2026-01-29 13:12:50,511 - gen_committees.py - WARNING - Comcode not found for P000197, Nonetype returned.
+2026-01-29 13:12:50,511 - gen_committees.py - WARNING - Comcode not found for S001176, Nonetype returned.
+2026-01-29 13:12:50,511 - gen_committees.py - WARNING - Comcode not found for J000299, Nonetype returned.
+2026-01-29 13:12:50,511 - gen_committees.py - WARNING - Comcode not found for C001101, Nonetype returned.
+2026-01-29 13:12:50,512 - gen_committees.py - WARNING - Comcode not found for J000294, Nonetype returned.
+2026-01-29 13:12:51,287 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for senate
+2026-01-29 13:19:56,861 - modify_votes.py - INFO - Success getting senate bioguide to senate_id dict
+2026-01-29 13:19:57,003 - modify_votes.py - INFO - 410 house votes, 659 senate votes, for total of 1069 votes
+2026-01-29 13:19:57,074 - modify_votes.py - INFO - 446 house reps, 102 senators, for total of 548 people
+2026-01-29 13:19:57,518 - modify_votes.py - WARNING - Some congressmen are missing voter information unexpectedly: ['A000382' 'B001230' 'B001236' 'B001243' 'B001261' 'B001267' 'B001277'
+ 'B001288' 'B001299' 'B001303' 'B001305' 'B001319' 'C000127' 'C000880'
+ 'C001035' 'C001047' 'C001056' 'C001075' 'C001088' 'C001095' 'C001096'
+ 'C001098' 'C001113' 'C001114' 'D000563' 'D000618' 'D000622' 'E000295'
+ 'F000463' 'F000479' 'G000359' 'G000386' 'G000555' 'G000574' 'G000596'
+ 'G000606' 'H000273' 'H000601' 'H001042' 'H001046' 'H001061' 'H001076'
+ 'H001079' 'H001089' 'H001104' 'J000293' 'J000312' 'K000367' 'K000377'
+ 'K000383' 'K000384' 'K000393' 'K000394' 'L000570' 'L000571' 'L000575'
+ 'L000577' 'L000578' 'M000133' 'M000355' 'M000934' 'M001111' 'M001153'
+ 'M001169' 'M001176' 'M001190' 'M001198' 'M001242' 'M001243' 'M001244'
+ 'O000174' 'P000145' 'P000595' 'P000603' 'R000122' 'R000584' 'R000605'
+ 'R000608' 'R000618' 'S000033' 'S000148' 'S001150' 'S001181' 'S001184'
+ 'S001194' 'S001198' 'S001203' 'S001207' 'S001208' 'S001217' 'S001227'
+ 'S001232' 'T000250' 'T000278' 'T000476' 'V000128' 'V000139' 'W000437'
+ 'W000779' 'W000790' 'W000800' 'W000802' 'W000805' 'W000817' 'W000831'
+ 'Y000064']
+2026-01-29 13:19:57,580 - modify_reps.py - DEBUG - There are 537 NA endyears
+2026-01-29 13:19:57,581 - modify_reps.py - DEBUG - Added yes to 537 members
+2026-01-29 13:19:57,582 - modify_reps.py - INFO - After processing, there are 0 na endYears
+2026-01-29 13:20:09,646 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for House
+2026-01-29 13:20:09,646 - gen_committees.py - INFO - Success getting list of (sub)committee names for comcode
+2026-01-29 13:20:09,647 - gen_committees.py - WARNING - Comcode not found for None, Nonetype returned.
+2026-01-29 13:20:09,647 - gen_committees.py - WARNING - Comcode not found for P000197, Nonetype returned.
+2026-01-29 13:20:09,647 - gen_committees.py - WARNING - Comcode not found for S001176, Nonetype returned.
+2026-01-29 13:20:09,647 - gen_committees.py - WARNING - Comcode not found for J000299, Nonetype returned.
+2026-01-29 13:20:09,647 - gen_committees.py - WARNING - Comcode not found for C001101, Nonetype returned.
+2026-01-29 13:20:09,647 - gen_committees.py - WARNING - Comcode not found for J000294, Nonetype returned.
+2026-01-29 13:20:10,119 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for senate
+2026-01-29 13:24:03,805 - gen_voting_record_json.py - INFO - Starting from vote 49 for house pull
+2026-01-29 13:24:03,805 - gen_voting_record_json.py - INFO - Requesting members for vote: Congress 119, Session 2, Vote #49
+2026-01-29 13:24:03,805 - gen_voting_record_json.py - INFO -   - Querying: https://api.congress.gov/v3/house-vote/119/2/49/members with offset=0
+2026-01-29 13:24:04,672 - gen_voting_record_json.py - ERROR - HTTP Error for vote members: 404 - {
+    "error": "No Vote matches the given query.",
+    "request": {
+        "congress": "119",
+        "contentType": "application/json",
+        "format": "json",
+        "session": "2"
+    }
+}
+2026-01-29 13:24:04,672 - gen_voting_record_json.py - ERROR -   - Vote not found or invalid congress/session/voteNumber combination.
+2026-01-29 13:24:04,672 - gen_voting_record_json.py - ERROR - Voting record not found for 49, either timeout or doesn't exist.
+2026-01-29 13:24:06,799 - gen_voting_record_json.py - INFO - Done generating C:\Users\madis\repos\politician_pages\src\..\src\generated_outputs\voting_records.json
+2026-01-29 13:27:58,809 - gen_voting_record_json.py - INFO - Starting from vote 49 for house pull
+2026-01-29 13:27:58,809 - gen_voting_record_json.py - INFO - Requesting members for vote: Congress 119, Session 2, Vote #49
+2026-01-29 13:27:58,809 - gen_voting_record_json.py - INFO -   - Querying: https://api.congress.gov/v3/house-vote/119/2/49/members with offset=0
+2026-01-29 13:27:59,660 - gen_voting_record_json.py - ERROR - HTTP Error for vote members: 404 - {
+    "error": "No Vote matches the given query.",
+    "request": {
+        "congress": "119",
+        "contentType": "application/json",
+        "format": "json",
+        "session": "2"
+    }
+}
+2026-01-29 13:27:59,660 - gen_voting_record_json.py - ERROR -   - Vote not found or invalid congress/session/voteNumber combination.
+2026-01-29 13:27:59,661 - gen_voting_record_json.py - ERROR - Voting record not found for 49, either timeout or doesn't exist.
+2026-01-29 13:28:02,640 - gen_voting_record_json.py - INFO - Done generating C:\Users\madis\repos\politician_pages\src\..\src\generated_outputs\voting_records.json
+2026-01-29 13:31:35,592 - gen_voting_record_json.py - INFO - Starting from vote 49 for house pull
+2026-01-29 13:31:35,592 - gen_voting_record_json.py - INFO - Requesting members for vote: Congress 119, Session 2, Vote #49
+2026-01-29 13:31:35,592 - gen_voting_record_json.py - INFO -   - Querying: https://api.congress.gov/v3/house-vote/119/2/49/members with offset=0
+2026-01-29 13:31:36,531 - gen_voting_record_json.py - INFO - HTTP Error for vote members: 404 - {
+    "error": "No Vote matches the given query.",
+    "request": {
+        "congress": "119",
+        "contentType": "application/json",
+        "format": "json",
+        "session": "2"
+    }
+}
+2026-01-29 13:31:36,531 - gen_voting_record_json.py - INFO - Vote not found or invalid congress/session/voteNumber combination.
+2026-01-29 13:31:36,531 - gen_voting_record_json.py - ERROR - Voting record not found for 49, either timeout or doesn't exist.
+2026-01-29 13:31:38,863 - gen_voting_record_json.py - INFO - Done generating C:\Users\madis\repos\politician_pages\src\..\src\generated_outputs\voting_records.json
+2026-01-29 13:31:39,100 - gen_voting_record_json.py - INFO - Starting from vote 13 for senate pull
+2026-01-29 13:31:40,870 - gen_voting_record_json.py - ERROR - XML 14 doesn't exist yet. Quitting.
+2026-01-29 13:31:41,666 - gen_voting_record_json.py - INFO - Done generating C:\Users\madis\repos\politician_pages\src\..\src\generated_outputs\voting_records_senate.json
+2026-01-29 13:32:15,810 - gen_voting_record_json.py - INFO - Starting from vote 49 for house pull
+2026-01-29 13:32:15,812 - gen_voting_record_json.py - INFO - Requesting members for vote: Congress 119, Session 2, Vote #49
+2026-01-29 13:32:15,812 - gen_voting_record_json.py - INFO -   - Querying: https://api.congress.gov/v3/house-vote/119/2/49/members with offset=0
+2026-01-29 13:32:16,722 - gen_voting_record_json.py - INFO - HTTP Error for vote members: 404 - {
+    "error": "No Vote matches the given query.",
+    "request": {
+        "congress": "119",
+        "contentType": "application/json",
+        "format": "json",
+        "session": "2"
+    }
+}
+2026-01-29 13:32:16,722 - gen_voting_record_json.py - INFO - Vote not found or invalid congress/session/voteNumber combination.
+2026-01-29 13:32:16,722 - gen_voting_record_json.py - ERROR - Voting record not found for 49, either timeout or doesn't exist.
+2026-01-29 13:32:19,511 - gen_voting_record_json.py - INFO - Done generating C:\Users\madis\repos\politician_pages\src\..\src\generated_outputs\voting_records.json
+2026-01-29 13:32:19,833 - gen_voting_record_json.py - INFO - Starting from vote 14 for senate pull
+2026-01-29 13:32:20,616 - gen_voting_record_json.py - ERROR - XML 14 doesn't exist yet. Quitting.
+2026-01-29 13:32:21,967 - gen_voting_record_json.py - INFO - Done generating C:\Users\madis\repos\politician_pages\src\..\src\generated_outputs\voting_records_senate.json
+2026-01-29 13:35:08,897 - gen_voting_record_json.py - INFO - Starting from vote 49 for house pull
+2026-01-29 13:35:08,897 - gen_voting_record_json.py - INFO - Requesting members for vote: Congress 119, Session 2, Vote #49
+2026-01-29 13:35:08,897 - gen_voting_record_json.py - INFO -   - Querying: https://api.congress.gov/v3/house-vote/119/2/49/members with offset=0
+2026-01-29 13:35:09,729 - gen_voting_record_json.py - INFO - HTTP Error for vote members: 404 - {
+    "error": "No Vote matches the given query.",
+    "request": {
+        "congress": "119",
+        "contentType": "application/json",
+        "format": "json",
+        "session": "2"
+    }
+}
+2026-01-29 13:35:09,729 - gen_voting_record_json.py - INFO - Vote not found or invalid congress/session/voteNumber combination.
+2026-01-29 13:35:09,729 - gen_voting_record_json.py - ERROR - Voting record not found for 49, either timeout or doesn't exist.
+2026-01-29 13:35:12,173 - gen_voting_record_json.py - INFO - Done generating C:\Users\madis\repos\politician_pages\src\..\src\generated_outputs\voting_records.json
+2026-01-29 13:35:12,468 - gen_voting_record_json.py - INFO - Starting from vote 14 for senate pull
+2026-01-29 13:35:13,310 - gen_voting_record_json.py - ERROR - XML 14 doesn't exist yet. Quitting.
+2026-01-29 13:35:14,486 - gen_voting_record_json.py - INFO - Done generating C:\Users\madis\repos\politician_pages\src\..\src\generated_outputs\voting_records_senate.json
+2026-01-29 13:35:16,753 - modify_votes.py - INFO - Success getting senate bioguide to senate_id dict
+2026-01-29 13:35:16,980 - modify_votes.py - INFO - 410 house votes, 659 senate votes, for total of 1069 votes
+2026-01-29 13:35:17,107 - modify_votes.py - INFO - 446 house reps, 102 senators, for total of 548 people
+2026-01-29 13:35:17,935 - modify_votes.py - WARNING - Some congressmen are missing voter information unexpectedly: ['A000382' 'B001230' 'B001236' 'B001243' 'B001261' 'B001267' 'B001277'
+ 'B001288' 'B001299' 'B001303' 'B001305' 'B001319' 'C000127' 'C000880'
+ 'C001035' 'C001047' 'C001056' 'C001075' 'C001088' 'C001095' 'C001096'
+ 'C001098' 'C001113' 'C001114' 'D000563' 'D000618' 'D000622' 'E000295'
+ 'F000463' 'F000479' 'G000359' 'G000386' 'G000555' 'G000574' 'G000596'
+ 'G000606' 'H000273' 'H000601' 'H001042' 'H001046' 'H001061' 'H001076'
+ 'H001079' 'H001089' 'H001104' 'J000293' 'J000312' 'K000367' 'K000377'
+ 'K000383' 'K000384' 'K000393' 'K000394' 'L000570' 'L000571' 'L000575'
+ 'L000577' 'L000578' 'M000133' 'M000355' 'M000934' 'M001111' 'M001153'
+ 'M001169' 'M001176' 'M001190' 'M001198' 'M001242' 'M001243' 'M001244'
+ 'O000174' 'P000145' 'P000595' 'P000603' 'R000122' 'R000584' 'R000605'
+ 'R000608' 'R000618' 'S000033' 'S000148' 'S001150' 'S001181' 'S001184'
+ 'S001194' 'S001198' 'S001203' 'S001207' 'S001208' 'S001217' 'S001227'
+ 'S001232' 'T000250' 'T000278' 'T000476' 'V000128' 'V000139' 'W000437'
+ 'W000779' 'W000790' 'W000800' 'W000802' 'W000805' 'W000817' 'W000831'
+ 'Y000064']
+2026-01-29 13:35:18,020 - modify_reps.py - DEBUG - There are 537 NA endyears
+2026-01-29 13:35:18,021 - modify_reps.py - DEBUG - Added yes to 537 members
+2026-01-29 13:35:18,023 - modify_reps.py - INFO - After processing, there are 0 na endYears
+2026-01-29 13:35:19,240 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for House
+2026-01-29 13:35:19,241 - gen_committees.py - INFO - Success getting list of (sub)committee names for comcode
+2026-01-29 13:35:19,241 - gen_committees.py - WARNING - Comcode not found for None, Nonetype returned.
+2026-01-29 13:35:19,241 - gen_committees.py - WARNING - Comcode not found for P000197, Nonetype returned.
+2026-01-29 13:35:19,241 - gen_committees.py - WARNING - Comcode not found for S001176, Nonetype returned.
+2026-01-29 13:35:19,242 - gen_committees.py - WARNING - Comcode not found for J000299, Nonetype returned.
+2026-01-29 13:35:19,242 - gen_committees.py - WARNING - Comcode not found for C001101, Nonetype returned.
+2026-01-29 13:35:19,242 - gen_committees.py - WARNING - Comcode not found for J000294, Nonetype returned.
+2026-01-29 13:35:19,665 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for senate
+2026-01-30 13:15:19,842 - modify_votes.py - INFO - Success getting senate bioguide to senate_id dict
+2026-01-30 13:15:20,042 - modify_votes.py - INFO - 410 house votes, 659 senate votes, for total of 1069 votes
+2026-01-30 13:15:20,110 - modify_votes.py - INFO - 446 house reps, 102 senators, for total of 548 people
+2026-01-30 13:15:20,571 - modify_votes.py - WARNING - Some congressmen are missing voter information unexpectedly: ['A000382' 'B001230' 'B001236' 'B001243' 'B001261' 'B001267' 'B001277'
+ 'B001288' 'B001299' 'B001303' 'B001305' 'B001319' 'C000127' 'C000880'
+ 'C001035' 'C001047' 'C001056' 'C001075' 'C001088' 'C001095' 'C001096'
+ 'C001098' 'C001113' 'C001114' 'D000563' 'D000618' 'D000622' 'E000295'
+ 'F000463' 'F000479' 'G000359' 'G000386' 'G000555' 'G000574' 'G000596'
+ 'G000606' 'H000273' 'H000601' 'H001042' 'H001046' 'H001061' 'H001076'
+ 'H001079' 'H001089' 'H001104' 'J000293' 'J000312' 'K000367' 'K000377'
+ 'K000383' 'K000384' 'K000393' 'K000394' 'L000570' 'L000571' 'L000575'
+ 'L000577' 'L000578' 'M000133' 'M000355' 'M000934' 'M001111' 'M001153'
+ 'M001169' 'M001176' 'M001190' 'M001198' 'M001242' 'M001243' 'M001244'
+ 'O000174' 'P000145' 'P000595' 'P000603' 'R000122' 'R000584' 'R000605'
+ 'R000608' 'R000618' 'S000033' 'S000148' 'S001150' 'S001181' 'S001184'
+ 'S001194' 'S001198' 'S001203' 'S001207' 'S001208' 'S001217' 'S001227'
+ 'S001232' 'T000250' 'T000278' 'T000476' 'V000128' 'V000139' 'W000437'
+ 'W000779' 'W000790' 'W000800' 'W000802' 'W000805' 'W000817' 'W000831'
+ 'Y000064']
+2026-01-30 13:15:20,627 - modify_reps.py - DEBUG - There are 537 NA endyears
+2026-01-30 13:15:20,629 - modify_reps.py - DEBUG - Added yes to 537 members
+2026-01-30 13:15:20,631 - modify_reps.py - INFO - After processing, there are 0 na endYears
+2026-01-30 13:15:21,453 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for House
+2026-01-30 13:15:21,453 - gen_committees.py - INFO - Success getting list of (sub)committee names for comcode
+2026-01-30 13:15:21,453 - gen_committees.py - WARNING - Comcode not found for None, Nonetype returned.
+2026-01-30 13:15:21,453 - gen_committees.py - WARNING - Comcode not found for P000197, Nonetype returned.
+2026-01-30 13:15:21,453 - gen_committees.py - WARNING - Comcode not found for S001176, Nonetype returned.
+2026-01-30 13:15:21,453 - gen_committees.py - WARNING - Comcode not found for J000299, Nonetype returned.
+2026-01-30 13:15:21,453 - gen_committees.py - WARNING - Comcode not found for C001101, Nonetype returned.
+2026-01-30 13:15:21,453 - gen_committees.py - WARNING - Comcode not found for J000294, Nonetype returned.
+2026-01-30 13:15:21,788 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for senate
+2026-01-30 13:17:01,252 - gen_temp_for_javascript.py - WARNING - Image for Hakeem S. Jeffries is too small at (175, 218) instead of (342, 428). Trying backup image.
+2026-01-30 13:17:01,960 - gen_temp_for_javascript.py - WARNING - Image for Hakeem S. Jeffries is too small at (175, 218) instead of (342, 428).
+2026-01-30 13:17:01,960 - gen_temp_for_javascript.py - DEBUG - Success image pull for Hakeem S. Jeffries
+2026-01-30 13:17:01,961 - gen_temp_for_javascript.py - INFO - Both images too small for Hakeem S. Jeffries. Using larger one at (175, 218).
+2026-01-30 13:17:01,961 - gen_temp_for_javascript.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 218)
+2026-01-30 13:17:42,440 - gen_temp_for_javascript.py - WARNING - Image for Tim Burchett is too small at (175, 263) instead of (342, 428). Trying backup image.
+2026-01-30 13:17:43,183 - gen_temp_for_javascript.py - WARNING - Image for Tim Burchett is too small at (175, 263) instead of (342, 428).
+2026-01-30 13:17:43,183 - gen_temp_for_javascript.py - DEBUG - Success image pull for Tim Burchett
+2026-01-30 13:17:43,183 - gen_temp_for_javascript.py - INFO - Both images too small for Tim Burchett. Using larger one at (175, 263).
+2026-01-30 13:17:43,183 - gen_temp_for_javascript.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 263)

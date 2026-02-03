@@ -13,36 +13,49 @@ current_dir = os.path.dirname(__file__)
 project_root = os.path.abspath(os.path.join(current_dir, ".."))
 sys.path.insert(0, project_root)
 
-from src.init_logger import my_logger
+from init_logger import my_logger
 
-# --- Configuration ---
-# 1. Try to load from the private config repo
-try:
-    # Get path to parent directory, then into the private repo folder
-    # Assumes structure: 
-    # ./public_repo/script.py
-    # ./private_config_repo/config.py
-    parent_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+if getattr(sys, 'frozen', False):
+    application_path = os.path.dirname(sys.executable)
+    parent_dir = os.path.join(application_path, os.path.pardir, os.path.pardir, os.path.pardir)
     config_path = os.path.join(parent_dir, "politician_pages_assets")
-    print(f"adding {config_path} to path")
+    config_file = os.path.join(config_path, "config.json")
     
-    sys.path.insert(0, config_path)
-    from permissions import CONGRESS_API_KEY
-    print("Loaded CONGRESS_API_KEY from config.py")
+    try:
+        with open(config_file, 'r') as f:
+            config = json.load(f)
+            CONGRESS_API_KEY = config.get('CONGRESS_API_KEY')
+            print("Loaded API key from config.json")
+    except FileNotFoundError:
+        print(f"Error: {config_file} not found")
+        CONGRESS_API_KEY = None
+        sys.exit()
+else:
+    # 1. Try to load from the private config repo
+    try:
+        application_path = os.path.dirname(__file__)
+        parent_dir = os.path.join(application_path, os.path.pardir, os.path.pardir)
+        config_path = os.path.join(parent_dir, "politician_pages_assets")
+        config_file = os.path.join(config_path, "config.json")
+        
+        with open(config_file, 'r') as f:
+            config = json.load(f)
+            CONGRESS_API_KEY = config.get('CONGRESS_API_KEY')
+            print("Loaded API key from config.json")
 
-# 2. Fallback to environment variables if file/repo is missing
-except (ImportError, ModuleNotFoundError):
-    CONGRESS_API_KEY = os.getenv("FEC_API_KEY")
-    
-    if not CONGRESS_API_KEY:
-        print("Error: Neither config.py nor environment variables found.")
-    else:
-        print("Loaded CONGRESS_API_KEY from environment variables")
+    # 2. Fallback to environment variables if file/repo is missing
+    except (ImportError, ModuleNotFoundError, FileNotFoundError):
+        CONGRESS_API_KEY = os.getenv("CONGRESS_API_KEY")
+        
+        if not CONGRESS_API_KEY:
+            print("Error: Neither config.json nor environment variables found.")
+        else:
+            print("Loaded CONGRESS_API_KEY from environment variables")
 
-# Finally, remove the path to keep the environment clean
-finally:
-    if 'config_path' in locals() and config_path in sys.path:
-        sys.path.remove(config_path)
+    # Finally, remove the path to keep the environment clean
+    finally:
+        if 'config_path' in locals() and config_path in sys.path:
+            sys.path.remove(config_path)
 
 BASE_URL = "https://api.congress.gov/v3/"
 HEADERS = {
@@ -103,9 +116,9 @@ def get_house_vote_members(vote_number, congress=119, session=1, limit=250, offs
         my_logger.info(f"  - Fetched {len(member_votes_on_page)} member votes. Total: {len(all_member_votes)}")
 
     except requests.exceptions.HTTPError as e:
-        my_logger.error(f"HTTP Error for vote members: {e.response.status_code} - {e.response.text}")
+        my_logger.info(f"HTTP Error for vote members: {e.response.status_code} - {e.response.text}")
         if e.response.status_code == 404:
-            my_logger.error("  - Vote not found or invalid congress/session/voteNumber combination.")
+            my_logger.info("Vote not found or invalid congress/session/voteNumber combination.")
     except requests.exceptions.ConnectionError as e:
         my_logger.error(f"Connection Error for vote members: {e}")
     except requests.exceptions.Timeout as e:
@@ -168,6 +181,7 @@ def get_voting_record(old_votes, congress, session, max_records=1000, start_vote
                 flattened_row = parent_fields.copy()  # Start with the parent data
                 flattened_row.update(vote_keep)           # Add the nested term data
                 full_voting_record.append(flattened_row)
+                print(f"Pulled House congress {congress} session {session} - Vote {i}")
 
             time.sleep(RATE_LIMIT_DELAY_SECONDS)
             i = i + 1
@@ -243,7 +257,8 @@ def get_voting_record_senate(old_votes, congress, session, max_records=1000, sta
                 temp_dict['voteCast'] = member_element.find('vote_cast').text
                 temp_dict['voteParty'] = member_element.find('party').text
                 full_voting_record.append(temp_dict)
-            my_logger.info(f"Success getting votes for vote {num_to_string} for Senate")
+            print(f"Pulled Senate congress {congress} session {session} - Vote {i}")
+
 
         except ET.ParseError as e:
             my_logger.error(f"XML {i} doesn't exist yet. Quitting.")
@@ -285,7 +300,6 @@ def get_starting_point(starting_file):
             id = int(n)
             congress = int(data[-1].get('congress'))
             session = int(data[-1].get('session'))
-        print(congress, session, id+1)
         return congress, session, id+1
 
     except FileNotFoundError:
@@ -384,7 +398,110 @@ def gen_voting_record_json(max_records=1000):
     congress, session, senate_start = get_starting_point(voting_records_senate_json)
 
     while True:
-        new_senate_data = get_voting_record_senate(file_senate_votes, congress, session, max_records=max_records, start_vote=senate_start)
+        new_senate_data = get_voting_record_senate(file_senate_votes, congress, session, start_vote=senate_start)
+        
+        if congress == max_congress:
+            if session == max_session+1:
+                break
+            else:
+                session = 1 + (session % 2)
+        else:
+            congress += 1
+            session = 1 + (session % 2)
+
+        senate_start = 1
+
+    #Now save with full voting records
+    with open(voting_records_senate_json, 'w') as file:
+        # Use indent for clean formatting
+        json.dump(new_senate_data, file, indent=2)
+
+
+    my_logger.info(f"Done generating {voting_records_senate_json}")
+
+
+if __name__ == "__main__":
+    """
+    This script pulls all voting record data from the Congress.gov API.
+    The output is "voting_records.json", which compiles all the data for each vote.
+    Use the output of this to generate the dataframe to merge with congressmen info.
+    Needs to be run semi-frequently. Added new functionality to pick up where 
+    you left off 10/15.
+    NOTE: Senate data is pulled from a different source, so both are handled here.
+    Format for senate data is XML.
+
+    Args:
+        max_records (int): for debug, can set to limit number of voting records pulled.
+    
+    Outputs:
+        voting_records_senate.json: File with senate votes.
+        voting_records.json: File with house votes.
+    """
+    print("##############################################")
+    print("Calling gen_voting_record_json.py for House Data")
+
+
+    # Fix for PyInstaller executables
+    if getattr(sys, 'frozen', False):
+        # Running as compiled executable
+        application_path = os.path.dirname(sys.executable)
+        application_path = os.path.join(application_path, os.path.pardir)
+
+    else:
+        # Running as normal Python script
+        application_path = os.path.dirname(os.path.abspath(__file__))
+
+    root = os.path.join(application_path, os.path.pardir)
+    voting_records_json = os.path.join(root, "src", "generated_outputs", "voting_records.json")
+    try:
+        with open(voting_records_json, 'r') as file:
+            file_house_votes = json.load(file)
+    except FileNotFoundError:
+        file_house_votes = []
+
+    #Read pre-existing voting records to pick up where you left off.
+    congress, session, house_start = get_starting_point(voting_records_json) #session 1/2
+    max_congress, max_session = get_stop_point() #session 0/1
+
+    while True:
+        new_house_data = get_voting_record(file_house_votes, congress, session, start_vote=house_start)
+        
+        if congress == max_congress:
+            if session == max_session+1:
+                break
+            else:
+                session = 1 + (session % 2)
+        else:
+            congress += 1
+            session = 1 + (session % 2)
+        print(f"Now proceeding for congress {congress} session {session}")
+        house_start = 1
+
+
+    #Now save with full voting records
+    with open(voting_records_json, 'w') as file:
+        # Use indent for clean formatting
+        json.dump(new_house_data, file, indent=2)
+
+    my_logger.info(f"Done generating {voting_records_json}")
+
+
+    print("##############################################")
+    print("Calling gen_voting_record_json.py for Senate Data")
+
+    voting_records_senate_json = os.path.join(root, "src", "generated_outputs", "voting_records_senate.json")
+
+    try:
+        with open(voting_records_senate_json, 'r') as file:
+            file_senate_votes = json.load(file)
+    except FileNotFoundError:
+        file_senate_votes = []
+
+    #Read pre-existing voting records to pick up where you left off
+    congress, session, senate_start = get_starting_point(voting_records_senate_json)
+
+    while True:
+        new_senate_data = get_voting_record_senate(file_senate_votes, congress, session, start_vote=senate_start)
         
         if congress == max_congress:
             if session == max_session+1:

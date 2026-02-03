@@ -1,5 +1,16 @@
 [
   {
+    "bioguideID": "C001059",
+    "name": "Costa, Jim",
+    "partyName": "Democratic",
+    "state": "California",
+    "url": "https://api.congress.gov/v3/member/C001059?format=json",
+    "attribution": "Image courtesy of the Member",
+    "imageUrl": "https://www.congress.gov/img/member/6973c909ded7781a35cc1fd7_200.jpg",
+    "chamber": "House of Representatives",
+    "startYear": 2005
+  },
+  {
     "bioguideID": "M001244",
     "name": "Moody, Ashley",
     "partyName": "Republican",
@@ -5380,17 +5391,6 @@
     "imageUrl": "https://www.congress.gov/img/member/115_rp_tx_32_sessions_pete_200.jpg",
     "chamber": "House of Representatives",
     "startYear": 2021
-  },
-  {
-    "bioguideID": "C001059",
-    "name": "Costa, Jim",
-    "partyName": "Democratic",
-    "state": "California",
-    "url": "https://api.congress.gov/v3/member/C001059?format=json",
-    "attribution": "Congressional Pictorial Directory",
-    "imageUrl": "https://www.congress.gov/img/member/116_rp_ca_16_costa_jim_200.jpg",
-    "chamber": "House of Representatives",
-    "startYear": 2005
   },
   {
     "bioguideID": "I000056",

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+  <title>Generate Card</title>
+  <link rel="stylesheet" href="gencard.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Generate Card</h1>
+    <p>Would you like to update any data or skip right to card generation?</p>
+    <button id="updateDataBtn">Update Data</button>
+    <button id="genCardsBtn">Generate Cards</button>
+    <div class="spinner" id="spinner"></div>
+    <div class="status" id="status"></div>
+
+    <!-- Output Display Area -->
+    <div class="output-container" id="outputContainer">
+      <div class="output-header">
+        <h3>Script Output:</h3>
+        <button id="clearOutputBtn" class="clear-btn">Clear</button>
+      </div>
+      <pre id="outputDisplay"></pre>
+    </div>
+  </div>
+
+  <!-- Manual Insert Modal -->
+  <div class="modal" id="manualInsertModal">
+    <div class="modal-content">
+      <h2>Generate Card</h2>
+      <!-- Step 1: Regenerate congressmen.json -->
+      <div id="step1" class="step">
+        <p>Do you want to update congressmen.json? Do this when people update, like Jan 3.</p>
+        <button id="yesGenCongressmenBtn">Yes</button>
+        <button id="noGenCongressmenBtn">No</button>
+      </div>
+      <!-- Step 2: Regenerate voting_record.json -->
+      <div id="step2" class="step">
+        <p>Do you want to update voting_record.json? Do this often.</p>
+        <button id="yesGenVotesBtn">Yes</button>
+        <button id="noGenVotesBtn">No</button>
+      </div>
+
+      <!-- Step 3: Name Selection -->
+      <div id="step3" class="step">
+        <label for="nameInput">Enter representative name:</label>
+        <input type="text" id="nameInput" placeholder="Enter name...">
+        <div id="nameSuggestions" class="suggestions"></div>
+        <button id="nameSubmitBtn">Continue</button>
+        <button id="cancelBtn" class="secondary">Cancel</button>
+
+      </div>
+
+      <!-- Step 4: Field Selection -->
+      <div id="step4" class="step hidden">
+        <p><strong>Representative:</strong> <span id="selectedName"></span></p>
+
+        <div class="current-data">
+          <h3>Current Data:</h3>
+          <div id="currentDataDisplay"></div>
+        </div>
+
+        <label for="fieldSelect">Select field to edit:</label>
+        <select id="fieldSelect">
+          <option value="">-- Select a field --</option>
+          <option value="url">URL</option>
+          <option value="imageUrl">Image URL</option>
+          <option value="endYear">End Year</option>
+          <option value="committees">Committees</option>
+          <option value="photo">Photo</option>
+          <option value="birthDate">Birth Date</option>
+          <option value="education">Education</option>
+          <option value="military">Military</option>
+          <option value="illegal">Illegal Activities</option>
+          <option value="failed_runs">Failed Runs</option>
+          <option value="work_history">Work History</option>
+          <option value="congress_highlights">Congress Highlights</option>
+          <option value="accolades">Accolades</option>
+          <option value="family">Personal</option>
+          <option value="top_donors">Top Donors</option>
+          <option value="top_issues">Top Issues</option>
+          <option value="birthplace">Birthplace</option>
+        </select>
+        <button id="fieldSubmitBtn">Update Field</button>
+        <button id="noUpdateBtn" class="secondary">No Updates, Gen Card</button>
+        <button id="backToNameBtn" class="secondary">Back</button>
+      </div>
+
+      <!-- Step 5: Enter New Value -->
+      <div id="step5" class="step hidden">
+        <p><strong>Representative:</strong> <span id="selectedName2"></span></p>
+        <p><strong>Field:</strong> <span id="selectedField"></span></p>
+        <p><strong>Current Value:</strong></p>
+        <div id="currentValue" class="current-value"></div>
+        <label for="valueInput" id="valueLabel">Enter new value:</label>
+        <input type="text" id="valueInput" placeholder="Enter value...">
+        <button id="saveBtn">Save</button>
+        <button id="backToConfirmBtn" class="secondary">Back</button>
+      </div>
+
+      <!-- Step 6: Success writing, gen card or update more fields -->
+      <div id="step6" class="step hidden">
+        <div class="success-message">
+          <h3>✓ Successfully Updated!</h3>
+          <p>The data has been saved to supplement_congressmen.json.</p>
+          <p>Would you like to change another field or proceed with card generation?</p>
+        </div>
+        <button id="genCardBtn">Gen Card</button>
+        <button id="addAnotherBtn" class="secondary">Add Another Field</button>
+      </div>
+
+      <!-- Step 7: Success -->
+      <div id="step7" class="step hidden">
+        <div class="success-message">
+          <h3>✓ Card Generated!</h3>
+          <p>The card has been created.</p>
+          <p>Would you like to quit or generate another card?</p>
+        </div>
+        <button id="genNewCardBtn">Gen New Card</button>
+        <button id="quitBtn" class="secondary">Quit</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="generate-renderer.js"></script>
+</body>
+</html>

@@ -6,7 +6,6 @@
  * STEP 5: close or add another
  */
 
-const refetchBtn = document.getElementById('refetchBtn');
 const manualInsertBtn = document.getElementById('manualInsertBtn');
 const status_doc = document.getElementById('status');
 const spinner = document.getElementById('spinner');
@@ -66,7 +65,6 @@ function showStatus(message, isSuccess) {
 }
 
 function setLoading(isLoading) {
-  refetchBtn.disabled = isLoading;
   manualInsertBtn.disabled = isLoading;
   if (isLoading) {
     spinner.classList.add('show');
@@ -300,16 +298,6 @@ addAnotherBtn.addEventListener('click', () => {
 });
 
 // Main button handlers
-refetchBtn.addEventListener('click', async () => {
-  setLoading(true);
-  status_doc.className = 'status';
-  
-  const result = await window.electronAPI.refetchData();
-  
-  setLoading(false);
-  showStatus(result.message, result.success);
-});
-
 manualInsertBtn.addEventListener('click', async () => {
   setLoading(true);
   const loaded = await loadData();
