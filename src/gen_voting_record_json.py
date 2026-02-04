@@ -181,7 +181,8 @@ def get_voting_record(old_votes, congress, session, max_records=1000, start_vote
                 flattened_row = parent_fields.copy()  # Start with the parent data
                 flattened_row.update(vote_keep)           # Add the nested term data
                 full_voting_record.append(flattened_row)
-                print(f"Pulled House congress {congress} session {session} - Vote {i}")
+            
+            print(f"Pulled House congress {congress} session {session} - Vote {i}")
 
             time.sleep(RATE_LIMIT_DELAY_SECONDS)
             i = i + 1
