@@ -479,7 +479,12 @@ backToConfirmBtn.addEventListener('click', () => showStep(3));
 genCardBtn.addEventListener('click', async () => {
   setLoading(true);
   console.log("running gen card");
+
   const result = await window.electronAPI.genCard();
+
+  if (result.output) {
+    showOutput(result.output);
+  }
   if (result.success) {
     console.log("done with gen card");
     setLoading(false);

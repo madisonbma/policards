@@ -1,12 +1,14 @@
 import subprocess
 import os
 from datetime import date, datetime
+import sys
 import requests
 import re
 import json
 from PIL import Image, ImageDraw, ImageFont
 from io import BytesIO
 from requests.exceptions import RequestException, HTTPError
+import argparse
 from init_logger import my_logger
 
 
@@ -462,13 +464,13 @@ def create_temp(rep_info, absolute_stats):
     #party = rep_info['partyName']
 
     if (rep_info['bg_endYear'] - 1 > date.today().year):
-        range = str(rep_info['startYear']) + " - Present"
+        range = str(rep_info['bg_startYear']) + " - Present"
         text_block += f"{range} | Up for re-election in {str(rep_info['bg_endYear']-1)}\n"
     elif (rep_info['bg_endYear'] - 1 < date.today().year):
-        range = f"{rep_info['startYear']} - {rep_info['bg_endYear']}"
+        range = f"{rep_info['bg_startYear']} - {rep_info['bg_endYear']}"
         text_block += f"Served from {range}\n"
     else:
-        range = str(rep_info['startYear']) + " - Present"
+        range = str(rep_info['bg_startYear']) + " - Present"
         text_block += f"{range} | Up for re-election this year\n"
     
 
@@ -549,7 +551,8 @@ def create_temp(rep_info, absolute_stats):
             else:
 
                 text_block += f"{tenure_marker}\n{num_to_percentile(tenure_pct)} ({duration:.{2}g} months)\n"
-
+        elif duration == 1:
+            text_block += f"{tenure_marker}\n{num_to_percentile(tenure_pct)} ({duration} year)\n"
         else:
             text_block += f"{tenure_marker}\n{num_to_percentile(tenure_pct)} ({duration} years)\n"
 
@@ -704,3 +707,36 @@ def gen_temp_for_javascript(rep_info):
     create_temp(rep_info, absolute_stats)
     pull_pic_from_web(rep_info, dummy=False)
 
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Pull info for Photoshop automation")
+    parser.add_argument('name', help="Name of congressman to run")
+
+    args = parser.parse_args()
+
+    rep_info = args.name
+
+    current_dir = os.path.dirname(__file__)
+    abs_stat_f = os.path.join(current_dir, "generated_outputs", "absolute_stats.json")
+    supplement_f = os.path.join(current_dir, "generated_outputs", "supplement_congressmen.json")
+
+    #Load in the absolute_stats JSON
+    try: 
+        with open(abs_stat_f, 'r') as abs_f:
+            absolute_stats = json.load(abs_f)[0]
+    except Exception as e:
+        my_logger.error("There is an issue with the absolute_stats.json. Quitting.")
+        sys.exit()
+    
+    #Load in the supplement JSON
+    try: 
+        with open(supplement_f, 'r') as supp_f:
+            supplement_data = json.load(supp_f)
+    except Exception as e:
+        my_logger.error("There is an issue with the supplement_congressmen.json. Quitting.")
+        sys.exit()
+
+
+    rep_info = merge_in_supplement(rep_info, supplement_data)
+    create_temp(rep_info, absolute_stats)
+    pull_pic_from_web(rep_info, dummy=False)

@@ -13,7 +13,7 @@ current_dir = os.path.dirname(__file__)
 project_root = os.path.abspath(os.path.join(current_dir, ".."))
 sys.path.insert(0, project_root)
 
-from init_logger import my_logger
+from src.init_logger import my_logger
 
 if getattr(sys, 'frozen', False):
     application_path = os.path.dirname(sys.executable)

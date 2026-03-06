@@ -30,5 +30,30 @@
     {
         "name": "Thomas Tillis",
         "birthDate": "1960-08-30"
+    },
+    {
+        "name": "Mark R. Warner",
+        "birthDate": "1954-12-15"
+    },
+    {
+        "name": "Chris Van Hollen",
+        "birthDate": "1959-10-01"
+    },
+    {
+        "name": "Lisa Murkowski",
+        "birthplace": "Ketchikan, AK"
+    },
+    {
+        "name": "Christopher Murphy",
+        "birthDate": "1973-08-03"
+    },
+    {
+        "name": "John Thune",
+        "birthDate": "1961-01-07"
+    },
+    {
+        "name": "John Cornyn",
+        "birthplace": "Houston, TX",
+        "birthDate": "1952-02-02"
     }
 ]

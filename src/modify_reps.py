@@ -1,13 +1,19 @@
 import os
 import json
 import pandas as pd
-import add_bioguide
-import gen_committees
+import sys
+
+current_dir = os.path.dirname(__file__)
+project_root = os.path.abspath(os.path.join(current_dir, ".."))
+sys.path.insert(0, project_root)
+
+import src.add_bioguide as add_bioguide
+import src.gen_committees as gen_committees
 import sys
 import os
 from datetime import date
 import numpy as np
-from init_logger import my_logger
+from src.init_logger import my_logger
 
 
 

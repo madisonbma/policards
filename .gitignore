@@ -1,13 +1,15 @@
 cards/
 cards_ps/
 templates/
+src/build
 __pycache__
 src/gen_cards.log
-temp.png
-temp.txt
-
+src/generated_outputs/temp.png
+src/generated_outputs/temp.txt
+src/generated_outputs/*.log
 # Logs
 logs
+src/*.log
 *.log
 npm-debug.log*
 yarn-debug.log*

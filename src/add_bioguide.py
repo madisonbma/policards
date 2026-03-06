@@ -1476,7 +1476,7 @@ def check_for_term_info(fact, terms):
     match_start_3 = re.match(r"elected as a.*Senate.* in (?P<start_year>\d{4})$", fact)
     match_start_4 = re.match(r"reelected (in \d{4}(,)?(( \d{4},)+)? and again )?in \d{4} for the term ending (?P<end_date>[A-Z][a-z]+ \d+, \d{4})", fact)
     match_start_5 = re.match(r"elected as a.* in (?P<start_year>\d{4}) for the term ending (?P<end_date>[A-Z][a-z]+ \d+, \d{4})", fact)
-    match_start_6 = re.match(r"elected [\w ]+ to the (?P<start_congress>([A-Z][a-z]+)( [A-Z][a-z]+|-[a-z]+)+).*, and served from (?P<start_date>[A-Z][a-z]+ \d+, \d{4}), to (?P<end_date>[A-Z][a-z]+ \d+, \d{4})", fact)
+    match_start_6 = re.match(r"elected [\w ]+ to the (?P<start_congress>([A-Z][a-z]+)( [A-Z][a-z]+|-[a-z]+)+).*, and served from (?P<start_date>[A-Z][a-z]+ \d+, \d{4}), to (?P<end_date>[A-Z][a-z]+ \d+, \d{4}).*resigned.*[sS]enat", fact)
     match_start_7 = re.match(r"elected in (?P<start_year>\d{4}) [\w ]+ to the (?P<start_congress>([A-Z][a-z]+)( [A-Z][a-z]+|-[a-z]+)+) Congress$", fact)
 
     match_start_present_1 = re.match(r"(appointed|elected)[\w ]+to the [\w ]+ Congress(es)?.*\((?P<start_date>[A-Z][a-z]+ \d+, \d{4}) ?- ?present\)(\.)?", fact)
@@ -1486,18 +1486,20 @@ def check_for_term_info(fact, terms):
     match_start_present_5 = re.match(r"(subsequently )?elected[\w ]+in (the )?(?P<start_date>[A-Z][a-z]+ \d+, \d{4}),? [\w ]+ term ending (?P<end_date>[A-Z][a-z]+ \d+, \d{4})(\.)?$", fact)
     match_start_present_PR = re.match(r"elected [\w ]+ to the (?P<start_congress>([A-Z][a-z]+)( [A-Z][a-z]+|-[a-z]+)+) Congress to a four-year term in \d{4} \((?P<start_date>[A-Z][a-z]+ \d+, \d{4}) ?- ?present\)(\.)?", fact)
 
-    match_reelection_3 = re.match(r"reelected to the \w+ succeeding Congresses, and served from (?P<start_date>[A-Z][a-z]+ \d+, \d{4}), to (?P<end_date>[A-Z][a-z]+ \d+, \d{4})", fact)
-
+    match_reelection_3 = re.match(r"reelected to the \w+ succeeding Congresses, and served from (?P<start_date>[A-Z][a-z]+ \d+, \d{4}), to (?P<end_date>[A-Z][a-z]+ \d+, \d{4}).*resigned to be .*[Ss]enator", fact)
+    match_reelection_4 = re.match(r"unsuccessful candidate for renomination .*, but subsequently elected as a write-in candidate in the .*(?P<start_year>\d{4}),? general election, for the term ending (?P<end_date>[A-Z][a-z]+ \d+, \d{4})(\.)?$", fact)
+    match_reelection_5 = re.match(r"reelected to the (?P<start_congress>([A-Z][a-z]+)( [A-Z][a-z]+|-[a-z]+| and)+) Congress(es)? \((?P<start_date>[A-Z][a-z]+ \d+, \d{4}) ?- ?(?P<end_date>[A-Z][a-z]+ \d+, \d{4})\)", fact)
     #end their time in congress
     match_end_2 = re.match(r"(was )?not a candidate.* unsuccessful.*", fact)
     match_end_3 = re.match(r"(was )?not a candidate for reelection( )?(in \d{4}\.)?$", fact)
 
     #change chambers
-    match_takeover_1 =  re.match(r"appointed .* to fill (the|a) vacancy caused by the resignation.*the term ending (?P<end_date>[A-Z][a-z]+ \d+, \d{4})", fact)
+    match_takeover_1 =  re.match(r"appointed .* Senate to fill (the|a) vacancy caused by the resignation.*the term ending (?P<end_date>[A-Z][a-z]+ \d+, \d{4})", fact)
     match_takeover_2 =  re.match(r"(appointed|elected) .*Senate.* to fill (the|a) vacancy caused by the resignation.*took the oath of office on (?P<start_date>[A-Z][a-z]+ \d+, \d{4})", fact)
     match_takeover_3 =  re.match(r"appointed (?P<start_date>[A-Z][a-z]+ \d+, \d{4}), to fill (the|a) vacancy caused by the resignation", fact)
-    match_takeover_4 =  re.match(r"elected.*special election.* to fill (the|a) vacancy caused by the (resignation|death).*\((?P<start_date>[A-Z][a-z]+ \d+, \d{4})-present\)", fact)
-    match_takeover_5 =  re.match(r"elected.*(special election|Senate).*term ending (?P<end_date>[A-Z][a-z]+ \d+, \d{4}), .*(resignation|death)?.*(began service|took the oath of office) on (?P<start_date>[A-Z][a-z]+ \d+, \d{4})", fact)
+    match_takeover_3s =  re.match(r"appointed (.*Senate on )?(?P<start_date>[A-Z][a-z]+ \d+, \d{4}), to fill (the|a) vacancy caused by the resignation", fact)
+    match_takeover_4 =  re.match(r"elected.*special election.* to fill (the|a) vacancy .*\((?P<start_date>[A-Z][a-z]+ \d+, \d{4})-present\)", fact)
+    match_takeover_5 =  re.match(r"elected.*Senate.*term ending (?P<end_date>[A-Z][a-z]+ \d+, \d{4}), .*(resignation|death)?.*(began service|took the oath of office) on (?P<start_date>[A-Z][a-z]+ \d+, \d{4})", fact)
     match_takeover_6 =  re.match(r"elected in (?P<start_year>\d{4}).*special election.*term ending (?P<end_date>[A-Z][a-z]+ \d+, \d{4})", fact)
     match_takeover_7 =  re.match(r"(subsequently )?elected.*special election on (?P<start_date>[A-Z][a-z]+ \d+, \d{4})($|.* remainder of the term)", fact)
     match_takeover_8 =  re.match(r"(subsequently )?elected([\w ]+)? in (?P<start_year>\d{4}) in a special election$", fact)
@@ -1510,18 +1512,18 @@ def check_for_term_info(fact, terms):
     match_change_3p5 = re.match(r"appointed .*to the United States Senate on ([A-Z][a-z]+ \d+, \d{4}).*oath of office on (?P<start_date>[A-Z][a-z]+ \d+, \d{4})", fact)
     match_change_4 = re.match(r"(appointed|elected) .*to the (United States |U.( )?S. )Senate [oi]n (?P<start_year>\d{4})", fact)
     #match45 = was not a candidate in YYYY for reelection to CHAMBER but was elected to CHAMBER in DATE
-    match_yrchamberchamberdate = re.match(r"(was )?not a candidate in (?P<end_year>\d{4}) for reelection to the (United States |U.( )?S. )?(House of Representatives|Senate).* but was elected.*(House of Representatives|Senate)? ([io]n|commencing) ((?P<start_date>[A-Z][a-z]+ \d+, \d{4})).*", fact)
+    match_yrchamberchamberdate = re.match(r"(was )?not a candidate in (?P<end_year>\d{4}) for reelection to the (United States |U.( )?S. )?(House of Representatives|Senate).* but was elected.*(?P<chamber>House of Representatives|Senate)? ([io]n|commencing) ((?P<start_date>[A-Z][a-z]+ \d+, \d{4})).*", fact)
     match_chamberchamberdate_s = re.match(r"(was )?not a candidate for reelection to the (United States |U.( )?S. )?House of Representatives.* but was elected.*(Senate)? ([io]n|commencing) ((?P<start_date>([A-Z][a-z]+ \d+, )\d{4})).*", fact)
     match_chamberchamberdateend = re.match(r"(was )?not a candidate for reelection to the (United States |U.( )?S. )?House of Representatives but was elected.*(Senate)? ([io]n|commencing) (the )?((?P<start_date>([A-Z][a-z]+ \d+, )\d{4})).*term ending (?P<end_date>([A-Z][a-z]+ \d+, )\d{4})", fact)
     match_chamberchamberdate_h = re.match(r"(was )?not a candidate for reelection to the (United States |U.( )?S. )?Senate.* but was elected.*(House of Representatives)? ([io]n|commencing) ((?P<start_date>([A-Z][a-z]+ \d+, )\d{4})).*", fact)
-    match_yrchamberchamber1 = re.match(r"(was )?not a candidate in (?P<end_year>\d{4}) for reelection to the (United States |U.( )?S. )?(House of Representatives|Senate).* but was (a successful|elected).*(House of Representatives|Senate)( |\.)?$", fact)
-    match_yrchamberchamber2 = re.match(r"(was )?not a candidate for reelection in (?P<end_year>\d{4}) to the (United States |U.( )?S. )?(House of Representatives|Senate).* but was elected.*(House of Representatives|Senate)( |\.)?$", fact)
-    match_chamberyrchamber = re.match(r"(was )?not a candidate for reelection to the (United States |U.( )?S. )?(House of Representatives|Senate) in (?P<end_year>\d{4}).* but was elected.*(House of Representatives|Senate)( |\.)?$", fact)
-    match_chamberyrchamberdate = re.match(r"(was )?not a candidate for reelection to the (United States |U.( )?S. )?(House of Representatives|Senate) in (?P<end_year>\d{4}).* but was elected.*(House of Representatives|Senate) ([io]n|commencing) ((?P<start_date>[A-Z][a-z]+ \d+, \d{4}))$", fact)
+    match_yrchamberchamber1 = re.match(r"(was )?not a candidate in (?P<end_year>\d{4}) for reelection to the (United States |U.( )?S. )?(House of Representatives|Senate).* but was (a successful|elected).*(?P<chamber>House of Representatives|Senate)( |\.)?$", fact)
+    match_yrchamberchamber2 = re.match(r"(was )?not a candidate for reelection in (?P<end_year>\d{4}) to the (United States |U.( )?S. )?(House of Representatives|Senate).* but was elected.*(?P<chamber>House of Representatives|Senate)( |\.)?$", fact)
+    match_chamberyrchamber = re.match(r"(was )?not a candidate for reelection to the (United States |U.( )?S. )?(House of Representatives|Senate) in (?P<end_year>\d{4}).* but was elected.*(?P<chamber>House of Representatives|Senate)( |\.)?$", fact)
+    match_chamberyrchamberdate = re.match(r"(was )?not a candidate for reelection to the (United States |U.( )?S. )?(House of Representatives|Senate) in (?P<end_year>\d{4}).* but was elected.*(?P<chamber>House of Representatives|Senate) ([io]n|commencing) ((?P<start_date>[A-Z][a-z]+ \d+, \d{4}))$", fact)
     match_chamberyrchamberyr = re.match(r"(was )?not a candidate for re(election|nomination) to the (United States |U.( )?S. )?(House of Representatives|Senate) in (?P<start_year>\d{4}).* but was elected.*(House of Representatives|Senate) ([io]n|commencing) ((?P<end_year>\d{4}))$", fact)
 
-    match_chamberyrchamberrange = re.match(r"(was )?not a candidate for reelection to the (United States |U.( )?S. )?(House of Representatives|Senate) in (?P<end_year>\d{4}).* but was elected.*(House of Representatives|Senate) and served from (?P<start_term>[A-Z][a-z]+ \d+, \d{4}), to (?P<end_term>[A-Z][a-z]+ \d+, \d{4})", fact)
-    match_yrchamberchamberrange = re.match(r"(was )?not a candidate for reelection in (?P<end_year>\d{4}) to the (United States |U.( )?S. )?(House of Representatives|Senate).* but was elected.*(House of Representatives|Senate) and served from (?P<start_term>[A-Z][a-z]+ \d+, \d{4}), to (?P<end_term>[A-Z][a-z]+ \d+, \d{4})", fact)
+    match_chamberyrchamberrange = re.match(r"(was )?not a candidate for reelection to the (United States |U.( )?S. )?(House of Representatives|Senate) in (?P<end_year>\d{4}).* but was elected.*(?P<chamber>House of Representatives|Senate) and served from (?P<start_term>[A-Z][a-z]+ \d+, \d{4}), to (?P<end_term>[A-Z][a-z]+ \d+, \d{4})", fact)
+    match_yrchamberchamberrange = re.match(r"(was )?not a candidate for reelection in (?P<end_year>\d{4}) to the (United States |U.( )?S. )?(House of Representatives|Senate).* but was elected.*(?P<chamber>House of Representatives|Senate) and served from (?P<start_term>[A-Z][a-z]+ \d+, \d{4}), to (?P<end_term>[A-Z][a-z]+ \d+, \d{4})", fact)
     match_yrchamberdate = re.match(r"(was )?not a candidate for reelection, but was a candidate in \d{4} to the United States Senate .* commencing ((?P<start_date>[A-Z][a-z]+ \d+, \d{4}))$", fact)
     match_change_5 = re.match(r"(was )?not a candidate.* for reelection.* but was elected.*Senate (in |on .*)(?P<start_year>\d{4}).*", fact)
     match_change_6 = re.match(r"(was )?not a candidate.* for reelection.* but was elected.*(in |on .*)(?P<start_date>[A-Z][a-z]+ \d+, \d{4}).*term ending (?P<end_date>[A-Z][a-z]+ \d+, \d{4})(?!\d{4})+$", fact)
@@ -1535,77 +1537,90 @@ def check_for_term_info(fact, terms):
         #print(f"***check_failed_run: {fact}")
         return True, terms
     elif match_start_1:
+        #these all look like house
         start_date = datetime.strptime(match_start_1.group('start_date'), date_format)
         end_date = datetime.strptime(match_start_1.group('end_date'), date_format)
-        #print(f"match_start_1 {fact} = {end_date - start_date}")
-        terms.append([start_date, end_date])
+        terms.append([start_date, end_date, "h"])
+        #print(f"match_start_1 {fact} = h = {start_date}-{end_date}")
         return True, terms
     elif match_start_2:
         start_date = datetime.strptime(match_start_2.group('start_date'), date_format)
         end_date = start_date + relativedelta(years=6)
-        #print(f"match_start_2 {fact} = {end_date - start_date}")
-        terms.append([start_date, end_date])
+        #print(f"match_start_2 {fact} = s = {start_date}-{end_date}")
+        terms.append([start_date, end_date, "s"])    
         return True, terms
     elif match_start_3:
         start_year = int(match_start_3.group('start_year'))+1
         start_date = datetime.strptime(f"January 3, {start_year}", date_format)
         end_date = start_date + relativedelta(years=6)
-        #print(f"match_start_3 {fact} = {end_date - start_date}")
+        #print(f"match_start_3 {fact} = s = {start_date}, {end_date}")
         if len(terms)>0:
             if terms[-1][1] is None:
                 terms[-1][1] = start_date
-        terms.append([start_date, end_date])
+        terms.append([start_date, end_date, "s"])
         return True, terms
     elif match_start_4:
+        #reelected in YR(, YR, and again in YR)? for the term ending in DATE. likely all senate
         end_date = datetime.strptime(match_start_4.group('end_date'), date_format)
+        ch = None
         all_dates = re.findall(r"(\d{4})", fact)
         all_dates_int = [int(match) for match in all_dates]
         temp_list = []
-        
-        date2 = datetime.strptime(f"January 3, {all_dates_int[0]+1}", date_format)        
+        #date2 == first date
+        date2 = datetime.strptime(f"January 3, {all_dates_int[0]+1}", date_format) 
         if len(terms)>0:
             #if terms exists, check if most recent one has nothing there. since reelected, can use this date as end date
             if terms[-1][1] is None:
                 terms[-1][1] = date2
 
+
         for i in range(1, len(all_dates_int)-1):
             # The difference is current match - previous match
             diff = all_dates_int[i] - all_dates_int[i-1]
             if diff == 2: #house
+                ch = "h"
                 date1 = datetime.strptime(f"January 3, {all_dates_int[i-1]+1}", date_format)                
                 date2 = datetime.strptime(f"January 3, {all_dates_int[i]+1}", date_format)
-                temp_list.append([date1, date2])
+                temp_list.append([date1, date2, ch])
                 continue
             elif diff == 6: #senate
+                ch = "s"
                 date1 = datetime.strptime(f"January 3, {all_dates_int[i-1]+1}", date_format)                
                 date2 = datetime.strptime(f"January 3, {all_dates_int[i]+1}", date_format)
-                temp_list.append([date1, date2])
+                temp_list.append([date1, date2, ch])
                 continue
             else: #something went wrong
                 print(f"Something went wrong here: {all_dates_int}")
-
-        temp_list.append([date2, end_date])
-        #print(f"match_start_4 {fact} = {temp_list}")
+        if ch is None:
+            diff = end_date.year - date2.year
+            if diff == 2:
+                ch = "h"
+            elif diff == 6:
+                ch = "s"
+            else:
+                ch = "n"
+        temp_list.append([date2, end_date, ch])
+        #print(f"match_start_4 {fact} = {ch} = {temp_list}")
         terms.extend(temp_list)
         return True, terms
     elif match_start_5:
-        start_year = match_start_5.group('start_year')
+        start_year = int(match_start_5.group('start_year'))+1
         start_date = datetime.strptime(f"January 3, {start_year}", date_format)
         end_date = datetime.strptime(match_start_5.group('end_date'), date_format)
-        #print(f"match_start_5 {fact} = {end_date - start_date}")
-        terms.append([start_date, end_date])
+        #print(f"match_start_5 {fact} = s = {start_date}-{end_date}")
+        terms.append([start_date, end_date, "s"])
         return True, terms
     elif match_start_6:
         start_date = datetime.strptime(match_start_6.group('start_date'), date_format)
         end_date = datetime.strptime(match_start_6.group('end_date'), date_format)
-        #print(f"match_start_6 {fact} = {end_date - start_date}")
-        terms.append([start_date, end_date])
+        #print(f"match_start_6 {fact} = h = {start_date}-{end_date}")
+        terms.append([start_date, end_date, "h"])
         return True, terms
     elif match_start_7:
         start_year = match_start_7.group('start_year')
         start_date = datetime.strptime(f"January 3, {start_year}", date_format)
-        #print(f"match_start_7 {fact} = {start_date}")
-        terms.append([start_date, None])
+        #print(f"match_start_7 {fact} = idk = {start_date}")
+        terms.append([start_date, None, "n"])
         return True, terms
     #the match_start_present are all for HOR: end_date if present is just the next odd year
     elif match_start_present_1:
@@ -1616,8 +1631,8 @@ def check_for_term_info(fact, terms):
         else:
             end_date = datetime.strptime(f"January 3, {current_year+1}", date_format)
 
-        #print(f"match_start_present_1 {fact} = {end_date - start_date}", date_format)
-        terms.append([start_date, end_date])
+        #print(f"match_start_present_1 {fact} = h = {start_date}-{end_date}")
+        terms.append([start_date, end_date, "h"])
         return True, terms    
     elif match_start_present_2:
         start_year = match_start_present_2.group('start_year')
@@ -1627,8 +1642,8 @@ def check_for_term_info(fact, terms):
             end_date = datetime.strptime(f"January 3, {current_year+2}", date_format)
         else:
             end_date = datetime.strptime(f"January 3, {current_year+1}", date_format)
-        #print(f"match_start_present_2 {fact} = {end_date - start_date}", date_format)
-        terms.append([start_date, end_date])
+        #print(f"match_start_present_2 {fact} = h = {start_date}-{end_date}")
+        terms.append([start_date, end_date, "h"])
         return True, terms  
     elif match_start_present_3:
         start_date = datetime.strptime(match_start_present_3.group('start_date'), date_format)
@@ -1637,16 +1652,16 @@ def check_for_term_info(fact, terms):
             end_date = datetime.strptime(f"January 3, {current_year+2}", date_format)
         else:
             end_date = datetime.strptime(f"January 3, {current_year+1}", date_format)
-        #print(f"match_start_present_3 {fact} = {end_date - start_date}", date_format)
-        terms.append([start_date, end_date])
+        #print(f"match_start_present_3 {fact} = h = {start_date}-{end_date}")
+        terms.append([start_date, end_date, "h"])
         return True, terms  
     elif match_start_present_4:
         #only get congress, convert to year
         start_year, end_year = get_years_from_congress(fact)
         start_date = datetime.strptime(f"January 3, {start_year}", date_format)
         end_date = datetime.strptime(f"January 3, {end_year}", date_format)
-        #print(f"match_start_present_4 {fact} = {end_date - start_date}")
-        terms.append([start_date, end_date])
+        #print(f"match_start_present_4 {fact} = h = {start_date}-{end_date}")
+        terms.append([start_date, end_date, "h"])
         return True, terms
     elif match_start_present_5:
         start_date = datetime.strptime(match_start_present_5.group('start_date'), date_format)
@@ -1654,139 +1669,207 @@ def check_for_term_info(fact, terms):
         if len(terms) > 0:
             if terms[-1][1] is None:
                 terms[-1][1] = start_date #if had an oath, set the end to start_date
-        #print(f"match_start_present_5 {fact} = {end_date - start_date}")
-        terms.append([start_date, end_date])
+        #print(f"match_start_present_5 {fact} = h = {start_date}-{end_date}")
+        terms.append([start_date, end_date, "h"])
         return True, terms
     elif match_start_present_PR:
         #for PR, the term is 4 years
         start_date = datetime.strptime(match_start_present_PR.group('start_date'), date_format)
         end_date = start_date + relativedelta(years=4)
-        #print(f"match_start_present_PR {fact} = {end_date - start_date}")
-        terms.append([start_date, end_date])
+        #print(f"match_start_present_PR {fact} = h = {start_date}-{end_date}")
+        terms.append([start_date, end_date, "h"])
         return True, terms
     elif match_yrchamberchamberdate: 
+        #NOT USED
         end_year = int(match_yrchamberchamberdate.group('end_year'))+1
         end_date = datetime.strptime(f"January 3, {end_year}", date_format)
         start_date = datetime.strptime(match_yrchamberchamberdate.group('start_date'), date_format)
-        #print(f"yccd {fact} = {end_date - start_date}")
-        terms.append([start_date, end_date])
+        chamber = match_yrchamberchamberdate.group('chamber')
+        if chamber == "House of Representatives":
+            ch = 'h'
+        elif chamber == "Senate":
+            ch = 's'
+        else:
+            ch = 'n'
+        terms.append([start_date, end_date, ch])
+        print(f"yccd {fact} = {ch} = {start_date}, {end_date}")
         return True, terms
     elif match_yrchamberchamber1: 
+        #NOT USED
         end_year = int(match_yrchamberchamber1.group('end_year'))+1
         end_date = datetime.strptime(f"January 3, {end_year}", date_format)
-        #print(f"ycc1 {fact} = {end_date}")
-        terms.append([None, end_date])
+        chamber = match_yrchamberchamber1.group('chamber')
+        if chamber == "House of Representatives":
+            ch = 'h'
+        elif chamber == "Senate":
+            ch = 's'
+        else:
+            ch = 'n'
+        terms.append([None, end_date, ch])
+        print(f"!!!ycc1 {fact} = {ch} = {end_date}")
         return True, terms
     elif match_yrchamberchamber2: 
+        #NOT USED
         end_year = int(match_yrchamberchamber2.group('end_year'))+1
         end_date = datetime.strptime( f"January 3, {end_year}", date_format)
-        #print(f"ycc2 {fact} = {end_date}")
-        terms.append([None, end_date])
+        chamber = match_yrchamberchamber2.group('chamber')
+        if chamber == "House of Representatives":
+            ch = 'h'
+        elif chamber == "Senate":
+            ch = 's'
+        else:
+            ch = 'n'
+        terms.append([None, end_date, ch])
+        print(f"!!!ycc2 {fact} = {end_date}")     
         return True, terms
     elif match_chamberyrchamber: 
-        end_year = int(match_chamberyrchamber.group('end_year'))+1
-        end_date = datetime.strptime(f"January 3, {end_year}", date_format)
-        #print(f"cyc {fact} = {end_date}")
-        terms.append([None, end_date])
+        #NOT USED
+        start_year = int(match_chamberyrchamber.group('end_year'))+1
+        start_date = datetime.strptime(f"January 3, {end_year}", date_format)
+        chamber = match_yrchamberchamber2.group('chamber')
+        if chamber == "House of Representatives":
+            ch = 'h'
+            end_date = start_date + relativedelta(years=2)
+        elif chamber == "Senate":
+            ch = 's'
+            end_date = start_date + relativedelta(years=6)
+        else:
+            ch = 'n'
+            end_date = None
+        terms.append([start_date, end_date, ch])  
+        print(f"cyc {fact} = {ch} = {end_date}")
         return True, terms
     elif match_chamberchamberdate_s:
         start_date = datetime.strptime(match_chamberchamberdate_s.group('start_date'), date_format)
         end_date = start_date + relativedelta(years=6)
-        #print(f"ccds {fact} = {end_date - start_date}")
-        terms.append([start_date, end_date])
+        #print(f"ccds {fact} = s = {start_date}-{end_date}")
+        terms.append([start_date, end_date, "s"])
         return True, terms
     elif match_chamberchamberdate_h:
         start_date = datetime.strptime(match_chamberchamberdate_h.group('start_date'), date_format)
         end_date = start_date + relativedelta(years=2)
-        #print(f"ccdh {fact} = {end_date - start_date}")
-        terms.append([start_date, end_date])
+        #print(f"ccdh {fact} = h = {start_date}-{end_date}")
+        terms.append([start_date, end_date, "h"])
         return True, terms
     elif match_chamberchamberdateend:
         start_date = datetime.strptime(match_chamberchamberdateend.group('start_date'), date_format)
         end_date = datetime.strptime(match_chamberchamberdateend.group('end_date'), date_format)
-        #print(f"ccde {fact} = {end_date - start_date}")
-        terms.append([start_date, end_date])
+        #print(f"ccde {fact} = s_se = {end_date - start_date}")
+        terms.append([start_date, end_date, "s_se"])
         return True, terms
     elif match_chamberyrchamberdate:
+        #NOT USED
         end_year = int(match_chamberyrchamberdate.group('end_year'))+1
         end_date = datetime.strptime(f"January 3, {end_year}", date_format)
         start_date = datetime.strptime(match_chamberyrchamberdate.group('start_date'), date_format)
-        #print(f"cycd {fact} = {end_date - start_date}")
-        terms.append([start_date, end_date])
+        chamber = match_chamberyrchamberdate.group('chamber')
+        if chamber == "House of Representatives":
+            ch = 'h'
+        elif chamber == "Senate":
+            ch = 's'
+        else:
+            ch = 'n'
+        terms.append([None, end_date, ch])  
+        print(f"cycd {fact} = {ch} = {start_date}-{end_date}")
         return True, terms
     elif match_chamberyrchamberyr:
         start_year = int(match_chamberyrchamberyr.group('start_year'))+1
         start_date = datetime.strptime(f"January 3, {start_year}", date_format)
         end_date = start_date + relativedelta(years=6)
-        #print(f"cycy {fact} = {end_date - start_date}")
-        terms.append([start_date, end_date])
+        #print(f"cycy {fact} = senate = {start_date}-{end_date}")
+        terms.append([start_date, end_date, "s"])
         return True, terms
     elif match_chamberyrchamberrange:
+        #NOT USED
         end_year = int(match_chamberyrchamberrange.group('end_year'))+1
         end_date = datetime.strptime(f"January 3, {end_year}", date_format)
         start_term = datetime.strptime(match_chamberyrchamberrange.group('start_term'), date_format)
         end_term = datetime.strptime(match_chamberyrchamberrange.group('end_term'), date_format)
-        #print(f"cycr{fact} = switched chambers {end_date}, in new chamber {end_term - start_term} ")
         if terms[-1][1] is None:
             terms[-1][1] = end_date
         
-        terms.append([start_term, end_term])
+        chamber = match_chamberyrchamberrange.group('chamber')
+        if chamber == "House of Representatives":
+            ch = 'h'
+        elif chamber == "Senate":
+            ch = 's'
+        else:
+            ch = 'n'
+        terms.append([None, end_date, ch])  
+        print(f"cycr{fact} = switched chambers {end_date}, in new chamber{ch} {start_term}-{end_term}")
         return True, terms
     elif match_yrchamberchamberrange:
+        #NOT USED
         end_year = int(match_yrchamberchamberrange.group('end_year'))+1
         end_date = datetime.strptime(f"January 3, {end_year}", date_format)
         start_term = datetime.strptime( match_yrchamberchamberrange.group('start_term'), date_format)
         end_term = datetime.strptime(match_yrchamberchamberrange.group('end_term'), date_format)
-        #print(f"yccr{fact} = switched chambers {end_date}, in new chamber {end_term - start_term} ")
         if terms[-1][1] is None:
             terms[-1][1] = end_date
-        terms.append([start_term, end_term])
+        chamber = match_yrchamberchamberrange.group('chamber')
+        if chamber == "House of Representatives":
+            ch = 'h'
+        elif chamber == "Senate":
+            ch = 's'
+        else:
+            ch = 'n'
+        print(f"yccr{fact} = switched chambers {end_date}, in new chamber {ch} {start_term}-{end_term}")
+        terms.append([None, end_date, ch])  
         return True, terms
     elif match_yrchamberdate:
+        #NOT USED
         start_date = datetime.strptime(match_yrchamberdate.group('start_date'), date_format)
-        #print(f"ycd {fact} = {start_date}")
-        terms.append([start_date, None])
+        end_date = start_date + relativedelta(years=6)
+        print(f"ycd {fact} = s = {start_date}")
+        terms.append([start_date, end_date, "s"])
         return True, terms
     elif match_change_1:
+        #NOT USED
         start_date = datetime.strptime(match_change_1.group('start_date'), date_format)
-        #print(f"match_change_1 {fact} = {start_date}")
-        terms.append([start_date, None])
+        end_date = start_date + relativedelta(years=6)
+        print(f"match_change_1 {fact} = s = {start_date}")
+        terms.append([start_date, end_date, "s"])
         return True, terms
     elif match_change_2:
+        #NOT USED
         start_year = match_change_2.group('start_year')
         start_date = datetime.strptime(f"January 3, {start_year}", date_format)
-        #print(f"match_change_2 {fact} = {start_date}")
-        terms.append([start_date, None])
+        end_date = start_date + relativedelta(years=6)
+        print(f"match_change_2 {fact} = s = {start_date}")
+        terms.append([start_date, end_date, "s"])
         return True, terms
     elif match_change_3:
+        #NOT CATCHING
         start_date = datetime.strptime( match_change_3.group('start_date'), date_format)
-        #print(f"match_change_3 {fact} = {start_date}")
-        terms.append([start_date, None])
+        end_date = start_date + relativedelta(years=6)
+        print(f"match_change_3 {fact} = s = {start_date}")
+        terms.append([start_date, end_date, "s"])
         return True, terms
     elif match_change_3p5:
         start_date = datetime.strptime( match_change_3p5.group('start_date'), date_format)
-        #print(f"match_change_3p5 {fact} = {start_date}")
-        terms.append([start_date, None])
+        #print(f"match_change_3p5 {fact} = s = {start_date}")
+        terms.append([start_date, None, "s_se"])
         return True, terms
     elif match_change_4:
         start_year = match_change_4.group('start_year')
         start_date = datetime.strptime(f"January 3, {start_year}", date_format)
         end_date = start_date + relativedelta(years=6)
-        #print(f"match_change_4 {fact} = {end_date - start_date}")
-        terms.append([start_date, end_date])
+        #print(f"match_change_4 {fact} = s = {start_date}-{end_date}")
+        terms.append([start_date, end_date, "s"])
         return True, terms
     elif match_change_5:
         start_year = int(match_change_5.group('start_year'))+1
         start_date = datetime.strptime(f"January 3, {start_year}", date_format)
         end_date = start_date + relativedelta(years=6)
-        #print(f"match_change_5 {fact} = {start_date - end_date}")
-        terms.append([start_date, end_date])
+        #print(f"match_change_5 {fact} = s = {start_date}-{end_date}")
+        terms.append([start_date, end_date, "s"])
         return True, terms
     elif match_change_6:
+        #NOT USED
         start_date = datetime.strptime(match_change_6.group('start_date'), date_format)
         end_date = datetime.strptime(match_change_6.group('end_date'), date_format)
-        #print(f"match_change_6 {fact} = {end_date - start_date}")
-        terms.append([start_date, end_date])
+        print(f"match_change_6 {fact} = s = {start_date}={end_date}")
+        terms.append([start_date, end_date, "s"])
         return True, terms
     elif match_change_7:
         start_date = datetime.strptime(match_change_7.group('start_date'), date_format)
@@ -1794,35 +1877,59 @@ def check_for_term_info(fact, terms):
         if len(terms) > 0:
             if terms[-1][1] is None:
                 terms[-1][1] = start_date
-        #print(f"match_change_7 {fact} = {end_date - start_date}")
-        terms.append([start_date, end_date])
+        #print(f"match_change_7 {fact} = n_se = {end_date - start_date}")
+        terms.append([start_date, end_date, "n_se"])
         return True, terms
     elif match_reelection_3:
         start_date = datetime.strptime(match_reelection_3.group('start_date'), date_format)
         end_date = datetime.strptime(match_reelection_3.group('end_date'), date_format)
-        #print(f"match_reelection_3 {fact} = {end_date - start_date}")
-        terms.append([start_date, end_date])
+        #print(f"match_reelection_3 {fact} = h = {start_date}-{end_date}")
+        terms.append([start_date, end_date, "h"])
+        return True, terms
+    elif match_reelection_4:
+        start_year = int(match_reelection_4.group('start_year')) + 1
+        start_date = datetime.strptime(f"January 3, {start_year}", date_format)
+        end_date = datetime.strptime(match_reelection_4.group('end_date'), date_format)
+        terms.append([start_date, end_date, "s"])
+        #print(f"match_reelection_4 {fact} = s = {end_date}, {start_date}")
+        return True, terms
+    elif match_reelection_5:
+        #no terms, should be house. reelected, means merge with previous if has None
+        start_date = datetime.strptime(match_reelection_5.group('start_date'), date_format)
+        end_date = datetime.strptime(match_reelection_5.group('end_date'), date_format)
+        if len(terms)>0 and terms[-1][1] is None:
+            terms[-1][1] = end_date
+        else:
+            terms.append([start_date, end_date, "h"])
+        #print(f"match_reelection_4 {fact} = h = {end_date}, {start_date}")
         return True, terms
     elif match_end_2 or match_end_3:
         #print(f"***match_end_2/3: {fact}")
         return True, terms
     elif match_takeover_1: 
         end_date = datetime.strptime(match_takeover_1.group('end_date'), date_format)
-        #print(f"match_takeover_1 {fact} = {end_date}")
-        terms.append([None, end_date])
+        #print(f"match_takeover_1 {fact} = s = {end_date}")
+        terms.append([None, end_date, "s"])
         return True, terms
     elif match_takeover_2: 
         start_date = datetime.strptime(match_takeover_2.group('start_date'), date_format)
-        #print(f"match_takeover_2 {fact} = {start_date}")
+        #print(f"match_takeover_2 {fact} = s = {start_date}")
         if len(terms)>0 and terms[-1][0] is None:
             terms[-1][0] = start_date
         else:
-            terms.append([start_date, None])
+            terms.append([start_date, None, "s"])
         return True, terms
     elif match_takeover_3: 
+        #not explicitly senate
         start_date = datetime.strptime(match_takeover_3.group('start_date'), date_format)
-        #print(f"match_takeover_3 {fact} = {start_date}")
-        terms.append([start_date, None])
+        #print(f"match_takeover_3 {fact} = n_se = {start_date}")
+        terms.append([start_date, None, "n_se"])
+        return True, terms
+    elif match_takeover_3s: 
+        #senate explicitly
+        start_date = datetime.strptime(match_takeover_3s.group('start_date'), date_format)
+        #print(f"match_takeover_3 {fact} = s_se = {start_date}")
+        terms.append([start_date, None, "s_se"])
         return True, terms
     elif match_takeover_4: 
         start_date = datetime.strptime(match_takeover_4.group('start_date'), date_format)
@@ -1831,63 +1938,65 @@ def check_for_term_info(fact, terms):
             end_date = datetime.strptime(f"January 3, {current_year+2}", date_format)
         else:
             end_date = datetime.strptime(f"January 3, {current_year+1}", date_format)
-        #print(f"match_takeover_4 {fact} = {end_date - start_date}")
-        terms.append([start_date, end_date])
+        #print(f"match_takeover_4 {fact} = n_se = {start_date}-{end_date}")
+        terms.append([start_date, end_date, "n_se"])
         return True, terms
     elif match_takeover_5: 
         end_date = datetime.strptime(match_takeover_5.group('end_date'), date_format)
         start_date = datetime.strptime(match_takeover_5.group('start_date'), date_format)
-        terms.append([start_date, end_date])
+        terms.append([start_date, end_date, "s_se"])
+        #print(f"match_takeover_5 {fact} = s_se = {start_date}-{end_date}")
         return True, terms
     elif match_takeover_6: 
+        #should be senate since "term ending"
         end_date = datetime.strptime(match_takeover_6.group('end_date'), date_format)
         start_year = match_takeover_6.group('start_year')
         start_date = datetime.strptime(f"January 3, {start_year}", date_format)
-        #print(f"match_takeover_6 {fact} = {end_date - start_date}")
+        #print(f"match_takeover_6 {fact} = s_se = {start_date}-{end_date}")
         if len(terms) > 0:
             if terms[-1][1] is None: #coming from oath, replace end_date with start_date
                 terms[-1][1] = start_date
-        terms.append([start_date, end_date])
+        terms.append([start_date, end_date, "s_se"])
         return True, terms
     elif match_takeover_7: 
         start_date = datetime.strptime(match_takeover_7.group('start_date'), date_format)
-        #print(f"match_takeover_7 {fact} = {start_date}")
+        #print(f"match_takeover_7 {fact} = n_se = {start_date}")
         if len(terms) > 0:
             if terms[-1][1] is None: #coming from oath, replace end_date with start_date
                 terms[-1][1] = start_date
-        terms.append([start_date, None])
+        terms.append([start_date, None, "n_se"])
         return True, terms
     elif match_takeover_8:
         start_year = match_takeover_8.group('start_year') 
         start_date = datetime.strptime(f"January 3, {start_year}", date_format)
-        #print(f"match_takeover_8 {fact} = {start_date}")
+        #print(f"match_takeover_8 {fact} = n_se = {start_date}")
         if len(terms) > 0:
             if terms[-1][1] is None: #coming from oath, replace end_date with start_date
                 terms[-1][1] = start_date
-        terms.append([start_date, None])
+        terms.append([start_date, None, "n_se"])
         return True, terms
     elif match_takeover_9:
         start_year, end_year = get_years_from_congress(fact)
         start_date = datetime.strptime(f"January 3, {start_year}", date_format)
         end_date = datetime.strptime(f"January 3, {end_year}", date_format)
-        #print(f"match_takeover_9 {fact} = {end_date - start_date}")
-        terms.append([start_date, end_date])
+        print(f"match_takeover_9 {fact} = n = {start_date}-{end_date}")
+        terms.append([start_date, end_date, "n"])
         return True, terms
     elif match_takeover_10:
         start_year, end_year = get_years_from_congress(fact)
         start_date = datetime.strptime(f"January 3, {start_year}", date_format)
         end_date = datetime.strptime(f"January 3, {end_year}", date_format)
-        #print(f"match_takeover_10 {fact} = {end_date - start_date}")
-        terms.append([start_date, end_date])
+        print(f"match_takeover_10 {fact} = n_se = {start_date}-{end_date}")
+        terms.append([start_date, end_date, "n_se"])
         return True, terms
     elif match_oath_of_office: 
         start_date = datetime.strptime(match_oath_of_office.group('start_date'), date_format)
-        #print(f"oath_of_office: {fact} = {start_date}")
+        #print(f"oath_of_office: {fact} = idk = {start_date}")
         if len(terms)>0:
             if terms[-1][0] is None:
                 terms[-1][0] = start_date
         else:
-            terms.append([start_date, None])
+            terms.append([start_date, None, "oath"])
         return True, terms
     elif re.match(r"^(?!unsuccessful).*special election.*$", fact):
         #print(f"***unsuccessful special election: {fact}")
@@ -2234,13 +2343,13 @@ def add_bioguide_congress_data(list_of_dict):
 
         rep.update({'birthDate': birthdate})
         rep.update({'term_info': term_info})
-        #terms cannot be updated into JSON because they're in date formats.
-        if len(terms) == 0:
-            print(f"term length 0 for {rep.get('name')}")
-        #else:
-            #print(terms)
+        
+        #if (rep.get('name') == "Darrell Issa"):
+        #    print(f"CHECKING: {terms}")
         new_terms = convert_terms_to_useful(terms)
-        #print(f"new_terms: {new_terms}")
+        #if (rep.get('name') == "Darrell Issa"):
+        #    print(f"CHECKING: {new_terms}")
+        
         if new_terms is not None:
             rep.update({"terms": new_terms[-1]})
             #print(f"{rep.get('name')}: {new_terms}")
@@ -2267,10 +2376,10 @@ def add_bioguide_congress_data(list_of_dict):
 ############################################
 def convert_terms_to_useful(terms):
     """
-    terms (list of lists): list of [start_year, end_year]
-    1. Replace any None with start_year+2 (base assumption)
-    2. get difference between years. if <=2 years, house. if <=6 years, senate. else print out to debug
+    terms (list of lists): list of [start_year, end_year, chamber]
+    1. get difference between years. if <=2 years, house. if <=6 years, senate. else print out to debug
     3. 
+
     return the past terms (should only be len 1-2, maybe 3):
         [
         [YYYY-MM-DD, YYYY-MM-DD],
@@ -2282,37 +2391,148 @@ def convert_terms_to_useful(terms):
     
     final_list = []
     date_format = "%Y-%m-%d"
+
     #replace the None if present
-    if terms[0][1] is None:
-        terms[0][1] = terms[0][0] + relativedelta(years=2)
+    #if terms[0][1] is None:
+    #    terms[0][1] = terms[0][0] + relativedelta(years=2)
 
     if len(terms) == 1:
         return [[terms[0][0].strftime(date_format), terms[0][1].strftime(date_format)]]
 
 
-    start_date, end_date = terms[0]
+    start_date, end_date, _ = terms[0]
     for i in range(1, len(terms)):
-        prev_terms = terms[i-1]
-        current_terms = terms[i]
-        if current_terms[1] is None:
-            current_terms[1] = current_terms[0] + relativedelta(years=2)
-    
+        prev_start, prev_end, prev_ch = terms[i-1]
+        curr_start, curr_end, curr_ch = terms[i]
 
         #if the end_date and start_date match, then might want to combine. Check if they're the same term width
-        if prev_terms[1] == current_terms[0]:
-            diff_current = (current_terms[1] - current_terms[0]).days
-            diff_prev = (prev_terms[1] - prev_terms[0]).days
-            if diff_prev <= 365*2+1: #house or special election data point
+        if prev_end == curr_start:
+            #if dates match and chambers match, join.
+            if prev_ch == curr_ch:
+                end_date = curr_end
+            elif prev_ch == "s" or prev_ch == "s_se":
+                #senate to house = upload
+                if curr_ch == "h" or curr_ch == "h_se":
+                    final_list.append([start_date.strftime(date_format), end_date.strftime(date_format)])
+                    start_date = curr_start
+                    end_date = curr_end  
+                #senate to unknown special election should be senate to senate. means were appointed and then elected
+                elif curr_ch == "n_se":
+                    end_date = curr_end
+            elif prev_ch == "h" or prev_ch == "h_se":
+                #house to senate = upload
+                if curr_ch == "s" or curr_ch == "s_se":
+                    final_list.append([start_date.strftime(date_format), end_date.strftime(date_format)])
+                    start_date = curr_start
+                    end_date = curr_end  
+                #house to unknown should be house to senate
+                elif curr_ch == "n_se":
+                    final_list.append([start_date.strftime(date_format), end_date.strftime(date_format)])
+                    start_date = curr_start
+                    end_date = curr_end  
+            else:
+                #days match but chamber changed. append what we've got and reset.
+                final_list.append([start_date.strftime(date_format), end_date.strftime(date_format)])
+                start_date = curr_start
+                end_date = curr_end
+                
+        #if previous is special election, combine it with this one
+        elif "se" in prev_ch:
+            if "n" in curr_ch:
+                print(f"Inconclusive what chamber these are, SE to N: {terms[i-1]} - {terms[i]}")
+            else:
+                end_date = curr_end
+        
+        #if current is "oath", it indicates a switch. upload what we have.
+        elif curr_ch == "oath":
+            final_list.append([start_date.strftime(date_format), end_date.strftime(date_format)])
+            start_date = curr_start
+            end_date = curr_end
+
+        elif prev_ch == "s" or prev_ch == "s_se":
+            #senate to house = upload
+            if curr_ch == "h" or curr_ch == "h_se":
+                final_list.append([start_date.strftime(date_format), end_date.strftime(date_format)])
+                start_date = curr_start
+                end_date = curr_end  
+            #senate to unknown special election should be senate to senate. means were appointed and then elected
+            elif curr_ch == "n_se":
+                end_date = curr_end
+            #senate to senate but dates don't match - noncontiguous runs, split
+            elif curr_ch == "s":
+                final_list.append([start_date.strftime(date_format), end_date.strftime(date_format)])
+                start_date = curr_start
+                end_date = curr_end  
+            else:
+                print(f"Uncaught: {terms[i-1]}-{terms[i]}")
+                final_list.append([start_date.strftime(date_format), end_date.strftime(date_format)])
+                start_date = curr_start
+                end_date = curr_end  
+        elif prev_ch == "h" or prev_ch == "h_se":
+            #house to senate = upload
+            if curr_ch == "s" or curr_ch == "s_se":
+                final_list.append([start_date.strftime(date_format), end_date.strftime(date_format)])
+                start_date = curr_start
+                end_date = curr_end  
+            #house to unknown should be house to senate
+            elif curr_ch == "n_se":
+                final_list.append([start_date.strftime(date_format), end_date.strftime(date_format)])
+                start_date = curr_start
+                end_date = curr_end  
+            #house to house but dates don't match - noncontiguous runs, split
+            elif curr_ch == "h":
+                final_list.append([start_date.strftime(date_format), end_date.strftime(date_format)])
+                start_date = curr_start
+                end_date = curr_end  
+            else:
+                print(f"Uncaught: {terms[i-1]}-{terms[i]}")
+                final_list.append([start_date.strftime(date_format), end_date.strftime(date_format)])
+                start_date = curr_start
+                end_date = curr_end  
+        else:
+            print(f"Uncaught: {terms[i-1]}-{terms[i]}")
+            final_list.append([start_date.strftime(date_format), end_date.strftime(date_format)])
+            start_date = curr_start
+            end_date = curr_end  
+        
+        """
+        elif abs((prev_end - curr_start).days) < 65:
+            #if within 65 days, this is likely confusion between the appointed/oathed.
+            #this should be a change, pick whichever one.
+            final_list.append([start_date.strftime(date_format), end_date.strftime(date_format)])
+            start_date = curr_start
+            end_date = curr_end
+        
+        elif prev_start <= curr_start and prev_end >= curr_end: #if dates contained in the other one, skip it
+            #just take prev_terms
+            final_list.append([prev_start.strftime(date_format), prev_end.strftime(date_format)])
+        elif prev_start >= curr_start and prev_end <= curr_end: #if dates contained in the other one, skip it
+            #just take current_terms
+            final_list.append([curr_start.strftime(date_format), curr_end.strftime(date_format)])
+        else:
+            #if dates don't match now, it's because there was a genuine break.
+            final_list.append([start_date.strftime(date_format), end_date.strftime(date_format)])
+            start_date = curr_start
+            end_date = curr_end  
+        """
+
+
+        """
+        if prev_end == curr_start
+            diff_current = (curr_end - curr_start).days
+            diff_prev = (prev_end - prev_start).days
+            if diff_prev <= 365*2+2: #house or special election data point
                 if diff_current <= 365*2+1: #house/SE -> house/SE: combine and keep going
-                    end_date = current_terms[1]
+                    end_date = curr_end
                 elif diff_current <= 365*6+2: #house/SE -> senate: no idea, print?
                     if diff_prev == 365*2:
                         #this is likely house to senate.
                         final_list.append([start_date.strftime(date_format), end_date.strftime(date_format)])
-                        start_date, end_date = current_terms
+                        start_date = curr_start
+                        end_date = curr_end
                     elif i == 1:
                         #for the second one, this is likely to be special election for senate. continue.
-                        end_date = current_terms[1]
+                        end_date = curr_end
                     else:
                         print(f"{i} TODO house to senate, or special election to senate, getting confused. diff_prev = {diff_prev}")
                         final_list.append([start_date.strftime(date_format), end_date.strftime(date_format)])
@@ -2329,22 +2549,7 @@ def convert_terms_to_useful(terms):
                 else:
                     print(f"WARNING2: difference between {current_terms} is bigger than {365*6} days: {diff_current}. Assuming senate special election.")
                     end_date = current_terms[1]
-        elif abs((prev_terms[1] - current_terms[0]).days) < 65:
-            #if within 65 days, this is likely confusion between the appointed/oathed.
-            #this should be a change, pick whichever one.
-            final_list.append([start_date.strftime(date_format), end_date.strftime(date_format)])
-            start_date, end_date  = current_terms
-        
-        elif prev_terms[0] <= current_terms[0] and prev_terms[1] >= current_terms[1]: #if dates contained in the other one, skip it
-            #just take prev_terms
-            final_list.append([prev_terms[0].strftime(date_format), prev_terms[1].strftime(date_format)])
-        elif prev_terms[0] >= current_terms[0] and prev_terms[1] <= current_terms[1]: #if dates contained in the other one, skip it
-            #just take current_terms
-            final_list.append([current_terms[0].strftime(date_format), current_terms[1].strftime(date_format)])
-        else:
-            #if dates don't match now, it's because there was a genuine break.
-            final_list.append([start_date.strftime(date_format), end_date.strftime(date_format)])
-            start_date, end_date = current_terms
+        """
 
     final_list.append([start_date.strftime(date_format), end_date.strftime(date_format)])
     return final_list

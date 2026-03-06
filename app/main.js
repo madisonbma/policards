@@ -2,6 +2,7 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const { exec } = require('child_process');
 const fs = require('fs');
+const fsPromises = fs.promises; 
 
 let mainWindow;
 let updateWindow;
@@ -56,6 +57,41 @@ function createGenWindow() {
 
   genWindow.on('closed', () => {
     genWindow = null;
+  });
+}
+
+
+async function deleteFile(filePath) {
+  try {
+    await fsPromises.unlink(filePath);
+    console.log(`File ${filePath} deleted successfully`);
+  } catch (err) {
+    if (err.code === 'ENOENT') {
+      console.log('File does not exist');
+    } else {
+      console.error('Error deleting file:', err);
+    }
+  }
+}
+
+
+const { spawn } = require('child_process');
+
+function runPythonScript(scriptPath, args = []) {
+  return new Promise((resolve, reject) => {
+    // Note: Use 'python' or 'python3' depending on your system
+    const pyProcess = spawn('python', [scriptPath, ...args]);
+
+    pyProcess.stdout.on('data', (data) => console.log(`Python: ${data}`));
+    pyProcess.stderr.on('data', (data) => console.error(`Python Error: ${data}`));
+
+    pyProcess.on('close', (code) => {
+      if (code === 0) {
+        resolve();
+      } else {
+        reject(new Error(`Python script exited with code ${code}`));
+      }
+    });
   });
 }
 
@@ -185,27 +221,11 @@ ipcMain.handle('gen-card', async () => {
     const jsxScript = path.join(__dirname, '../src/fill_social_template.jsx');
     const tempFile = path.join(__dirname, '../src/generated_outputs/temp.txt');
 
-    fs.unlink(tempFile, (err) => {
-    if (err) {
-      console.error('Error deleting file:', err);
-      return;
-    }
-    });
+    await deleteFile(tempFile);
     //1: gen temp for javascript
-    await new Promise((resolve, reject) => {
-      exec(`python "${pythonScript}"`, (error, stdout, stderr) => {
-        if (error) {
-          reject(`Python Error: ${error.message}`);
-          return;
-        }
-        if (stderr) {
-          console.log('Python stderr:', stderr);
-        }
-        console.log('Python stdout:', stdout);
-        resolve();
-      });
-    });
 
+    await runPythonScript(pythonScript, name);
+    console.log("Success! temp.txt has been created.");
     // 2: Check if temp.txt was created
     if (!fs.existsSync(tempFile)) {
       throw new Error('temp.txt was not generated');
