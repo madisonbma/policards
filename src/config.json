@@ -1,6 +1,6 @@
 {
     "settings": {
-        "photoshop_path": "C:/Program Files/Adobe/Adobe Photoshop 2026/Photoshop.exe",
+        "photoshop_path": "/Applications/Adobe Photoshop 2026/Adobe Photoshop 2026.app",
         "output_root": "./out"
     },
     "directories": {
@@ -10,5 +10,4 @@
     "get_congress_bioguide_data": {
         "filename": "congressmen.json"
     }
-
 }

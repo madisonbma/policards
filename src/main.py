@@ -5,6 +5,7 @@ import subprocess
 import json
 from tkinter import filedialog
 import tkinter as tk
+from pathlib import Path
 
 
 current_dir = os.path.dirname(__file__)
@@ -138,15 +139,18 @@ def load_or_init_config():
         if current_os == "Windows":
             file_types = [("Photoshop Executable", "Photoshop.exe"), ("All Files", "*.*")]
             title = "Select Photoshop.exe"
+            selected_path = filedialog.askopenfilename(title=title, filetypes=file_types)
+            root.destroy()
         elif current_os == "Darwin": # macOS
-            file_types = [("Applications", "*.app")]
+            #file_types = [("Applications", "*.app")]
             title = "Select Adobe Photoshop.app"
+            selected_path = filedialog.askdirectory(title=title)
+            root.destroy()
         else:
             file_types = [("All Files", "*.*")]
             title = "Select Photoshop Application"
-
-        selected_path = filedialog.askopenfilename(title=title, filetypes=file_types)
-        root.destroy()
+            selected_path = filedialog.askopenfilename(title=title, filetypes=file_types)
+            root.destroy()
 
         if selected_path:
             # On macOS, .app is actually a folder. Photoshop likes the path to the .app itself.
@@ -219,13 +223,13 @@ def get_name_input(full_rep_info):
 
 
 def run_photoshop_script(ps_exe, script):
-    # Construct the command to open the PSD and then execute the JSX script
-    command = [
-        ps_exe,
-        "-r",  # Flag often used to indicate running a script
-        script
-    ]
+    current_os = platform.system()
 
+    if current_os == "Darwin":
+        command = ["open", "-a", ps_exe, script]
+        #use open because can't exec a .app since it's a folder
+    else:
+        command = [ps_exe, "-r", script]
 
     try:
         # Run the command and wait for Photoshop to finish the script
@@ -242,15 +246,58 @@ def run_photoshop_script(ps_exe, script):
 
 
 
+def find_photoshop_dir(root_dir, prefix):
+    base_path = Path(root_dir)
+    if not base_path.is_dir():
+        print(f"Error: {root_dir} is not a directory")
+        return []
+    
+    matches = [
+        folder for folder in base_path.iterdir() 
+        if folder.is_dir() and folder.name.startswith(prefix)
+    ]
+
+    names = [
+        folder.name for folder in base_path.iterdir() 
+        if folder.is_dir() and folder.name.startswith(prefix)
+    ]
+
+    if len(matches)==0:
+        print("Error: Couldn't find Photoshop installed. Make sure installed.")
+        print("On Mac, expect to be in a path like /Applications/Adobe Photoshop 2026/Adobe Photoshop 2026.app")
+        print("On Windows, expect to be in a path like C:\\Program Files\\Adobe\\Adobe Photoshop 2026\\Photoshop.exe")
+        sys.exit(1)
+    return (matches[-1], names[-1])
+
 
 
 if __name__ == "__main__":
 
     ####### 1. Get configuration settings
     # --- EXECUTION LOGIC ---
-    config = load_or_init_config()
-    ps_exe = config["settings"]["photoshop_path"]
+    #config = load_or_init_config()
+    #ps_exe = config["settings"]["photoshop_path"]
     #print(f"Using Photoshop at: {ps_exe}")
+
+    #Not using config anymore.
+    current_os = platform.system() # 'Windows' or 'Darwin' (Mac)
+
+    if current_os == "Darwin": #macOS
+        photoshop_path, photoshop_exe = find_photoshop_dir("/Applications/", "Adobe Photoshop")
+        photoshop_path = photoshop_path / f"{photoshop_exe}.app"
+        ps_exe = photoshop_path
+        #print(photoshop_path)
+        #photoshop_path = "/Applications/Adobe Photoshop 2026/Adobe Photoshop 2026.app"
+
+    elif current_os == "Windows":
+        photoshop_path,_ = find_photoshop_dir("C:\\Program Files\\Adobe", "Adobe Photoshop")
+        photoshop_path = photoshop_path / f"Photoshop.exe"
+        ps_exe = photoshop_path
+        #print(photoshop_path)
+        #photoshop_path = "C:\\Program Files\\Adobe\\Adobe Photoshop 2026\\Photoshop.exe"
+    else:
+        config = load_or_init_config()
+        ps_exe = config["settings"]["photoshop_path"]
 
 
     congressmen_json = os.path.join(project_root, "src", "generated_outputs", "congressmen.json")
