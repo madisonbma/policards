@@ -587,10 +587,12 @@ def create_temp(rep_info, absolute_stats):
     root = os.path.dirname(os.path.abspath(__file__))
     temp_file = os.path.join(root, "generated_outputs", "temp.txt")
 
+    cards_dir = os.path.join(root, "..", "cards_ps")
+    os.makedirs(cards_dir, exist_ok=True)
 
     replacements = str.maketrans({",": "", "\"": "", ".":"", " ":"_"})
 
-    output_filename = os.path.join(root, "..", "cards_ps", \
+    output_filename = os.path.join(cards_dir, \
         f"{name.translate(replacements).lower()}_card.psd")
     text_block += output_filename
     text_block += "\n"

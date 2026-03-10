@@ -339,7 +339,6 @@ yesVoteBtn.addEventListener('click', async () => {
   if (result_vote.success) {
     console.log("Success in genVotingRecordJSON");
     const result_combine = await window.electronAPI.combineData();
-    window.electronAPI.removeTerminalListener(handler2);
 
     if (result_combine.success) {
       showStatus('Success in combineData. All is good...');
@@ -354,15 +353,18 @@ yesVoteBtn.addEventListener('click', async () => {
     }
     else {
       showStatus('Error combining data: ' + result_combine.message, false);
+      const p = document.createElement('p');
       p.textContent = "ERROR: Copy this section, send to Madison, and close the window.";
       terminal2.appendChild(p);
     }
 
   } else {
     showStatus('Error making voting_record.json: ' + result_vote.message, false);
+    const p = document.createElement('p');
     p.textContent = "ERROR: Copy this section, send to Madison, and close the window.";
     terminal2.appendChild(p);
   }
+  window.electronAPI.removeTerminalListener(handler2);
 
 });
 
@@ -372,6 +374,7 @@ noVoteBtn.addEventListener('click', async () => {
   setLoading(true);
   noVoteBtn.disabled = true;
   yesVoteBtn.disabled = true;
+
 
     //init the handler and terminal interaction
   const handler3 = (data) => {
@@ -399,6 +402,7 @@ noVoteBtn.addEventListener('click', async () => {
   }
   else {
     showStatus('Error loading/combining data: ' + result_combine.message, false);
+    const p = document.createElement('p');
     p.textContent = "ERROR: Copy this section, send to Madison, and close the window.";
     terminal2.appendChild(p);
   }

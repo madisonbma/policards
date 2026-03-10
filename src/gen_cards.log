@@ -10922,3 +10922,316 @@
 2026-01-30 13:17:43,183 - gen_temp_for_javascript.py - DEBUG - Success image pull for Tim Burchett
 2026-01-30 13:17:43,183 - gen_temp_for_javascript.py - INFO - Both images too small for Tim Burchett. Using larger one at (175, 263).
 2026-01-30 13:17:43,183 - gen_temp_for_javascript.py - WARNING - Having to expand picture, could be poor quality. Original photo: (175, 263)
+2026-03-06 15:18:25,489 - gen_temp_for_javascript.py - WARNING - Image for Thomas Tillis is too small at (180, 225) instead of (342, 428). Trying backup image.
+2026-03-06 15:18:25,619 - gen_temp_for_javascript.py - WARNING - Image for Thomas Tillis is too small at (180, 225) instead of (342, 428).
+2026-03-06 15:18:25,619 - gen_temp_for_javascript.py - DEBUG - Success image pull for Thomas Tillis
+2026-03-06 15:18:25,619 - gen_temp_for_javascript.py - INFO - Both images too small for Thomas Tillis. Using larger one at (180, 225).
+2026-03-06 15:18:25,619 - gen_temp_for_javascript.py - WARNING - Having to expand picture, could be poor quality. Original photo: (180, 225)
+2026-03-06 15:18:55,122 - gen_temp_for_javascript.py - WARNING - Image for Thomas Tillis is too small at (180, 225) instead of (342, 428). Trying backup image.
+2026-03-06 15:18:55,225 - gen_temp_for_javascript.py - WARNING - Image for Thomas Tillis is too small at (180, 225) instead of (342, 428).
+2026-03-06 15:18:55,225 - gen_temp_for_javascript.py - DEBUG - Success image pull for Thomas Tillis
+2026-03-06 15:18:55,225 - gen_temp_for_javascript.py - INFO - Both images too small for Thomas Tillis. Using larger one at (180, 225).
+2026-03-06 15:18:55,226 - gen_temp_for_javascript.py - WARNING - Having to expand picture, could be poor quality. Original photo: (180, 225)
+2026-03-08 11:32:17,362 - gen_temp_for_javascript.py - WARNING - Image for Thomas Tillis is too small at (180, 225) instead of (342, 428). Trying backup image.
+2026-03-08 11:32:17,730 - gen_temp_for_javascript.py - WARNING - Image for Thomas Tillis is too small at (180, 225) instead of (342, 428).
+2026-03-08 11:32:17,730 - gen_temp_for_javascript.py - DEBUG - Success image pull for Thomas Tillis
+2026-03-08 11:32:17,730 - gen_temp_for_javascript.py - INFO - Both images too small for Thomas Tillis. Using larger one at (180, 225).
+2026-03-08 11:32:17,731 - gen_temp_for_javascript.py - WARNING - Having to expand picture, could be poor quality. Original photo: (180, 225)
+2026-03-08 11:35:13,676 - gen_temp_for_javascript.py - WARNING - Image for Thomas Tillis is too small at (180, 225) instead of (342, 428). Trying backup image.
+2026-03-08 11:35:13,777 - gen_temp_for_javascript.py - WARNING - Image for Thomas Tillis is too small at (180, 225) instead of (342, 428).
+2026-03-08 11:35:13,777 - gen_temp_for_javascript.py - DEBUG - Success image pull for Thomas Tillis
+2026-03-08 11:35:13,777 - gen_temp_for_javascript.py - INFO - Both images too small for Thomas Tillis. Using larger one at (180, 225).
+2026-03-08 11:35:13,777 - gen_temp_for_javascript.py - WARNING - Having to expand picture, could be poor quality. Original photo: (180, 225)
+2026-03-08 11:37:45,954 - gen_temp_for_javascript.py - WARNING - Image for Thomas Tillis is too small at (180, 225) instead of (342, 428). Trying backup image.
+2026-03-08 11:37:46,075 - gen_temp_for_javascript.py - WARNING - Image for Thomas Tillis is too small at (180, 225) instead of (342, 428).
+2026-03-08 11:37:46,075 - gen_temp_for_javascript.py - DEBUG - Success image pull for Thomas Tillis
+2026-03-08 11:37:46,075 - gen_temp_for_javascript.py - INFO - Both images too small for Thomas Tillis. Using larger one at (180, 225).
+2026-03-08 11:37:46,076 - gen_temp_for_javascript.py - WARNING - Having to expand picture, could be poor quality. Original photo: (180, 225)
+2026-03-08 11:43:25,088 - gen_temp_for_javascript.py - WARNING - Image for Thomas Tillis is too small at (180, 225) instead of (342, 428). Trying backup image.
+2026-03-08 11:43:25,379 - gen_temp_for_javascript.py - WARNING - Image for Thomas Tillis is too small at (180, 225) instead of (342, 428).
+2026-03-08 11:43:25,379 - gen_temp_for_javascript.py - DEBUG - Success image pull for Thomas Tillis
+2026-03-08 11:43:25,379 - gen_temp_for_javascript.py - INFO - Both images too small for Thomas Tillis. Using larger one at (180, 225).
+2026-03-08 11:43:25,379 - gen_temp_for_javascript.py - WARNING - Having to expand picture, could be poor quality. Original photo: (180, 225)
+2026-03-08 11:54:11,219 - gen_temp_for_javascript.py - WARNING - Image for Thomas Tillis is too small at (180, 225) instead of (342, 428). Trying backup image.
+2026-03-08 11:54:11,366 - gen_temp_for_javascript.py - WARNING - Image for Thomas Tillis is too small at (180, 225) instead of (342, 428).
+2026-03-08 11:54:11,366 - gen_temp_for_javascript.py - DEBUG - Success image pull for Thomas Tillis
+2026-03-08 11:54:11,366 - gen_temp_for_javascript.py - INFO - Both images too small for Thomas Tillis. Using larger one at (180, 225).
+2026-03-08 11:54:11,366 - gen_temp_for_javascript.py - WARNING - Having to expand picture, could be poor quality. Original photo: (180, 225)
+2026-03-08 12:13:57,891 - gen_temp_for_javascript.py - WARNING - Image for Thomas Tillis is too small at (180, 225) instead of (342, 428). Trying backup image.
+2026-03-08 12:13:58,018 - gen_temp_for_javascript.py - WARNING - Image for Thomas Tillis is too small at (180, 225) instead of (342, 428).
+2026-03-08 12:13:58,018 - gen_temp_for_javascript.py - DEBUG - Success image pull for Thomas Tillis
+2026-03-08 12:13:58,018 - gen_temp_for_javascript.py - INFO - Both images too small for Thomas Tillis. Using larger one at (180, 225).
+2026-03-08 12:13:58,018 - gen_temp_for_javascript.py - WARNING - Having to expand picture, could be poor quality. Original photo: (180, 225)
+2026-03-10 11:48:27,073 - gen_voting_record_json.py - INFO - Starting from vote 88 for house pull
+2026-03-10 11:48:27,075 - gen_voting_record_json.py - INFO - Requesting members for vote: Congress 119, Session 2, Vote #88
+2026-03-10 11:48:27,075 - gen_voting_record_json.py - INFO -   - Querying: https://api.congress.gov/v3/house-vote/119/2/88/members with offset=0
+2026-03-10 11:48:27,349 - gen_voting_record_json.py - INFO - HTTP Error for vote members: 403 - {
+  "error": {
+    "code": "API_KEY_MISSING",
+    "message": "No api_key was supplied. Get one at https://api.congress.gov:443"
+  }
+}
+2026-03-10 11:48:27,349 - gen_voting_record_json.py - ERROR - Voting record not found for 88, either timeout or doesn't exist.
+2026-03-10 11:48:29,182 - gen_voting_record_json.py - INFO - Starting from vote 50 for senate pull
+2026-03-10 11:48:29,585 - gen_voting_record_json.py - ERROR - XML 50 doesn't exist yet. Quitting.
+2026-03-10 11:52:48,567 - gen_voting_record_json.py - INFO - Starting from vote 88 for house pull
+2026-03-10 11:52:48,567 - gen_voting_record_json.py - INFO - Requesting members for vote: Congress 119, Session 2, Vote #88
+2026-03-10 11:52:48,567 - gen_voting_record_json.py - INFO -   - Querying: https://api.congress.gov/v3/house-vote/119/2/88/members with offset=0
+2026-03-10 11:52:48,972 - gen_voting_record_json.py - INFO - HTTP Error for vote members: 404 - {
+    "error": "No Vote matches the given query.",
+    "request": {
+        "congress": "119",
+        "contentType": "application/json",
+        "format": "json",
+        "session": "2"
+    }
+}
+2026-03-10 11:52:48,972 - gen_voting_record_json.py - INFO - Vote not found or invalid congress/session/voteNumber combination.
+2026-03-10 11:52:48,972 - gen_voting_record_json.py - ERROR - Voting record not found for 88, either timeout or doesn't exist.
+2026-03-10 11:52:50,838 - gen_voting_record_json.py - INFO - Starting from vote 50 for senate pull
+2026-03-10 11:52:51,029 - gen_voting_record_json.py - ERROR - XML 50 doesn't exist yet. Quitting.
+2026-03-10 11:53:50,068 - gen_voting_record_json.py - INFO - Starting from vote 88 for house pull
+2026-03-10 11:53:50,069 - gen_voting_record_json.py - INFO - Requesting members for vote: Congress 119, Session 2, Vote #88
+2026-03-10 11:53:50,069 - gen_voting_record_json.py - INFO -   - Querying: https://api.congress.gov/v3/house-vote/119/2/88/members with offset=0
+2026-03-10 11:53:50,296 - gen_voting_record_json.py - INFO - HTTP Error for vote members: 404 - {
+    "error": "No Vote matches the given query.",
+    "request": {
+        "congress": "119",
+        "contentType": "application/json",
+        "format": "json",
+        "session": "2"
+    }
+}
+2026-03-10 11:53:50,296 - gen_voting_record_json.py - INFO - Vote not found or invalid congress/session/voteNumber combination.
+2026-03-10 11:53:50,296 - gen_voting_record_json.py - ERROR - Voting record not found for 88, either timeout or doesn't exist.
+2026-03-10 11:53:52,227 - gen_voting_record_json.py - INFO - Starting from vote 50 for senate pull
+2026-03-10 11:53:52,420 - gen_voting_record_json.py - ERROR - XML 50 doesn't exist yet. Quitting.
+2026-03-10 11:55:19,934 - gen_voting_record_json.py - INFO - Starting from vote 88 for house pull
+2026-03-10 11:55:19,934 - gen_voting_record_json.py - INFO - Requesting members for vote: Congress 119, Session 2, Vote #88
+2026-03-10 11:55:19,934 - gen_voting_record_json.py - INFO -   - Querying: https://api.congress.gov/v3/house-vote/119/2/88/members with offset=0
+2026-03-10 11:55:20,205 - gen_voting_record_json.py - INFO - HTTP Error for vote members: 404 - {
+    "error": "No Vote matches the given query.",
+    "request": {
+        "congress": "119",
+        "contentType": "application/json",
+        "format": "json",
+        "session": "2"
+    }
+}
+2026-03-10 11:55:20,205 - gen_voting_record_json.py - INFO - Vote not found or invalid congress/session/voteNumber combination.
+2026-03-10 11:55:20,205 - gen_voting_record_json.py - ERROR - Voting record not found for 88, either timeout or doesn't exist.
+2026-03-10 11:55:21,883 - gen_voting_record_json.py - INFO - Starting from vote 50 for senate pull
+2026-03-10 11:55:22,046 - gen_voting_record_json.py - ERROR - XML 50 doesn't exist yet. Quitting.
+2026-03-10 11:57:18,440 - gen_voting_record_json.py - INFO - Starting from vote 88 for house pull
+2026-03-10 11:57:18,440 - gen_voting_record_json.py - INFO - Requesting members for vote: Congress 119, Session 2, Vote #88
+2026-03-10 11:57:18,440 - gen_voting_record_json.py - INFO -   - Querying: https://api.congress.gov/v3/house-vote/119/2/88/members with offset=0
+2026-03-10 11:57:18,701 - gen_voting_record_json.py - INFO - HTTP Error for vote members: 404 - {
+    "error": "No Vote matches the given query.",
+    "request": {
+        "congress": "119",
+        "contentType": "application/json",
+        "format": "json",
+        "session": "2"
+    }
+}
+2026-03-10 11:57:18,702 - gen_voting_record_json.py - INFO - Vote not found or invalid congress/session/voteNumber combination.
+2026-03-10 11:57:18,702 - gen_voting_record_json.py - ERROR - Voting record not found for 88, either timeout or doesn't exist.
+2026-03-10 11:57:20,559 - gen_voting_record_json.py - INFO - Starting from vote 50 for senate pull
+2026-03-10 11:57:20,715 - gen_voting_record_json.py - ERROR - XML 50 doesn't exist yet. Quitting.
+2026-03-10 11:59:53,918 - gen_voting_record_json.py - INFO - Starting from vote 88 for house pull
+2026-03-10 11:59:53,918 - gen_voting_record_json.py - INFO - Requesting members for vote: Congress 119, Session 2, Vote #88
+2026-03-10 11:59:53,918 - gen_voting_record_json.py - INFO -   - Querying: https://api.congress.gov/v3/house-vote/119/2/88/members with offset=0
+2026-03-10 11:59:54,326 - gen_voting_record_json.py - INFO - HTTP Error for vote members: 404 - {
+    "error": "No Vote matches the given query.",
+    "request": {
+        "congress": "119",
+        "contentType": "application/json",
+        "format": "json",
+        "session": "2"
+    }
+}
+2026-03-10 11:59:54,326 - gen_voting_record_json.py - INFO - Vote not found or invalid congress/session/voteNumber combination.
+2026-03-10 11:59:54,326 - gen_voting_record_json.py - ERROR - Voting record not found for 88, either timeout or doesn't exist.
+2026-03-10 11:59:56,174 - gen_voting_record_json.py - INFO - Starting from vote 50 for senate pull
+2026-03-10 11:59:56,322 - gen_voting_record_json.py - ERROR - XML 50 doesn't exist yet. Quitting.
+2026-03-10 12:02:13,794 - gen_voting_record_json.py - INFO - Starting from vote 88 for house pull
+2026-03-10 12:02:13,794 - gen_voting_record_json.py - INFO - Requesting members for vote: Congress 119, Session 2, Vote #88
+2026-03-10 12:02:13,795 - gen_voting_record_json.py - INFO -   - Querying: https://api.congress.gov/v3/house-vote/119/2/88/members with offset=0
+2026-03-10 12:02:14,095 - gen_voting_record_json.py - INFO - HTTP Error for vote members: 404 - {
+    "error": "No Vote matches the given query.",
+    "request": {
+        "congress": "119",
+        "contentType": "application/json",
+        "format": "json",
+        "session": "2"
+    }
+}
+2026-03-10 12:02:14,095 - gen_voting_record_json.py - INFO - Vote not found or invalid congress/session/voteNumber combination.
+2026-03-10 12:02:14,095 - gen_voting_record_json.py - ERROR - Voting record not found for 88, either timeout or doesn't exist.
+2026-03-10 12:02:15,987 - gen_voting_record_json.py - INFO - Starting from vote 50 for senate pull
+2026-03-10 12:02:16,125 - gen_voting_record_json.py - ERROR - XML 50 doesn't exist yet. Quitting.
+2026-03-10 12:04:55,933 - gen_voting_record_json.py - INFO - Starting from vote 88 for house pull
+2026-03-10 12:04:55,933 - gen_voting_record_json.py - INFO - Requesting members for vote: Congress 119, Session 2, Vote #88
+2026-03-10 12:04:55,933 - gen_voting_record_json.py - INFO -   - Querying: https://api.congress.gov/v3/house-vote/119/2/88/members with offset=0
+2026-03-10 12:04:56,347 - gen_voting_record_json.py - INFO - HTTP Error for vote members: 404 - {
+    "error": "No Vote matches the given query.",
+    "request": {
+        "congress": "119",
+        "contentType": "application/json",
+        "format": "json",
+        "session": "2"
+    }
+}
+2026-03-10 12:04:56,347 - gen_voting_record_json.py - INFO - Vote not found or invalid congress/session/voteNumber combination.
+2026-03-10 12:04:56,347 - gen_voting_record_json.py - ERROR - Voting record not found for 88, either timeout or doesn't exist.
+2026-03-10 12:04:58,165 - gen_voting_record_json.py - INFO - Starting from vote 50 for senate pull
+2026-03-10 12:04:58,346 - gen_voting_record_json.py - ERROR - XML 50 doesn't exist yet. Quitting.
+2026-03-10 12:06:23,529 - gen_voting_record_json.py - INFO - Starting from vote 88 for house pull
+2026-03-10 12:06:23,530 - gen_voting_record_json.py - INFO - Requesting members for vote: Congress 119, Session 2, Vote #88
+2026-03-10 12:06:23,530 - gen_voting_record_json.py - INFO -   - Querying: https://api.congress.gov/v3/house-vote/119/2/88/members with offset=0
+2026-03-10 12:06:23,782 - gen_voting_record_json.py - INFO - HTTP Error for vote members: 404 - {
+    "error": "No Vote matches the given query.",
+    "request": {
+        "congress": "119",
+        "contentType": "application/json",
+        "format": "json",
+        "session": "2"
+    }
+}
+2026-03-10 12:06:23,782 - gen_voting_record_json.py - INFO - Vote not found or invalid congress/session/voteNumber combination.
+2026-03-10 12:06:23,783 - gen_voting_record_json.py - ERROR - Voting record not found for 88, either timeout or doesn't exist.
+2026-03-10 12:06:25,525 - gen_voting_record_json.py - INFO - Starting from vote 50 for senate pull
+2026-03-10 12:06:25,655 - gen_voting_record_json.py - ERROR - XML 50 doesn't exist yet. Quitting.
+2026-03-10 12:10:30,219 - gen_voting_record_json.py - INFO - Starting from vote 88 for house pull
+2026-03-10 12:10:30,219 - gen_voting_record_json.py - INFO - Requesting members for vote: Congress 119, Session 2, Vote #88
+2026-03-10 12:10:30,219 - gen_voting_record_json.py - INFO -   - Querying: https://api.congress.gov/v3/house-vote/119/2/88/members with offset=0
+2026-03-10 12:10:30,627 - gen_voting_record_json.py - INFO - HTTP Error for vote members: 404 - {
+    "error": "No Vote matches the given query.",
+    "request": {
+        "congress": "119",
+        "contentType": "application/json",
+        "format": "json",
+        "session": "2"
+    }
+}
+2026-03-10 12:10:30,627 - gen_voting_record_json.py - INFO - Vote not found or invalid congress/session/voteNumber combination.
+2026-03-10 12:10:30,627 - gen_voting_record_json.py - ERROR - Voting record not found for 88, either timeout or doesn't exist.
+2026-03-10 12:10:32,589 - gen_voting_record_json.py - INFO - Starting from vote 50 for senate pull
+2026-03-10 12:10:32,736 - gen_voting_record_json.py - ERROR - XML 50 doesn't exist yet. Quitting.
+2026-03-10 12:15:39,292 - gen_voting_record_json.py - INFO - Starting from vote 88 for house pull
+2026-03-10 12:15:39,293 - gen_voting_record_json.py - INFO - Requesting members for vote: Congress 119, Session 2, Vote #88
+2026-03-10 12:15:39,293 - gen_voting_record_json.py - INFO -   - Querying: https://api.congress.gov/v3/house-vote/119/2/88/members with offset=0
+2026-03-10 12:15:39,724 - gen_voting_record_json.py - INFO - HTTP Error for vote members: 404 - {
+    "error": "No Vote matches the given query.",
+    "request": {
+        "congress": "119",
+        "contentType": "application/json",
+        "format": "json",
+        "session": "2"
+    }
+}
+2026-03-10 12:15:39,724 - gen_voting_record_json.py - INFO - Vote not found or invalid congress/session/voteNumber combination.
+2026-03-10 12:15:39,724 - gen_voting_record_json.py - ERROR - Voting record not found for 88, either timeout or doesn't exist.
+2026-03-10 12:15:41,553 - gen_voting_record_json.py - INFO - Starting from vote 50 for senate pull
+2026-03-10 12:15:41,716 - gen_voting_record_json.py - ERROR - XML 50 doesn't exist yet. Quitting.
+2026-03-10 12:25:33,321 - gen_voting_record_json.py - INFO - Starting from vote 88 for house pull
+2026-03-10 12:25:33,322 - gen_voting_record_json.py - INFO - Requesting members for vote: Congress 119, Session 2, Vote #88
+2026-03-10 12:25:33,322 - gen_voting_record_json.py - INFO -   - Querying: https://api.congress.gov/v3/house-vote/119/2/88/members with offset=0
+2026-03-10 12:25:33,778 - gen_voting_record_json.py - INFO - HTTP Error for vote members: 404 - {
+    "error": "No Vote matches the given query.",
+    "request": {
+        "congress": "119",
+        "contentType": "application/json",
+        "format": "json",
+        "session": "2"
+    }
+}
+2026-03-10 12:25:33,778 - gen_voting_record_json.py - INFO - Vote not found or invalid congress/session/voteNumber combination.
+2026-03-10 12:25:33,778 - gen_voting_record_json.py - ERROR - Voting record not found for 88, either timeout or doesn't exist.
+2026-03-10 12:25:35,361 - gen_voting_record_json.py - INFO - Starting from vote 50 for senate pull
+2026-03-10 12:25:35,931 - gen_voting_record_json.py - ERROR - XML 50 doesn't exist yet. Quitting.
+2026-03-10 12:25:42,158 - modify_votes.py - INFO - Success getting senate bioguide to senate_id dict
+2026-03-10 12:25:42,401 - modify_votes.py - INFO - 449 house votes, 659 senate votes, for total of 1108 votes
+2026-03-10 12:25:42,518 - modify_votes.py - INFO - 447 house reps, 102 senators, for total of 549 people
+2026-03-10 12:25:43,326 - modify_votes.py - WARNING - Some congressmen are missing voter information unexpectedly: <StringArray>
+['A000382', 'B001230', 'B001236', 'B001243', 'B001261', 'B001267', 'B001277',
+ 'B001288', 'B001299', 'B001303',
+ ...
+ 'V000139', 'W000437', 'W000779', 'W000790', 'W000800', 'W000802', 'W000805',
+ 'W000817', 'W000831', 'Y000064']
+Length: 107, dtype: str
+2026-03-10 12:25:43,406 - modify_reps.py - DEBUG - There are 538 NA endyears
+2026-03-10 12:25:43,408 - modify_reps.py - DEBUG - Added yes to 538 members
+2026-03-10 12:25:43,410 - modify_reps.py - INFO - After processing, there are 0 na endYears
+2026-03-10 12:25:43,951 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for House
+2026-03-10 12:25:43,952 - gen_committees.py - INFO - Success getting list of (sub)committee names for comcode
+2026-03-10 12:25:43,952 - gen_committees.py - WARNING - Comcode not found for None, Nonetype returned.
+2026-03-10 12:25:43,952 - gen_committees.py - WARNING - Comcode not found for P000197, Nonetype returned.
+2026-03-10 12:25:43,952 - gen_committees.py - WARNING - Comcode not found for S001176, Nonetype returned.
+2026-03-10 12:25:43,952 - gen_committees.py - WARNING - Comcode not found for J000299, Nonetype returned.
+2026-03-10 12:25:43,952 - gen_committees.py - WARNING - Comcode not found for C001101, Nonetype returned.
+2026-03-10 12:25:43,953 - gen_committees.py - WARNING - Comcode not found for J000294, Nonetype returned.
+2026-03-10 12:25:44,058 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for senate
+2026-03-10 12:26:02,342 - gen_temp_for_javascript.py - WARNING - Image for Thomas Tillis is too small at (180, 225) instead of (342, 428). Trying backup image.
+2026-03-10 12:26:02,511 - gen_temp_for_javascript.py - WARNING - Image for Thomas Tillis is too small at (180, 225) instead of (342, 428).
+2026-03-10 12:26:02,511 - gen_temp_for_javascript.py - DEBUG - Success image pull for Thomas Tillis
+2026-03-10 12:26:02,511 - gen_temp_for_javascript.py - INFO - Both images too small for Thomas Tillis. Using larger one at (180, 225).
+2026-03-10 12:26:02,511 - gen_temp_for_javascript.py - WARNING - Having to expand picture, could be poor quality. Original photo: (180, 225)
+2026-03-10 12:26:31,720 - gen_temp_for_javascript.py - WARNING - Image for Thomas Tillis is too small at (180, 225) instead of (342, 428). Trying backup image.
+2026-03-10 12:26:31,855 - gen_temp_for_javascript.py - WARNING - Image for Thomas Tillis is too small at (180, 225) instead of (342, 428).
+2026-03-10 12:26:31,855 - gen_temp_for_javascript.py - DEBUG - Success image pull for Thomas Tillis
+2026-03-10 12:26:31,856 - gen_temp_for_javascript.py - INFO - Both images too small for Thomas Tillis. Using larger one at (180, 225).
+2026-03-10 12:26:31,856 - gen_temp_for_javascript.py - WARNING - Having to expand picture, could be poor quality. Original photo: (180, 225)
+2026-03-10 12:27:01,370 - gen_temp_for_javascript.py - WARNING - Image for Thomas Tillis is too small at (180, 225) instead of (342, 428). Trying backup image.
+2026-03-10 12:27:01,492 - gen_temp_for_javascript.py - WARNING - Image for Thomas Tillis is too small at (180, 225) instead of (342, 428).
+2026-03-10 12:27:01,492 - gen_temp_for_javascript.py - DEBUG - Success image pull for Thomas Tillis
+2026-03-10 12:27:01,492 - gen_temp_for_javascript.py - INFO - Both images too small for Thomas Tillis. Using larger one at (180, 225).
+2026-03-10 12:27:01,492 - gen_temp_for_javascript.py - WARNING - Having to expand picture, could be poor quality. Original photo: (180, 225)
+2026-03-10 12:27:23,123 - gen_temp_for_javascript.py - WARNING - Image for Thomas Tillis is too small at (180, 225) instead of (342, 428). Trying backup image.
+2026-03-10 12:27:23,248 - gen_temp_for_javascript.py - WARNING - Image for Thomas Tillis is too small at (180, 225) instead of (342, 428).
+2026-03-10 12:27:23,248 - gen_temp_for_javascript.py - DEBUG - Success image pull for Thomas Tillis
+2026-03-10 12:27:23,248 - gen_temp_for_javascript.py - INFO - Both images too small for Thomas Tillis. Using larger one at (180, 225).
+2026-03-10 12:27:23,248 - gen_temp_for_javascript.py - WARNING - Having to expand picture, could be poor quality. Original photo: (180, 225)
+2026-03-10 12:32:30,388 - gen_voting_record_json.py - INFO - Starting from vote 88 for house pull
+2026-03-10 12:32:30,389 - gen_voting_record_json.py - INFO - Requesting members for vote: Congress 119, Session 2, Vote #88
+2026-03-10 12:32:30,389 - gen_voting_record_json.py - INFO -   - Querying: https://api.congress.gov/v3/house-vote/119/2/88/members with offset=0
+2026-03-10 12:32:30,862 - gen_voting_record_json.py - INFO - HTTP Error for vote members: 404 - {
+    "error": "No Vote matches the given query.",
+    "request": {
+        "congress": "119",
+        "contentType": "application/json",
+        "format": "json",
+        "session": "2"
+    }
+}
+2026-03-10 12:32:30,862 - gen_voting_record_json.py - INFO - Vote not found or invalid congress/session/voteNumber combination.
+2026-03-10 12:32:30,862 - gen_voting_record_json.py - ERROR - Voting record not found for 88, either timeout or doesn't exist.
+2026-03-10 12:32:32,470 - gen_voting_record_json.py - INFO - Starting from vote 50 for senate pull
+2026-03-10 12:32:32,638 - gen_voting_record_json.py - ERROR - XML 50 doesn't exist yet. Quitting.
+2026-03-10 12:32:34,980 - modify_votes.py - INFO - Success getting senate bioguide to senate_id dict
+2026-03-10 12:32:35,225 - modify_votes.py - INFO - 449 house votes, 659 senate votes, for total of 1108 votes
+2026-03-10 12:32:35,335 - modify_votes.py - INFO - 447 house reps, 102 senators, for total of 549 people
+2026-03-10 12:32:36,251 - modify_votes.py - WARNING - Some congressmen are missing voter information unexpectedly: <StringArray>
+['A000382', 'B001230', 'B001236', 'B001243', 'B001261', 'B001267', 'B001277',
+ 'B001288', 'B001299', 'B001303',
+ ...
+ 'V000139', 'W000437', 'W000779', 'W000790', 'W000800', 'W000802', 'W000805',
+ 'W000817', 'W000831', 'Y000064']
+Length: 107, dtype: str
+2026-03-10 12:32:36,334 - modify_reps.py - DEBUG - There are 538 NA endyears
+2026-03-10 12:32:36,336 - modify_reps.py - DEBUG - Added yes to 538 members
+2026-03-10 12:32:36,338 - modify_reps.py - INFO - After processing, there are 0 na endYears
+2026-03-10 12:32:36,836 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for House
+2026-03-10 12:32:36,836 - gen_committees.py - INFO - Success getting list of (sub)committee names for comcode
+2026-03-10 12:32:36,837 - gen_committees.py - WARNING - Comcode not found for None, Nonetype returned.
+2026-03-10 12:32:36,837 - gen_committees.py - WARNING - Comcode not found for P000197, Nonetype returned.
+2026-03-10 12:32:36,837 - gen_committees.py - WARNING - Comcode not found for S001176, Nonetype returned.
+2026-03-10 12:32:36,837 - gen_committees.py - WARNING - Comcode not found for J000299, Nonetype returned.
+2026-03-10 12:32:36,837 - gen_committees.py - WARNING - Comcode not found for C001101, Nonetype returned.
+2026-03-10 12:32:36,837 - gen_committees.py - WARNING - Comcode not found for J000294, Nonetype returned.
+2026-03-10 12:32:36,952 - gen_committees.py - INFO - Success getting list of comcodes per bioguideID for senate
+2026-03-10 12:32:56,532 - gen_temp_for_javascript.py - WARNING - Image for Adam B. Schiff is too small at (180, 225) instead of (342, 428). Trying backup image.
+2026-03-10 12:32:56,688 - gen_temp_for_javascript.py - WARNING - Image for Adam B. Schiff is too small at (180, 225) instead of (342, 428).
+2026-03-10 12:32:56,688 - gen_temp_for_javascript.py - DEBUG - Success image pull for Adam B. Schiff
+2026-03-10 12:32:56,688 - gen_temp_for_javascript.py - INFO - Both images too small for Adam B. Schiff. Using larger one at (180, 225).
+2026-03-10 12:32:56,688 - gen_temp_for_javascript.py - WARNING - Having to expand picture, could be poor quality. Original photo: (180, 225)
