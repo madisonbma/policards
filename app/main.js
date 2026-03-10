@@ -78,7 +78,14 @@ const { spawn } = require('child_process');
 function runPythonScript(scriptPath, args = []) {
   return new Promise((resolve, reject) => {
     // Note: Use 'python' or 'python3' depending on your system
-    const pyProcess = spawn('python3.14', [scriptPath, ...args]);
+    let pyProcess;
+    if (process.platform === "darwin") {
+      pyProcess = spawn('python3.14', [scriptPath, ...args]);
+    }
+    else {
+      pyProcess = spawn('python', [scriptPath, ...args]);
+    }
+    
 
     pyProcess.stdout.on('data', (data) => console.log(`Python: ${data}`));
     pyProcess.stderr.on('data', (data) => console.error(`Python Error: ${data}`));
@@ -106,8 +113,14 @@ function sendSafe(sender, channel, data) {
 
 function runPythonScriptAndStream(scriptPath, args, sender) {
     console.log("Launching python script");
+    let pythonProcess;
     return new Promise((resolve, reject) => {
-        const pythonProcess = spawn('python3.14', [scriptPath, ...args]);
+        if (process.platform === "darwin") {
+          pythonProcess = spawn('python3.14', [scriptPath, ...args]);
+        }
+        else {
+          pythonProcess = spawn('python', [scriptPath, ...args]);
+        }
         console.log("Spawned new process");
         pythonProcess.stdout.on('data', (data) => {
           const text = data.toString('utf8');
@@ -136,8 +149,13 @@ function runPythonScriptAndStream(scriptPath, args, sender) {
 
 
 function runPythonScriptAndStream_nopromise(scriptPath, args, sender) {
-    const pythonProcess = spawn('python3.14', [scriptPath, ...args]);
-
+  let pythonProcess;
+    if (process.platform === "darwin") {
+      pythonProcess = spawn('python3.14', [scriptPath, ...args]);
+    }
+    else {
+      pythonProcess = spawn('python', [scriptPath, ...args]);
+    }
     pythonProcess.stdout.on('data', (data) => {
         // Send each chunk of data to the UI
         sendSafe(sender, 'terminal-update', data.toString());    
