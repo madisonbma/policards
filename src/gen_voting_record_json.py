@@ -9,6 +9,8 @@ from datetime import date
 import xml.etree.ElementTree as ET
 import sys
 
+sys.stdout.reconfigure(line_buffering=True)
+
 current_dir = os.path.dirname(__file__)
 project_root = os.path.abspath(os.path.join(current_dir, ".."))
 sys.path.insert(0, project_root)
@@ -27,7 +29,8 @@ if getattr(sys, 'frozen', False):
             CONGRESS_API_KEY = config.get('CONGRESS_API_KEY')
             print("Loaded API key from config.json")
     except FileNotFoundError:
-        print(f"Error: {config_file} not found")
+        print(f"ERROR: {config_file} not found")
+        print(f"TO FIX: Make sure you have pulled the politician_pages_assets repo.")
         CONGRESS_API_KEY = None
         sys.exit()
 else:
@@ -49,6 +52,8 @@ else:
         
         if not CONGRESS_API_KEY:
             print("Error: Neither config.json nor environment variables found.")
+            print(f"TO FIX: Make sure you have pulled the politician_pages_assets repo.")
+
         else:
             print("Loaded CONGRESS_API_KEY from environment variables")
 
@@ -307,10 +312,12 @@ def get_starting_point(starting_file):
         print(f"Error: The file {starting_file} was not found. Starting from vote 1.")
         return 119, 1, 1
     except json.JSONDecodeError:
-        print("Error: Failed to decode JSON from the file. Check if the JSON is well-formed.")
+        print(f"Error: Failed to decode JSON from {starting_file}. Check if the JSON is well-formed.")
+        print("To FIX: Send to Madison")
         return None
     except Exception as e:
-        print(f"An unexpected error occurred in get_starting_point: {e}")
+        print(f"An unexpected error occurred in gen_voting_record_json.py/get_starting_point: {e}")
+        print(f"TO FIX: Send to Madison")
         return None
 
     
@@ -347,7 +354,7 @@ def gen_voting_record_json(max_records=1000):
         voting_records.json: File with house votes.
     """
     print("##############################################")
-    print("Calling gen_voting_record_json.py for House Data")
+    print("Getting House Voting Records")
 
     root =os.path.join(os.path.dirname(os.path.abspath(__file__)),  os.path.pardir)
     voting_records_json = os.path.join(root, "src", "generated_outputs", "voting_records.json")
@@ -383,9 +390,9 @@ def gen_voting_record_json(max_records=1000):
 
     my_logger.info(f"Done generating {voting_records_json}")
 
-
+    print("House voting records all retrieved.")
     print("##############################################")
-    print("Calling gen_voting_record_json.py for Senate Data")
+    print("Now getting Senate Voting Records")
 
     voting_records_senate_json = os.path.join(root, "src", "generated_outputs", "voting_records_senate.json")
 
@@ -419,7 +426,7 @@ def gen_voting_record_json(max_records=1000):
 
 
     my_logger.info(f"Done generating {voting_records_senate_json}")
-
+    print("Senate voting records all retrieved.")
 
 if __name__ == "__main__":
     """
@@ -439,7 +446,7 @@ if __name__ == "__main__":
         voting_records.json: File with house votes.
     """
     print("##############################################")
-    print("Calling gen_voting_record_json.py for House Data")
+    print("Getting House Voting Records")
 
 
     # Fix for PyInstaller executables
@@ -457,6 +464,7 @@ if __name__ == "__main__":
     try:
         with open(voting_records_json, 'r') as file:
             file_house_votes = json.load(file)
+            print("Found pre-existing voting_records.json, will load that in first")
     except FileNotFoundError:
         file_house_votes = []
 
@@ -478,17 +486,15 @@ if __name__ == "__main__":
         print(f"Now proceeding for congress {congress} session {session}")
         house_start = 1
 
-
+    print("Now saving House records.")
     #Now save with full voting records
     with open(voting_records_json, 'w') as file:
         # Use indent for clean formatting
         json.dump(new_house_data, file, indent=2)
 
-    my_logger.info(f"Done generating {voting_records_json}")
-
-
+    print("House voting records all retrieved.")
     print("##############################################")
-    print("Calling gen_voting_record_json.py for Senate Data")
+    print("Now getting Senate Voting Records")
 
     voting_records_senate_json = os.path.join(root, "src", "generated_outputs", "voting_records_senate.json")
 
@@ -515,12 +521,12 @@ if __name__ == "__main__":
 
         senate_start = 1
 
+    print("Now saving Senate voting records.")
     #Now save with full voting records
     with open(voting_records_senate_json, 'w') as file:
         # Use indent for clean formatting
         json.dump(new_senate_data, file, indent=2)
 
-
-    my_logger.info(f"Done generating {voting_records_senate_json}")
+    print(f"Files saved. Done with {voting_records_senate_json}")
 
 

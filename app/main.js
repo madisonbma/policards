@@ -66,9 +66,7 @@ async function deleteFile(filePath) {
     await fsPromises.unlink(filePath);
     console.log(`File ${filePath} deleted successfully`);
   } catch (err) {
-    if (err.code === 'ENOENT') {
-      console.log('File does not exist');
-    } else {
+    if (!(err.code === 'ENOENT')) {
       console.error('Error deleting file:', err);
     }
   }
@@ -94,6 +92,66 @@ function runPythonScript(scriptPath, args = []) {
     });
   });
 }
+
+function sendSafe(sender, channel, data) {
+    // 1. Check if sender exists
+    // 2. Check if the window hasn't been destroyed (user closed the modal)
+    if (sender && !sender.isDestroyed()) {
+        sender.send(channel, data);
+    } else {
+        console.warn("Attempted to send to a destroyed window. Ignoring.");
+    }
+}
+
+
+function runPythonScriptAndStream(scriptPath, args, sender) {
+    return new Promise((resolve, reject) => {
+        const pythonProcess = spawn('python', [scriptPath, ...args]);
+
+        pythonProcess.stdout.on('data', (data) => {
+          const text = data.toString('utf8');
+          if (sender && !sender.isDestroyed()) {
+              sender.send('terminal-update', text);
+            }
+        });
+
+        // Resolve the promise when the process exits successfully
+        pythonProcess.on('close', (code) => {
+            if (code === 0) {
+                console.log("Python script ", scriptPath, " finished successfully.");
+                resolve(); 
+            } else {
+                reject(new Error(`Python process exited with code ${code}`));
+            }
+        });
+
+        pythonProcess.on('error', (err) => {
+            reject(err);
+        });
+    });
+}
+
+
+function runPythonScriptAndStream_nopromise(scriptPath, args, sender) {
+    const pythonProcess = spawn('python', [scriptPath, ...args]);
+
+    pythonProcess.stdout.on('data', (data) => {
+        // Send each chunk of data to the UI
+        sendSafe(sender, 'terminal-update', data.toString());    
+        console.log(`Python: ${data}`);
+    });
+
+    pythonProcess.stderr.on('data', (data) => {
+      sendSafe(sender, 'terminal-update', `ERROR: ${data.toString()}`);
+      console.log(`ERROR: ${data.toString()}`);
+    });
+
+    sender.on('destroyed', () => {
+        pythonProcess.kill();
+        console.log('Killed process')
+    });
+}
+
 
 
 /////////////////////////////////////////////////////
@@ -140,23 +198,10 @@ ipcMain.handle('open-update-window', () => {
 });
 
 // Handle gen reps (step 1 of gen card): python call
-ipcMain.handle('gen-reps-json', async () => {
+ipcMain.handle('gen-reps-json', async (event) => {
   try {
     const pythonScript = path.join(__dirname, '../src/gen_reps_json.py');
-
-    await new Promise((resolve, reject) => {
-      exec(`python "${pythonScript}"`, (error, stdout, stderr) => {
-        if (error) {
-          reject(`Python Error: ${error.message}`);
-          return;
-        }
-        if (stderr) {
-          console.log('Python stderr:', stderr);
-        }
-        console.log('Python stdout:', stdout);
-        resolve();
-      });
-    });
+    await runPythonScriptAndStream(pythonScript, [], event.sender);
 
     return { success: true, message: 'Generated Reps' };
   } catch (error) {
@@ -165,23 +210,10 @@ ipcMain.handle('gen-reps-json', async () => {
 });
 
 // Handle gen votes (step 2 of gen card): python call
-ipcMain.handle('gen-voting-record-json', async () => {
+ipcMain.handle('gen-voting-record-json', async (event) => {
   try {
     const pythonScript = path.join(__dirname, '../src/gen_voting_record_json.py');
-
-    await new Promise((resolve, reject) => {
-      exec(`python "${pythonScript}"`, (error, stdout, stderr) => {
-        if (error) {
-          reject(`Python Error: ${error.message}`);
-          return;
-        }
-        if (stderr) {
-          console.log('Python stderr:', stderr);
-        }
-        console.log('Python stdout:', stdout);
-        resolve();
-      });
-    });
+    await runPythonScriptAndStream(pythonScript, [], event.sender);
 
     return { success: true, message: 'Generated Votes' };
   } catch (error) {
@@ -190,23 +222,10 @@ ipcMain.handle('gen-voting-record-json', async () => {
 });
 
 //combine data, aka make congressmen_mod.json
-ipcMain.handle('combine-data', async () => {
+ipcMain.handle('combine-data', async (event) => {
   try {
     const pythonScript = path.join(__dirname, '../src/combine_data.py');
-
-    await new Promise((resolve, reject) => {
-      exec(`python "${pythonScript}"`, (error, stdout, stderr) => {
-        if (error) {
-          reject(`Python Error: ${error.message}`);
-          return;
-        }
-        if (stderr) {
-          console.log('Python stderr:', stderr);
-        }
-        console.log('Python stdout:', stdout);
-        resolve();
-      });
-    });
+    await runPythonScriptAndStream(pythonScript, [], event.sender);
 
     return { success: true, message: 'Created congressmen_mod.json' };
   } catch (error) {
@@ -215,53 +234,89 @@ ipcMain.handle('combine-data', async () => {
 });
 
 //gen card
-ipcMain.handle('gen-card', async () => {
+ipcMain.handle('gen-card', async (_event, name) => {
+  console.log("Received from renderer: ", name)
   try {
     const pythonScript = path.join(__dirname, '../src/gen_temp_for_javascript.py');
     const jsxScript = path.join(__dirname, '../src/fill_social_template.jsx');
     const tempFile = path.join(__dirname, '../src/generated_outputs/temp.txt');
+    const outputDir = path.join(__dirname, '../cards_ps');
+    const replacements = {
+      ',': '',
+      '"': '',
+      '.': '',
+      ' ': '_'
+    };
+    const regex = new RegExp(Object.keys(replacements).map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'), 'g');
+    const sanitizedName = name.replace(regex, (match) => replacements[match] || '')
+                          .toLowerCase();
+    const outputFileName = `${sanitizedName}_card.psd`;
+    const outputPath = path.join(outputDir, outputFileName);
 
-    await deleteFile(tempFile);
+
     //1: gen temp for javascript
-
-    await runPythonScript(pythonScript, name);
+    await deleteFile(tempFile);
+    await runPythonScript(pythonScript, [name]);
     console.log("Success! temp.txt has been created.");
-    // 2: Check if temp.txt was created
+
+
+    // 2: Check if temp.txt was created, remove previous psd file if exists
     if (!fs.existsSync(tempFile)) {
       throw new Error('temp.txt was not generated');
     }
+    await deleteFile(outputPath);
 
-    // 3: Run Photoshop script using ExtendScript
-    await new Promise((resolve, reject) => {
-      const isWindows = process.platform === 'win32';
-      const isMac = process.platform === 'darwin';
 
-      let command;
-      if (isWindows) {
-        // Windows: Use Photoshop's executable with the script
-        command = `"C:\\Program Files\\Adobe\\Adobe Photoshop 2026\\Photoshop.exe" "${jsxScript}"`;
-      } else if (isMac) {
-        // Mac: Use osascript to tell Photoshop to run the script
-        command = `osascript -e 'tell application "Adobe Photoshop 2026" to do javascript file("${jsxScript}")'`;
-      } else {
-        reject('Unsupported operating system');
-        return;
-      }
+    // 3: Launch Photoshop
+    //await new Promise((resolve, reject) => {
+    const isWindows = process.platform === 'win32';
+    const isMac = process.platform === 'darwin';
 
-      exec(command, (error, stdout, stderr) => {
-        if (error) {
-          reject(`Photoshop Error: ${error.message}`);
-          return;
+    let command;
+    if (isWindows) {
+      // Windows: Use Photoshop's executable with the script
+      command = `start "" "C:\\Program Files\\Adobe\\Adobe Photoshop 2026\\Photoshop.exe" "${jsxScript}"`;
+    } else if (isMac) {
+      // Mac: Use osascript to tell Photoshop to run the script
+      command = `osascript -e 'tell application "Adobe Photoshop 2026" to do javascript file("${jsxScript}")' &`;
+    } else {
+      reject('Unsupported operating system');
+      return;
+    }
+
+    exec(command);
+    console.log("Photoshop executed");
+
+    //4: Wait for file completion
+    return await new Promise((resolve, reject) => {
+        const timeoutMs = 90000; // 90 second limit
+        
+        // Setup the Timeout
+        const timer = setTimeout(() => {
+            watcher.close();
+            reject(new Error("Timeout: Photoshop took too long to generate the card."));
+        }, timeoutMs);
+
+        // Setup the File Watcher
+        const watcher = fs.watch(outputDir, (eventType, filename) => {
+            if (filename === outputFileName && fs.existsSync(outputPath)) {
+                clearTimeout(timer);
+                watcher.close();
+                console.log("File generated successfully!")
+                resolve({ success: true, path: outputPath });
+            }
+        });
+
+        // Quick check in case it finished instantly before the watcher started
+        if (fs.existsSync(outputPath)) {
+            clearTimeout(timer);
+            watcher.close();
+            console.log("File generated successfully!")
+            resolve({ success: true, path: outputPath });
         }
-        if (stderr) {
-          console.log('Photoshop stderr:', stderr);
-        }
-        console.log('Photoshop stdout:', stdout);
-        resolve();
-      });
     });
 
-    return { success: true, message: 'Card generated successfully!' };
+    //return { success: true, message: 'Card generated successfully!' };
   } catch (error) {
     return { success: false, message: error.toString() };
   }

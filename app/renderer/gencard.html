@@ -9,20 +9,11 @@
 <body>
   <div class="container">
     <h1>Generate Card</h1>
-    <p>Would you like to update any data or skip right to card generation?</p>
-    <button id="updateDataBtn">Update Data</button>
+    <p>Would you like to update the voting records or skip right to card generation?</p>
+    <button id="updateDataBtn">Update Records</button>
     <button id="genCardsBtn">Generate Cards</button>
     <div class="spinner" id="spinner"></div>
     <div class="status" id="status"></div>
-
-    <!-- Output Display Area -->
-    <div class="output-container" id="outputContainer">
-      <div class="output-header">
-        <h3>Script Output:</h3>
-        <button id="clearOutputBtn" class="clear-btn">Clear</button>
-      </div>
-      <pre id="outputDisplay"></pre>
-    </div>
   </div>
 
   <!-- Manual Insert Modal -->
@@ -34,12 +25,14 @@
         <p>Do you want to update congressmen.json? Do this when people update, like Jan 3.</p>
         <button id="yesGenCongressmenBtn">Yes</button>
         <button id="noGenCongressmenBtn">No</button>
+        <div id="terminalOutput1" class="terminal"></div>
       </div>
       <!-- Step 2: Regenerate voting_record.json -->
       <div id="step2" class="step">
         <p>Do you want to update voting_record.json? Do this often.</p>
         <button id="yesGenVotesBtn">Yes</button>
         <button id="noGenVotesBtn">No</button>
+        <div id="terminalOutput2" class="terminal"></div>
       </div>
 
       <!-- Step 3: Name Selection -->

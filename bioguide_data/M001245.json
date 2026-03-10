@@ -1,0 +1,87 @@
+{
+  "data": {
+    "usCongressBioId": "M001245",
+    "familyName": "Menefee",
+    "givenName": "Christian",
+    "middleName": "D.",
+    "unaccentedFamilyName": "Menefee",
+    "unaccentedGivenName": "Christian",
+    "unaccentedMiddleName": "D.",
+    "birthDate": "1988-04-18",
+    "birthCirca": false,
+    "birthDateUnknown": false,
+    "deathCirca": false,
+    "image": [
+      {
+        "contentUrl": "/bioguide-staging/assets/698206b2eb30d3271899373e.jpg",
+        "caption": "Image courtesy of the Member",
+        "name": "M001245_001"
+      }
+    ],
+    "profileText": "a Representative from Texas; born in California, April 18, 1988; attended Klein Forest High School, Klein, Tex.; graduated from Alief Hastings High School, Houston, Tex., 2006; B.B.A, University of Texas, San Antonio, Tex., 2010; J.D., Washington University School of Law, St. Louis, Mo., 2013; lawyer, private practice; county attorney, Harris County, Tex., 2021-2025; acting county attorney, Harris County, Tex., 2025; elected as a Democrat to the One Hundred Nineteenth Congress, by special election, to fill the vacancy caused by the death of United States Representative Sylvester Turner (January 31, 2026-present).",
+    "relationship": [],
+    "asset": [
+      {
+        "name": "M001245_001",
+        "assetType": "Image",
+        "contentUrl": "/bioguide-published/assets/698206b2eb30d3271899373e.jpg",
+        "creditLine": "Image courtesy of the Member",
+        "associatedEntity": [],
+        "accessionNumber": "PA2026.02.0001a",
+        "usageRight": [
+          "Import to Congress.gov",
+          "Restricted"
+        ],
+        "uploadDate": "2026-02-03T09:32:14.321",
+        "uploadDateISO": "2026-02-03T14:32:14.321Z"
+      }
+    ],
+    "jobPositions": [
+      {
+        "job": {
+          "name": "Representative",
+          "jobType": "CongressMemberJob"
+        },
+        "startDate": "2026-01-31",
+        "startCirca": false,
+        "endCirca": false,
+        "congressAffiliation": {
+          "congress": {
+            "name": "The 119th United States Congress",
+            "congressNumber": 119,
+            "congressType": "USCongress",
+            "startDate": "2025-01-03"
+          },
+          "electionType": "Special Runoff",
+          "partyAffiliation": [
+            {
+              "party": {
+                "name": "Democrat"
+              },
+              "startCirca": false,
+              "endCirca": false
+            }
+          ],
+          "caucusAffiliation": [
+            {
+              "party": {
+                "name": "Democrat"
+              },
+              "startCirca": false,
+              "endCirca": false
+            }
+          ],
+          "represents": {
+            "regionType": "DistrictRegion",
+            "regionCode": "TX"
+          }
+        }
+      }
+    ],
+    "creativeWork": [],
+    "researchRecord": [],
+    "deleted": false,
+    "publishedDate": "2026-02-03T09:33:49.569",
+    "publishedDateISO": "2026-02-03T14:33:49.569Z"
+  }
+}

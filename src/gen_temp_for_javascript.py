@@ -632,6 +632,22 @@ def merge_in_supplement(rep_info, supplement):
 
 
 
+def get_rep_info(full_rep_info, name):
+    """
+    Name has already been vetted by the electron app.
+    Don't need to check for it having a match in rep_info.
+    Return rep_info for that rep.
+    """
+
+
+    for rep_info in full_rep_info:
+        rep_name = rep_info.get('name')
+        if rep_name == name:
+            return rep_info
+        
+    print(f"Representative {name} not found")
+    return None
+
 def gen_temp_for_javascript_old(test_card=True):
 
     current_dir = os.path.dirname(__file__)
@@ -679,7 +695,7 @@ def gen_temp_for_javascript_old(test_card=True):
             create_temp(rep, absolute_stats)
 
 
-
+#used for main.py
 def gen_temp_for_javascript(rep_info):
 
     current_dir = os.path.dirname(__file__)
@@ -708,18 +724,29 @@ def gen_temp_for_javascript(rep_info):
     pull_pic_from_web(rep_info, dummy=False)
 
 
+#used for electron
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Pull info for Photoshop automation")
     parser.add_argument('name', help="Name of congressman to run")
 
     args = parser.parse_args()
 
-    rep_info = args.name
+    name = args.name
 
     current_dir = os.path.dirname(__file__)
     abs_stat_f = os.path.join(current_dir, "generated_outputs", "absolute_stats.json")
     supplement_f = os.path.join(current_dir, "generated_outputs", "supplement_congressmen.json")
+    congressmen_f = os.path.join(current_dir, "generated_outputs", "congressmen_mod.json")
 
+    #Load in rep_info
+    try: 
+        with open(congressmen_f, 'r') as f:
+            full_rep_info = json.load(f)
+    except Exception as e:
+        my_logger.error("There is an issue loading in the congressmen_mod.json. Quitting.")
+
+    rep_info = get_rep_info(full_rep_info, name)
+    
     #Load in the absolute_stats JSON
     try: 
         with open(abs_stat_f, 'r') as abs_f:

@@ -33,10 +33,14 @@ const step7 = document.getElementById('step7');
 //Step 1 elements
 const yesConBtn = document.getElementById('yesGenCongressmenBtn')
 const noConBtn = document.getElementById('noGenCongressmenBtn')
+const terminal1 = document.getElementById('terminalOutput1');
+
 
 //Step 2 elements
 const yesVoteBtn = document.getElementById('yesGenVotesBtn')
 const noVoteBtn = document.getElementById('noGenVotesBtn')
+const terminal2 = document.getElementById('terminalOutput2');
+
 
 // Step 3 elements
 const nameInput = document.getElementById('nameInput');
@@ -65,10 +69,6 @@ const addAnotherBtn = document.getElementById('addAnotherBtn');
 const genNewCardBtn = document.getElementById('genNewCardBtn');
 const quitBtn = document.getElementById('quitBtn');
 
-// Output display elements
-const outputContainer = document.getElementById('outputContainer');
-const outputDisplay = document.getElementById('outputDisplay');
-const clearOutputBtn = document.getElementById('clearOutputBtn');
 
 
 ////////////////////////////////
@@ -82,11 +82,13 @@ let currentFieldValue = null;
 
 const LIST_FIELDS = ['committees', 'education', 'military', 'illegal', 'failed_runs', 'work_history', 'congress_highlights', 'accolades', 'family', 'top_donors', 'top_issues'];
 
-function showOutput(text) {
+/*function showOutput(text) {
   outputContainer.classList.add('show');
   const timestamp = new Date().toLocaleTimeString();
   outputDisplay.textContent += `[${timestamp}]\n${text}\n\n`;
   outputDisplay.scrollTop = outputDisplay.scrollHeight;
+
+  
 }
 
 function clearOutput() {
@@ -95,8 +97,12 @@ function clearOutput() {
 }
 
 clearOutputBtn.addEventListener('click', clearOutput);
+*/
+
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 function showStatus(message, isSuccess) {
+  console.log(message);
   status_doc.textContent = message;
   status_doc.className = 'status show ' + (isSuccess ? 'success' : 'error');
   setTimeout(() => {
@@ -170,9 +176,30 @@ function displayCurrentData() {
     'top_issues': 'Top Issues',
     'birthplace': 'Birthplace',
   };
-  
+
+  //selectedRep == congressmen_mod.json rep info
+  //supplement   
+  let supplemental_data = supplement.find(s => s.name === selectedRep.name);
+
+
+  let value;
   fieldsToDisplay.forEach(field => {
-    const value = selectedRep[field];
+    // Check if we should append both lists together
+    if (typeof LIST_FIELDS !== 'undefined' && LIST_FIELDS.includes(field)) {
+        const baseList = Array.isArray(selectedRep[field]) ? selectedRep[field] : [];
+        const suppList = (supplemental_data && Array.isArray(supplemental_data[field])) 
+                         ? supplemental_data[field] 
+                         : [];
+        
+        // Merge both arrays and remove any duplicates (using Set)
+        value = [...new Set([...baseList, ...suppList])];
+    } else {
+        // Fallback to your previous "Priority" logic for non-list fields
+        value = (supplemental_data && supplemental_data[field] !== undefined) 
+                ? supplemental_data[field] 
+                : selectedRep[field];
+    }
+
     const row = document.createElement('div');
     row.className = 'data-row';
     
@@ -204,6 +231,21 @@ function displayCurrentData() {
     } else {
       valueDiv.textContent = value;
     }
+
+    const date_regex = /^\d{4}\-\d{2}\-\d{2}$/;
+    if (field === "birthDate" && !date_regex.test(value)) {
+      console.log("birthDate is not YYYY-MM-DD. Highlighting.");
+      keyDiv.style.background = '#f1ff2f';
+    }
+    else if (field === "top_donors" && valueDiv.textContent === '(empty)') {
+      console.log("Top Donors is empty. Highlighting.");
+      keyDiv.style.background = '#f1ff2f';
+    }
+    else if (field === "top_issues" && valueDiv.textContent === '(empty)') {
+      console.log("Top Issues is empty. Highlighting.");
+      keyDiv.style.background = '#f1ff2f';
+    }
+
     
     row.appendChild(keyDiv);
     row.appendChild(valueDiv);
@@ -226,24 +268,40 @@ async function loadData() {
 
 //Step 1: Ask to update congressmen data
 yesConBtn.addEventListener('click', async () => {
-  console.log("Running API pull for congressmen.json");
   yesConBtn.disabled = true;
   noConBtn.disabled = true;
   setLoading(true);
+
+  terminal1.innerHTML = "Running API pull for congressmen.json";
+  //init the handler and terminal interaction
+  const handler1 = (data) => {
+        console.log("Data received:", data); 
+        console.log("Data type:", typeof data);
+        const message = (typeof data === 'string') ? data : JSON.stringify(data);
+        const p = document.createElement('p');
+        p.textContent = message;
+        terminal1.appendChild(p);
+        //terminal2.innterText += message;
+        terminal1.scrollTop = terminal1.scrollHeight;
+  };
+
+  window.electronAPI.onTerminalUpdate(handler1);
+  console.log("Listener is active, now triggering Python...");
   const result = await window.electronAPI.genRepsJSON();
+  window.electronAPI.removeTerminalListener(handler1);
   // Display Python output
-  if (result.output) {
-    showOutput(result.output);
-  }
+
   if (result.success) {
     console.log("success");
     setLoading(false);
     yesConBtn.disabled = false;
     noConBtn.disabled = true;
-
+    await delay(5000); // Wait 5s
     showStep(2);
   } else {
     showStatus('Error making congressmen.json: ' + result.message, false);
+    p.textContent = "ERROR: Copy this section, send to Madison, and close the window.";
+    terminal1.appendChild(p);
     yesConBtn.disabled = false;
     noConBtn.disabled = true;
 
@@ -259,55 +317,80 @@ noConBtn.addEventListener('click', () => {
 //Step 2: Ask to update voting data
 //in both, need to re-merge data.
 yesVoteBtn.addEventListener('click', async () => {
-  console.log("Running API pull for voting_record.json");
   yesVoteBtn.disabled = true;
   noVoteBtn.disabled = true;
-  setLoading(true);
+  terminal2.innerHTML = "Running API pull for voting_record.json";
+
+  //init the handler and terminal interaction
+  const handler2 = (data) => {
+        console.log("Data received:", data); 
+        console.log("Data type:", typeof data);
+        const message = (typeof data === 'string') ? data : JSON.stringify(data);
+        const p = document.createElement('p');
+        p.textContent = message;
+        terminal2.appendChild(p);
+        terminal2.scrollTop = terminal2.scrollHeight;
+  };
+
+  window.electronAPI.onTerminalUpdate(handler2);
+  console.log("Listener is active, now triggering Python...");
   const result_vote = await window.electronAPI.genVotingRecordJSON();
-  if (result_vote.output) {
-    showOutput(result_vote.output);
-  }
+
   if (result_vote.success) {
-    console.log("success in genVotingRecordJSON");
+    console.log("Success in genVotingRecordJSON");
     const result_combine = await window.electronAPI.combineData();
-    if (result_combine.output) {
-      showOutput(result_combine.output);
-    }
+    window.electronAPI.removeTerminalListener(handler2);
+
     if (result_combine.success) {
-      console.log('success in combineData')
+      showStatus('Success in combineData. All is good...');
+      await delay(5000);
       const loaded = await loadData();
       setLoading(false);
-      yesVoteBtn.disabled = false;
-      noVoteBtn.disabled = false;
+      //yesVoteBtn.disabled = false;
+      //noVoteBtn.disabled = false;
       if (loaded){
         showStep(3);
       }
     }
     else {
       showStatus('Error combining data: ' + result_combine.message, false);
-      yesVoteBtn.disabled = false;
-      noVoteBtn.disabled = false;
-
+      p.textContent = "ERROR: Copy this section, send to Madison, and close the window.";
+      terminal2.appendChild(p);
     }
 
   } else {
     showStatus('Error making voting_record.json: ' + result_vote.message, false);
-    yesVoteBtn.disabled = false;
-    noVoteBtn.disabled = false;
+    p.textContent = "ERROR: Copy this section, send to Madison, and close the window.";
+    terminal2.appendChild(p);
   }
 
 });
+
 noVoteBtn.addEventListener('click', async () => {
   console.log("Not updating voting_record.json");
+  terminal2.innerHTML = "Running merge on data sets";
   setLoading(true);
   noVoteBtn.disabled = true;
   yesVoteBtn.disabled = true;
+
+    //init the handler and terminal interaction
+  const handler3 = (data) => {
+        console.log("Data received:", data); 
+        console.log("Data type:", typeof data);
+        const message = (typeof data === 'string') ? data : JSON.stringify(data);
+        const p = document.createElement('p');
+        p.textContent = message;
+        terminal2.appendChild(p);
+        terminal2.scrollTop = terminal2.scrollHeight;
+  };
+  window.electronAPI.onTerminalUpdate(handler3);
+
   const result_combine = await window.electronAPI.combineData();
-  if (result_combine.output) {
-    showOutput(result_combine.output);
-  }
+  window.electronAPI.removeTerminalListener(handler3);
+
   if (result_combine.success) {
-    console.log('success in combineData')
+    console.log('Success in combineData. All is good...')
+    await delay(5000);
     const loaded = await loadData();
     setLoading(false);
     if (loaded){
@@ -316,8 +399,8 @@ noVoteBtn.addEventListener('click', async () => {
   }
   else {
     showStatus('Error loading/combining data: ' + result_combine.message, false);
-    noVoteBtn.disabled = false;
-    yesVoteBtn.disabled = false;
+    p.textContent = "ERROR: Copy this section, send to Madison, and close the window.";
+    terminal2.appendChild(p);
   }
 
 });
@@ -406,19 +489,46 @@ fieldSubmitBtn.addEventListener('click', () => {
     showStatus('Please select a field', false);
     return;
   }
-  
-  currentFieldValue = selectedRep[selectedField];
-  
+    
   document.getElementById('selectedName2').textContent = selectedRep.name;
   document.getElementById('selectedField').textContent = selectedField;
   
-  // Display current value
-  if (currentFieldValue === undefined || currentFieldValue === null) {
-    currentValue.textContent = '(empty)';
-  } else if (Array.isArray(currentFieldValue)) {
-    currentValue.innerHTML = '<ul>' + currentFieldValue.map(v => '<li>' + v + '</li>').join('') + '</ul>';
+
+  // Calculate the combined value specifically for this display block
+  let supplemental_data = supplement.find(s => s.name === selectedRep.name);
+  let displayValue;
+  if (typeof LIST_FIELDS !== 'undefined' && LIST_FIELDS.includes(selectedField)) {
+      const baseList = Array.isArray(selectedRep[selectedField]) ? selectedRep[selectedField] : [];
+      const suppList = (supplemental_data && Array.isArray(supplemental_data[selectedField])) 
+                        ? supplemental_data[selectedField] 
+                        : [];
+      
+      // Merge both arrays and remove any duplicates (using Set)
+      displayValue = [...new Set([...baseList, ...suppList])];
   } else {
-    currentValue.textContent = currentFieldValue;
+      // Fallback to your previous "Priority" logic for non-list fields
+      displayValue = (supplemental_data && supplemental_data[selectedField] !== undefined) 
+              ? supplemental_data[selectedField] 
+              : selectedRep[selectedField];
+  }
+
+  console.log("Using data ", displayValue);
+  // Display the value
+  if (displayValue === undefined || displayValue === null || displayValue === '') {
+      currentValue.textContent = '(empty)';
+  } else if (Array.isArray(displayValue)) {
+      if (displayValue.length === 0) {
+          currentValue.textContent = '(empty)';
+      } else {
+          currentValue.innerHTML = '<ul>' + 
+              displayValue
+                  .filter(v => v !== '') // Remove any empty strings from the list
+                  .map(v => '<li>' + v + '</li>')
+                  .join('') + 
+              '</ul>';
+      }
+  } else {
+      currentValue.textContent = displayValue;
   }
   
   showStep(5);
@@ -439,11 +549,23 @@ saveBtn.addEventListener('click', async () => {
     showStatus('Please enter a value', false);
     return;
   }
+
   
   // Update supplement
   const isListField = LIST_FIELDS.includes(selectedField);
   let existingEntry = supplement.find(s => s.name === selectedRep.name);
-  
+
+  if (selectedField == "birthDate") {
+    valueLabel.textContent = 'Enter new birth date (YYYY-MM-DD):';
+  }
+  else if (isListField) {
+    valueLabel.textContent = "Please enter a single bullet point at a time.";
+  }
+  else {
+    valueLabel.textContent = 'Enter new value:';
+  }
+
+
   if (existingEntry) {
     if (isListField) {
       if (!existingEntry[selectedField]) {
@@ -479,12 +601,11 @@ backToConfirmBtn.addEventListener('click', () => showStep(3));
 genCardBtn.addEventListener('click', async () => {
   setLoading(true);
   console.log("running gen card");
+  console.log("Sending to main.js: ", selectedRep.name);
+  showStatus('Generating card. May take 1-2 minutes if Photoshop not open yet.');
 
-  const result = await window.electronAPI.genCard();
+  const result = await window.electronAPI.genCard(selectedRep.name);
 
-  if (result.output) {
-    showOutput(result.output);
-  }
   if (result.success) {
     console.log("done with gen card");
     setLoading(false);
@@ -492,11 +613,14 @@ genCardBtn.addEventListener('click', async () => {
   }
   else {
     showStatus('Error generating card: ' + result.message, false);
+    setLoading(false);
   }
 });
 
 addAnotherBtn.addEventListener('click', () => {
-  openModal();
+  //openModal();
+  loadData();
+  displayCurrentData();
   showStep(4);
 });
 

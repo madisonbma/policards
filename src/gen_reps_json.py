@@ -7,6 +7,9 @@ import json
 import time
 import sys
 
+sys.stdout.reconfigure(line_buffering=True)
+
+
 # --- Configuration ---
 if getattr(sys, 'frozen', False):
     application_path = os.path.dirname(sys.executable)
@@ -20,7 +23,8 @@ if getattr(sys, 'frozen', False):
             CONGRESS_API_KEY = config.get('CONGRESS_API_KEY')
             print("Loaded API key from config.json")
     except FileNotFoundError:
-        print(f"Error: {config_file} not found")
+        print(f"ERROR: {config_file} not found")
+        print(f"TO FIX: Make sure politician_pages_assets repo has been cloned.")
         CONGRESS_API_KEY = None
         sys.exit()
 else:
@@ -41,7 +45,8 @@ else:
         CONGRESS_API_KEY = os.getenv("CONGRESS_API_KEY")
         
         if not CONGRESS_API_KEY:
-            print("Error: Neither config.json nor environment variables found.")
+            print("ERROR: Neither config.json nor environment variables found.")
+            print(f"TO FIX: Make sure politician_pages_assets repo has been cloned.")
         else:
             print("Loaded CONGRESS_API_KEY from environment variables")
 

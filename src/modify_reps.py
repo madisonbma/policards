@@ -3,6 +3,9 @@ import json
 import pandas as pd
 import sys
 
+sys.stdout.reconfigure(line_buffering=True)
+
+
 current_dir = os.path.dirname(__file__)
 project_root = os.path.abspath(os.path.join(current_dir, ".."))
 sys.path.insert(0, project_root)
@@ -19,38 +22,7 @@ from src.init_logger import my_logger
 
 ####################################################################################################
 
-def combine_on_bioguideID():
-    from collections import defaultdict
 
-    input_data = [
-        {"bioguideID": "A000001", "field1": "value1a", "field2": "value2a"},
-        {"bioguideID": "B000002", "field1": "value1b", "field2": "value2b"},
-        {"bioguideID": "A000001", "field1": "value1c", "field2": "value2c"}
-    ]
-
-    merged_data = defaultdict(list)
-
-    # 1. Iterate through the input data and group by bioguideID
-    for item in input_data:
-        bioguide_id = item['bioguideID']
-        # Create a tuple of the desired fields (Python tuples are ordered and immutable)
-        fields_tuple = (item['field1'], item['field2'])
-        merged_data[bioguide_id].append(fields_tuple)
-
-    # 2. Reformat the grouped data into the desired output structure
-    output_data = []
-    for bioguide_id, tuples_list in merged_data.items():
-        output_data.append({
-            "bioguideID": bioguide_id,
-            "combined_fields": tuples_list
-        })
-
-    # 3. Convert the result back to a JSON formatted string
-    output_json = json.dumps(output_data, indent=4)
-    print(output_json)
-
-
-############################################
 
 def update_endyear(df):
     """
@@ -451,13 +423,13 @@ def modify_reps(input_json_f, vote_f):
     try: 
         df = pd.read_json(input_json_f)
     except Exception as e:
-        print("There is an issue with the congressmen.json. Quitting.")
+        print("There is an issue converting congressmen.json to df. Quitting.")
         sys.exit()
 
     try: 
         vote_df = pd.read_json(vote_f)
     except Exception as e:
-        print("There is an issue with the voting_records.json. Quitting.")
+        print("There is an issue converting voting_records.json to df. Quitting.")
         sys.exit()
         
     df = update_endyear(df)
