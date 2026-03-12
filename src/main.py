@@ -6,24 +6,13 @@ import json
 from tkinter import filedialog
 import tkinter as tk
 from pathlib import Path
+import gen_temp_for_javascript
+import gen_reps_json
+import gen_voting_record_json
+import modify_reps
+import modify_votes
 
 
-current_dir = os.path.dirname(__file__)
-project_root = os.path.abspath(os.path.join(current_dir, ".."))
-sys.path.insert(0, project_root)
-
-from src.init_logger import my_logger
-
-import src.run_jsx
-import src.gen_temp_for_javascript
-import src.gen_reps_json
-import src.gen_voting_record_json
-import src.modify_reps
-import src.modify_votes
-#import src.gen_xls
-#import src.gen_cards
-
-#PHOTOSHOP_EXE_PATH = "C:\\Program Files\\Adobe\\Adobe Photoshop 2026\\Photoshop.exe" 
 CONFIG_NAME = "config.json"
 
 
@@ -54,9 +43,6 @@ def get_sub_directory(config, folder_key):
         os.makedirs(full_path, exist_ok=True)
     
     return full_path
-
-
-
 
 
 def get_photoshop_path():
@@ -96,7 +82,6 @@ import platform
 import tkinter as tk
 from tkinter import filedialog
 
-CONFIG_NAME = "config.json"
 
 def get_config_path():
     """Finds the config file next to the EXE/App or the Script."""
@@ -185,6 +170,15 @@ def get_yes_no_input(prompt):
         else:
             print("Invalid input. Please enter 'y' or 'n'.")
 
+def get_input(prompt):
+    """
+    Prompts the user for an input, no modifications.
+    """
+    while True:
+        user_input = input(f"{prompt}: ").strip()
+        return user_input
+
+
 def get_name_input(full_rep_info):
     """
     Docstring for get_name_input
@@ -193,7 +187,6 @@ def get_name_input(full_rep_info):
     
     :param prompt: Description
     """
-
 
     while True:
         user_input = input(f"Please provide the name of the representative you\'re trying to generate: ").lower().strip()
@@ -208,7 +201,7 @@ def get_name_input(full_rep_info):
             if rep_name.split(' ')[-1] == user_input.split(' ')[-1]: #check if last name matches
                 #if full name matches, return that one
                 if rep_name == user_input:
-                    return rep_info
+                    return rep_info.get('name')
                 else:
                     did_you_mean.append(rep_name)
     
@@ -270,6 +263,58 @@ def find_photoshop_dir(root_dir, prefix):
     return (matches[-1], names[-1])
 
 
+def load_from_config():
+    """Config file should be set from the app.
+    If not set properly, ask user input and store needed variables.
+    """
+    writeback = False
+    config_path = CONFIG_NAME
+    with open(config_path, 'r') as f:
+        config_data = json.load(f)
+
+    try: 
+        CONGRESS_API_KEY = config_data['CONGRESS_API_KEY']
+    except KeyError as e:
+        CONGRESS_API_KEY = get_input("Please enter the CONGRESS_API_KEY")
+        config_data['CONGRESS_API_KEY'] = CONGRESS_API_KEY
+        writeback = True
+    try: 
+        FEC_API_KEY = config_data['FEC_API_KEY']
+    except KeyError as e:
+        FEC_API_KEY = get_input("Please enter the FEC_API_KEY")
+        config_data['FEC_API_KEY'] = FEC_API_KEY
+        writeback = True
+
+    try: 
+        photoshop_year = config_data['photoshop_year']
+    except KeyError as e:
+        photoshop_year = get_input("Please enter the photoshop year version you have")
+        config_data['photoshop_year'] = photoshop_year
+        writeback = True
+
+    try: 
+        pp_path = config_data['politician_pages_path']
+    except KeyError as e:
+        pp_path = get_input("Please enter the path of your politician pages repo")
+        config_data['politician_pages_path'] = pp_path
+        writeback = True
+
+    try: 
+        pp_assets_path = config_data['politician_pages_assets_path']
+    except KeyError as e:
+        pp_assets_path = get_input("Please enter the path of your politician pages assets repo")
+        config_data['politician_pages_assets_path'] = pp_assets_path
+        writeback = True
+
+    if writeback:
+        with open(config_path, 'w') as f:
+            json.dump(config_data, f, indent=4)
+        print(f"Updated config data and saved to {CONFIG_NAME}")     
+
+    print("Using the following config: ")
+    print(config_data)
+    return config_data
+
 
 if __name__ == "__main__":
 
@@ -280,24 +325,25 @@ if __name__ == "__main__":
     #print(f"Using Photoshop at: {ps_exe}")
 
     #Not using config anymore.
+    config = load_from_config()
     current_os = platform.system() # 'Windows' or 'Darwin' (Mac)
+
+    project_root = config['politician_pages_path']
 
     if current_os == "Darwin": #macOS
         photoshop_path, photoshop_exe = find_photoshop_dir("/Applications/", "Adobe Photoshop")
         photoshop_path = photoshop_path / f"{photoshop_exe}.app"
         ps_exe = photoshop_path
-        #print(photoshop_path)
         #photoshop_path = "/Applications/Adobe Photoshop 2026/Adobe Photoshop 2026.app"
 
     elif current_os == "Windows":
         photoshop_path,_ = find_photoshop_dir("C:\\Program Files\\Adobe", "Adobe Photoshop")
         photoshop_path = photoshop_path / f"Photoshop.exe"
         ps_exe = photoshop_path
-        #print(photoshop_path)
         #photoshop_path = "C:\\Program Files\\Adobe\\Adobe Photoshop 2026\\Photoshop.exe"
     else:
-        config = load_or_init_config()
-        ps_exe = config["settings"]["photoshop_path"]
+        print("WARNING: Unknown operation system.")
+        sys.exit()
 
 
     congressmen_json = os.path.join(project_root, "src", "generated_outputs", "congressmen.json")
@@ -322,12 +368,12 @@ if __name__ == "__main__":
 
             if get_yes_no_input(f"congressmen.json already exists, was created on {readable_time}. Do you want to force regeneration?"):
                 print("Regenerating congressmen.json")
-                src.gen_reps_json.gen_reps_json()
+                gen_reps_json.gen_reps_json(config['CONGRESS_API_KEY'], config['politician_pages_path'])
             else:
                 print("Not regenerating, running with pre-existing congressmen.json.")    
         else:
             print("src/generated_outputs/congressmen.json does not exist. Generating...")
-            src.gen_reps_json.gen_reps_json()
+            gen_reps_json.gen_reps_json(config['CONGRESS_API_KEY'], config['politician_pages_path'])
 
         #Generate the voting record json if it doesn't exist or if forcing override.
         voting_json = os.path.join(project_root, "src", "generated_outputs", "voting_records.json")
@@ -337,36 +383,30 @@ if __name__ == "__main__":
 
             if get_yes_no_input(f"voting_records.json already exists, was created on {readable_time}. Do you want to pull the votes since then?"):
                 print("Pulling new voting_records.json")
-                src.gen_voting_record_json.gen_voting_record_json() 
+                gen_voting_record_json.gen_voting_record_json() 
             else:
                 print("Not regenerating, running with pre-existing voting_records.json.")    
         else:
             print("voting_records.json does not exist. Generating...")
-            src.gen_voting_record_json.gen_voting_record_json()    
+            gen_voting_record_json.gen_voting_record_json()    
 
 
         #Now perform data analytics on pulled raw data.
         voting_senate_json = os.path.join(project_root, "src", "generated_outputs", "voting_records_senate.json")
         vote_avg_json = os.path.join(project_root, "src", "generated_outputs", "vote_avg.json")
-        src.modify_votes.modify_votes(voting_json, voting_senate_json)
-        src.modify_reps.modify_reps(congressmen_json, vote_avg_json)
+        modify_votes.modify_votes(voting_json, voting_senate_json)
+        modify_reps.modify_reps(congressmen_json, vote_avg_json)
 
 
-    #Now generate cards
-    #if get_yes_no_input(f"Generate for all the congressmen? NOTE not fully functional"):
-    #    print("Generating cards.")
-    #    print("Running Photoshop script...")
-    #    run_photoshop_script(ps_exe, os.path.join(project_root, "src", "fill_social_template.jsx"))
 
-    
-    #else:
+
     #Load in the congressmen data
     try: 
         with open(congressmen_mod_json, 'r') as f:
             full_rep_info = json.load(f)
     except Exception as e:
-        my_logger.error("There is an issue loading in the congressmen_mod.json. Quitting.")
+        print("There is an issue loading in the congressmen_mod.json. Quitting.")
 
-    rep_info = get_name_input(full_rep_info) #ask user for name to generate
-    src.gen_temp_for_javascript.gen_temp_for_javascript(rep_info) #generate the temp file with info to pull from json
+    rep_name = get_name_input(full_rep_info) #ask user for name to generate
+    gen_temp_for_javascript.gen_temp_for_javascript(rep_name, project_root, config['politician_pages_assets_path']) #generate the temp file with info to pull from json
     run_photoshop_script(ps_exe, os.path.join(project_root, "src", "fill_social_template.jsx"))
