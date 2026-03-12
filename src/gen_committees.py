@@ -1,6 +1,5 @@
 import xml.etree.ElementTree as ET
 import requests
-from src.init_logger import my_logger
 
 # Define the XML content as a string for this example
 # In your case, you would load this from a file or a web request
@@ -13,9 +12,9 @@ def get_root(url):
         root = ET.fromstring(xml_content)
         return root
     except requests.exceptions.ConnectionError as e:
-        my_logger.error(f"Connection error: {e}")
+        print(f"Connection error: {e}")
     except requests.exceptions.HTTPError as e:
-        my_logger.error(f"HTTP error: {e}")
+        print(f"HTTP error: {e}")
 
 
 def get_committee_codes_senate(root):
@@ -52,11 +51,10 @@ def get_committee_codes_senate(root):
             
             # 3. Store the information in the dictionary
             member_assignments[bioguide_id] = assignments_list
-        my_logger.info("Success getting list of comcodes per bioguideID for senate")
         return member_assignments
     
     except ET.ParseError as e:
-        my_logger.error(f"Error parsing XML: {e}")
+        print(f"Error parsing XML: {e}")
         return None
     
 
@@ -82,7 +80,7 @@ def get_committee_codes_house(root):
         members_list = root.find('members')
 
         if members_list is None:
-            my_logger.error("Error: The <members> element was not found.")
+            print("Error: The <members> element was not found.")
             return None
 
         # Iterate through each <member> child of the <members> list
@@ -106,11 +104,10 @@ def get_committee_codes_house(root):
             
             # 3. Store the information in the dictionary
             member_assignments[bioguide_id] = assignments_list
-        my_logger.info("Success getting list of comcodes per bioguideID for House")
         return member_assignments
 
     except ET.ParseError as e:
-        my_logger.error(f"Error parsing XML: {e}")
+        print(f"Error parsing XML: {e}")
         return None
 
 
@@ -124,7 +121,7 @@ def get_comm_codes_to_names_house(root):
     #root = tree.getroot()
     committees_list = root.find('committees')
     if committees_list is None:
-        my_logger.error("Error: The <committees> element was not found.")
+        print("Error: The <committees> element was not found.")
         return None
     
     for comm in committees_list:
@@ -133,7 +130,7 @@ def get_comm_codes_to_names_house(root):
         comm_dict[comcode] = comname
         subcoms = comm.findall('subcommittee')
         if subcoms is None:
-            my_logger.warning(f"No subcommittees found for {comname}")
+            print(f"No subcommittees found for {comname}")
         else:
             for subcom in subcoms:
                 subcomcode = subcom.attrib.get('subcomcode')
@@ -141,7 +138,6 @@ def get_comm_codes_to_names_house(root):
                 subcomname = f"{comname}: {subcomname}"
                 comm_dict[subcomcode] = subcomname
 
-    my_logger.info(f"Success getting list of (sub)committee names for comcode")
     return comm_dict
 
 def convert_comm_codes_house(code_bioguide_dict, code_name_dict):
@@ -167,7 +163,7 @@ def convert_comm_codes_house(code_bioguide_dict, code_name_dict):
             if comcode is None:
                 comcode = comm.get('subcomcode')
             if comcode is None:
-                my_logger.warning(f"Comcode not found for {bioguide_id}, Nonetype returned.")
+                print(f"Comcode not found for {bioguide_id}, Nonetype returned.")
             else:
                 if comcode in code_name_dict:
                     title = comm.get('leadership')
@@ -177,7 +173,7 @@ def convert_comm_codes_house(code_bioguide_dict, code_name_dict):
                         returned_comm_list.append(code_name_dict[comcode])
                     #comm['name'] = code_name_dict[comcode]
                 else:
-                    my_logger.warning(f"No mapping available for comcode {comcode}")
+                    print(f"No mapping available for comcode {comcode}")
         final_dict[bioguide_id] = returned_comm_list
 
     return final_dict

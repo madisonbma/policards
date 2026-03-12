@@ -116,9 +116,9 @@
     "Both":33,
     "Neither":14,
     "with_D":621,
-    "with_R":31,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":33,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"B000490",
@@ -171,9 +171,9 @@
     "Both":35,
     "Neither":11,
     "with_D":629,
-    "with_R":30,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":32,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"B001236",
@@ -182,20 +182,20 @@
     "Both":45,
     "Neither":3,
     "with_D":7,
-    "with_R":641,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":643,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"B001243",
-    "Absent":35,
+    "Absent":36,
     "Abstained":0,
     "Both":39,
     "Neither":8,
     "with_D":4,
-    "with_R":622,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":623,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"B001257",
@@ -226,9 +226,9 @@
     "Both":39,
     "Neither":9,
     "with_D":5,
-    "with_R":651,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":653,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"B001267",
@@ -237,9 +237,9 @@
     "Both":36,
     "Neither":12,
     "with_D":615,
-    "with_R":33,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":35,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"B001277",
@@ -248,9 +248,9 @@
     "Both":35,
     "Neither":13,
     "with_D":632,
-    "with_R":18,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":20,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"B001278",
@@ -310,13 +310,13 @@
   {
     "bioguideID":"B001288",
     "Absent":30,
-    "Abstained":2,
+    "Abstained":4,
     "Both":26,
     "Neither":22,
     "with_D":606,
     "with_R":22,
-    "vote_count":708,
-    "missing_records":-49
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"B001291",
@@ -380,9 +380,9 @@
     "Both":38,
     "Neither":10,
     "with_D":4,
-    "with_R":646,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":648,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"B001300",
@@ -424,9 +424,9 @@
     "Both":34,
     "Neither":14,
     "with_D":646,
-    "with_R":11,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":13,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"B001305",
@@ -434,10 +434,10 @@
     "Abstained":0,
     "Both":39,
     "Neither":9,
-    "with_D":7,
+    "with_D":9,
     "with_R":630,
-    "vote_count":708,
-    "missing_records":-49
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"B001306",
@@ -545,9 +545,9 @@
     "Both":40,
     "Neither":8,
     "with_D":3,
-    "with_R":642,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":644,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"B001321",
@@ -644,9 +644,9 @@
     "Both":38,
     "Neither":10,
     "with_D":632,
-    "with_R":26,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":28,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"C000537",
@@ -666,9 +666,9 @@
     "Both":41,
     "Neither":7,
     "with_D":5,
-    "with_R":645,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":647,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"C001035",
@@ -677,9 +677,9 @@
     "Both":46,
     "Neither":2,
     "with_D":84,
-    "with_R":576,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":578,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"C001039",
@@ -699,9 +699,9 @@
     "Both":43,
     "Neither":4,
     "with_D":6,
-    "with_R":640,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":642,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"C001051",
@@ -743,9 +743,9 @@
     "Both":41,
     "Neither":6,
     "with_D":4,
-    "with_R":652,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":654,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"C001059",
@@ -842,9 +842,9 @@
     "Both":34,
     "Neither":8,
     "with_D":8,
-    "with_R":614,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":616,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"C001078",
@@ -886,9 +886,9 @@
     "Both":41,
     "Neither":4,
     "with_D":579,
-    "with_R":46,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":48,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"C001091",
@@ -908,9 +908,9 @@
     "Both":43,
     "Neither":5,
     "with_D":4,
-    "with_R":644,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":646,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"C001096",
@@ -919,9 +919,9 @@
     "Both":42,
     "Neither":5,
     "with_D":6,
-    "with_R":631,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":633,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"C001098",
@@ -929,10 +929,10 @@
     "Abstained":0,
     "Both":30,
     "Neither":14,
-    "with_D":4,
-    "with_R":617,
-    "vote_count":708,
-    "missing_records":-49
+    "with_D":5,
+    "with_R":618,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"C001101",
@@ -996,9 +996,9 @@
     "Both":41,
     "Neither":4,
     "with_D":570,
-    "with_R":76,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":78,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"C001114",
@@ -1007,9 +1007,9 @@
     "Both":37,
     "Neither":11,
     "with_D":6,
-    "with_R":643,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":645,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"C001115",
@@ -1293,9 +1293,9 @@
     "Both":38,
     "Neither":9,
     "with_D":586,
-    "with_R":57,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":59,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"D000594",
@@ -1348,9 +1348,9 @@
     "Both":40,
     "Neither":6,
     "with_D":5,
-    "with_R":636,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":638,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"D000622",
@@ -1359,9 +1359,9 @@
     "Both":31,
     "Neither":13,
     "with_D":584,
-    "with_R":22,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":24,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"D000623",
@@ -1502,9 +1502,9 @@
     "Both":36,
     "Neither":9,
     "with_D":6,
-    "with_R":643,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":645,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"E000296",
@@ -1656,9 +1656,9 @@
     "Both":42,
     "Neither":6,
     "with_D":7,
-    "with_R":646,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":648,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"F000466",
@@ -1788,9 +1788,9 @@
     "Both":44,
     "Neither":1,
     "with_D":491,
-    "with_R":124,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":126,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"F000480",
@@ -1854,9 +1854,9 @@
     "Both":44,
     "Neither":4,
     "with_D":6,
-    "with_R":607,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":609,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"G000386",
@@ -1865,9 +1865,9 @@
     "Both":41,
     "Neither":6,
     "with_D":9,
-    "with_R":648,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":650,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"G000546",
@@ -1909,9 +1909,9 @@
     "Both":39,
     "Neither":9,
     "with_D":605,
-    "with_R":43,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":45,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"G000558",
@@ -1959,14 +1959,14 @@
   },
   {
     "bioguideID":"G000574",
-    "Absent":95,
+    "Absent":96,
     "Abstained":0,
     "Both":34,
     "Neither":5,
     "with_D":508,
-    "with_R":66,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":67,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"G000576",
@@ -2239,9 +2239,9 @@
     "Both":40,
     "Neither":8,
     "with_D":602,
-    "with_R":49,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":51,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"H000601",
@@ -2250,9 +2250,9 @@
     "Both":35,
     "Neither":11,
     "with_D":4,
-    "with_R":634,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":636,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"H000874",
@@ -2272,9 +2272,9 @@
     "Both":31,
     "Neither":17,
     "with_D":642,
-    "with_R":15,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":17,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"H001046",
@@ -2283,9 +2283,9 @@
     "Both":37,
     "Neither":11,
     "with_D":571,
-    "with_R":55,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":57,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"H001047",
@@ -2327,9 +2327,9 @@
     "Both":43,
     "Neither":5,
     "with_D":5,
-    "with_R":648,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":650,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"H001066",
@@ -2382,9 +2382,9 @@
     "Both":47,
     "Neither":1,
     "with_D":541,
-    "with_R":105,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":107,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"H001077",
@@ -2404,9 +2404,9 @@
     "Both":42,
     "Neither":5,
     "with_D":6,
-    "with_R":644,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":646,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"H001081",
@@ -2459,9 +2459,9 @@
     "Both":36,
     "Neither":9,
     "with_D":31,
-    "with_R":601,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":603,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"H001090",
@@ -2602,9 +2602,9 @@
     "Both":38,
     "Neither":8,
     "with_D":2,
-    "with_R":652,
-    "vote_count":700,
-    "missing_records":-41
+    "with_R":654,
+    "vote_count":702,
+    "missing_records":-43
   },
   {
     "bioguideID":"I000056",
@@ -2656,10 +2656,10 @@
     "Abstained":0,
     "Both":34,
     "Neither":14,
-    "with_D":9,
+    "with_D":11,
     "with_R":641,
-    "vote_count":708,
-    "missing_records":-49
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"J000294",
@@ -2795,14 +2795,14 @@
   },
   {
     "bioguideID":"J000312",
-    "Absent":31,
+    "Absent":32,
     "Abstained":0,
     "Both":40,
     "Neither":6,
     "with_D":5,
-    "with_R":624,
-    "vote_count":706,
-    "missing_records":-47
+    "with_R":625,
+    "vote_count":708,
+    "missing_records":-49
   },
   {
     "bioguideID":"K000009",
@@ -2822,9 +2822,9 @@
     "Both":40,
     "Neither":7,
     "with_D":595,
-    "with_R":58,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":60,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"K000375",
@@ -2855,9 +2855,9 @@
     "Both":42,
     "Neither":5,
     "with_D":543,
-    "with_R":78,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":80,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"K000383",
@@ -2866,9 +2866,9 @@
     "Both":41,
     "Neither":5,
     "with_D":541,
-    "with_R":110,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":112,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"K000384",
@@ -2877,9 +2877,9 @@
     "Both":42,
     "Neither":6,
     "with_D":574,
-    "with_R":80,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":82,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"K000385",
@@ -2943,9 +2943,9 @@
     "Both":34,
     "Neither":14,
     "with_D":5,
-    "with_R":640,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":642,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"K000394",
@@ -2954,9 +2954,9 @@
     "Both":34,
     "Neither":14,
     "with_D":616,
-    "with_R":37,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":39,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"K000397",
@@ -3141,9 +3141,9 @@
     "Both":35,
     "Neither":13,
     "with_D":617,
-    "with_R":32,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":34,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"L000571",
@@ -3152,9 +3152,9 @@
     "Both":33,
     "Neither":14,
     "with_D":6,
-    "with_R":633,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":635,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"L000575",
@@ -3163,9 +3163,9 @@
     "Both":40,
     "Neither":8,
     "with_D":6,
-    "with_R":652,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":654,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"L000577",
@@ -3173,10 +3173,10 @@
     "Abstained":0,
     "Both":29,
     "Neither":19,
-    "with_D":11,
+    "with_D":13,
     "with_R":624,
-    "vote_count":708,
-    "missing_records":-49
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"L000578",
@@ -3372,9 +3372,9 @@
     "Both":15,
     "Neither":33,
     "with_D":648,
-    "with_R":7,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":9,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"M000194",
@@ -3416,9 +3416,9 @@
     "Both":33,
     "Neither":3,
     "with_D":22,
-    "with_R":577,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":579,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"M000687",
@@ -3449,9 +3449,9 @@
     "Both":39,
     "Neither":6,
     "with_D":8,
-    "with_R":615,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":617,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"M001111",
@@ -3460,9 +3460,9 @@
     "Both":29,
     "Neither":16,
     "with_D":610,
-    "with_R":8,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":10,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"M001136",
@@ -3504,9 +3504,9 @@
     "Both":44,
     "Neither":3,
     "with_D":85,
-    "with_R":552,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":554,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"M001157",
@@ -3547,10 +3547,10 @@
     "Abstained":0,
     "Both":17,
     "Neither":31,
-    "with_D":634,
-    "with_R":5,
-    "vote_count":708,
-    "missing_records":-49
+    "with_D":635,
+    "with_R":6,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"M001176",
@@ -3559,9 +3559,9 @@
     "Both":21,
     "Neither":25,
     "with_D":646,
-    "with_R":10,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":12,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"M001177",
@@ -3603,9 +3603,9 @@
     "Both":40,
     "Neither":5,
     "with_D":7,
-    "with_R":617,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":619,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"M001194",
@@ -3636,9 +3636,9 @@
     "Both":39,
     "Neither":9,
     "with_D":4,
-    "with_R":650,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":652,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"M001199",
@@ -4038,14 +4038,14 @@
   },
   {
     "bioguideID":"M001242",
-    "Absent":1,
+    "Absent":2,
     "Abstained":0,
     "Both":38,
     "Neither":10,
     "with_D":4,
-    "with_R":655,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":656,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"M001243",
@@ -4054,9 +4054,9 @@
     "Both":41,
     "Neither":7,
     "with_D":5,
-    "with_R":635,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":637,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"M001244",
@@ -4065,9 +4065,9 @@
     "Both":34,
     "Neither":11,
     "with_D":4,
-    "with_R":646,
-    "vote_count":700,
-    "missing_records":-41
+    "with_R":648,
+    "vote_count":702,
+    "missing_records":-43
   },
   {
     "bioguideID":"M001245",
@@ -4230,9 +4230,9 @@
     "Both":40,
     "Neither":7,
     "with_D":577,
-    "with_R":34,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":36,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"O000175",
@@ -4296,9 +4296,9 @@
     "Both":23,
     "Neither":22,
     "with_D":613,
-    "with_R":21,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":23,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"P000197",
@@ -4318,9 +4318,9 @@
     "Both":45,
     "Neither":2,
     "with_D":601,
-    "with_R":44,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":46,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"P000597",
@@ -4339,10 +4339,10 @@
     "Abstained":2,
     "Both":22,
     "Neither":25,
-    "with_D":79,
+    "with_D":81,
     "with_R":547,
-    "vote_count":708,
-    "missing_records":-49
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"P000605",
@@ -4483,9 +4483,9 @@
     "Both":39,
     "Neither":9,
     "with_D":599,
-    "with_R":53,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":55,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"R000305",
@@ -4538,9 +4538,9 @@
     "Both":39,
     "Neither":8,
     "with_D":4,
-    "with_R":639,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":641,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"R000595",
@@ -4593,9 +4593,9 @@
     "Both":44,
     "Neither":4,
     "with_D":9,
-    "with_R":647,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":649,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"R000606",
@@ -4615,9 +4615,9 @@
     "Both":44,
     "Neither":4,
     "with_D":558,
-    "with_R":91,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":93,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"R000609",
@@ -4681,9 +4681,9 @@
     "Both":43,
     "Neither":5,
     "with_D":7,
-    "with_R":651,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":653,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"R000619",
@@ -4736,9 +4736,9 @@
     "Both":14,
     "Neither":33,
     "with_D":595,
-    "with_R":8,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":10,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"S000148",
@@ -4747,9 +4747,9 @@
     "Both":37,
     "Neither":11,
     "with_D":639,
-    "with_R":17,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":19,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"S000168",
@@ -4857,9 +4857,9 @@
     "Both":28,
     "Neither":19,
     "with_D":601,
-    "with_R":44,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":46,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"S001156",
@@ -4918,14 +4918,14 @@
   },
   {
     "bioguideID":"S001181",
-    "Absent":23,
+    "Absent":24,
     "Abstained":0,
     "Both":47,
     "Neither":1,
     "with_D":529,
-    "with_R":108,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":109,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"S001183",
@@ -4945,9 +4945,9 @@
     "Both":38,
     "Neither":6,
     "with_D":5,
-    "with_R":636,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":638,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"S001185",
@@ -5010,10 +5010,10 @@
     "Abstained":0,
     "Both":29,
     "Neither":18,
-    "with_D":637,
+    "with_D":639,
     "with_R":17,
-    "vote_count":708,
-    "missing_records":-49
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"S001195",
@@ -5044,9 +5044,9 @@
     "Both":42,
     "Neither":6,
     "with_D":19,
-    "with_R":621,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":623,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"S001199",
@@ -5088,9 +5088,9 @@
     "Both":28,
     "Neither":17,
     "with_D":620,
-    "with_R":9,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":11,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"S001205",
@@ -5121,9 +5121,9 @@
     "Both":44,
     "Neither":3,
     "with_D":572,
-    "with_R":67,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":69,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"S001211",
@@ -5197,10 +5197,10 @@
     "Abstained":0,
     "Both":33,
     "Neither":15,
-    "with_D":10,
+    "with_D":12,
     "with_R":648,
-    "vote_count":708,
-    "missing_records":-49
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"S001218",
@@ -5286,9 +5286,9 @@
     "Both":39,
     "Neither":9,
     "with_D":4,
-    "with_R":647,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":649,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"S001228",
@@ -5341,9 +5341,9 @@
     "Both":41,
     "Neither":6,
     "with_D":3,
-    "with_R":639,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":641,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"T000165",
@@ -5374,20 +5374,20 @@
     "Both":43,
     "Neither":5,
     "with_D":18,
-    "with_R":641,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":643,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"T000278",
-    "Absent":32,
+    "Absent":33,
     "Abstained":0,
     "Both":39,
     "Neither":9,
-    "with_D":7,
+    "with_D":8,
     "with_R":621,
-    "vote_count":708,
-    "missing_records":-49
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"T000460",
@@ -5472,10 +5472,10 @@
     "Abstained":0,
     "Both":42,
     "Neither":4,
-    "with_D":15,
-    "with_R":566,
-    "vote_count":708,
-    "missing_records":-49
+    "with_D":16,
+    "with_R":567,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"T000478",
@@ -5616,9 +5616,9 @@
     "Both":22,
     "Neither":26,
     "with_D":641,
-    "with_R":7,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":9,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"V000129",
@@ -5747,10 +5747,10 @@
     "Abstained":0,
     "Both":41,
     "Neither":4,
-    "with_D":7,
-    "with_R":627,
-    "vote_count":708,
-    "missing_records":-49
+    "with_D":8,
+    "with_R":628,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"W000779",
@@ -5759,9 +5759,9 @@
     "Both":28,
     "Neither":18,
     "with_D":632,
-    "with_R":13,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":15,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"W000788",
@@ -5781,9 +5781,9 @@
     "Both":36,
     "Neither":8,
     "with_D":592,
-    "with_R":52,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":54,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"W000795",
@@ -5825,9 +5825,9 @@
     "Both":20,
     "Neither":19,
     "with_D":584,
-    "with_R":35,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":37,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"W000802",
@@ -5836,9 +5836,9 @@
     "Both":38,
     "Neither":8,
     "with_D":590,
-    "with_R":43,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":45,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"W000804",
@@ -5858,9 +5858,9 @@
     "Both":42,
     "Neither":5,
     "with_D":561,
-    "with_R":83,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":85,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"W000806",
@@ -5935,9 +5935,9 @@
     "Both":17,
     "Neither":31,
     "with_D":639,
-    "with_R":7,
-    "vote_count":708,
-    "missing_records":-49
+    "with_R":9,
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"W000821",
@@ -6011,10 +6011,10 @@
     "Abstained":0,
     "Both":42,
     "Neither":6,
-    "with_D":7,
+    "with_D":9,
     "with_R":647,
-    "vote_count":708,
-    "missing_records":-49
+    "vote_count":710,
+    "missing_records":-51
   },
   {
     "bioguideID":"Y000067",

@@ -1,4 +1,5 @@
 const genCardBtn = document.getElementById('genCardBtn');
+//const editConfigBtn = document.getElementById('editConfigBtn');
 const updateDataBtn = document.getElementById('updateDataBtn');
 const status_doc = document.getElementById('status');
 const spinner = document.getElementById('spinner');
@@ -28,6 +29,11 @@ genCardBtn.addEventListener('click', async () => {
   await window.electronAPI.openGenCard();
 });
 
-updateDataBtn.addEventListener('click', async () => {
+/*updateDataBtn.addEventListener('click', async () => {
   await window.electronAPI.openUpdateWindow();
+});*/
+
+editConfigBtn.addEventListener('click', async () => {
+  console.log("Clicked edit config btn");
+  await window.electronAPI.openConfigWindow();
 });

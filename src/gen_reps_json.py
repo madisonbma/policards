@@ -5,55 +5,10 @@ import requests
 import os
 import json
 import time
+import argparse
 import sys
 
 sys.stdout.reconfigure(line_buffering=True)
-
-
-# --- Configuration ---
-if getattr(sys, 'frozen', False):
-    application_path = os.path.dirname(sys.executable)
-    parent_dir = os.path.join(application_path, os.path.pardir, os.path.pardir, os.path.pardir)
-    config_path = os.path.join(parent_dir, "politician_pages_assets")
-    config_file = os.path.join(config_path, "config.json")
-    
-    try:
-        with open(config_file, 'r') as f:
-            config = json.load(f)
-            CONGRESS_API_KEY = config.get('CONGRESS_API_KEY')
-            print("Loaded API key from config.json")
-    except FileNotFoundError:
-        print(f"ERROR: {config_file} not found")
-        print(f"TO FIX: Make sure politician_pages_assets repo has been cloned.")
-        CONGRESS_API_KEY = None
-        sys.exit()
-else:
-    # 1. Try to load from the private config repo
-    try:
-        application_path = os.path.dirname(__file__)
-        parent_dir = os.path.join(application_path, os.path.pardir, os.path.pardir)
-        config_path = os.path.join(parent_dir, "politician_pages_assets")
-        config_file = os.path.join(config_path, "config.json")
-        
-        with open(config_file, 'r') as f:
-            config = json.load(f)
-            CONGRESS_API_KEY = config.get('CONGRESS_API_KEY')
-            print("Loaded API key from config.json")
-
-    # 2. Fallback to environment variables if file/repo is missing
-    except (ImportError, ModuleNotFoundError, FileNotFoundError):
-        CONGRESS_API_KEY = os.getenv("CONGRESS_API_KEY")
-        
-        if not CONGRESS_API_KEY:
-            print("ERROR: Neither config.json nor environment variables found.")
-            print(f"TO FIX: Make sure politician_pages_assets repo has been cloned.")
-        else:
-            print("Loaded CONGRESS_API_KEY from environment variables")
-
-    # Finally, remove the path to keep the environment clean
-    finally:
-        if 'config_path' in locals() and config_path in sys.path:
-            sys.path.remove(config_path)
 
 BASE_URL = "https://api.congress.gov/v3/"
 HEADERS = {
@@ -61,11 +16,62 @@ HEADERS = {
 }
 RATE_LIMIT_DELAY_SECONDS = 0.2 
 
+def setup():
+    """
+    This function is deprecated. Now we pass these variables in at CLI
+    so that pathing changes are reflected.
+    """
+
+    # --- Configuration ---
+    if getattr(sys, 'frozen', False):
+        application_path = os.path.dirname(sys.executable)
+        parent_dir = os.path.join(application_path, os.path.pardir, os.path.pardir, os.path.pardir)
+        config_path = os.path.join(parent_dir, "politician_pages_assets")
+        config_file = os.path.join(config_path, "config.json")
+        
+        try:
+            with open(config_file, 'r') as f:
+                config = json.load(f)
+                CONGRESS_API_KEY = config.get('CONGRESS_API_KEY')
+                print("Loaded API key from config.json")
+        except FileNotFoundError:
+            print(f"ERROR: {config_file} not found")
+            print(f"TO FIX: Make sure politician_pages_assets repo has been cloned.")
+            CONGRESS_API_KEY = None
+            sys.exit()
+    else:
+        # 1. Try to load from the private config repo
+        try:
+            application_path = os.path.dirname(__file__)
+            parent_dir = os.path.join(application_path, os.path.pardir, os.path.pardir)
+            config_path = os.path.join(parent_dir, "politician_pages_assets")
+            config_file = os.path.join(config_path, "config.json")
+            
+            with open(config_file, 'r') as f:
+                config = json.load(f)
+                CONGRESS_API_KEY = config.get('CONGRESS_API_KEY')
+                print("Loaded API key from config.json")
+
+        # 2. Fallback to environment variables if file/repo is missing
+        except (ImportError, ModuleNotFoundError, FileNotFoundError):
+            CONGRESS_API_KEY = os.getenv("CONGRESS_API_KEY")
+            
+            if not CONGRESS_API_KEY:
+                print("ERROR: Neither config.json nor environment variables found.")
+                print(f"TO FIX: Make sure politician_pages_assets repo has been cloned.")
+            else:
+                print("Loaded CONGRESS_API_KEY from environment variables")
+
+        # Finally, remove the path to keep the environment clean
+        finally:
+            if 'config_path' in locals() and config_path in sys.path:
+                sys.path.remove(config_path)
+
 
 ########################################################
 
 
-def get_bills_list(congress="119", bill_type="hr", limit=20, offset=0, sort="updateDateDesc"):
+def get_bills_list(api_key, congress="119", bill_type="hr", limit=20, offset=0, sort="updateDateDesc"):
     """
     Fetches a list of bills from a specific Congress and bill type.
 
@@ -81,7 +87,7 @@ def get_bills_list(congress="119", bill_type="hr", limit=20, offset=0, sort="upd
     """
     endpoint = f"bill"
     params = {
-        "api_key": CONGRESS_API_KEY,
+        "api_key": api_key,
         "format": "json",
         "congress": congress,
         "type": bill_type,
@@ -112,7 +118,7 @@ def get_bills_list(congress="119", bill_type="hr", limit=20, offset=0, sort="upd
     return None
 
 
-def get_bill_details(congress, bill_type, bill_number):
+def get_bill_details(api_key, congress, bill_type, bill_number):
     """
     Fetches detailed information for a specific bill.
 
@@ -126,7 +132,7 @@ def get_bill_details(congress, bill_type, bill_number):
     """
     endpoint = f"bill/{congress}/{bill_type}/{bill_number}"
     params = {
-        "api_key": CONGRESS_API_KEY,
+        "api_key": api_key,
         "format": "json"
     }
 
@@ -149,7 +155,7 @@ def get_bill_details(congress, bill_type, bill_number):
 
 
 
-def get_congress_members(congress=None, chamber=None, limit_per_page=250, max_members=None, sort="lastNameAsc"):
+def get_congress_members(api_key, congress=None, chamber=None, limit_per_page=250, max_members=None, sort="lastNameAsc"):
     """
     Fetches a list of members of Congress from the Congress.gov API, with pagination,
     and returns the collected data as a JSON formatted string.
@@ -176,7 +182,7 @@ def get_congress_members(congress=None, chamber=None, limit_per_page=250, max_me
 
     # Initial parameters
     params = {
-        "api_key": CONGRESS_API_KEY,
+        "api_key": api_key,
         "format": "json",
         "limit": limit_per_page,
         "offset": current_offset,
@@ -308,28 +314,16 @@ def flatten_user_terms(users_list):
     return all_flattened_terms
 
 
-def gen_reps_json():
+def gen_reps_json(api_key, root):
     """
     This script pulls all congressmen data from the Congress.gov API.
     The output is "congressmen.json", which is a json with info about each representative.
     Use the output of this to generate the dataframe to merge with voting records.
     Only needs to be run when there is a change in representatives
     """
-    members_dict = get_congress_members()
-
+    members_dict = get_congress_members(api_key)
     members_json = flatten_user_terms(members_dict)
 
-    # Fix for PyInstaller executables
-    if getattr(sys, 'frozen', False):
-        # Running as compiled executable
-        # Move up extra level because exe in dist
-        application_path = os.path.dirname(sys.executable)
-        application_path = os.path.join(application_path, os.path.pardir)
-    else:
-        # Running as normal Python script
-        application_path = os.path.dirname(os.path.abspath(__file__))
-
-    root = os.path.join(application_path, os.path.pardir)
     congressmen_json = os.path.join(root, "src", "generated_outputs", "congressmen.json")
 
 
@@ -350,26 +344,14 @@ if __name__ == "__main__":
     Use the output of this to generate the dataframe to merge with voting records.
     Only needs to be run when there is a change in representatives
     """
-    members_dict = get_congress_members()
 
-    members_json = flatten_user_terms(members_dict)
+    # Get user inputs for API path and path to the repo
+    parser = argparse.ArgumentParser(description="Get congressional data")
+    parser.add_argument('api', help="CONGRESS_API_KEY")
+    parser.add_argument('pp_path', help="path to politician_pages repo")
+    args = parser.parse_args()
+    CONGRESS_API_KEY = args.api
+    root = args.pp_path
 
-    # Fix for PyInstaller executables
-    if getattr(sys, 'frozen', False):
-        # Running as compiled executable
-        application_path = os.path.dirname(sys.executable)
-        application_path = os.path.join(application_path, os.path.pardir)
-
-    else:
-        # Running as normal Python script
-        application_path = os.path.dirname(os.path.abspath(__file__))
-
-    root = os.path.join(application_path, os.path.pardir)
-    congressmen_json = os.path.join(root, "src", "generated_outputs", "congressmen.json")
-
-
-    with open(congressmen_json, 'w') as f:
-        json.dump(members_json, f, indent=2)
-
-    print(f"Wrote to file {congressmen_json}")
+    gen_reps_json(CONGRESS_API_KEY, root)
 

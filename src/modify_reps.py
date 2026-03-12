@@ -6,19 +6,15 @@ import sys
 sys.stdout.reconfigure(line_buffering=True)
 
 
-current_dir = os.path.dirname(__file__)
-project_root = os.path.abspath(os.path.join(current_dir, ".."))
-sys.path.insert(0, project_root)
 
-import src.add_bioguide as add_bioguide
-import src.gen_committees as gen_committees
+import add_bioguide
+import gen_committees
 import sys
 import os
 from datetime import date
 import numpy as np
-from src.init_logger import my_logger
 
-
+DEBUG = False
 
 ####################################################################################################
 
@@ -29,10 +25,12 @@ def update_endyear(df):
     Converts endYear==NA to startYear+2 or +6 based on chamber
     This is because current members have no end year.
     """
-    my_logger.debug(f"There are {len(df[df['endYear'].isna()])} NA endyears")
+    if DEBUG:
+        print(f"There are {len(df[df['endYear'].isna()])} NA endyears")
 
     df['current_member'] = np.where(df['endYear'].isna(), "yes", "no")
-    my_logger.debug(f"Added yes to {len(df[df['current_member']=="yes"])} members")
+    if DEBUG:
+        print(f"Added yes to {len(df[df['current_member']=="yes"])} members")
 
     year = int(date.today().year)
 
@@ -50,8 +48,8 @@ def update_endyear(df):
     )
 
     df['endYear'] = df['endYear'].astype(int)
-
-    my_logger.info(f"After processing, there are {len(df[df['endYear'].isna()])} na endYears")
+    if DEBUG:
+        print(f"After processing, there are {len(df[df['endYear'].isna()])} na endYears")
     return df
 
 ############################################
@@ -419,6 +417,8 @@ def modify_reps(input_json_f, vote_f):
         input_json_f [str]: File path to congressmen.json
 
     """
+    root = os.path.join(os.path.dirname(input_json_f), os.path.pardir, os.path.pardir)
+    print(root)
     #Load in the JSON
     try: 
         df = pd.read_json(input_json_f)
@@ -453,8 +453,8 @@ def modify_reps(input_json_f, vote_f):
     con_json = df.to_json(indent=2, orient='records')
     print("Starting the add_bioguide")
     #Last, modify the JSON with add_bioguide.py
-    modified_congressmen_json_pre = add_bioguide.add_bioguide(con_json) #list of dicts python Obj
-
+    
+    modified_congressmen_json_pre = add_bioguide.add_bioguide(con_json, root) #list of dicts python Obj
 
     tenure_df = add_bioguide_tenure_ranks(modified_congressmen_json_pre)
     get_absolute_stats(tenure_df, input_json_f)

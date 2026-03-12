@@ -1,14 +1,12 @@
 import requests
 import os
-import json
-import time
 import pandas as pd
 import sys
 import os
 import numpy as np
-from datetime import date
 import xml.etree.ElementTree as ET
-from src.init_logger import my_logger
+
+DEBUG = False
 
 def get_voting_record(df):
     """
@@ -22,12 +20,12 @@ def get_voting_record(df):
     all_votes = len(df.groupby('identifier'))
     house_vote_count = len(df[df['lis_member_id'].isna()].groupby('identifier'))
     senate_vote_count = all_votes - house_vote_count
-    my_logger.info(f"{house_vote_count} house votes, {senate_vote_count} senate votes, for total of {all_votes} votes")
-
-    total_people = len(df['bioguideID'].unique())
-    house_people = len(df[df['lis_member_id'].isna()]['bioguideID'].unique())
-    senate_people = len(df[df['lis_member_id'].notna()]['bioguideID'].unique())
-    my_logger.info(f"{house_people} house reps, {senate_people} senators, for total of {total_people} people")
+    if DEBUG:
+        print(f"{house_vote_count} house votes, {senate_vote_count} senate votes, for total of {all_votes} votes")
+        total_people = len(df['bioguideID'].unique())
+        house_people = len(df[df['lis_member_id'].isna()]['bioguideID'].unique())
+        senate_people = len(df[df['lis_member_id'].notna()]['bioguideID'].unique())
+        print(f"{house_people} house reps, {senate_people} senators, for total of {total_people} people")
 
     #For each vote_identifier, get the count of how each party voted.
     #Group by identifier
@@ -111,7 +109,7 @@ def check_missing_votes(df):
     missing_df = df[df['missing_records']!= 0]
     missing_filtered_df = missing_df[~missing_df['bioguideID'].isin(acceptable_missing_votes)]
     if len(missing_filtered_df) != 0:
-        my_logger.warning(f"Some congressmen are missing voter information unexpectedly: {missing_filtered_df['bioguideID'].unique()}")
+        print(f"Some congressmen are missing voter information unexpectedly: {missing_filtered_df['bioguideID'].unique()}")
     else:
         df.drop('missing_records', axis=1, inplace=True)
 
@@ -126,9 +124,9 @@ def get_root(url):
         root = ET.fromstring(xml_content)
         return root
     except requests.exceptions.ConnectionError as e:
-        my_logger.error(f"Connection error: {e}")
+        print(f"Connection error: {e}")
     except requests.exceptions.HTTPError as e:
-        my_logger.error(f"HTTP error: {e}")
+        print(f"HTTP error: {e}")
 
 
 
@@ -151,11 +149,10 @@ def sen_id_to_bioguide_id():
             
             # 3. Store the information in the dictionary
             sen_id_bioguide_id[senate_id] = bioguide_id
-        my_logger.info("Success getting senate bioguide to senate_id dict")
         return sen_id_bioguide_id
     
     except ET.ParseError as e:
-        my_logger.error(f"Error parsing XML: {e}")
+        print(f"Error parsing XML: {e}")
         return None
 
 
@@ -181,7 +178,7 @@ def merge_house_and_senate(df1, df2):
     df['bioguideID'] = np.where(df['lis_member_id'] == "S350", "R000595", df['bioguideID'])
     # ['S350' is Marco Rubio (R000595), 'S421' is JD Vance (V000137)]
     if (len(df[df['bioguideID'].isna()] > 0)):
-        my_logger.warning(f"There are some NA bioguides on the merged voting record: {df[df['bioguideID'].isna()]['lis_member_id'].unique()}")
+        print(f"There are some NA bioguides on the merged voting record: {df[df['bioguideID'].isna()]['lis_member_id'].unique()}")
     df['chamber'] = np.where(df['lis_member_id'].isna(), "house", "senate") 
 
     return df
@@ -199,6 +196,7 @@ def modify_votes(voting_records_json, voting_records_senate_json):
         voting_records_json [str]: File path to voting_records.json (House)
         voting_records_senate_json [str]: File path to voting_records_senate.json (Senate)
     """
+    generated_outputs_dir = os.path.dirname(voting_records_json)
 
     #Load in the JSON
     try: 
@@ -219,7 +217,7 @@ def modify_votes(voting_records_json, voting_records_senate_json):
     overall_df = check_missing_votes(overall_df)
     overall_df.drop('chamber', axis=1, inplace=True) #get rid of chamber now, don't need it for the merge
 
-    vote_avg_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "generated_outputs", "vote_avg.json")
+    vote_avg_path = os.path.join(generated_outputs_dir, "vote_avg.json")
     print(f"Exporting {len(overall_df)} to vote_avg.json")
     overall_df.to_json(vote_avg_path, indent=2, orient='records')
     print(f"Created {vote_avg_path} from {voting_records_json} and {voting_records_senate_json}")

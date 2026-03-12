@@ -1,7 +1,5 @@
-import subprocess
 import os
 from datetime import date, datetime
-import sys
 import requests
 import re
 import json
@@ -9,37 +7,25 @@ from PIL import Image, ImageDraw, ImageFont
 from io import BytesIO
 from requests.exceptions import RequestException, HTTPError
 import argparse
-from init_logger import my_logger
 
 
-# --- Configuration (UPDATE THESE PATHS) ---
-current_dir = os.path.dirname(__file__)
-project_root = os.path.abspath(os.path.join(current_dir, ".."))
+def load_global_fonts(root):
+    global NN_EXTRA_BOLD
+    global NN_MEDIUM
+    global NN_BOLD_ITALIC
+    global FONT_CHECK_DICT
 
-NN_EXTRA_BOLD = os.path.join(project_root, "fonts", "NeulisNeue", "NeulisNeue-ExtraBold.ttf")
-NN_MEDIUM = os.path.join(project_root, "fonts", "NeulisNeue", "NeulisNeue-Medium.ttf")
-NN_BOLD_ITALIC = os.path.join(project_root, "fonts", "NeulisNeue", "NeulisNeue-BoldItalic.ttf")
+    NN_EXTRA_BOLD = os.path.join(root, "fonts", "NeulisNeue", "NeulisNeue-ExtraBold.ttf")
+    NN_MEDIUM = os.path.join(root, "fonts", "NeulisNeue", "NeulisNeue-Medium.ttf")
+    NN_BOLD_ITALIC = os.path.join(root, "fonts", "NeulisNeue", "NeulisNeue-BoldItalic.ttf")
 
-#"C:\\Users\\Owner\\policards\\fonts\\NeulisNeue\\NeulisNeue-ExtraBold.ttf"
-#NN_MEDIUM = "C:\\Users\\Owner\\policards\\fonts\\NeulisNeue\\NeulisNeue-Medium.ttf"
-#NN_BOLD_ITALIC = "C:\\Users\\Owner\\policards\\fonts\\NeulisNeue\\NeulisNeue-BoldItalic.ttf"
-
-FONT_CHECK_DICT = {
-    "name": (100, NN_EXTRA_BOLD, 15.72),
-    "state": (253, NN_BOLD_ITALIC, 10.24),
-    "born_age": (100, NN_MEDIUM, 6.62),
-    "education": (100, NN_MEDIUM, 6.62),
-    "work": (100, NN_MEDIUM, 6.62)
-}
-    #name is Extra Bold, size 15.72
-    #Title is Extra Bold, size 7.72
-    #Born_age is medium/bold, size 6.62
-    #Education is medium, size 6.62
-    #State is bold italic, size 10.24
-
-
-
-# --- End Configuration ---
+    FONT_CHECK_DICT = {
+        "name": (100, NN_EXTRA_BOLD, 15.72),
+        "state": (253, NN_BOLD_ITALIC, 10.24),
+        "born_age": (100, NN_MEDIUM, 6.62),
+        "education": (100, NN_MEDIUM, 6.62),
+        "work": (100, NN_MEDIUM, 6.62)
+    }
 
 
 def resize_image(img, desired_width):
@@ -51,7 +37,7 @@ def resize_image(img, desired_width):
     new_height = int(desired_width * aspect_ratio)
 
     if new_height > original_height:
-        my_logger.warning(f"Having to expand picture, could be poor quality. Original photo: {img.size}")
+        print(f"Having to expand picture, could be poor quality. Original photo: {img.size}")
     
     # Resize the image using the calculated dimensions
     resized_img = img.resize((desired_width, new_height))
@@ -60,8 +46,7 @@ def resize_image(img, desired_width):
 
 
 
-
-def pull_pic_from_web(rep, dummy=False):
+def pull_pic_from_web(rep, root, dummy=False):
     """
     Pull the photo from the web link. 
     If no link was given, fill with an empty photo.
@@ -78,14 +63,12 @@ def pull_pic_from_web(rep, dummy=False):
     try:
         if dummy:
             img = Image.new('RGB', (PIC_WIDTH, PIC_HEIGHT), color = 'lightgray')
-            my_logger.debug(f'Dummy Image for {rep['name']}')
         else:
             face_path = rep.get('photo', None)
 
             # Get the face in rep['photo'] if it exists, check the size of image
             if face_path is None:
                 #failed to get rep['photo'], try backup image
-                my_logger.info(f"Trying backup image for {rep['name']}")
                 face_path = rep['imageUrl']
             elif "http" in face_path:
                 #if image is big enough be done, otherwise try backup image
@@ -94,72 +77,70 @@ def pull_pic_from_web(rep, dummy=False):
                     img_1 = Image.open(BytesIO(face_path_url.content))
                     dims_1 = img_1.size
                     if dims_1[0] < PIC_WIDTH or dims_1[1] < PIC_HEIGHT:
-                        my_logger.warning(f"Image for {rep['name']} is too small at {dims_1} instead of {(PIC_WIDTH, PIC_HEIGHT)}. Trying backup image.")
+                        print(f"Image for {rep['name']} is too small at {dims_1} instead of {(PIC_WIDTH, PIC_HEIGHT)}. Trying backup image.")
                         face_path = rep['imageUrl']
                     else:
                         img = img_1
-                        my_logger.info(f"Using primary image for {rep['name']}")
                     #my_logger.debug(f'Success image pull for {rep['name']}')
                 except HTTPError as http_err:
-                    my_logger.error(f"HTTP error occurred: {http_err}")
+                    print(f"HTTP error occurred: {http_err}")
                 except RequestException as req_err:
-                    my_logger.error(f"Request exception occurred: {req_err}")
+                    print(f"Request exception occurred: {req_err}")
                 except Exception as e:
-                    my_logger.error(f"An unexpected error occurred: {e}")
+                    print(f"An unexpected error occurred: {e}")
 
 
             if face_path is None:
                 img = Image.new('RGB', (PIC_WIDTH,PIC_HEIGHT), color = 'lightgray')
-                my_logger.debug(f'No image found for {rep['name']}. Generating dummy image.')
+                #my_logger.debug(f'No image found for {rep['name']}. Generating dummy image.')
             elif face_path == rep['photo']:
-                my_logger.debug(f'Primary image for {rep['name']} was sufficient.')
+                #my_logger.debug(f'Primary image for {rep['name']} was sufficient.')
+                pass
             elif "http" in face_path:
                 try:
                     face_path_url = requests.get(face_path)
                     img_2 = Image.open(BytesIO(face_path_url.content))
                     dims_2 = img_2.size
                     if dims_2[0] < PIC_WIDTH or dims_2[1] < PIC_HEIGHT:
-                        my_logger.warning(f"Image for {rep['name']} is too small at {dims_2} instead of {(PIC_WIDTH, PIC_HEIGHT)}.")
+                        print(f"Image for {rep['name']} is too small at {dims_2} instead of {(PIC_WIDTH, PIC_HEIGHT)}.")
                     else:
                         img = img_2
-                        my_logger.info(f"Using secondary image for {rep['name']}")
-                    my_logger.debug(f'Success image pull for {rep['name']}')
+                        print(f"Using secondary image for {rep['name']}")
+                    #my_logger.debug(f'Success image pull for {rep['name']}')
                 except HTTPError as http_err:
-                    my_logger.error(f"HTTP error occurred: {http_err}")
+                    print(f"HTTP error occurred: {http_err}")
                 except RequestException as req_err:
-                    my_logger.error(f"Request exception occurred: {req_err}")
+                    print(f"Request exception occurred: {req_err}")
                 except Exception as e:
-                    my_logger.error(f"An unexpected error occurred: {e}")
+                    print(f"An unexpected error occurred: {e}")
             else:
                 img = Image.new('RGB', (PIC_WIDTH,PIC_WIDTH), color = 'lightgray')
-                my_logger.debug(f'Face path invalid for {rep['name']}. Generating dummy image.')
+                #my_logger.debug(f'Face path invalid for {rep['name']}. Generating dummy image.')
 
 
             if img is None:
                 #This means both images were too small. Pick the best one
                 img = img_1 if dims_1[0]*dims_1[1] > dims_2[0]*dims_2[1] else img_2
-                my_logger.info(f'Both images too small for {rep['name']}. Using larger one at {img.size}.')
+                print(f'Both images too small for {rep['name']}. Using larger one at {img.size}.')
 
         #Resize the image
         img = resize_image(img, PIC_WIDTH)
 
         #Save the image to generated_outputs/temp.png
-        root = os.path.dirname(os.path.abspath(__file__))
-        pic_file = os.path.join(root, "generated_outputs", "temp.png")
+        pic_file = os.path.join(root, "src", "generated_outputs", "temp.png")
         img.save(pic_file)
+        print(f"Saved photo for {rep['name']}")
         
 
     except ImportError:
-        my_logger.error(f"Pillow is installed, but couldn't create dummy images.")
+        print(f"Pillow is installed, but couldn't create dummy images.")
         pass # Continue without dummy images if PIL issues persist
     except Exception as e:
-        my_logger.error(f"Unexpected error pulling image for {rep['name']}: {e}")
+        print(f"Unexpected error pulling image for {rep['name']}: {e}")
 
     #return img
 
 def draw_wrapped_text(draw_context, text, font, max_width):
-
-
     lines = []
     line_words = []
     words = text.split(' ')
@@ -187,8 +168,6 @@ def draw_wrapped_text(draw_context, text, font, max_width):
         else: #just return it
             return_me = lines[0]
 
-
-    
     return return_me
 
 
@@ -357,7 +336,7 @@ def create_vote_block(rep_info, absolute_stats):
 
 
     except Exception as e:
-        my_logger.warning(f"No voting record for {rep_info['name']}. Skip this section.")
+        print(f"No voting record for {rep_info['name']}. Skip this section.")
         message = ""
 
     return message
@@ -398,7 +377,7 @@ def gen_bonus_section(rep_info, draw, font, max_width):
 
 
 
-def create_temp(rep_info, absolute_stats):
+def create_temp(rep_info, absolute_stats, root, assets_dir):
     """
     Create the temp file needed for javascript. Format is:
     NAME
@@ -584,8 +563,7 @@ def create_temp(rep_info, absolute_stats):
     ####### Add in paths for save, template
     ################################################
 
-    root = os.path.dirname(os.path.abspath(__file__))
-    temp_file = os.path.join(root, "generated_outputs", "temp.txt")
+    temp_file = os.path.join(root, "src", "generated_outputs", "temp.txt")
 
     cards_dir = os.path.join(root, "..", "cards_ps")
     os.makedirs(cards_dir, exist_ok=True)
@@ -599,11 +577,11 @@ def create_temp(rep_info, absolute_stats):
 
     party = rep_info.get('partyName')
     if party=="Republican":
-        text_block += os.path.join(root, os.path.pardir, os.path.pardir, "politician_pages_assets", "templates", "Republican-House_Senate_Gov-Social.psd")
+        text_block += os.path.join(assets_dir, "politician_pages_assets", "templates", "Republican-House_Senate_Gov-Social.psd")
     elif party=="Democrat":
-        text_block += os.path.join(root, os.path.pardir, os.path.pardir, "politician_pages_assets", "templates", "Democrat-House_Senate_Gov-Social.psd")
+        text_block += os.path.join(assets_dir, "politician_pages_assets", "templates", "Democrat-House_Senate_Gov-Social.psd")
     else:
-        text_block += os.path.join(root, os.path.pardir, os.path.pardir, "politician_pages_assets", "templates", "Independent-House_Senate_Gov-Social.psd")
+        text_block += os.path.join(assets_dir, "politician_pages_assets", "templates", "Independent-House_Senate_Gov-Social.psd")
 
 
 
@@ -650,122 +628,55 @@ def get_rep_info(full_rep_info, name):
     print(f"Representative {name} not found")
     return None
 
-def gen_temp_for_javascript_old(test_card=True):
-
-    current_dir = os.path.dirname(__file__)
-    congressmen_f = os.path.join(current_dir, "generated_outputs", "congressmen_mod.json")
-    abs_stat_f = os.path.join(current_dir, "generated_outputs", "absolute_stats.json")
-    #Load in the JSON
-    try: 
-        with open(congressmen_f, 'r') as f:
-            congressmen_json = json.load(f)
-    except Exception as e:
-        my_logger.error("There is an issue with the congressmen.json. Quitting.")
-        return
-
-    #Load in the JSON
-    try: 
-        with open(abs_stat_f, 'r') as abs_f:
-            absolute_stats = json.load(abs_f)[0]
-    except Exception as e:
-        my_logger.error("There is an issue with the absolute_stats.json. Quitting.")
-        return
-
-
-
-    if test_card:
-        #max committee length
-        comm_dict = {}
-        my_logger.info("Running in debug mode. Just printing one card.")
-        for rep in congressmen_json:
-            comm = rep.get('committees', "a")
-            if comm is not None:
-                comm_len = len(comm)
-                comm_dict[comm_len] = comm_dict.get(comm_len, 0) + 1
-
-            else:
-                comm_dict[0] = comm_dict.get(0, 0) + 1
-            #Pelosi P000197
-            #Hamadeh H001098
-            #Sanders S000033
-            if rep.get('bioguideID')=='O000172': 
-                create_temp(rep, absolute_stats)
-                pull_pic_from_web(rep, dummy=False)
-        #print(comm_dict)
-    else:
-        for rep in congressmen_json:
-            create_temp(rep, absolute_stats)
-
 
 #used for main.py
-def gen_temp_for_javascript(rep_info):
+def gen_temp_for_javascript(name, root, assets_dir):
 
-    current_dir = os.path.dirname(__file__)
-    abs_stat_f = os.path.join(current_dir, "generated_outputs", "absolute_stats.json")
-    supplement_f = os.path.join(current_dir, "generated_outputs", "supplement_congressmen.json")
-
-    #Load in the absolute_stats JSON
-    try: 
-        with open(abs_stat_f, 'r') as abs_f:
-            absolute_stats = json.load(abs_f)[0]
-    except Exception as e:
-        my_logger.error("There is an issue with the absolute_stats.json. Quitting.")
-        return
-    
-    #Load in the supplement JSON
-    try: 
-        with open(supplement_f, 'r') as supp_f:
-            supplement_data = json.load(supp_f)
-    except Exception as e:
-        my_logger.error("There is an issue with the supplement_congressmen.json. Quitting.")
-        return
-
-
-    rep_info = merge_in_supplement(rep_info, supplement_data)
-    create_temp(rep_info, absolute_stats)
-    pull_pic_from_web(rep_info, dummy=False)
-
-
-#used for electron
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Pull info for Photoshop automation")
-    parser.add_argument('name', help="Name of congressman to run")
-
-    args = parser.parse_args()
-
-    name = args.name
-
-    current_dir = os.path.dirname(__file__)
-    abs_stat_f = os.path.join(current_dir, "generated_outputs", "absolute_stats.json")
-    supplement_f = os.path.join(current_dir, "generated_outputs", "supplement_congressmen.json")
-    congressmen_f = os.path.join(current_dir, "generated_outputs", "congressmen_mod.json")
+    abs_stat_f = os.path.join(root, "src", "generated_outputs", "absolute_stats.json")
+    supplement_f = os.path.join(root, "src", "generated_outputs", "supplement_congressmen.json")
+    congressmen_f = os.path.join(root, "src", "generated_outputs", "congressmen_mod.json")
 
     #Load in rep_info
     try: 
         with open(congressmen_f, 'r') as f:
             full_rep_info = json.load(f)
     except Exception as e:
-        my_logger.error("There is an issue loading in the congressmen_mod.json. Quitting.")
+        print("There is an issue loading in the congressmen_mod.json. Quitting.")
 
     rep_info = get_rep_info(full_rep_info, name)
-    
+
     #Load in the absolute_stats JSON
     try: 
         with open(abs_stat_f, 'r') as abs_f:
             absolute_stats = json.load(abs_f)[0]
     except Exception as e:
-        my_logger.error("There is an issue with the absolute_stats.json. Quitting.")
-        sys.exit()
+        print("There is an issue with the absolute_stats.json. Quitting.")
+        return
     
     #Load in the supplement JSON
     try: 
         with open(supplement_f, 'r') as supp_f:
             supplement_data = json.load(supp_f)
     except Exception as e:
-        my_logger.error("There is an issue with the supplement_congressmen.json. Quitting.")
-        sys.exit()
+        print("There is an issue with the supplement_congressmen.json. Quitting.")
+        return
 
+    load_global_fonts(root)
 
     rep_info = merge_in_supplement(rep_info, supplement_data)
-    create_temp(rep_info, absolute_stats)
-    pull_pic_from_web(rep_info, dummy=False)
+    create_temp(rep_info, absolute_stats, root, assets_dir)
+    pull_pic_from_web(rep_info, root, dummy=False)
+
+
+#used for electron
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Pull info for Photoshop automation")
+    parser.add_argument('name', help="Name of congressman to run")
+    parser.add_argument('pp_repo', help="Path to politician_pages repo")
+    parser.add_argument('pp_assets', help="Path for psd assets")
+    args = parser.parse_args()
+    name = args.name
+    root = args.pp_repo
+    assets_dir = args.pp_assets
+
+    gen_temp_for_javascript(name, root, assets_dir)

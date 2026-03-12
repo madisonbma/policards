@@ -1,12 +1,22 @@
 cards/
 cards_ps/
 templates/
-src/build
 __pycache__
+
+#config file
+src/config.json
+
 src/gen_cards.log
 src/generated_outputs/temp.png
 src/generated_outputs/temp.txt
 src/generated_outputs/*.log
+
+#executable generation
+dist/
+build/
+src/build
+*.spec
+
 # Logs
 logs
 src/*.log

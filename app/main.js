@@ -4,9 +4,15 @@ const { exec } = require('child_process');
 const fs = require('fs');
 const fsPromises = fs.promises; 
 
+const isDev = process.env.NODE_ENV !== 'production';
+const debug = false;
+
 let mainWindow;
 let updateWindow;
+let configWindow;
 let genWindow;
+
+let config;
 
 function createMainWindow() {
   mainWindow = new BrowserWindow({
@@ -41,6 +47,27 @@ function createUpdateWindow() {
   });
 }
 
+
+function createConfigWindow() {
+  configWindow = new BrowserWindow({
+    width: 800,
+    height: 500,
+    parent: mainWindow,
+    webPreferences: {
+      nodeIntegration: false,
+      contextIsolation: true,
+      preload: path.join(__dirname, 'preload.js')
+    }
+  });
+
+  configWindow.loadFile('renderer/config.html');
+
+  configWindow.on('closed', () => {
+    configWindow = null;
+  });
+}
+
+
 function createGenWindow() {
   genWindow = new BrowserWindow({
     width: 800,
@@ -60,6 +87,25 @@ function createGenWindow() {
   });
 }
 
+function default_config(configPath) {
+  const default_config = {
+    'CONGRESS_API_KEY': "",
+    'FEC_API_KEY': "",
+    'photoshop_year': "",
+    'politician_pages_path': "",
+    'politician_pages_assets_path': ""
+  }
+  const jsonString = JSON.stringify(default_config);
+  fs.writeFile(configPath, jsonString, (err) => {
+      if (err) {
+          console.error('Error writing to file', err);
+      } else {
+          console.log(`Data written to ${configPath} as JSON.`);
+      }
+  });
+  return default_config;
+}
+
 
 async function deleteFile(filePath) {
   try {
@@ -72,18 +118,42 @@ async function deleteFile(filePath) {
   }
 }
 
+function getBinaryPath(file) {
+  const isWin = process.platform === "win32";
+  const folder = isWin ? 'win' : 'mac';
+  const filename = isWin ? file + '.exe' : file + '-binary';
+  if (isDev) {
+    const filepath = path.join(config['politician_pages_path'], 'resources/bin', folder, filename);
+    console.log("Using file ", filepath);
+    return filepath;
+  } else {
+    const filepath = path.join(process.resourcesPath, 'bin', filename);
+    console.log("Using file ", filepath);
+    return filepath;
+  }
+}
+
+function scriptname_to_py(name) {
+  const filename = name + ".py";
+  return path.join(__dirname, '../src', filename);
+}
 
 const { spawn } = require('child_process');
 
-function runPythonScript(scriptPath, args = []) {
+function runPythonScript(scriptName, args = []) {
   return new Promise((resolve, reject) => {
-    // Note: Use 'python' or 'python3' depending on your system
     let pyProcess;
-    if (process.platform === "darwin") {
-      pyProcess = spawn('python3.14', [scriptPath, ...args]);
-    }
-    else {
-      pyProcess = spawn('python', [scriptPath, ...args]);
+    if (debug) {
+      if (process.platform === "darwin") {
+        pyProcess = spawn('python3.14', [scriptname_to_py(scriptName), ...args]);
+      }
+      else {
+        pyProcess = spawn('python', [scriptname_to_py(scriptName), ...args]);
+      }
+    } else {
+      pyProcess = spawn(getBinaryPath(scriptName), args, {
+        stdio: 'pipe'
+      });
     }
     
 
@@ -111,73 +181,97 @@ function sendSafe(sender, channel, data) {
 }
 
 
-function runPythonScriptAndStream(scriptPath, args, sender) {
-    console.log("Launching python script");
+function runPythonScriptAndStream(scriptName, args, sender) {
     let pythonProcess;
     return new Promise((resolve, reject) => {
+      if (debug) {
         if (process.platform === "darwin") {
-          pythonProcess = spawn('python3.14', [scriptPath, ...args]);
+          pythonProcess = spawn('python3.14', [scriptname_to_py(scriptName), ...args]);
         }
         else {
-          pythonProcess = spawn('python', [scriptPath, ...args]);
+          pythonProcess = spawn('python', [scriptname_to_py(scriptName), ...args]);
         }
-        console.log("Spawned new process");
-        pythonProcess.stdout.on('data', (data) => {
-          const text = data.toString('utf8');
-          console.log(text);
-          if (sender && !sender.isDestroyed()) {
-              sender.send('terminal-update', text);
-            }
-        });
+      } else {
+          pythonProcess = spawn(getBinaryPath(scriptName), args, {
+            stdio: 'pipe'
+          });
+      }
+      console.log("Spawning new process");
 
-        // Resolve the promise when the process exits successfully
-        pythonProcess.on('close', (code) => {
-            if (code === 0) {
-                console.log("Python script ", scriptPath, " finished successfully.");
-                resolve(); 
-            } else {
-                reject(new Error(`Python process exited with code ${code}`));
-            }
-        });
 
-        pythonProcess.on('error', (err) => {
-            console.log(err);
-            reject(err);
-        });
+      pythonProcess.stdout.on('data', (data) => {
+        const text = data.toString('utf8');
+        console.log(text);
+        if (sender && !sender.isDestroyed()) {
+            sender.send('terminal-update', text);
+          }
+      });
+
+      // Resolve the promise when the process exits successfully
+      pythonProcess.on('close', (code) => {
+          if (code === 0) {
+              console.log("Python script ", scriptPath, " finished successfully.");
+              resolve(); 
+          } else {
+              reject(new Error(`Python process exited with code ${code}`));
+          }
+      });
+
+      pythonProcess.on('error', (err) => {
+          console.log(err);
+          reject(err);
+      });
     });
 }
 
 
-function runPythonScriptAndStream_nopromise(scriptPath, args, sender) {
+function runPythonScriptAndStream_nopromise(scriptName, args, sender) {
   let pythonProcess;
+  if (debug) {
     if (process.platform === "darwin") {
-      pythonProcess = spawn('python3.14', [scriptPath, ...args]);
+      pythonProcess = spawn('python3.14', [scriptname_to_py(scriptName), ...args]);
     }
     else {
-      pythonProcess = spawn('python', [scriptPath, ...args]);
+      pythonProcess = spawn('python', [scriptname_to_py(scriptName), ...args]);
     }
-    pythonProcess.stdout.on('data', (data) => {
-        // Send each chunk of data to the UI
-        sendSafe(sender, 'terminal-update', data.toString());    
-        console.log(`Python: ${data}`);
+  } else {
+    pythonProcess = spawn(getBinaryPath(scriptName), args, {
+      stdio: 'pipe'
     });
+  }
+  pythonProcess.stdout.on('data', (data) => {
+      // Send each chunk of data to the UI
+      sendSafe(sender, 'terminal-update', data.toString());    
+      console.log(`Python: ${data}`);
+  });
 
-    pythonProcess.stderr.on('data', (data) => {
-      sendSafe(sender, 'terminal-update', `ERROR: ${data.toString()}`);
-      console.log(`ERROR: ${data.toString()}`);
-    });
+  pythonProcess.stderr.on('data', (data) => {
+    sendSafe(sender, 'terminal-update', `ERROR: ${data.toString()}`);
+    console.log(`ERROR: ${data.toString()}`);
+  });
 
-    sender.on('destroyed', () => {
-        pythonProcess.kill();
-        console.log('Killed process')
-    });
+  sender.on('destroyed', () => {
+      pythonProcess.kill();
+      console.log('Killed process')
+  });
 }
 
+
+function change_permissions_for_mac() {
+  if (process.platform !== 'win32') {
+    fs.chmodSync(getBinaryPath('gen_reps_json'), '755');
+    fs.chmodSync(getBinaryPath('gen_voting_record_json'), '755');
+    fs.chmodSync(getBinaryPath('combine_data'), '755');
+    fs.chmodSync(getBinaryPath('gen_temp_for_javascript'), '755');
+  }
+}
 
 
 /////////////////////////////////////////////////////
 // Start running the app
 //////////////////////////////////////////////////////
+
+change_permissions_for_mac();
 
 app.whenReady().then(() => {
   createMainWindow();
@@ -218,11 +312,20 @@ ipcMain.handle('open-update-window', () => {
   }
 });
 
+// Handle Edit Config button - opens new window
+ipcMain.handle('open-config-window', () => {
+  if (configWindow) {
+    configWindow.focus();
+  } else {
+    createConfigWindow();
+  }
+});
+
 // Handle gen reps (step 1 of gen card): python call
 ipcMain.handle('gen-reps-json', async (event) => {
   try {
-    const pythonScript = path.join(__dirname, '../src/gen_reps_json.py');
-    await runPythonScriptAndStream(pythonScript, [], event.sender);
+    const pythonScript = 'gen_reps_json';
+    await runPythonScriptAndStream(pythonScript, [config['CONGRESS_API_KEY'], config['politician_pages_path']], event.sender);
 
     return { success: true, message: 'Generated Reps' };
   } catch (error) {
@@ -233,8 +336,8 @@ ipcMain.handle('gen-reps-json', async (event) => {
 // Handle gen votes (step 2 of gen card): python call
 ipcMain.handle('gen-voting-record-json', async (event) => {
   try {
-    const pythonScript = path.join(__dirname, '../src/gen_voting_record_json.py');
-    await runPythonScriptAndStream(pythonScript, [], event.sender);
+    const pythonScript = 'gen_voting_record_json';
+    await runPythonScriptAndStream(pythonScript, [config['CONGRESS_API_KEY'], config['politician_pages_path']], event.sender);
 
     return { success: true, message: 'Generated Votes' };
   } catch (error) {
@@ -246,8 +349,8 @@ ipcMain.handle('gen-voting-record-json', async (event) => {
 ipcMain.handle('combine-data', async (event) => {
   try {
     console.log("Now running combine data")
-    const pythonScript = path.join(__dirname, '../src/combine_data.py');
-    await runPythonScriptAndStream(pythonScript, [], event.sender);
+    const pythonScript = 'combine_data';
+    await runPythonScriptAndStream(pythonScript, [config['politician_pages_path']], event.sender);
 
     return { success: true, message: 'Created congressmen_mod.json' };
   } catch (error) {
@@ -259,10 +362,10 @@ ipcMain.handle('combine-data', async (event) => {
 ipcMain.handle('gen-card', async (_event, name) => {
   console.log("Received from renderer: ", name)
   try {
-    const pythonScript = path.join(__dirname, '../src/gen_temp_for_javascript.py');
-    const jsxScript = path.join(__dirname, '../src/fill_social_template.jsx');
-    const tempFile = path.join(__dirname, '../src/generated_outputs/temp.txt');
-    const outputDir = path.join(__dirname, '../cards_ps');
+    const pythonScript = 'gen_temp_for_javascript';
+    const jsxScript = path.join(config['politician_pages_path'], 'src/fill_social_template.jsx');
+    const tempFile = path.join(config['politician_pages_path'], 'src/generated_outputs/temp.txt');
+    const outputDir = path.join(config['politician_pages_path'], 'cards_ps');
     const replacements = {
       ',': '',
       '"': '',
@@ -278,7 +381,7 @@ ipcMain.handle('gen-card', async (_event, name) => {
 
     //1: gen temp for javascript
     await deleteFile(tempFile);
-    await runPythonScript(pythonScript, [name]);
+    await runPythonScript(pythonScript, [name, config['politician_pages_path'], config['politician_pages_assets_path']]);
     console.log("Success! temp.txt has been created.");
 
 
@@ -347,8 +450,8 @@ ipcMain.handle('gen-card', async (_event, name) => {
 // Load congressmen data for manual entry
 ipcMain.handle('load-congressmen-data', async () => {
   try {
-    const congressmenModPath = path.join(__dirname, '../src/generated_outputs/congressmen_mod.json');
-    const supplementPath = path.join(__dirname, '../src/generated_outputs/supplement_congressmen.json');
+    const congressmenModPath = path.join(config['politician_pages_path'], 'src/generated_outputs/congressmen_mod.json');
+    const supplementPath = path.join(config['politician_pages_path'], 'src/generated_outputs/supplement_congressmen.json');
 
     let congressmenMod = [];
     let supplement = [];
@@ -375,10 +478,51 @@ ipcMain.handle('load-congressmen-data', async () => {
   }
 });
 
+
+
+// Load config data
+ipcMain.handle('load-config-data', async () => {
+  try {
+    const configPath = path.join(__dirname, '../src/config.json');
+
+    // Load config.json
+    if (fs.existsSync(configPath)) {
+      const configData = fs.readFileSync(configPath, 'utf8');
+      config = JSON.parse(configData);
+      if (Object.keys(config).length <= 0) {
+        config = default_config(configPath);
+      }
+    } else {
+      //create new config file with prepopulated fields
+      config = default_config(configPath);
+    }
+
+    return { config };
+  } catch (error) {
+    throw new Error(`Failed to load data: ${error.message}`);
+  }
+});
+
+// Save config data
+ipcMain.handle('save-config-data', async (event, configData) => {
+  try {
+    const configPath = path.join(__dirname, '../src/config.json');
+
+    //load the data to use directly:
+    config = configData;
+
+    //now save to file for future use
+    fs.writeFileSync(configPath, JSON.stringify(configData, null, 4), 'utf8');
+    return { success: true, message: 'Data saved successfully!' };
+  } catch (error) {
+    return { success: false, message: error.toString() };
+  }
+});
+
 // Save supplement data
 ipcMain.handle('save-supplement', async (event, supplementData) => {
   try {
-    const supplementPath = path.join(__dirname, '../src/generated_outputs/supplement_congressmen.json');
+    const supplementPath = path.join(config['politician_pages_path'], 'src/generated_outputs/supplement_congressmen.json');
     
     fs.writeFileSync(supplementPath, JSON.stringify(supplementData, null, 4), 'utf8');
     

@@ -9,6 +9,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   genCard: (name) => ipcRenderer.invoke('gen-card', name),
   openUpdateWindow: () => ipcRenderer.invoke('open-update-window'),
   loadCongressmenData: () => ipcRenderer.invoke('load-congressmen-data'),
+  loadConfigData: () => ipcRenderer.invoke('load-config-data'),
   combineData: () => ipcRenderer.invoke('combine-data'),
-  saveSupplement: (data) => ipcRenderer.invoke('save-supplement', data)
+  saveSupplement: (data) => ipcRenderer.invoke('save-supplement', data),
+  saveConfigData: (data) => ipcRenderer.invoke('save-config-data', data),
+  openConfigWindow: () => ipcRenderer.invoke('open-config-window')
 });

@@ -1,0 +1,30 @@
+name: Build Python Binaries
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.14'
+      - name: Install PyInstaller
+        run: pip install pyinstaller
+      - name: Build Executable
+        run: | 
+          pyinstaller --onefile src/gen_reps_json.py
+          pyinstaller --onefile src/gen_voting_record_json.py
+          pyinstaller --onefile --paths src src/combine_data.py
+          pyinstaller --onefile src/gen_temp_for_javascript.py
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: binaries-${{ matrix.os }}
+          path: dist/

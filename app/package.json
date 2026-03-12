@@ -15,10 +15,10 @@
   "type": "commonjs",
   "main": "main.js",
   "scripts": {
-    "start": "electron .",
-    "build": "electron-builder",
-    "build:win": "electron-builder --win",
-    "build:mac": "electron-builder --mac"
+    "start": "cross-env NODE_ENV=development electron .",
+    "build": "cross-env NODE_ENV=production electron-builder",
+    "build:win": "cross-env NODE_ENV=production electron-builder --win",
+    "build:mac": "cross-env NODE_ENV=production electron-builder --mac"
   },
   "dependencies": {
     "electron-squirrel-startup": "^1.0.1"
@@ -32,9 +32,19 @@
     "@electron-forge/plugin-auto-unpack-natives": "^7.10.2",
     "@electron-forge/plugin-fuses": "^7.10.2",
     "@electron/fuses": "^1.8.0",
+    "cross-env": "^10.1.0",
     "electron": "^39.8.0"
   },
   "build": {
+    "extraResources": [
+      {
+        "from": "resources/bin/${os}",
+        "to": "bin",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
     "appId": "com.cardgenerator.app",
     "productName": "Card Generator",
     "files": [
