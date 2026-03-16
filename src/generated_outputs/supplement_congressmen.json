@@ -21,7 +21,17 @@
     },
     {
         "name": "Trent Kelly",
-        "birthplace": "Union, MS"
+        "birthplace": "Union, MS",
+        "top_donors": [
+            "Dunlap & Kyle Employees ($25k)",
+            "Herzog Contracting ($20k from employees, $5k from PAC)",
+            "Seeman Composites Employees ($21k)"
+        ],
+        "top_issues": [
+            "Strengthen national defense and support military veterans",
+            "Support and protect farmers and rural communities with subsidies and disaster relief",
+            "Reduce business regulations so the government doesn't pick winners and losers"
+        ]
     },
     {
         "name": "Michael Guest",
@@ -55,5 +65,11 @@
         "name": "John Cornyn",
         "birthplace": "Houston, TX",
         "birthDate": "1952-02-02"
+    },
+    {
+        "name": "Adelita S. Grijalva",
+        "top_donors": [
+            "person 1"
+        ]
     }
 ]

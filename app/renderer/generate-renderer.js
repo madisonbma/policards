@@ -341,7 +341,7 @@ yesVoteBtn.addEventListener('click', async () => {
     const result_combine = await window.electronAPI.combineData();
 
     if (result_combine.success) {
-      showStatus('Success in combineData. All is good...');
+      showStatus('Success in combineData. All is good...', true);
       await delay(5000);
       const loaded = await loadData();
       setLoading(false);

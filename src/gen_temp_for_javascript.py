@@ -192,7 +192,7 @@ def num_to_percentile(num):
 
 
 
-def gen_summary_stats(rep_info):
+def gen_summary_stats(rep_info, rep_stats):
     """
     Docstring for gen_summary_stats
      * - Tenure: <rank/total>
@@ -201,36 +201,35 @@ def gen_summary_stats(rep_info):
      * - District Size: TBD
     :param rep_info: dictionary on representative info
     """
-
-    return_me = ""
+    summary_stat = ""
     chamber = rep_info.get("chamber")
     ### TENURE
     if chamber == "House of Representatives":
-        return_me += f"Tenure: {rep_info.get("bg_duration")} years ({rep_info.get("bg_tenure_rank_current")}/535)||BREAK_DOT||"
+        summary_stat += f"Tenure: {rep_info.get("bg_duration")} years ({rep_info.get("bg_tenure_rank_current")}/535)||BREAK_DOT||"
     else:
-        return_me += f"Tenure: {rep_info.get("bg_duration")} years ({rep_info.get("bg_tenure_rank_current")}/100)||BREAK_DOT||"
+        summary_stat += f"Tenure: {rep_info.get("bg_duration")} years ({rep_info.get("bg_tenure_rank_current")}/100)||BREAK_DOT||"
 
     ### ABSENT
     novote_count = rep_info.get('Absent', 0) + rep_info.get("Abstained", 0)
     novote_percent = novote_count / (rep_info.get('vote_count') - rep_info.get('Both', 0) - rep_info.get('Neither', 0)) * 100
     novote_percent = int(novote_percent)
-    return_me += f"Not Voting: {novote_count} votes ({novote_percent}% of votes)||BREAK_DOT||"
+    summary_stat += f"Not Voting: {novote_count} votes ({novote_percent}% of votes)||BREAK_DOT||"
 
     ### POPULATION
-    return_me += f"Population: TBD||BREAK_DOT||"
+    summary_stat += f"Population: TBD||BREAK_DOT||"
 
     ### DISTRICT_SIZE 
-    return_me += f"District Size: TBD"
+    summary_stat += f"District Size: TBD"
     
+    rep_stats['summary_stats'] = summary_stat
 
-    return_me += "\n"
-    return return_me
 
-def gen_committee_list(rep_info):
+
+def gen_committee_list(rep_info, rep_stats):
     return_me = ""
     committees = rep_info.get("committees")
     if len(committees)==0:
-        return "\n"
+        rep_stats['committee_list'] = ""
     else:
         parent_com = []
         sub_com = []
@@ -257,27 +256,23 @@ def gen_committee_list(rep_info):
             return_me += "||BREAK_DOT||".join(parent_com)
 
 
-        return_me += "\n"
-        return return_me
+        rep_stats['committee_list'] = return_me
 
 
-def get_work_history(rep_info, draw, font, max_width):
-    return_me = ""
+def get_work_history(rep_info, draw, font, max_width, rep_stats):
     new_ed = []
     work_history = rep_info.get('work_history')
     if len(work_history)==0:
-        return "\n"
+        rep_stats['work_history'] = ""
     else:
         for work in work_history:
             new_ed.append(draw_wrapped_text(draw, work, font, max_width))
         new_ed[0] = f"||BREAK_DOT||{new_ed[0]}"
-        return_me = "||BREAK_DOT||".join(new_ed)
-        return_me += "\n"
-        return return_me
+        rep_stats['work_history'] = "||BREAK_DOT||".join(new_ed)
 
 
 
-def create_vote_block(rep_info, absolute_stats):
+def create_vote_block(rep_info, absolute_stats, rep_stats):
     """
     This is the voting info block. Example:
         Votes with Republicans 95% of the time
@@ -290,90 +285,100 @@ def create_vote_block(rep_info, absolute_stats):
     chamber = rep_info.get('chamber')
 
     try:
-        message = ""
         with_d = rep_info.get('with_D_percent')
         with_r = rep_info.get('with_R_percent')
         novote_count = rep_info.get('Absent', 0) + rep_info.get("Abstained", 0)
         novote_percent = novote_count / (rep_info.get('vote_count') - rep_info.get('Both', 0) - rep_info.get('Neither', 0)) * 100
         novote_percent = int(novote_percent)
-        message += f"{novote_percent}\n"
+        rep_stats['absent_percent'] = f"{novote_percent}"
         if with_d > with_r:
-            message += f"Votes {with_d}% Democrat, {with_r}% Republican,||BREAK||Not Voting {novote_percent}%\n"
+            rep_stats['vote_with_party_text'] = f"Votes {with_d}% Democrat, {with_r}% Republican,||BREAK||Not Voting {novote_percent}%"
         else:
-            message += f"Votes {with_r}% Republican, {with_d}% Democrat,||BREAK||Not Voting {novote_percent}%\n"
+            rep_stats['vote_with_party_text'] = f"Votes {with_r}% Republican, {with_d}% Democrat,||BREAK||Not Voting {novote_percent}%"
 
 
         #if they are D or R, show how often they vote with party:
         if party=="Republican":
             if chamber == "House of Representatives":
-                message += f"The average House Republican votes {absolute_stats.get('with_R_avg_vote_H_R'):.{3}g}% Republican||BREAK||and is not voting {absolute_stats.get('absent_percent_avg_vote_H_R'):.{3}g}% of the time\n"
+                rep_stats['avg_vote_text'] = f"The average House Republican votes {absolute_stats.get('with_R_avg_vote_H_R'):.{3}g}% Republican||BREAK||and is not voting {absolute_stats.get('absent_percent_avg_vote_H_R'):.{3}g}% of the time"
             else:
-                message += f"The average Senate Republican votes {absolute_stats.get('with_R_avg_vote_S_R'):.{3}g}% Republican||BREAK||and is not voting {absolute_stats.get('absent_percent_avg_vote_S_R'):.{3}g}% of the time\n"
+                rep_stats['avg_vote_text'] = f"The average Senate Republican votes {absolute_stats.get('with_R_avg_vote_S_R'):.{3}g}% Republican||BREAK||and is not voting {absolute_stats.get('absent_percent_avg_vote_S_R'):.{3}g}% of the time"
     
         elif party=="Democrat":
             if chamber == "House of Representatives":
-                message += f"The average House Democrat votes {absolute_stats.get('with_D_avg_vote_H_D'):.{3}g}% Democrat||BREAK||and is not voting {absolute_stats.get('absent_percent_avg_vote_H_D'):.{3}g}% of the time\n"
+                rep_stats['avg_vote_text'] = f"The average House Democrat votes {absolute_stats.get('with_D_avg_vote_H_D'):.{3}g}% Democrat||BREAK||and is not voting {absolute_stats.get('absent_percent_avg_vote_H_D'):.{3}g}% of the time"
             else:
-                message += f"The average Senate Democrat votes {absolute_stats.get('with_D_avg_vote_S_D'):.{3}g}% Democrat||BREAK||and is not voting {absolute_stats.get('absent_percent_avg_vote_S_D'):.{3}g}% of the time\n"
+                rep_stats['avg_vote_text'] = f"The average Senate Democrat votes {absolute_stats.get('with_D_avg_vote_S_D'):.{3}g}% Democrat||BREAK||and is not voting {absolute_stats.get('absent_percent_avg_vote_S_D'):.{3}g}% of the time"
 
         else: #if they're not D or R, show which party they vote with more often:
             if rep_info['with_D'] > rep_info['with_R']:
                 #Vote more often with democrats
                 if chamber == "House of Representatives":
-                    message += f"Votes more often with House Democrats, who on average vote {absolute_stats.get('with_D_avg_vote_H_D'):.{3}g}% Democrat||BREAK||and is not voting {absolute_stats.get('absent_percent_avg_vote_H_D'):.{3}g}% of the time\n"
+                    rep_stats['avg_vote_text'] = f"Votes more often with House Democrats, who on average vote {absolute_stats.get('with_D_avg_vote_H_D'):.{3}g}% Democrat||BREAK||and is not voting {absolute_stats.get('absent_percent_avg_vote_H_D'):.{3}g}% of the time"
                 else:
-                    message += f"Votes more often with Senate Democrats, who on average vote {absolute_stats.get('with_D_avg_vote_S_D'):.{3}g}% Democrat||BREAK||and is not voting {absolute_stats.get('absent_percent_avg_vote_S_D'):.{3}g}% of the time\n"
+                    rep_stats['avg_vote_text'] = f"Votes more often with Senate Democrats, who on average vote {absolute_stats.get('with_D_avg_vote_S_D'):.{3}g}% Democrat||BREAK||and is not voting {absolute_stats.get('absent_percent_avg_vote_S_D'):.{3}g}% of the time"
             elif rep_info['with_D'] == rep_info['with_R']:
-                message += "Votes with Democrats and Republicans 50% of the time\n"
+                rep_stats['avg_vote_text'] = "Votes with Democrats and Republicans 50% of the time"
             else:
                 #Vote more often with republicans
                 if chamber == "House of Representatives":
-                    message += f"Votes more often with House Republicans, who on average vote {absolute_stats.get('with_R_avg_vote_H_R'):.{3}g}% Democrat||BREAK||and is not voting {absolute_stats.get('absent_percent_avg_vote_H_R'):.{3}g}% of the time\n"
+                    rep_stats['avg_vote_text'] = f"Votes more often with House Republicans, who on average vote {absolute_stats.get('with_R_avg_vote_H_R'):.{3}g}% Democrat||BREAK||and is not voting {absolute_stats.get('absent_percent_avg_vote_H_R'):.{3}g}% of the time"
                 else:
-                    message += f"Votes more often with Senate Republicans, who on average vote {absolute_stats.get('with_R_avg_vote_S_R'):.{3}g}% Democrat||BREAK||and is not voting {absolute_stats.get('absent_percent_avg_vote_S_R'):.{3}g}% of the time\n"
-
- 
-
+                    rep_stats['avg_vote_text'] = f"Votes more often with Senate Republicans, who on average vote {absolute_stats.get('with_R_avg_vote_S_R'):.{3}g}% Democrat||BREAK||and is not voting {absolute_stats.get('absent_percent_avg_vote_S_R'):.{3}g}% of the time"
 
     except Exception as e:
         print(f"No voting record for {rep_info['name']}. Skip this section.")
-        message = ""
-
-    return message
-    
 
 
+def gen_top_issues(rep_info, draw, font, max_width, rep_stats):
+    formatted_list = []
+    top_issues_list = rep_info.get('top_issues', [])
+    if top_issues_list:
+        for issue in top_issues_list:
+            formatted_list.append(draw_wrapped_text(draw, issue, font, max_width))
+        top_issues = "||BREAK_DOT||".join(formatted_list)
+        rep_stats['top_issues'] = f"||BREAK_DOT||{top_issues}"
+    else:
+        rep_stats['top_issues'] = "||BREAK_DOT||Issue 1||BREAK_DOT||Issue 2||BREAK_DOT||Issue 3"
 
 
-def gen_bonus_section(rep_info, draw, font, max_width):
-    return_me = ""
+def gen_top_donors(rep_info, draw, font, max_width, rep_stats):
+    formatted_list = []
+    top_donors_list = rep_info.get('top_donors', [])
+    if top_donors_list:
+        for donor in top_donors_list:
+            formatted_list.append(draw_wrapped_text(draw, donor, font, max_width))
+        top_donors = "||BREAK_DOT||".join(formatted_list)
+        rep_stats['top_donors'] = f"||BREAK_DOT||{top_donors}"
+    else:
+        rep_stats['top_donors'] = "||BREAK_DOT||Donor 1||BREAK_DOT||Donor 2||BREAK_DOT||Donor 3"
+
+
+def gen_bonus_section(rep_info, draw, font, max_width, rep_stats):
     bonus_list = []
     if rep_info.get('military'):
         bonus_list = rep_info.get('military')
-        return_me += "MILITARY SERVICE\n"
+        rep_stats['bonus_header'] = "MILITARY SERVICE"
     elif rep_info.get('accolades'):
         bonus_list = rep_info.get('accolades')
-        return_me += "AWARDS\n"
+        rep_stats['bonus_header'] = "AWARDS"
     elif rep_info.get('illegal'):
         bonus_list = rep_info.get("illegal")
-        return_me += "REPRIMANDS\n"
+        rep_stats['bonus_header'] = "REPRIMANDS"
     elif rep_info.get('family'):
         bonus_list = rep_info.get("family")  
-        return_me += "NOTABLE FAMILY\n" 
+        rep_stats['bonus_header'] = "NOTABLE FAMILY" 
     elif rep_info.get('congress_highlights'):
         bonus_list = rep_info.get("congress_highlights")
-        return_me += "CONGRESS HIGHLIGHTS\n"
+        rep_stats['bonus_header'] = "CONGRESS HIGHLIGHTS"
     else:
-
-        return "\n\n"
-
+        return
+    
     formatted_list = []
     for item in bonus_list:
         formatted_list.append(draw_wrapped_text(draw, item, font, max_width))
     formatted_list[0] = f"||BREAK_DOT||{formatted_list[0]}"
-    return_me += "||BREAK_DOT||".join(formatted_list)
-    return_me += "\n"
-    return return_me
+    rep_stats['bonus_text'] = "||BREAK_DOT||".join(formatted_list)
 
 
 
@@ -389,7 +394,7 @@ def create_temp(rep_info, absolute_stats, root, assets_dir):
     #First create a dummy draw to get dimensions of fonts
     card = Image.new("RGB", (1080, 1920), (140, 23, 42))
     draw = ImageDraw.Draw(card)
-    text_block = ""
+    rep_stats = {}
 
 
     ##################################################
@@ -404,7 +409,7 @@ def create_temp(rep_info, absolute_stats, root, assets_dir):
             "Ensure the font file exists and is accessible.")
 
     state = draw_wrapped_text(draw, rep_info.get('state', "STATE"), font, max_width)
-    text_block += f"{state}\n"
+    rep_stats['state'] = f"{state}"
 
 
     ##################################################
@@ -420,22 +425,22 @@ def create_temp(rep_info, absolute_stats, root, assets_dir):
             "Ensure the font file exists and is accessible.")
 
     name_data = draw_wrapped_text(draw, name, font, max_width)
-    text_block += f"{name_data}\n"
+    rep_stats['name_line'] = f"{name_data}"
 
     ##################################################
     #      EITHER CONGRESS OR GOVERNOR               #
     ##################################################
     chamber = rep_info.get('chamber')
     if chamber == "House of Representatives":
-        text_block += "Congress\n"
+        rep_stats['title_line'] = "Congress"
     elif chamber == "Senate":
-        text_block += "Congress\n"
+        rep_stats['title_line'] = "Congress"
     elif chamber == "Governor":
-        text_block += "Governor\n"
+        rep_stats['title_line'] = "Governor"
     else:
-        text_block += "Unknown Position\n"
+        rep_stats['title_line'] = "Unknown Position"
     
-    text_block += f"{chamber}:\n"
+    rep_stats['chamber_line'] = f"{chamber}:"
     ##################################################
     #    XXXX-Present | Up for re-election in 20XX   #
     ##################################################
@@ -444,13 +449,13 @@ def create_temp(rep_info, absolute_stats, root, assets_dir):
 
     if (rep_info['bg_endYear'] - 1 > date.today().year):
         range = str(rep_info['bg_startYear']) + " - Present"
-        text_block += f"{range} | Up for re-election in {str(rep_info['bg_endYear']-1)}\n"
+        rep_stats['reelection_line'] = f"{range} | Up for re-election in {str(rep_info['bg_endYear']-1)}"
     elif (rep_info['bg_endYear'] - 1 < date.today().year):
         range = f"{rep_info['bg_startYear']} - {rep_info['bg_endYear']}"
-        text_block += f"Served from {range}\n"
+        rep_stats['reelection_line'] = f"Served from {range}"
     else:
         range = str(rep_info['bg_startYear']) + " - Present"
-        text_block += f"{range} | Up for re-election this year\n"
+        rep_stats['reelection_line'] =  f"{range} | Up for re-election this year"
     
 
     ##################################################
@@ -466,10 +471,10 @@ def create_temp(rep_info, absolute_stats, root, assets_dir):
 
     birthplace = rep_info.get('birthplace')
     if birthplace == "":
-        text_block += f"Unknown\n"
+        rep_stats['birthplace_line'] = f"Unknown"
     else:
         birthplace = draw_wrapped_text(draw, birthplace, font, max_width)
-        text_block += f"{birthplace}\n"
+        rep_stats['birthplace_line'] = f"{birthplace}"
 
     birthday = rep_info.get('birthDate', 0)
     today = date.today()
@@ -485,7 +490,7 @@ def create_temp(rep_info, absolute_stats, root, assets_dir):
     else:
         age = 0
 
-    text_block += f"{age}\n"
+    rep_stats['age_line'] = f"{age}"
 
 
     ##################################################
@@ -497,9 +502,9 @@ def create_temp(rep_info, absolute_stats, root, assets_dir):
             if ed_list[0] == "High school graduate":
                 ed_list.pop(0) #get rid of the high school info
         education = "||BREAK_DOT||".join(ed_list)
-        text_block += f"||BREAK_DOT||{education}\n"
+        rep_stats['education_line'] = f"||BREAK_DOT||{education}"
     else:
-        text_block += "\n"
+        rep_stats['education_line'] = ""
 
     #############SECTION 2 #########################
     #Voting Record: %f percentage
@@ -509,37 +514,37 @@ def create_temp(rep_info, absolute_stats, root, assets_dir):
     voting_pct = rep_info.get('for_bar', None)
 
     if voting_pct is not None:
-        text_block += f"{voting_pct}\n"
+        rep_stats['vote_with_party_percentile'] = f"{voting_pct}"
 
-    text_block += create_vote_block(rep_info, absolute_stats)
+    create_vote_block(rep_info, absolute_stats, rep_stats)
 
     key = f"max_tenure_{chamber[0].upper()}"
     max_tenure = absolute_stats.get(key)
 
     duration = rep_info.get('bg_duration', None)
     tenure_marker = int((duration/max_tenure)*100)
+    rep_stats['tenure_percentile'] = tenure_marker
     tenure_pct = rep_info.get("bg_tenure_rank_current_percentile", None)
     if tenure_pct is not None:
         if duration is None:
-            text_block += f"{tenure_marker}\n{num_to_percentile(tenure_pct)}\n"
+            rep_stats['tenure_percentile_formatted'] = f"{num_to_percentile(tenure_pct)}"
         elif duration < 1:
             duration = duration*12
             if duration < 1: #if less than 1 month
-                text_block += f"{tenure_marker}\n{num_to_percentile(tenure_pct)} (<1 month)\n"
+                rep_stats['tenure_percentile_formatted'] = f"{num_to_percentile(tenure_pct)} (<1 month)"
 
             else:
-
-                text_block += f"{tenure_marker}\n{num_to_percentile(tenure_pct)} ({duration:.{2}g} months)\n"
+                rep_stats['tenure_percentile_formatted'] = f"{num_to_percentile(tenure_pct)} ({duration:.{2}g} months)"
         elif duration == 1:
-            text_block += f"{tenure_marker}\n{num_to_percentile(tenure_pct)} ({duration} year)\n"
+            rep_stats['tenure_percentile_formatted'] = f"{num_to_percentile(tenure_pct)} ({duration} year)"
         else:
-            text_block += f"{tenure_marker}\n{num_to_percentile(tenure_pct)} ({duration} years)\n"
+            rep_stats['tenure_percentile_formatted'] = f"{num_to_percentile(tenure_pct)} ({duration} years)"
 
 
-    text_block += f"{max_tenure}\n"
+    rep_stats['max_tenure'] = f"{max_tenure}"
 
-    text_block += gen_summary_stats(rep_info)
-    text_block += gen_committee_list(rep_info)
+    gen_summary_stats(rep_info, rep_stats)
+    gen_committee_list(rep_info, rep_stats)
 
 
     ##################################################
@@ -552,11 +557,12 @@ def create_temp(rep_info, absolute_stats, root, assets_dir):
     except IOError:
         print(f"Warning: Could not load font from {font_tuple[1]}."
             "Ensure the font file exists and is accessible.")
-    text_block += get_work_history(rep_info, draw, font, max_width)
+    get_work_history(rep_info, draw, font, max_width, rep_stats)
 
 
-    text_block += gen_bonus_section(rep_info, draw, font, max_width)
-
+    gen_bonus_section(rep_info, draw, font, max_width, rep_stats)
+    gen_top_issues(rep_info, draw, font, max_width, rep_stats)
+    gen_top_donors(rep_info, draw, font, max_width, rep_stats)
 
 
     #################################################
@@ -565,35 +571,32 @@ def create_temp(rep_info, absolute_stats, root, assets_dir):
 
     temp_file = os.path.join(root, "src", "generated_outputs", "temp.txt")
 
-    cards_dir = os.path.join(root, "..", "cards_ps")
+    cards_dir = os.path.join(root, "cards_ps")
     os.makedirs(cards_dir, exist_ok=True)
 
     replacements = str.maketrans({",": "", "\"": "", ".":"", " ":"_"})
-
+    
     output_filename = os.path.join(cards_dir, \
         f"{name.translate(replacements).lower()}_card.psd")
-    text_block += output_filename
-    text_block += "\n"
+    rep_stats['file_save_path'] = output_filename
 
     party = rep_info.get('partyName')
     if party=="Republican":
-        text_block += os.path.join(assets_dir, "templates", "Republican-House_Senate_Gov-Social.psd")
+        rep_stats['template_path'] = os.path.join(assets_dir, "templates", "Republican-House_Senate_Gov-Social.psd")
     elif party=="Democrat":
-        text_block += os.path.join(assets_dir, "templates", "Democrat-House_Senate_Gov-Social.psd")
+        rep_stats['template_path'] = os.path.join(assets_dir, "templates", "Democrat-House_Senate_Gov-Social.psd")
     else:
-        text_block += os.path.join(assets_dir, "templates", "Independent-House_Senate_Gov-Social.psd")
-
+        rep_stats['template_path'] = os.path.join(assets_dir, "templates", "Independent-House_Senate_Gov-Social.psd")
 
 
     #################################################
     ####### Write to temp file
     ################################################
     with open(temp_file, 'w') as f:
-        f.write(text_block)
+        f.write("var rep_info = ")
+        json.dump(rep_stats, f, indent=4)
+        f.write(";")
         print(f"Successfully wrote {name} data to {temp_file}")
-
-
-
 
 
 

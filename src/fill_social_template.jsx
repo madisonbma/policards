@@ -72,7 +72,7 @@ function center(layer_to_be_centered, bound1, bound2, axis) {
             layer_to_be_centered.translate(0, target - y);
         }
         else {
-            alert("height of text box is bigger than the allotted space");
+            //alert("height of text box is bigger than the allotted space");
         }
         
     }
@@ -375,6 +375,7 @@ function write_bulleted_list(layer, text){
      *   -> ||BREAK_SUBDOT||: for committees specifically. 
      *                        add 4 spaces before, don't add the bullet bc already there
      */
+    layer.textItem.kind = TextType.POINTTEXT; 
     var addme = "";
     var bullet = String.fromCharCode(8226);
     layer.textItem.leading = 7;
@@ -558,50 +559,20 @@ function name_and_title(name_and_info_layer, rep_info) {
     return education_size;
 }
 
-
-/////////////////////////////
-// Load in the temp input  //
-/////////////////////////////
-
-function load_temp_dict() {
-    try {
-
-        var datafile = new File(dataFilePath);
-        datafile.open('r');
-
-        var dict = {};
-        dict["state"] = datafile.readln();
-        dict["name_line"] = datafile.readln();
-        dict["title_line"] = datafile.readln();
-        dict["chamber_line"] = datafile.readln();
-        dict["reelection_line"] = datafile.readln();
-        dict["birthplace_line"] = datafile.readln();
-        dict["age_line"] = datafile.readln();
-        dict["education_line"] = datafile.readln();
-        dict["vote_with_party_percentile"] = parseFloat(datafile.readln());
-        dict["absent_percent"] = parseFloat(datafile.readln());
-        dict["vote_with_party_text"] = datafile.readln();
-        dict["avg_vote_text"] = datafile.readln();
-        dict["tenure_percentile"] = parseFloat(datafile.readln());
-        dict["tenure_percentile_formatted"] = datafile.readln();
-        dict["max_tenure"] = datafile.readln();
-        dict["summary_stats"] = datafile.readln();
-        dict["committee_list"] = datafile.readln();
-        dict["work_history"] = datafile.readln();
-        dict["bonus_header"] = datafile.readln();
-        dict["bonus_text"] = datafile.readln();
-        dict["file_save_path"] = datafile.readln();
-        dict["template_path"] = datafile.readln();
-
-        datafile.close();
-        return dict;
-
-
-    } catch (e) {
-        alert("Error reading data file: " + e.toString());
-    }
+function fill_top_issues(top_issues_layer, rep_info) {
+    write_bulleted_list(top_issues_layer.layers[0], rep_info['top_issues']);
 }
 
+function fill_top_donors(top_donors_layer, rep_info) {
+    var donor_text_layer = top_donors_layer.layers[0];
+    write_bulleted_list(donor_text_layer, rep_info['top_donors']);
+
+    var opensecrets_layer = top_donors_layer.layers[1];
+    var offset = donor_text_layer.bounds[3].value + 10 - opensecrets_layer.bounds[1].value;
+    //move opensecrets to below layer[0]
+    opensecrets_layer.translate(0, offset);
+
+}
 
 /**
  * Saves the active document with a new name in the same directory as the original.
@@ -627,13 +598,12 @@ function saveAsNewFile(newPath) {
 
 
 //////////////////////////////////////////////////////////////
-//Load in the variables I want
-var rep_info = load_temp_dict();
 
+//this should load in dataFilePath which creates a var rep_info
+$.evalFile(dataFilePath);
+    
 //open the template designated in temp.txt
 var template_file = new File(rep_info['template_path']);
-
-//
 
 if (template_file.exists) {
     // 1. OPEN the file as a Photoshop Document
@@ -660,9 +630,14 @@ if (template_file.exists) {
     }
 
 
-
     var statbar_layer = toplayer.layers.getByName("Stat Bars");
     format_stat_bars(statbar_layer, lines_layer.layers.getByName("Line 2"), rep_info);
+
+    var top_issues_layer = toplayer.layers.getByName("Top Issues");
+    var top_donors_layer = toplayer.layers.getByName("Top Donors");
+
+    fill_top_issues(top_issues_layer, rep_info);
+    fill_top_donors(top_donors_layer, rep_info);
 
 
     /////// REDO SPACING ////////
@@ -670,21 +645,34 @@ if (template_file.exists) {
     reformat_top_section(name_and_info_layer, lines_layer);
 
 
-    var top_issues_layer = toplayer.layers.getByName("Top Issues");
     var copyright_layer = toplayer.layers.getByName("cPoliticianPages")
 
-    var layer_list = [
-        statbar_layer, lines_layer.layers.getByName("Line 2"),
-        top_issues_layer, lines_layer.layers.getByName("Line 3"),
-        social_media_layer, copyright_layer
-    ];
+    
+    //if top_issues is taller, use that. otherwise use top_donors. then realign to the one you used
 
-    distribute_layers(layer_list, MIDDLE, BOTTOM, 0);
-    //move top donors to align with the new placement of top issues
-
-    realign_horizontally(top_issues_layer, toplayer.layers.getByName("Top Donors"));
-    realign_horizontally(top_issues_layer, lines_layer.layers.getByName("Line 4"));
-
+    top_issues_h = (top_issues_layer.bounds[3].value - top_issues_layer.bounds[1].value);
+    top_donors_h = (top_donors_layer.bounds[3].value - top_donors_layer.bounds[1].value);
+    if (top_donors_h > top_issues_h) {
+        var layer_list = [
+            statbar_layer, lines_layer.layers.getByName("Line 2"),
+            top_donors_layer, lines_layer.layers.getByName("Line 3"),
+            social_media_layer, copyright_layer
+        ];
+        distribute_layers(layer_list, MIDDLE, BOTTOM, 0);
+        realign_horizontally(top_donors_layer, top_issues_layer);
+        center(lines_layer.layers.getByName("Line 4"), top_issues_layer.bounds[2].value, top_donors_layer.bounds[0].value, 1)
+        center(lines_layer.layers.getByName("Line 4"), lines_layer.layers.getByName("Line 2").bounds[2].value, lines_layer.layers.getByName("Line 3").bounds[0].value, 0)
+    } else {
+        var layer_list = [
+            statbar_layer, lines_layer.layers.getByName("Line 2"),
+            top_issues_layer, lines_layer.layers.getByName("Line 3"),
+            social_media_layer, copyright_layer
+        ];
+        distribute_layers(layer_list, MIDDLE, BOTTOM, 0);
+        realign_horizontally(top_issues_layer, top_donors_layer);
+        center(lines_layer.layers.getByName("Line 4"), top_issues_layer.bounds[2].value, top_donors_layer.bounds[0].value, 1)
+        center(lines_layer.layers.getByName("Line 4"), lines_layer.layers.getByName("Line 2").bounds[2].value, lines_layer.layers.getByName("Line 3").bounds[0].value, 0)
+    }
 
 
     SaveOptions.DONOTSAVECHANGES;

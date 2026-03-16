@@ -26,6 +26,24 @@ function createMainWindow() {
   });
 
   mainWindow.loadFile('renderer/index.html');
+  try {
+    const configPath = path.join(__dirname, '../src/config.json');
+    // Load config.json
+    if (fs.existsSync(configPath)) {
+      const configData = fs.readFileSync(configPath, 'utf8');
+      config = JSON.parse(configData);
+      if (Object.keys(config).length <= 0) {
+        config = default_config(configPath);
+      }
+    } else {
+      //create new config file with prepopulated fields
+      config = default_config(configPath);
+    }
+    console.log("Loaded config data", config);
+  } catch (error) {
+    throw new Error(`Failed to load data: ${error.message}`);
+  }
+
 }
 
 function createUpdateWindow() {
@@ -107,6 +125,7 @@ function default_config(configPath) {
 }
 
 
+
 async function deleteFile(filePath) {
   try {
     await fsPromises.unlink(filePath);
@@ -124,11 +143,22 @@ function getBinaryPath(file) {
   const filename = isWin ? file + '.exe' : file + '-binary';
   if (isDev) {
     const filepath = path.join(config['politician_pages_path'], 'resources/bin', folder, filename);
-    console.log("Using file ", filepath);
+    if (!fs.existsSync(filepath)) {
+      console.log("FILE NOT FOUND: ", filepath)
+    }
+    else {
+      console.log("Using file ", filepath);
+    }
+
     return filepath;
   } else {
     const filepath = path.join(process.resourcesPath, 'bin', filename);
-    console.log("Using file ", filepath);
+    if (!fs.existsSync(filepath)) {
+      console.log("FILE NOT FOUND: ", filepath)
+    }
+    else {
+      console.log("Using file ", filepath);
+    }
     return filepath;
   }
 }
@@ -192,9 +222,10 @@ function runPythonScriptAndStream(scriptName, args, sender) {
           pythonProcess = spawn('python', [scriptname_to_py(scriptName), ...args]);
         }
       } else {
-          pythonProcess = spawn(getBinaryPath(scriptName), args, {
-            stdio: 'pipe'
-          });
+        console.log("Spawning: ", getBinaryPath(scriptName), args)
+        pythonProcess = spawn(getBinaryPath(scriptName), args, {
+          stdio: 'pipe'
+        });
       }
       console.log("Spawning new process");
 
@@ -210,7 +241,7 @@ function runPythonScriptAndStream(scriptName, args, sender) {
       // Resolve the promise when the process exits successfully
       pythonProcess.on('close', (code) => {
           if (code === 0) {
-              console.log("Python script ", scriptPath, " finished successfully.");
+              console.log(scriptName, " finished successfully.");
               resolve(); 
           } else {
               reject(new Error(`Python process exited with code ${code}`));
@@ -450,9 +481,10 @@ ipcMain.handle('gen-card', async (_event, name) => {
 // Load congressmen data for manual entry
 ipcMain.handle('load-congressmen-data', async () => {
   try {
+    console.log("Starting with ", config['politician_pages_path']);
     const congressmenModPath = path.join(config['politician_pages_path'], 'src/generated_outputs/congressmen_mod.json');
     const supplementPath = path.join(config['politician_pages_path'], 'src/generated_outputs/supplement_congressmen.json');
-
+    console.log("Using paths", congressmenModPath, supplementPath);
     let congressmenMod = [];
     let supplement = [];
 
@@ -484,7 +516,6 @@ ipcMain.handle('load-congressmen-data', async () => {
 ipcMain.handle('load-config-data', async () => {
   try {
     const configPath = path.join(__dirname, '../src/config.json');
-
     // Load config.json
     if (fs.existsSync(configPath)) {
       const configData = fs.readFileSync(configPath, 'utf8');
@@ -496,7 +527,7 @@ ipcMain.handle('load-config-data', async () => {
       //create new config file with prepopulated fields
       config = default_config(configPath);
     }
-
+    console.log("Loaded config data", config);
     return { config };
   } catch (error) {
     throw new Error(`Failed to load data: ${error.message}`);
