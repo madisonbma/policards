@@ -270,7 +270,6 @@ function show4() {
   const currentDataSection = document.getElementById('currentDataSection');
   
   window.scrollTo(0,0);
-  console.log("Resetting to top");
   modal.scrollTop = 0;
   currentDataSection.scrollTop = 0;
   step4.scrollTop = 0;
@@ -279,7 +278,7 @@ function show4() {
 function displayFieldData(selectedField, displayValue) {
   //displayValue is the array or item to show
   const currentFieldDisplay = document.getElementById('currentFieldDisplay');
-  const inputSection = document.getElementById('input-r-button');
+  const inputSection = document.getElementById('inputRButton');
   currentFieldDisplay.innerHTML = '';
   const isListField = LIST_FIELDS.includes(selectedField);
   //show the info depending on the selectedField
@@ -299,7 +298,7 @@ function displayFieldData(selectedField, displayValue) {
       //currentValue.textContent = '(empty)';
   //if it's an array to display, show with delete/edit capability
   } else if (Array.isArray(displayValue)) {
-    if (displayValue.length !== 0) {
+    if (displayValue.length !== 0) { 
       displayValue.forEach((item, index) => {
         const row = document.createElement('div');
         row.className = 'data-row';
@@ -338,18 +337,15 @@ function displayFieldData(selectedField, displayValue) {
         currentFieldDisplay.appendChild(row);
       });
     }
-  //otherwise just show the item in an input box for easy editing
+  //otherwise just show the item. do not make input box.
   } else {
     const row = document.createElement('div');
     row.className = 'data-row';
     const item = displayValue;
-    
-
-    const valueDiv = document.createElement('input');
-    valueDiv.setAttribute('type', 'text');
+    //do not make input, make paragraph
+    const valueDiv = document.createElement('p');
     valueDiv.setAttribute('id', selectedField);
-    valueDiv.setAttribute('placeholder', item);
-    valueDiv.value = item || "";
+    valueDiv.textContent = item || "";
 
 
     row.appendChild(valueDiv);
@@ -360,56 +356,65 @@ function displayFieldData(selectedField, displayValue) {
   //now if the field is a list field, let them edit by appending multiple.
   //otherwise just let them append, no + button
   if (isListField) {
-    //create the + button
-    const addFieldBtn = document.createElement('button');
-    addFieldBtn.type = 'button';
-    addFieldBtn.textContent =  '+';
-    addFieldBtn.setAttribute('id', 'addFieldBtn');
+    const existingAddBtn = document.getElementById('addFieldBtn');
+    if (!existingAddBtn) {  //create the + button if doesn't exist
+      
+      console.log("Adding + button for input");
+      const addFieldBtn = document.createElement('button');
+      addFieldBtn.type = 'button';
+      addFieldBtn.textContent =  '+';
+      addFieldBtn.setAttribute('id', 'addFieldBtn');
 
-    inputSection.appendChild(addFieldBtn);
+      inputSection.appendChild(addFieldBtn);
 
-    //if it's a list, then we have the add field button. set the event listener:
-    addFieldBtn.addEventListener('click', async () => {
-      let existingEntry = supplement.find(s => s.name === selectedRep.name);
+      //if it's a list, then we have the add field button. set the event listener:
+      addFieldBtn.addEventListener('click', async () => {
+        let existingEntry = supplement.find(s => s.name === selectedRep.name);
 
-      let newValue = valueInput.value.trim();
+        let newValue = valueInput.value.trim();
 
-      if (!newValue) {
-        showStatus('Please enter a value', false);
-        return;
-      }
+        if (!newValue) {
+          showStatus('Please enter a value', false);
+          return;
+        }
 
-      //add, update the visual
-      if (existingEntry) {
-        if (isListField) {
-          if (!existingEntry[selectedField]) {
-            existingEntry[selectedField] = [];
+        //add, update the visual
+        if (existingEntry) {
+          if (isListField) {
+            if (!existingEntry[selectedField]) {
+              existingEntry[selectedField] = [];
+            }
+            existingEntry[selectedField].push(newValue);
+          } else {
+            existingEntry[selectedField] = newValue;
           }
-          existingEntry[selectedField].push(newValue);
+          newValue = "";
+          valueInput.value = "";
         } else {
-          existingEntry[selectedField] = newValue;
+          const newEntry = { name: selectedRep.name };
+          if (isListField) {
+            newEntry[selectedField] = [newValue];
+          } else {
+            newEntry[selectedField] = newValue;
+          }
+          supplement.push(newEntry);
+          console.log("Added to supplement: ", newEntry);
+          newValue = "";
+          valueInput.value = "";
+
         }
-        newValue = "";
-        valueInput.value = "";
-      } else {
-        const newEntry = { name: selectedRep.name };
-        if (isListField) {
-          newEntry[selectedField] = [newValue];
-        } else {
-          newEntry[selectedField] = newValue;
-        }
-        supplement.push(newEntry);
-        console.log("Added to supplement: ", newEntry);
-        newValue = "";
-        valueInput.value = "";
 
-      }
+        displayValue = updateDisplayValue();
+        displayFieldData(selectedField, displayValue);
 
-      displayValue = updateDisplayValue();
-      displayFieldData(selectedField, displayValue);
-
-    });
+      });
+    }
   } else {
+    //also remove the + button if it exists
+    const existingAddBtn = document.getElementById('addFieldBtn');
+    if (existingAddBtn) {
+      existingAddBtn.remove();
+    }
     valueInput.setAttribute('placeholder', "New value");
   }
 }

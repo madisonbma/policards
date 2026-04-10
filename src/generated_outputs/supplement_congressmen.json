@@ -51,7 +51,11 @@
     },
     {
         "name": "Lisa Murkowski",
-        "birthplace": "Ketchikan, AK"
+        "birthplace": "Ketchikan, AK",
+        "education": [
+            "ConocoPhillips ($63k from individuals, $10k PAC)"
+        ],
+        "top_donors": []
     },
     {
         "name": "Christopher Murphy",
@@ -130,5 +134,9 @@
     {
         "name": "Bill Cassidy",
         "birthDate": "1957-09-28"
+    },
+    {
+        "name": "Mike Rounds",
+        "birthDate": "1954-10-24"
     }
 ]
