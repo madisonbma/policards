@@ -29,6 +29,7 @@ const step4 = document.getElementById('step4');
 const step5 = document.getElementById('step5');
 const step6 = document.getElementById('step6');
 const step7 = document.getElementById('step7');
+const step8 = document.getElementById('step8');
 
 //Step 1 elements
 const yesConBtn = document.getElementById('yesGenCongressmenBtn')
@@ -70,7 +71,6 @@ const genNewCardBtn = document.getElementById('genNewCardBtn');
 const quitBtn = document.getElementById('quitBtn');
 
 
-
 ////////////////////////////////
 
 // State
@@ -79,6 +79,7 @@ let supplement = [];
 let selectedRep = null;
 let selectedField = '';
 let currentFieldValue = null;
+let updated_data = false;
 
 const LIST_FIELDS = ['committees', 'education', 'military', 'illegal', 'failed_runs', 'work_history', 'congress_highlights', 'accolades', 'family', 'top_donors', 'top_issues'];
 
@@ -121,7 +122,7 @@ function setLoading(isLoading) {
 }
 
 function showStep(stepNum) {
-  [step1, step2, step3, step4, step5, step6, step7].forEach(s => s.classList.add('hidden'));
+  [step1, step2, step3, step4, step5, step6, step7, step8].forEach(s => s.classList.add('hidden'));
   
   if (stepNum === 1) step1.classList.remove('hidden');
   else if (stepNum === 2) step2.classList.remove('hidden');
@@ -130,6 +131,7 @@ function showStep(stepNum) {
   else if (stepNum === 5) step5.classList.remove('hidden');
   else if (stepNum === 6) step6.classList.remove('hidden');
   else if (stepNum === 7) step7.classList.remove('hidden');
+  else if (stepNum === 8) step8.classList.remove('hidden');
 }
 
 function openModal() {
@@ -253,6 +255,164 @@ function displayCurrentData() {
   });
 }
 
+function displayFieldData(selectedField, displayValue) {
+  //displayValue is the array or item to show
+  const currentFieldDisplay = document.getElementById('currentFieldDisplay');
+  const inputSection = document.getElementById('input-r-button');
+  currentFieldDisplay.innerHTML = '';
+  const isListField = LIST_FIELDS.includes(selectedField);
+  //show the info depending on the selectedField
+  if (selectedField == "birthDate") {
+    valueLabel.textContent = 'Enter new birth date (YYYY-MM-DD):';
+  }
+  else if (isListField) {
+    valueLabel.textContent = "Please enter a single bullet point at a time.";
+  }
+  else {
+    valueLabel.textContent = 'Enter new value:';
+  }
+  
+  // Display the current data in upper section for step 5
+  if (displayValue === undefined || displayValue === null || displayValue === '') {
+    //nothing to edit, just show the Add button
+      //currentValue.textContent = '(empty)';
+  //if it's an array to display, show with delete/edit capability
+  } else if (Array.isArray(displayValue)) {
+    if (displayValue.length !== 0) {
+      displayValue.forEach((item, index) => {
+        const row = document.createElement('div');
+        row.className = 'data-row';
+        
+        const rowBtnAndInput = document.createElement('div');
+        rowBtnAndInput.className = 'input-l-button';
+
+        const valueDiv = document.createElement('input');
+        valueDiv.setAttribute('type', 'text');
+        valueDiv.setAttribute('id', selectedField + '_' + index);
+        valueDiv.setAttribute('placeholder', item);
+        valueDiv.value = item || "";
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.type = 'button';
+        deleteBtn.textContent =  '-';
+        deleteBtn.setAttribute('id', selectedField + '_del_' + index);
+        
+        deleteBtn.addEventListener('click', function() {
+        // This removes the specific row from the UI
+
+          console.log("Deleted data: ", item);
+          const newKey = selectedField + "_mods";
+          //MADISON
+          row.remove();
+
+        
+        // OPTIONAL: If you need to update your actual data array:
+        // displayValue.splice(index, 1);
+        // console.log("Updated data:", displayValue);
+        });
+
+        rowBtnAndInput.appendChild(deleteBtn);
+        rowBtnAndInput.appendChild(valueDiv);
+        row.appendChild(rowBtnAndInput);
+        currentFieldDisplay.appendChild(row);
+      });
+    }
+  //otherwise just show the item in an input box for easy editing
+  } else {
+    const row = document.createElement('div');
+    row.className = 'data-row';
+    const item = displayValue;
+    
+
+    const valueDiv = document.createElement('input');
+    valueDiv.setAttribute('type', 'text');
+    valueDiv.setAttribute('id', selectedField);
+    valueDiv.setAttribute('placeholder', item);
+    valueDiv.value = item || "";
+
+
+    row.appendChild(valueDiv);
+    currentFieldDisplay.appendChild(row);
+  }
+
+
+  //now if the field is a list field, let them edit by appending multiple.
+  //otherwise just let them append, no + button
+  if (isListField) {
+    //create the + button
+    const addFieldBtn = document.createElement('button');
+    addFieldBtn.type = 'button';
+    addFieldBtn.textContent =  '+';
+    addFieldBtn.setAttribute('id', 'addFieldBtn');
+
+    inputSection.appendChild(addFieldBtn);
+
+    //if it's a list, then we have the add field button. set the event listener:
+    addFieldBtn.addEventListener('click', async () => {
+      let existingEntry = supplement.find(s => s.name === selectedRep.name);
+
+      let newValue = valueInput.value.trim();
+
+      if (!newValue) {
+        showStatus('Please enter a value', false);
+        return;
+      }
+
+      //add, update the visual
+      if (existingEntry) {
+        if (isListField) {
+          if (!existingEntry[selectedField]) {
+            existingEntry[selectedField] = [];
+          }
+          existingEntry[selectedField].push(newValue);
+        } else {
+          existingEntry[selectedField] = newValue;
+        }
+        newValue = "";
+        valueInput.value = "";
+      } else {
+        const newEntry = { name: selectedRep.name };
+        if (isListField) {
+          newEntry[selectedField] = [newValue];
+        } else {
+          newEntry[selectedField] = newValue;
+        }
+        supplement.push(newEntry);
+        console.log("Added to supplement: ", newEntry);
+        newValue = "";
+        valueInput.value = "";
+
+      }
+
+      displayValue = updateDisplayValue();
+      displayFieldData(selectedField, displayValue);
+
+    });
+  } else {
+    valueInput.setAttribute('placeholder', "New value");
+  }
+}
+
+function updateDisplayValue() {
+  let supplemental_data = supplement.find(s => s.name === selectedRep.name);
+  let displayValue;
+  if (typeof LIST_FIELDS !== 'undefined' && LIST_FIELDS.includes(selectedField)) {
+      const baseList = Array.isArray(selectedRep[selectedField]) ? selectedRep[selectedField] : [];
+      const suppList = (supplemental_data && Array.isArray(supplemental_data[selectedField])) 
+                        ? supplemental_data[selectedField] 
+                        : [];
+      
+      // Merge both arrays and remove any duplicates (using Set)
+      displayValue = [...new Set([...baseList, ...suppList])];
+  } else {
+      // Fallback to your previous "Priority" logic for non-list fields
+      displayValue = (supplemental_data && supplemental_data[selectedField] !== undefined) 
+              ? supplemental_data[selectedField] 
+              : selectedRep[selectedField];
+  }
+  return displayValue;
+}
+
 // Load data from files
 async function loadData() {
   try {
@@ -268,6 +428,7 @@ async function loadData() {
 
 //Step 1: Ask to update congressmen data
 yesConBtn.addEventListener('click', async () => {
+  updated_data = true;
   yesConBtn.disabled = true;
   noConBtn.disabled = true;
   setLoading(true);
@@ -342,7 +503,6 @@ yesVoteBtn.addEventListener('click', async () => {
 
     if (result_combine.success) {
       showStatus('Success in combineData. All is good...', true);
-      await delay(5000);
       const loaded = await loadData();
       setLoading(false);
       //yesVoteBtn.disabled = false;
@@ -370,41 +530,50 @@ yesVoteBtn.addEventListener('click', async () => {
 
 noVoteBtn.addEventListener('click', async () => {
   console.log("Not updating voting_record.json");
-  terminal2.innerHTML = "Running merge on data sets";
-  setLoading(true);
-  noVoteBtn.disabled = true;
-  yesVoteBtn.disabled = true;
 
+  if (updated_data) {
+    terminal2.innerHTML = "Running merge on data sets since congressmen data was updated";
+    setLoading(true);
+    noVoteBtn.disabled = true;
+    yesVoteBtn.disabled = true;
 
     //init the handler and terminal interaction
-  const handler3 = (data) => {
-        console.log("Data received:", data); 
-        console.log("Data type:", typeof data);
-        const message = (typeof data === 'string') ? data : JSON.stringify(data);
-        const p = document.createElement('p');
-        p.textContent = message;
-        terminal2.appendChild(p);
-        terminal2.scrollTop = terminal2.scrollHeight;
-  };
-  window.electronAPI.onTerminalUpdate(handler3);
+    const handler3 = (data) => {
+          console.log("Data received:", data); 
+          console.log("Data type:", typeof data);
+          const message = (typeof data === 'string') ? data : JSON.stringify(data);
+          const p = document.createElement('p');
+          p.textContent = message;
+          terminal2.appendChild(p);
+          terminal2.scrollTop = terminal2.scrollHeight;
+    };
+    window.electronAPI.onTerminalUpdate(handler3);
 
-  const result_combine = await window.electronAPI.combineData();
-  window.electronAPI.removeTerminalListener(handler3);
+    const result_combine = await window.electronAPI.combineData();
+    window.electronAPI.removeTerminalListener(handler3);
 
-  if (result_combine.success) {
-    console.log('Success in combineData. All is good...')
-    await delay(5000);
+    if (result_combine.success) {
+      console.log('Success in combineData.')
+      const loaded = await loadData();
+      setLoading(false);
+      if (loaded){
+        showStep(3);
+      }
+    }
+    else {
+      showStatus('Error loading/combining data: ' + result_combine.message, false);
+      const p = document.createElement('p');
+      p.textContent = "ERROR: Copy this section, send to Madison, and close the window.";
+      terminal2.appendChild(p);
+    }
+  }
+  else {
+    console.log('Success in combineData.')
     const loaded = await loadData();
     setLoading(false);
     if (loaded){
       showStep(3);
     }
-  }
-  else {
-    showStatus('Error loading/combining data: ' + result_combine.message, false);
-    const p = document.createElement('p');
-    p.textContent = "ERROR: Copy this section, send to Madison, and close the window.";
-    terminal2.appendChild(p);
   }
 
 });
@@ -499,100 +668,129 @@ fieldSubmitBtn.addEventListener('click', () => {
   
 
   // Calculate the combined value specifically for this display block
-  let supplemental_data = supplement.find(s => s.name === selectedRep.name);
-  let displayValue;
-  if (typeof LIST_FIELDS !== 'undefined' && LIST_FIELDS.includes(selectedField)) {
-      const baseList = Array.isArray(selectedRep[selectedField]) ? selectedRep[selectedField] : [];
-      const suppList = (supplemental_data && Array.isArray(supplemental_data[selectedField])) 
-                        ? supplemental_data[selectedField] 
-                        : [];
-      
-      // Merge both arrays and remove any duplicates (using Set)
-      displayValue = [...new Set([...baseList, ...suppList])];
-  } else {
-      // Fallback to your previous "Priority" logic for non-list fields
-      displayValue = (supplemental_data && supplemental_data[selectedField] !== undefined) 
-              ? supplemental_data[selectedField] 
-              : selectedRep[selectedField];
-  }
+  displayValue = updateDisplayValue();
 
   console.log("Using data ", displayValue);
-  // Display the value
-  if (displayValue === undefined || displayValue === null || displayValue === '') {
-      currentValue.textContent = '(empty)';
-  } else if (Array.isArray(displayValue)) {
-      if (displayValue.length === 0) {
-          currentValue.textContent = '(empty)';
-      } else {
-          currentValue.innerHTML = '<ul>' + 
-              displayValue
-                  .filter(v => v !== '') // Remove any empty strings from the list
-                  .map(v => '<li>' + v + '</li>')
-                  .join('') + 
-              '</ul>';
-      }
-  } else {
-      currentValue.textContent = displayValue;
-  }
+
+  //this is where we used to prep the data to show for step 5
+  displayFieldData(selectedField, displayValue);
   
   showStep(5);
 });
 
-noUpdateBtn.addEventListener('click', () => {
-  showStep(6);
+noUpdateBtn.addEventListener('click', async () => {
+
+  
+  showStep(7); //go to photoshop loading page
+  setLoading(true);
+  console.log("running gen card");
+  console.log("Sending to main.js: ", selectedRep.name);
+  //showStatus('Generating card. May take 1-2 minutes if Photoshop not open yet.', true);
+
+  const result = await window.electronAPI.genCard(selectedRep.name);
+
+  if (result.success) {
+    console.log("done with gen card");
+    setLoading(false);
+    showStep(8);
+  }
+  else {
+    showStatus('Error generating card: ' + result.message, false);
+    setLoading(false);
+  }
+
 });
 
 backToNameBtn.addEventListener('click', () => showStep(3));
 
 
+
 // Step 5: Update fields as needed
 saveBtn.addEventListener('click', async () => {
-  const newValue = valueInput.value.trim();
-  
-  if (!newValue) {
-    showStatus('Please enter a value', false);
-    return;
-  }
 
-  
-  // Update supplement
+  //const newValue = valueInput.value.trim();
+  //add the newValue if they did it and didn't click "add"
+
   const isListField = LIST_FIELDS.includes(selectedField);
   let existingEntry = supplement.find(s => s.name === selectedRep.name);
 
-  if (selectedField == "birthDate") {
-    valueLabel.textContent = 'Enter new birth date (YYYY-MM-DD):';
-  }
-  else if (isListField) {
-    valueLabel.textContent = "Please enter a single bullet point at a time.";
-  }
-  else {
-    valueLabel.textContent = 'Enter new value:';
-  }
+  //TODO will need to split for og and new
+  //if isListField, aggregate all into one array 
+  //then append to supplemental
+  //also need to fix for isListField, rn just working for single
+  if (isListField) {
+    let field_data = [];
+    const rows = currentFieldDisplay.children;
 
-
-  if (existingEntry) {
-    if (isListField) {
-      if (!existingEntry[selectedField]) {
+    if (rows.length === 0) {
+      if (existingEntry) {
         existingEntry[selectedField] = [];
       }
-      existingEntry[selectedField].push(newValue);
-    } else {
-      existingEntry[selectedField] = newValue;
     }
+    else {
+      Array.from(rows).forEach(row => {
+        const newValue = row.children[0].children[1].value; //[0] is input-l-button, then [0] is button, [1] is input
+
+        //const newValue = valueInput.value.trim();
+        if (newValue) {
+          field_data.push(newValue);
+          //supplement[selectedField] = newValue;
+          //console.log("saving ", key, ": ", newValue);
+        }
+        /*else {
+          supplement[selectedField] = "";
+          console.log("saving ", key, ": \"\"");
+        }*/
+
+        if (existingEntry) {
+          existingEntry[selectedField] = field_data;
+        }
+        else {
+          const newEntry = { name: selectedRep.name };
+          newEntry[selectedField] = field_data;
+          console.log("Saving to supplement: ", newEntry);
+          supplement.push(newEntry);
+        }
+      });
+    }
+
+    //then if they left anything in the value input, add that as well
+    const inputValue = valueInput.value.trim();
+    if (inputValue) {
+      if (existingEntry) {
+        if (!existingEntry[selectedField]) {
+          existingEntry[selectedField] = [];
+        }
+        existingEntry[selectedField].push(inputValue);
+      }
+      else {
+        const newEntry = { name: selectedRep.name };
+        newEntry[selectedField] = [inputValue];
+        console.log("Saving to supplement: ", newEntry);
+        supplement.push(newEntry);
+      }
+    }
+
   } else {
-    const newEntry = { name: selectedRep.name };
-    if (isListField) {
-      newEntry[selectedField] = [newValue];
-    } else {
+    //if not listfield, then only one row. append to supplemental
+    if (existingEntry) {
+      existingEntry[selectedField] = newValue;
+    } else { //if single entry, value is just what's in valueInput
+      const newValue = valueInput.value.trim();
+      const newEntry = { name: selectedRep.name };
       newEntry[selectedField] = newValue;
+      console.log("Saving to supplement: ", newEntry);
+      supplement.push(newEntry);
     }
-    supplement.push(newEntry);
+
   }
+
   
   // Save to file
   const result = await window.electronAPI.saveSupplement(supplement);
   
   if (result.success) {
+    valueInput.value = '';
     showStep(6);
   } else {
     showStatus('Error saving data: ' + result.message, false);
@@ -606,14 +804,14 @@ genCardBtn.addEventListener('click', async () => {
   setLoading(true);
   console.log("running gen card");
   console.log("Sending to main.js: ", selectedRep.name);
-  showStatus('Generating card. May take 1-2 minutes if Photoshop not open yet.');
+  showStatus('Generating card. May take 1-2 minutes if Photoshop not open yet.', true);
 
   const result = await window.electronAPI.genCard(selectedRep.name);
 
   if (result.success) {
     console.log("done with gen card");
     setLoading(false);
-    showStep(7);
+    showStep(8);
   }
   else {
     showStatus('Error generating card: ' + result.message, false);

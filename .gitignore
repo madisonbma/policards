@@ -10,6 +10,7 @@ src/gen_cards.log
 src/generated_outputs/temp.png
 src/generated_outputs/temp.txt
 src/generated_outputs/*.log
+scripts/*.csv
 
 #executable generation
 dist/

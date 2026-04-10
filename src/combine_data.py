@@ -20,6 +20,7 @@ def combine_data(root_dir):
         return None
     else:
         modify_votes.modify_votes(voting_records, voting_records_senate)
+        print("Combined senate and house votes successfully")
     
     congressmen = os.path.join(root_dir, "src", "generated_outputs", "congressmen.json")
     vote_avg = os.path.join(root_dir, "src", "generated_outputs", "vote_avg.json")
@@ -31,6 +32,7 @@ def combine_data(root_dir):
         return None
     else:
         modify_reps.modify_reps(congressmen, vote_avg)   
+        print("Combined congressmen and voting records successfully")
 
 if __name__ == "__main__":
     """Checks the modify suite. Assumes you have the JSONs in place, 

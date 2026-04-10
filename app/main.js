@@ -379,7 +379,7 @@ ipcMain.handle('gen-voting-record-json', async (event) => {
 //combine data, aka make congressmen_mod.json
 ipcMain.handle('combine-data', async (event) => {
   try {
-    console.log("Now running combine data")
+    console.log("Now running combine data");
     const pythonScript = 'combine_data';
     await runPythonScriptAndStream(pythonScript, [config['politician_pages_path']], event.sender);
 

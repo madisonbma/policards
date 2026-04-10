@@ -1934,9 +1934,13 @@ def check_for_term_info(fact, terms):
         return True, terms
     elif match_takeover_3s: 
         #senate explicitly
+        #no end date, assume they are interim and will only take over until the next election cycle
+        #next election cycle = the next year
         start_date = datetime.strptime(match_takeover_3s.group('start_date'), date_format)
+        start_year = start_date.year
+        end_date = datetime.strptime(f"January 3, {start_year+1}", date_format)
         #print(f"match_takeover_3 {fact} = s_se = {start_date}")
-        terms.append([start_date, None, "s_se"])
+        terms.append([start_date, end_date, "s_se"])
         return True, terms
     elif match_takeover_4: 
         start_date = datetime.strptime(match_takeover_4.group('start_date'), date_format)
@@ -2191,6 +2195,9 @@ def add_bioguide_congress_data(list_of_dict, root):
         profiletext = bioguide_data.get('profileText')
 
         if profiletext is not None:
+            #DEBUG uncomment if trying to figure out the text for a particular person
+            #if rep.get('name') == "Alan Armstrong":
+            #    print(f"original profiletext: {profiletext}")
             data = clean_profiletext_data(profiletext)
             data = data.split(";")
             chamber = None

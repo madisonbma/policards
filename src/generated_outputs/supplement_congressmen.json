@@ -71,5 +71,64 @@
         "top_donors": [
             "person 1"
         ]
+    },
+    {
+        "name": "Dan Crenshaw",
+        "top_donors": [
+            "American Israel Public Affairs Committee ($44k from individuals, $10k PAC)",
+            "Camden Property Trust Employees ($33k)",
+            "David Z Mafrige Interests Employees ($33k)"
+        ]
+    },
+    {
+        "name": "Charles E. Schumer",
+        "birthDate": "1950-11-23"
+    },
+    {
+        "name": "Josh Hawley",
+        "birthDate": "1979-12-31"
+    },
+    {
+        "name": "Susan M. Collins",
+        "birthDate": "1952-12-07"
+    },
+    {
+        "name": "Marsha Blackburn",
+        "birthDate": "1952-06-06"
+    },
+    {
+        "name": "Adam B. Schiff",
+        "top_issues": [],
+        "committees": [
+            "Committee on the Judiciary",
+            "Committee on Small Business and Entrepreneurship",
+            "Committee on Environment and Public Works"
+        ],
+        "education": [
+            "High school graduate",
+            "B.A., Stanford University, 1982",
+            "J.D., Harvard University, 1985",
+            "bonus education"
+        ]
+    },
+    {
+        "name": "Valerie P. Foushee",
+        "birthDate": "1956-05-07"
+    },
+    {
+        "name": "Brian Schatz",
+        "birthDate": "1972-10-20"
+    },
+    {
+        "name": "Jr. Angus S. King",
+        "birthDate": "1944-10-31"
+    },
+    {
+        "name": "John Kennedy",
+        "birthDate": "1951-11-21"
+    },
+    {
+        "name": "Bill Cassidy",
+        "birthDate": "1957-09-28"
     }
 ]

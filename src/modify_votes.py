@@ -104,7 +104,9 @@ def check_missing_votes(df):
     """
 
     acceptable_missing_votes = ["C001078", "G000551", "T000489", "G000590", "W000823", "F000484", "G000578", "P000622", "J000299", 
-                                "H001103", "K000404", "M001219", "N000147", "P000610", "R000600", "V000137", "R000595"]
+                                "H001103", "K000404", "M001219", "N000147", "P000610", "R000600", "V000137", "R000595",
+                                "A000383", "G000596", "G000606", "H001104", "L000578", "M001190", "M001244", "M001245",
+                                "S001207", "V000139", "W000831"]
 
     missing_df = df[df['missing_records']!= 0]
     missing_filtered_df = missing_df[~missing_df['bioguideID'].isin(acceptable_missing_votes)]
@@ -127,7 +129,6 @@ def get_root(url):
         print(f"Connection error: {e}")
     except requests.exceptions.HTTPError as e:
         print(f"HTTP error: {e}")
-
 
 
 def sen_id_to_bioguide_id():
@@ -155,6 +156,9 @@ def sen_id_to_bioguide_id():
         print(f"Error parsing XML: {e}")
         return None
 
+def uniquify_senate_vote_id(senate_df):
+    senate_df['identifier'] = senate_df['congress'].astype(str) + senate_df['session'].astype(str) + senate_df['identifier'].astype(str)
+    return senate_df
 
 def merge_house_and_senate(df1, df2):
     """
@@ -176,12 +180,13 @@ def merge_house_and_senate(df1, df2):
 
     df['bioguideID'] = np.where(df['lis_member_id'] == "S421", "V000137", df['bioguideID'])
     df['bioguideID'] = np.where(df['lis_member_id'] == "S350", "R000595", df['bioguideID'])
-    # ['S350' is Marco Rubio (R000595), 'S421' is JD Vance (V000137)]
-    if (len(df[df['bioguideID'].isna()] > 0)):
-        print(f"There are some NA bioguides on the merged voting record: {df[df['bioguideID'].isna()]['lis_member_id'].unique()}")
+    df['bioguideID'] = np.where(df['lis_member_id'] == "S419", "M001190", df['bioguideID'])
+    # ['S350' is Marco Rubio (R000595), 'S421' is JD Vance (V000137), 'S419' is Markwayne Mullin (M001190)]
+    if (len(df[df['bioguideID'].isna()]) > 0):
+        print(f"Can't figure out who this Senator is: {df[df['bioguideID'].isna()]['lis_member_id'].unique()}")
     df['chamber'] = np.where(df['lis_member_id'].isna(), "house", "senate") 
 
-    return df
+    return df    
 
 
 def modify_votes(voting_records_json, voting_records_senate_json):
@@ -211,7 +216,8 @@ def modify_votes(voting_records_json, voting_records_senate_json):
         print("There is an issue with the voting_records_senate.json. Quitting.")
         sys.exit()
 
-
+    
+    df2 = uniquify_senate_vote_id(df2)
     overall_df = merge_house_and_senate(df1, df2)
     overall_df = get_voting_record(overall_df)
     overall_df = check_missing_votes(overall_df)

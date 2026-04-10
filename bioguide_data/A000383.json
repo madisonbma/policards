@@ -1,0 +1,62 @@
+{
+  "data": {
+    "usCongressBioId": "A000383",
+    "familyName": "Armstrong",
+    "givenName": "Alan",
+    "unaccentedFamilyName": "Armstrong",
+    "unaccentedGivenName": "Alan",
+    "birthDate": "1962",
+    "birthCirca": false,
+    "birthDateUnknown": false,
+    "deathCirca": false,
+    "profileText": "a Senator from Oklahoma; born in McLennan County, Tex., July 11, 1962; graduated Sooner High School, Bartlesville, Okla.; B.S., civil engineering, University of Oklahoma, 1985; engineer; energy infrastructure company executive; chair, National Petroleum Council 2026; member, President's National Infrastructure Advisory Council; appointed as a Republican to the United States Senate on March 24, 2026, to fill the vacancy caused by the resignation of Markwayne Mullin; took the oath of office on March 24, 2026.",
+    "relationship": [],
+    "asset": [],
+    "jobPositions": [
+      {
+        "job": {
+          "name": "Senator",
+          "jobType": "CongressMemberJob"
+        },
+        "startDate": "2026-03-24",
+        "startCirca": false,
+        "endCirca": false,
+        "congressAffiliation": {
+          "congress": {
+            "name": "The 119th United States Congress",
+            "congressNumber": 119,
+            "congressType": "USCongress",
+            "startDate": "2025-01-03"
+          },
+          "partyAffiliation": [
+            {
+              "party": {
+                "name": "Republican"
+              },
+              "startCirca": false,
+              "endCirca": false
+            }
+          ],
+          "caucusAffiliation": [
+            {
+              "party": {
+                "name": "Republican"
+              },
+              "startCirca": false,
+              "endCirca": false
+            }
+          ],
+          "represents": {
+            "regionType": "StateRegion",
+            "regionCode": "OK"
+          }
+        }
+      }
+    ],
+    "creativeWork": [],
+    "researchRecord": [],
+    "deleted": false,
+    "publishedDate": "2026-03-26T17:02:34.614",
+    "publishedDateISO": "2026-03-26T21:02:34.614Z"
+  }
+}

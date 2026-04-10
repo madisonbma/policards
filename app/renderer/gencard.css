@@ -24,6 +24,15 @@ h1 {
 }
 
 button {
+  font-family: inherit; /* Ensures it uses your app's font */
+  cursor: pointer;
+  border: none;
+  outline: none;
+  background: none;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
   background: #f5576c;
   color: white;
   border: none;
@@ -36,28 +45,89 @@ button {
   min-width: 200px;
 }
 
-button:hover {
+.btn-primary:hover {
   background: #e44658;
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
 }
 
-button:active {
+.btn-primary:active {
   transform: translateY(0);
 }
 
-button:disabled {
+.btn-primary:disabled {
   background: #ccc;
   cursor: not-allowed;
   transform: none;
 }
 
-button.secondary {
+.btn-secondary {
   background: #6c757d;
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 10px;
+  transition: all 0.3s ease;
+  min-width: 200px;
 }
 
-button.secondary:hover {
+.btn-secondary:hover {
   background: #5a6268;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
+}
+
+.input-r-button {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.input-r-button input {
+    width: 100%;
+    flex-grow: 1;
+    padding: 8px; /* Important: Add padding on the right for the button */
+    box-sizing: border-box; /* Ensures padding is included in the element's total width/height */
+}
+
+.input-r-button button {
+  background: #f5576c;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: auto; /* Resets any fixed width that might have been applied */
+}
+
+.input-l-button {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.input-l-button input {
+    width: 100%;
+    flex-grow: 1;
+    padding: 8px; /* Important: Add padding on the right for the button */
+    box-sizing: border-box; /* Ensures padding is included in the element's total width/height */
+}
+
+.input-l-button button {
+  background: #f5576c;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: auto; /* Resets any fixed width that might have been applied */
 }
 
 .status {
@@ -228,10 +298,10 @@ button.secondary:hover {
   margin-bottom: 10px;
 }
 
-.modal-content button {
+/*.modal-content button {
   min-width: 120px;
   margin: 5px;
-}
+}*/
 
 .current-data {
   background: #f8f9fa;
@@ -280,6 +350,41 @@ button.secondary:hover {
 }
 
 .data-value li {
+  margin-bottom: 3px;
+}
+
+
+
+.current-field-data {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  max-height: 400px;
+  overflow-y: auto;
+  text-align: left;
+}
+
+.current-field-data h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 18px;
+}
+
+
+.field-data-value {
+  color: #6c757d;
+  margin-left: 10px;
+  word-break: break-word;
+}
+
+.field-data-value ul {
+  margin: 5px 0 0 20px;
+  padding: 0;
+}
+
+.field-data-value li {
   margin-bottom: 3px;
 }
 
