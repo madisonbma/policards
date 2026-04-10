@@ -357,58 +357,59 @@ function displayFieldData(selectedField, displayValue) {
   //otherwise just let them append, no + button
   if (isListField) {
     const existingAddBtn = document.getElementById('addFieldBtn');
-    if (!existingAddBtn) {  //create the + button if doesn't exist
-      
-      console.log("Adding + button for input");
-      const addFieldBtn = document.createElement('button');
-      addFieldBtn.type = 'button';
-      addFieldBtn.textContent =  '+';
-      addFieldBtn.setAttribute('id', 'addFieldBtn');
-
-      inputSection.appendChild(addFieldBtn);
-
-      //if it's a list, then we have the add field button. set the event listener:
-      addFieldBtn.addEventListener('click', async () => {
-        let existingEntry = supplement.find(s => s.name === selectedRep.name);
-
-        let newValue = valueInput.value.trim();
-
-        if (!newValue) {
-          showStatus('Please enter a value', false);
-          return;
-        }
-
-        //add, update the visual
-        if (existingEntry) {
-          if (isListField) {
-            if (!existingEntry[selectedField]) {
-              existingEntry[selectedField] = [];
-            }
-            existingEntry[selectedField].push(newValue);
-          } else {
-            existingEntry[selectedField] = newValue;
-          }
-          newValue = "";
-          valueInput.value = "";
-        } else {
-          const newEntry = { name: selectedRep.name };
-          if (isListField) {
-            newEntry[selectedField] = [newValue];
-          } else {
-            newEntry[selectedField] = newValue;
-          }
-          supplement.push(newEntry);
-          console.log("Added to supplement: ", newEntry);
-          newValue = "";
-          valueInput.value = "";
-
-        }
-
-        displayValue = updateDisplayValue();
-        displayFieldData(selectedField, displayValue);
-
-      });
+    if (existingAddBtn) {  //remove the current + button to avoid duplicates
+      existingAddBtn.remove();
     }
+    console.log("Adding + button for input");
+    const addFieldBtn = document.createElement('button');
+    addFieldBtn.type = 'button';
+    addFieldBtn.textContent =  '+';
+    addFieldBtn.setAttribute('id', 'addFieldBtn');
+
+    inputSection.appendChild(addFieldBtn);
+
+    //if it's a list, then we have the add field button. set the event listener:
+    addFieldBtn.addEventListener('click', async () => {
+      let existingEntry = supplement.find(s => s.name === selectedRep.name);
+
+      let newValue = valueInput.value.trim();
+
+      if (!newValue) {
+        showStatus('Please enter a value', false);
+        return;
+      }
+
+      //add, update the visual
+      if (existingEntry) {
+        if (isListField) {
+          if (!existingEntry[selectedField]) {
+            existingEntry[selectedField] = [];
+          }
+          existingEntry[selectedField].push(newValue);
+        } else {
+          existingEntry[selectedField] = newValue;
+        }
+        newValue = "";
+        valueInput.value = "";
+      } else {
+        const newEntry = { name: selectedRep.name };
+        if (isListField) {
+          newEntry[selectedField] = [newValue];
+        } else {
+          newEntry[selectedField] = newValue;
+        }
+        supplement.push(newEntry);
+        console.log("Added to supplement: ", newEntry);
+        newValue = "";
+        valueInput.value = "";
+
+      }
+
+      displayValue = updateDisplayValue();
+      displayFieldData(selectedField, displayValue);
+
+    });
+    
   } else {
     //also remove the + button if it exists
     const existingAddBtn = document.getElementById('addFieldBtn');

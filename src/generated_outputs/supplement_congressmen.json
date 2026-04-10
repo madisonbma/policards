@@ -138,5 +138,16 @@
     {
         "name": "Mike Rounds",
         "birthDate": "1954-10-24"
+    },
+    {
+        "name": "Burgess Owens",
+        "top_donors": [
+            "American Israel Public Affairs Committee ($24k from individuals, $5k PAC)",
+            "Delta Air Lines ($10k PAC)",
+            "American Bankers Association ($10k PAC)"
+        ],
+        "top_issues": [
+            "Give parents more control over where their children attend school, including charter, homeschool, and voucher programs"
+        ]
     }
 ]
