@@ -150,6 +150,7 @@ function closeModal() {
 
 function displayCurrentData() {
   const currentDataDisplay = document.getElementById('currentDataDisplay');
+
   currentDataDisplay.innerHTML = '';
   
   const fieldsToDisplay = [
@@ -239,13 +240,21 @@ function displayCurrentData() {
       console.log("birthDate is not YYYY-MM-DD. Highlighting.");
       keyDiv.style.background = '#f1ff2f';
     }
-    else if (field === "top_donors" && valueDiv.textContent === '(empty)') {
-      console.log("Top Donors is empty. Highlighting.");
-      keyDiv.style.background = '#f1ff2f';
-    }
-    else if (field === "top_issues" && valueDiv.textContent === '(empty)') {
-      console.log("Top Issues is empty. Highlighting.");
-      keyDiv.style.background = '#f1ff2f';
+    else if (valueDiv.textContent === '(empty)') {
+      console.log(field, " is empty. Highlighting.");
+      if (field === "top_donors") {
+        keyDiv.style.background = '#f1ff2f';
+      } 
+      else if (field === "top_issues") {
+        keyDiv.style.background = '#f1ff2f';
+      }
+      else if (field=="image_url"){
+        keyDiv.style.background = '#f1ff2f';
+      }
+      else {
+        keyDiv.style.background = '#fccb94';
+
+      }
     }
 
     
@@ -253,6 +262,18 @@ function displayCurrentData() {
     row.appendChild(valueDiv);
     currentDataDisplay.appendChild(row);
   });
+
+}
+
+function show4() {
+  showStep(4);
+  const currentDataSection = document.getElementById('currentDataSection');
+  
+  window.scrollTo(0,0);
+  console.log("Resetting to top");
+  modal.scrollTop = 0;
+  currentDataSection.scrollTop = 0;
+  step4.scrollTop = 0;
 }
 
 function displayFieldData(selectedField, displayValue) {
@@ -647,7 +668,10 @@ nameSubmitBtn.addEventListener('click', () => {
   selectedRep = match;
   document.getElementById('selectedName').textContent = selectedRep.name;
   displayCurrentData();
-  showStep(4);
+  //scroll step4 to top
+  //step4.scrollTop = 0;
+  show4();
+
 });
 
 cancelBtn.addEventListener('click', closeModal);
@@ -823,7 +847,7 @@ addAnotherBtn.addEventListener('click', () => {
   //openModal();
   loadData();
   displayCurrentData();
-  showStep(4);
+  show4();
 });
 
 //Step 7: Gen another card or quit?
