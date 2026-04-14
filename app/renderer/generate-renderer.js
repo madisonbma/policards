@@ -68,6 +68,8 @@ const backToConfirmBtn = document.getElementById('backToConfirmBtn');
 // Step 6 elements
 const genCardBtn = document.getElementById('genCardBtn');
 const addAnotherBtn = document.getElementById('addAnotherBtn');
+const missingItemWarning2 = document.getElementById('missingItemWarning2');
+
 
 //Step 7 elements
 const genNewCardBtn = document.getElementById('genNewCardBtn');
@@ -83,6 +85,8 @@ let selectedRep = null;
 let selectedField = '';
 let currentFieldValue = null;
 let updated_data = false;
+let need_update = [];
+let recommend_update = [];
 
 const LIST_FIELDS = ['committees', 'education', 'military', 'illegal', 'failed_runs', 'work_history', 'congress_highlights', 'accolades', 'family', 'top_donors', 'top_issues'];
 
@@ -138,6 +142,8 @@ function showPopup(message) {
   fieldSubmitBtn.disabled = true;
   noUpdateBtn.disabled = true;
   backToNameBtn.disabled = true;
+  genCardBtn.disabled = true;
+  addAnotherBtn.disabled = true;
 
   //on confirm, run the photoshop
   popupConfirmBtn.addEventListener('click', async () => {
@@ -145,6 +151,8 @@ function showPopup(message) {
     fieldSubmitBtn.disabled = false;
     noUpdateBtn.disabled = false;
     backToNameBtn.disabled = false;
+    genCardBtn.disabled = false;
+    addAnotherBtn.disabled = false;
     popup.className = 'popup';
 
     showStep(7); //go to photoshop loading page
@@ -172,8 +180,10 @@ function showPopup(message) {
     fieldSubmitBtn.disabled = false;
     noUpdateBtn.disabled = false;
     backToNameBtn.disabled = false;
+    genCardBtn.disabled = false;
+    addAnotherBtn.disabled = false;
     popup.className = 'popup';
-    showStep(4);
+    show4();
   });
 }
 
@@ -215,6 +225,8 @@ function closeModal() {
 }
 
 function displayCurrentData() {
+  need_update = []; //reset need_update for each rep
+  recommend_update = [];
   const currentDataDisplay = document.getElementById('currentDataDisplay');
   missingItemWarning.textContent = '';
   noUpdateBtn.disabled = false; //disable gen card until compliant
@@ -234,7 +246,7 @@ function displayCurrentData() {
     'imageUrl': 'Image URL',
     'endYear': 'End Year',
     'committees': 'Committees',
-    'photo': 'Photo',
+    'photo': 'Image URL 2',
     'birthDate': 'Birth Date',
     'education': 'Education',
     'military': 'Military',
@@ -308,31 +320,31 @@ function displayCurrentData() {
     if (field === "birthDate" && !date_regex.test(value)) {
       console.log("birthDate is not YYYY-MM-DD. Highlighting.");
       noUpdateBtn.disabled = true; //disable gen card until compliant
-      missingItemWarning.textContent = 'Please update birthDate to proceed.';  
+      need_update.push("birthDate");
       keyDiv.style.background = '#f1ff2f';
     } 
     else if (valueDiv.textContent === '(empty)') { //if empty, highlight.
       console.log(field, " is empty. Highlighting.");
       if (field === "top_donors") {
         if (missingItemWarning.textContent.length === 0) {
-          missingItemWarning.textContent = 'Recommended to update Top Donors before proceeding.';  
+          recommend_update.push("top_donors");
         }
         keyDiv.style.background = '#f1ff2f';
       } 
       else if (field === "top_issues") {
         if (missingItemWarning.textContent.length === 0) {
-          missingItemWarning.textContent = 'Recommended to update Top Issues before proceeding.';  
+          recommend_update.push("top_issues");
         }
         keyDiv.style.background = '#f1ff2f';
       }
       else if (field === 'education') {
         noUpdateBtn.disabled = true; //disable gen card until compliant
-        missingItemWarning.textContent = 'Please update education to proceed.';  
+        need_update.push("education");
         keyDiv.style.background = '#f1ff2f';
       }
       else if (field === 'birthplace') {
         noUpdateBtn.disabled = true; //disable gen card until compliant
-        missingItemWarning.textContent = 'Please update birthplace to proceed.';  
+        need_update.push("birthplace");
         keyDiv.style.background = '#f1ff2f';
       }
       else {
@@ -346,9 +358,19 @@ function displayCurrentData() {
     currentDataDisplay.appendChild(row);
   });
 
+  if (need_update.length > 0) {
+    missingItemWarning.textContent = `Please update the following fields: ${need_update.join(', ')}`;
+  }
+  else if (recommend_update.length > 0) {
+    missingItemWarning.textContent = `Consider updating the following fields for a more comprehensive card: ${recommend_update.join(', ')}`;
+  }
+
+
 }
 
 function show4() {
+  displayCurrentData();
+
   showStep(4);
   const currentDataSection = document.getElementById('currentDataSection');
   
@@ -402,16 +424,11 @@ function displayFieldData(selectedField, displayValue) {
         
         deleteBtn.addEventListener('click', function() {
         // This removes the specific row from the UI
+        row.remove();
 
-          console.log("Deleted data: ", item);
-          const newKey = selectedField + "_mods";
-          //MADISON
-          row.remove();
-
+        console.log("Deleted data: ", item);
+        const newKey = selectedField + "_mods";
         
-        // OPTIONAL: If you need to update your actual data array:
-        // displayValue.splice(index, 1);
-        // console.log("Updated data:", displayValue);
         });
 
         rowBtnAndInput.appendChild(deleteBtn);
@@ -829,19 +846,11 @@ backToNameBtn.addEventListener('click', () => showStep(3));
 
 
 
-// Step 5: Update fields as needed
+// Step 5: Save the updated field
 saveBtn.addEventListener('click', async () => {
-
-  //const newValue = valueInput.value.trim();
-  //add the newValue if they did it and didn't click "add"
 
   const isListField = LIST_FIELDS.includes(selectedField);
   let existingEntry = supplement.find(s => s.name === selectedRep.name);
-
-  //TODO will need to split for og and new
-  //if isListField, aggregate all into one array 
-  //then append to supplemental
-  //also need to fix for isListField, rn just working for single
   if (isListField) {
     let field_data = [];
     const rows = currentFieldDisplay.children;
@@ -854,17 +863,10 @@ saveBtn.addEventListener('click', async () => {
     else {
       Array.from(rows).forEach(row => {
         const newValue = row.children[0].children[1].value; //[0] is input-l-button, then [0] is button, [1] is input
-
-        //const newValue = valueInput.value.trim();
         if (newValue) {
           field_data.push(newValue);
-          //supplement[selectedField] = newValue;
-          //console.log("saving ", key, ": ", newValue);
         }
-        /*else {
-          supplement[selectedField] = "";
-          console.log("saving ", key, ": \"\"");
-        }*/
+
 
         if (existingEntry) {
           existingEntry[selectedField] = field_data;
@@ -897,7 +899,16 @@ saveBtn.addEventListener('click', async () => {
 
   } else {
     //if not listfield, then only one row. append to supplemental
+    if (selectedField === "birthDate") {
+      const date_regex = /^\d{4}\-\d{2}\-\d{2}$/;
+      const newValue = valueInput.value.trim();
+      if (!date_regex.test(newValue)) {
+        showStatus('Birth date must be in YYYY-MM-DD format', false);
+        return;
+      }
+    }
     if (existingEntry) {
+      const newValue = valueInput.value.trim();
       existingEntry[selectedField] = newValue;
     } else { //if single entry, value is just what's in valueInput
       const newValue = valueInput.value.trim();
@@ -916,37 +927,71 @@ saveBtn.addEventListener('click', async () => {
   if (result.success) {
     valueInput.value = '';
     showStep(6);
-  } else {
-    showStatus('Error saving data: ' + result.message, false);
-  }
+
+    //remove from warning if updated
+    console.log("Should remove ", selectedField, " from need_update and recommend_update if present");
+    if (need_update.includes(selectedField)) {
+      need_update = need_update.filter(f => f !== selectedField);
+      console.log("Need update is now: ", need_update);
+    }
+    else if (recommend_update.includes(selectedField)) {
+      recommend_update = recommend_update.filter(f => f !== selectedField);
+      console.log("Recommend update is now: ", recommend_update);
+    }
+
+    if (need_update.length > 0) {
+      missingItemWarning2.textContent = `***MUST UPDATE: ${need_update.join(', ')}`;
+      genCardBtn.disabled = true; //disable gen card until compliant
+    }
+    else if (recommend_update.length > 0) {
+      console.log("There are still recommend updates: ", recommend_update);
+      missingItemWarning2.textContent = `WARNING: Recommended updates: ${recommend_update.join(', ')}`;
+      genCardBtn.disabled = false;
+    }
+    else {
+      genCardBtn.disabled = false;
+      missingItemWarning2.textContent = "";
+
+    }
+    } else {
+      showStatus('Error saving data: ' + result.message, false);
+    }
+
 });
 
 backToConfirmBtn.addEventListener('click', () => showStep(3));
 
 // Step 6: Success updating congressman, gen card or update another field
 genCardBtn.addEventListener('click', async () => {
-  setLoading(true);
-  console.log("running gen card");
-  console.log("Sending to main.js: ", selectedRep.name);
-  showStatus('Generating card. May take 1-2 minutes if Photoshop not open yet.', true);
+  //check if top_issues or top_donors is empty, if so, show popup warning before gen card
+  if(recommend_update.length === 1) {
+    showPopup(`Field ${recommend_update[0]} is empty. Are you sure you want to proceed without updating it?`);
+  } else if(recommend_update.length > 1) {
+    showPopup(`Fields ${recommend_update.join(', ')} are empty. Are you sure you want to proceed without updating them?`);
+  } else {
+    setLoading(true);
+    console.log("running gen card");
+    console.log("Sending to main.js: ", selectedRep.name);
+    showStatus('Generating card. May take 1-2 minutes if Photoshop not open yet.', true);
 
-  const result = await window.electronAPI.genCard(selectedRep.name);
+    const result = await window.electronAPI.genCard(selectedRep.name);
 
-  if (result.success) {
-    console.log("done with gen card");
-    setLoading(false);
-    showStep(8);
+    if (result.success) {
+      console.log("done with gen card");
+      setLoading(false);
+      showStep(8);
+    }
+    else {
+      showStatus('Error generating card: ' + result.message, false);
+      setLoading(false);
+    }
   }
-  else {
-    showStatus('Error generating card: ' + result.message, false);
-    setLoading(false);
-  }
+
 });
 
 addAnotherBtn.addEventListener('click', () => {
   //openModal();
   loadData();
-  displayCurrentData();
   show4();
 });
 
