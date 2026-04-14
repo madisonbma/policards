@@ -17,6 +17,8 @@ const updateDataBtn = document.getElementById('updateDataBtn');
 const status_doc = document.getElementById('status');
 const spinner = document.getElementById('spinner');
 
+//popup elements
+const popup = document.getElementById('popup');
 
 
 
@@ -54,6 +56,7 @@ const fieldSelect = document.getElementById('fieldSelect');
 const fieldSubmitBtn = document.getElementById('fieldSubmitBtn');
 const noUpdateBtn = document.getElementById('noUpdateBtn');
 const backToNameBtn = document.getElementById('backToNameBtn');
+const missingItemWarning = document.getElementById('missingItemWarning');
 
 // Step 5 elements
 const currentValue = document.getElementById('currentValue');
@@ -111,6 +114,69 @@ function showStatus(message, isSuccess) {
   }, 5000);
 }
 
+function showPopup(message) {
+
+  //add yes/no buttons to popup
+  popup.textContent = message;
+  popup.className = 'popup show';
+
+  const popupConfirmBtn = document.createElement('button');
+  const popupCancelBtn = document.createElement('button');
+
+  const butDiv = document.createElement('div');
+  popupConfirmBtn.className = 'confirm';
+  popupCancelBtn.className = 'cancel';
+  popupConfirmBtn.textContent =  'Proceed';
+  popupCancelBtn.textContent =  'Cancel';
+  popupConfirmBtn.setAttribute('id', 'popupConfirmBtn');
+  popupCancelBtn.setAttribute('id', 'popupCancelBtn');
+  butDiv.appendChild(popupConfirmBtn);
+  butDiv.appendChild(popupCancelBtn);
+  popup.appendChild(butDiv);
+
+  //disable field buttons in the meantime
+  fieldSubmitBtn.disabled = true;
+  noUpdateBtn.disabled = true;
+  backToNameBtn.disabled = true;
+
+  //on confirm, run the photoshop
+  popupConfirmBtn.addEventListener('click', async () => {
+    //re-enable the field buttons after confirmation
+    fieldSubmitBtn.disabled = false;
+    noUpdateBtn.disabled = false;
+    backToNameBtn.disabled = false;
+    popup.className = 'popup';
+
+    showStep(7); //go to photoshop loading page
+    setLoading(true);
+    console.log("running gen card");
+    console.log("Sending to main.js: ", selectedRep.name);
+    //showStatus('Generating card. May take 1-2 minutes if Photoshop not open yet.', true);
+
+    const result = await window.electronAPI.genCard(selectedRep.name);
+
+    if (result.success) {
+      console.log("done with gen card");
+      setLoading(false);
+      showStep(8);
+    }
+    else {
+      showStatus('Error generating card: ' + result.message, false);
+      setLoading(false);
+    }
+  });
+
+  //on cancel, go back to field selection page
+  popupCancelBtn.addEventListener('click', () => {
+    //re-enable the field buttons after confirmation
+    fieldSubmitBtn.disabled = false;
+    noUpdateBtn.disabled = false;
+    backToNameBtn.disabled = false;
+    popup.className = 'popup';
+    showStep(4);
+  });
+}
+
 function setLoading(isLoading) {
   genCardsBtn.disabled = isLoading;
   updateDataBtn.disabled = isLoading;
@@ -150,6 +216,9 @@ function closeModal() {
 
 function displayCurrentData() {
   const currentDataDisplay = document.getElementById('currentDataDisplay');
+  missingItemWarning.textContent = '';
+  noUpdateBtn.disabled = false; //disable gen card until compliant
+
 
   currentDataDisplay.innerHTML = '';
   
@@ -238,22 +307,36 @@ function displayCurrentData() {
     const date_regex = /^\d{4}\-\d{2}\-\d{2}$/;
     if (field === "birthDate" && !date_regex.test(value)) {
       console.log("birthDate is not YYYY-MM-DD. Highlighting.");
+      noUpdateBtn.disabled = true; //disable gen card until compliant
+      missingItemWarning.textContent = 'Please update birthDate to proceed.';  
       keyDiv.style.background = '#f1ff2f';
-    }
-    else if (valueDiv.textContent === '(empty)') {
+    } 
+    else if (valueDiv.textContent === '(empty)') { //if empty, highlight.
       console.log(field, " is empty. Highlighting.");
       if (field === "top_donors") {
+        if (missingItemWarning.textContent.length === 0) {
+          missingItemWarning.textContent = 'Recommended to update Top Donors before proceeding.';  
+        }
         keyDiv.style.background = '#f1ff2f';
       } 
       else if (field === "top_issues") {
+        if (missingItemWarning.textContent.length === 0) {
+          missingItemWarning.textContent = 'Recommended to update Top Issues before proceeding.';  
+        }
         keyDiv.style.background = '#f1ff2f';
       }
-      else if (field=="image_url"){
+      else if (field === 'education') {
+        noUpdateBtn.disabled = true; //disable gen card until compliant
+        missingItemWarning.textContent = 'Please update education to proceed.';  
+        keyDiv.style.background = '#f1ff2f';
+      }
+      else if (field === 'birthplace') {
+        noUpdateBtn.disabled = true; //disable gen card until compliant
+        missingItemWarning.textContent = 'Please update birthplace to proceed.';  
         keyDiv.style.background = '#f1ff2f';
       }
       else {
         keyDiv.style.background = '#fccb94';
-
       }
     }
 
@@ -483,8 +566,8 @@ yesConBtn.addEventListener('click', async () => {
     console.log("success");
     setLoading(false);
     yesConBtn.disabled = false;
-    noConBtn.disabled = true;
-    await delay(5000); // Wait 5s
+    noConBtn.disabled = false;
+    //await delay(5000); // Wait 5s
     showStep(2);
   } else {
     showStatus('Error making congressmen.json: ' + result.message, false);
@@ -529,11 +612,11 @@ yesVoteBtn.addEventListener('click', async () => {
     const result_combine = await window.electronAPI.combineData();
 
     if (result_combine.success) {
-      showStatus('Success in combineData. All is good...', true);
+      //showStatus('Success in combineData. Loading data...', true);
       const loaded = await loadData();
       setLoading(false);
-      //yesVoteBtn.disabled = false;
-      //noVoteBtn.disabled = false;
+      yesVoteBtn.disabled = false;
+      noVoteBtn.disabled = false;
       if (loaded){
         showStep(3);
       }
@@ -560,6 +643,7 @@ noVoteBtn.addEventListener('click', async () => {
 
   if (updated_data) {
     terminal2.innerHTML = "Running merge on data sets since congressmen data was updated";
+    updated_data = false;
     setLoading(true);
     noVoteBtn.disabled = true;
     yesVoteBtn.disabled = true;
@@ -582,6 +666,8 @@ noVoteBtn.addEventListener('click', async () => {
     if (result_combine.success) {
       console.log('Success in combineData.')
       const loaded = await loadData();
+      yesVoteBtn.disabled = false;
+      noVoteBtn.disabled = false;
       setLoading(false);
       if (loaded){
         showStep(3);
@@ -708,25 +794,33 @@ fieldSubmitBtn.addEventListener('click', () => {
   showStep(5);
 });
 
+//step 4->5, generate card
 noUpdateBtn.addEventListener('click', async () => {
-
-  
-  showStep(7); //go to photoshop loading page
-  setLoading(true);
-  console.log("running gen card");
-  console.log("Sending to main.js: ", selectedRep.name);
-  //showStatus('Generating card. May take 1-2 minutes if Photoshop not open yet.', true);
-
-  const result = await window.electronAPI.genCard(selectedRep.name);
-
-  if (result.success) {
-    console.log("done with gen card");
-    setLoading(false);
-    showStep(8);
+  let supplemental_data = supplement.find(s => s.name === selectedRep.name);
+  if(supplemental_data['top_issues'] === undefined || supplemental_data['top_issues'].length === 0) {
+    showPopup("The 'Top Issues' field is empty. Are you sure you want to proceed without updating it?");
+  } else if(supplemental_data['top_donors'] === undefined || supplemental_data['top_donors'].length === 0) {
+    showPopup("The 'Top Donors' field is empty. Are you sure you want to proceed without updating it?");
   }
   else {
-    showStatus('Error generating card: ' + result.message, false);
-    setLoading(false);
+
+    showStep(7); //go to photoshop loading page
+    setLoading(true);
+    console.log("running gen card");
+    console.log("Sending to main.js: ", selectedRep.name);
+    //showStatus('Generating card. May take 1-2 minutes if Photoshop not open yet.', true);
+
+    const result = await window.electronAPI.genCard(selectedRep.name);
+
+    if (result.success) {
+      console.log("done with gen card");
+      setLoading(false);
+      showStep(8);
+    }
+    else {
+      showStatus('Error generating card: ' + result.message, false);
+      setLoading(false);
+    }
   }
 
 });

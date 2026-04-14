@@ -155,6 +155,51 @@ button {
   border: 1px solid #f5c6cb;
 }
 
+.popup {
+  margin-top: 20px;
+  padding: 10px;
+  border-radius: 5px;
+  display: none;
+  position: relative;
+  z-index: 200;
+}
+
+.popup.show {
+  display: block;
+  background: #c2c2c2;
+  color: #000000;
+  border: 1px solid #000000;
+}
+
+.popup.show button.confirm{
+  display: inline-block;
+  background: #8e8d8d;
+  color: black;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  margin: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: auto; /* Resets any fixed width that might have been applied */
+}
+
+.popup.show button.cancel{
+  display: inline-block;
+  background: #d5d5d5;
+  color: black;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  margin: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: auto; /* Resets any fixed width that might have been applied */
+}
+
+
 .spinner {
   display: none;
   border: 3px solid #f3f3f3;
