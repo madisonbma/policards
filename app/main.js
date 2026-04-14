@@ -18,6 +18,7 @@ function createMainWindow() {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 500,
+    icon: path.join(__dirname, 'icons/pp_logo.png'),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -51,6 +52,7 @@ function createUpdateWindow() {
     width: 800,
     height: 500,
     parent: mainWindow,
+    icon: path.join(__dirname, 'icons/pp_logo.png'),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -71,6 +73,7 @@ function createConfigWindow() {
     width: 800,
     height: 500,
     parent: mainWindow,
+    icon: path.join(__dirname, 'icons/pp_logo.png'),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -91,6 +94,7 @@ function createGenWindow() {
     width: 800,
     height: 500,
     parent: mainWindow,
+    icon: path.join(__dirname, 'icons/pp_logo.png'),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,

@@ -607,6 +607,7 @@ noConBtn.addEventListener('click', () => {
 yesVoteBtn.addEventListener('click', async () => {
   yesVoteBtn.disabled = true;
   noVoteBtn.disabled = true;
+  setLoading(true);
   terminal2.innerHTML = "Running API pull for voting_record.json";
 
   //init the handler and terminal interaction
@@ -641,6 +642,7 @@ yesVoteBtn.addEventListener('click', async () => {
     else {
       showStatus('Error combining data: ' + result_combine.message, false);
       const p = document.createElement('p');
+      setLoading(false);
       p.textContent = "ERROR: Copy this section, send to Madison, and close the window.";
       terminal2.appendChild(p);
     }
@@ -650,6 +652,7 @@ yesVoteBtn.addEventListener('click', async () => {
     const p = document.createElement('p');
     p.textContent = "ERROR: Copy this section, send to Madison, and close the window.";
     terminal2.appendChild(p);
+    setLoading(false);
   }
   window.electronAPI.removeTerminalListener(handler2);
 
@@ -693,6 +696,7 @@ noVoteBtn.addEventListener('click', async () => {
     else {
       showStatus('Error loading/combining data: ' + result_combine.message, false);
       const p = document.createElement('p');
+      setLoading(false);
       p.textContent = "ERROR: Copy this section, send to Madison, and close the window.";
       terminal2.appendChild(p);
     }
@@ -814,13 +818,14 @@ fieldSubmitBtn.addEventListener('click', () => {
 //step 4->5, generate card
 noUpdateBtn.addEventListener('click', async () => {
   let supplemental_data = supplement.find(s => s.name === selectedRep.name);
-  if(supplemental_data['top_issues'] === undefined || supplemental_data['top_issues'].length === 0) {
+  if (!supplemental_data || supplemental_data['top_issues'] === undefined || supplemental_data['top_issues'].length === 0) {
     showPopup("The 'Top Issues' field is empty. Are you sure you want to proceed without updating it?");
-  } else if(supplemental_data['top_donors'] === undefined || supplemental_data['top_donors'].length === 0) {
+    return;
+  } else if(!supplemental_data || supplemental_data['top_donors'] === undefined || supplemental_data['top_donors'].length === 0) {
     showPopup("The 'Top Donors' field is empty. Are you sure you want to proceed without updating it?");
+    return;
   }
   else {
-
     showStep(7); //go to photoshop loading page
     setLoading(true);
     console.log("running gen card");
@@ -838,8 +843,8 @@ noUpdateBtn.addEventListener('click', async () => {
       showStatus('Error generating card: ' + result.message, false);
       setLoading(false);
     }
+    
   }
-
 });
 
 backToNameBtn.addEventListener('click', () => showStep(3));

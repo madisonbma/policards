@@ -115,9 +115,9 @@
     "Abstained":0,
     "Both":42,
     "Neither":9,
-    "with_D":655,
+    "with_D":658,
     "with_R":19,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -127,8 +127,8 @@
     "Both":0,
     "Neither":0,
     "with_D":0,
-    "with_R":10,
-    "vote_count":10,
+    "with_R":13,
+    "vote_count":13,
     "missing_records":724
   },
   {
@@ -181,9 +181,9 @@
     "Abstained":2,
     "Both":44,
     "Neither":5,
-    "with_D":664,
+    "with_D":667,
     "with_R":18,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -193,8 +193,8 @@
     "Both":51,
     "Neither":0,
     "with_D":7,
-    "with_R":664,
-    "vote_count":734,
+    "with_R":667,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -204,8 +204,8 @@
     "Both":44,
     "Neither":3,
     "with_D":0,
-    "with_R":648,
-    "vote_count":734,
+    "with_R":651,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -237,19 +237,19 @@
     "Both":47,
     "Neither":4,
     "with_D":1,
-    "with_R":678,
-    "vote_count":734,
+    "with_R":681,
+    "vote_count":737,
     "missing_records":0
   },
   {
     "bioguideID":"B001267",
-    "Absent":13,
+    "Absent":15,
     "Abstained":0,
     "Both":43,
     "Neither":7,
-    "with_D":648,
+    "with_D":649,
     "with_R":23,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -258,9 +258,9 @@
     "Abstained":0,
     "Both":42,
     "Neither":9,
-    "with_D":665,
+    "with_D":668,
     "with_R":8,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -324,9 +324,9 @@
     "Abstained":5,
     "Both":22,
     "Neither":21,
-    "with_D":633,
+    "with_D":636,
     "with_R":22,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -391,8 +391,8 @@
     "Both":45,
     "Neither":5,
     "with_D":0,
-    "with_R":674,
-    "vote_count":734,
+    "with_R":677,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -434,9 +434,9 @@
     "Abstained":0,
     "Both":40,
     "Neither":11,
-    "with_D":676,
+    "with_D":679,
     "with_R":4,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -446,8 +446,8 @@
     "Both":43,
     "Neither":8,
     "with_D":3,
-    "with_R":657,
-    "vote_count":734,
+    "with_R":660,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -556,8 +556,8 @@
     "Both":48,
     "Neither":3,
     "with_D":1,
-    "with_R":666,
-    "vote_count":734,
+    "with_R":669,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -654,9 +654,9 @@
     "Abstained":0,
     "Both":46,
     "Neither":5,
-    "with_D":664,
+    "with_D":667,
     "with_R":17,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -677,8 +677,8 @@
     "Both":49,
     "Neither":2,
     "with_D":1,
-    "with_R":672,
-    "vote_count":734,
+    "with_R":675,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -688,8 +688,8 @@
     "Both":49,
     "Neither":2,
     "with_D":88,
-    "with_R":595,
-    "vote_count":734,
+    "with_R":598,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -710,8 +710,8 @@
     "Both":49,
     "Neither":1,
     "with_D":6,
-    "with_R":663,
-    "vote_count":734,
+    "with_R":666,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -754,8 +754,8 @@
     "Both":47,
     "Neither":1,
     "with_D":0,
-    "with_R":681,
-    "vote_count":734,
+    "with_R":684,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -853,8 +853,8 @@
     "Both":42,
     "Neither":3,
     "with_D":4,
-    "with_R":641,
-    "vote_count":734,
+    "with_R":644,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -896,9 +896,9 @@
     "Abstained":0,
     "Both":44,
     "Neither":4,
-    "with_D":602,
+    "with_D":605,
     "with_R":42,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -919,8 +919,8 @@
     "Both":50,
     "Neither":0,
     "with_D":2,
-    "with_R":669,
-    "vote_count":734,
+    "with_R":672,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -930,8 +930,8 @@
     "Both":49,
     "Neither":1,
     "with_D":3,
-    "with_R":657,
-    "vote_count":734,
+    "with_R":660,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -941,8 +941,8 @@
     "Both":36,
     "Neither":11,
     "with_D":1,
-    "with_R":643,
-    "vote_count":734,
+    "with_R":646,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -1006,9 +1006,9 @@
     "Abstained":0,
     "Both":47,
     "Neither":1,
-    "with_D":602,
+    "with_D":605,
     "with_R":67,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -1018,8 +1018,8 @@
     "Both":45,
     "Neither":6,
     "with_D":2,
-    "with_R":667,
-    "vote_count":734,
+    "with_R":670,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -1303,9 +1303,9 @@
     "Abstained":0,
     "Both":45,
     "Neither":6,
-    "with_D":615,
+    "with_D":618,
     "with_R":47,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -1359,8 +1359,8 @@
     "Both":48,
     "Neither":2,
     "with_D":1,
-    "with_R":659,
-    "vote_count":734,
+    "with_R":662,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -1369,9 +1369,9 @@
     "Abstained":0,
     "Both":38,
     "Neither":9,
-    "with_D":617,
+    "with_D":620,
     "with_R":12,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -1513,8 +1513,8 @@
     "Both":44,
     "Neither":4,
     "with_D":2,
-    "with_R":670,
-    "vote_count":734,
+    "with_R":673,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -1667,8 +1667,8 @@
     "Both":50,
     "Neither":1,
     "with_D":5,
-    "with_R":670,
-    "vote_count":734,
+    "with_R":673,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -1798,9 +1798,9 @@
     "Abstained":0,
     "Both":44,
     "Neither":1,
-    "with_D":506,
+    "with_D":509,
     "with_R":133,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -1865,8 +1865,8 @@
     "Both":49,
     "Neither":1,
     "with_D":6,
-    "with_R":630,
-    "vote_count":734,
+    "with_R":633,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -1876,8 +1876,8 @@
     "Both":49,
     "Neither":1,
     "with_D":5,
-    "with_R":675,
-    "vote_count":734,
+    "with_R":678,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -1919,9 +1919,9 @@
     "Abstained":0,
     "Both":47,
     "Neither":4,
-    "with_D":636,
+    "with_D":639,
     "with_R":34,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -1970,13 +1970,13 @@
   },
   {
     "bioguideID":"G000574",
-    "Absent":101,
+    "Absent":102,
     "Abstained":0,
     "Both":39,
     "Neither":1,
-    "with_D":535,
+    "with_D":537,
     "with_R":58,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -2249,9 +2249,9 @@
     "Abstained":0,
     "Both":46,
     "Neither":5,
-    "with_D":632,
+    "with_D":635,
     "with_R":42,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -2261,8 +2261,8 @@
     "Both":42,
     "Neither":6,
     "with_D":0,
-    "with_R":662,
-    "vote_count":734,
+    "with_R":665,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -2282,9 +2282,9 @@
     "Abstained":0,
     "Both":34,
     "Neither":17,
-    "with_D":671,
+    "with_D":674,
     "with_R":9,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -2293,9 +2293,9 @@
     "Abstained":0,
     "Both":46,
     "Neither":5,
-    "with_D":604,
+    "with_D":607,
     "with_R":45,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -2338,8 +2338,8 @@
     "Both":50,
     "Neither":1,
     "with_D":2,
-    "with_R":674,
-    "vote_count":734,
+    "with_R":677,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -2392,9 +2392,9 @@
     "Abstained":0,
     "Both":50,
     "Neither":0,
-    "with_D":569,
+    "with_D":572,
     "with_R":101,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -2415,8 +2415,8 @@
     "Both":49,
     "Neither":1,
     "with_D":5,
-    "with_R":668,
-    "vote_count":734,
+    "with_R":671,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -2470,8 +2470,8 @@
     "Both":43,
     "Neither":5,
     "with_D":28,
-    "with_R":626,
-    "vote_count":734,
+    "with_R":629,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -2613,8 +2613,8 @@
     "Both":45,
     "Neither":3,
     "with_D":1,
-    "with_R":677,
-    "vote_count":726,
+    "with_R":680,
+    "vote_count":729,
     "missing_records":8
   },
   {
@@ -2668,8 +2668,8 @@
     "Both":35,
     "Neither":16,
     "with_D":2,
-    "with_R":671,
-    "vote_count":734,
+    "with_R":674,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -2811,8 +2811,8 @@
     "Both":44,
     "Neither":1,
     "with_D":1,
-    "with_R":653,
-    "vote_count":732,
+    "with_R":656,
+    "vote_count":735,
     "missing_records":2
   },
   {
@@ -2832,9 +2832,9 @@
     "Abstained":0,
     "Both":50,
     "Neither":1,
-    "with_D":629,
+    "with_D":632,
     "with_R":45,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -2865,9 +2865,9 @@
     "Abstained":0,
     "Both":49,
     "Neither":1,
-    "with_D":570,
+    "with_D":573,
     "with_R":70,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -2876,9 +2876,9 @@
     "Abstained":0,
     "Both":50,
     "Neither":1,
-    "with_D":571,
+    "with_D":574,
     "with_R":100,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -2887,9 +2887,9 @@
     "Abstained":0,
     "Both":48,
     "Neither":3,
-    "with_D":600,
+    "with_D":603,
     "with_R":73,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -2954,8 +2954,8 @@
     "Both":42,
     "Neither":9,
     "with_D":3,
-    "with_R":665,
-    "vote_count":734,
+    "with_R":668,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -2964,9 +2964,9 @@
     "Abstained":0,
     "Both":35,
     "Neither":16,
-    "with_D":643,
+    "with_D":646,
     "with_R":33,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -3151,9 +3151,9 @@
     "Abstained":0,
     "Both":43,
     "Neither":8,
-    "with_D":651,
+    "with_D":654,
     "with_R":21,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -3163,8 +3163,8 @@
     "Both":40,
     "Neither":10,
     "with_D":1,
-    "with_R":661,
-    "vote_count":734,
+    "with_R":664,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -3174,8 +3174,8 @@
     "Both":47,
     "Neither":3,
     "with_D":2,
-    "with_R":678,
-    "vote_count":734,
+    "with_R":681,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -3185,8 +3185,8 @@
     "Both":30,
     "Neither":21,
     "with_D":4,
-    "with_R":654,
-    "vote_count":734,
+    "with_R":657,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -3382,9 +3382,9 @@
     "Abstained":0,
     "Both":17,
     "Neither":34,
-    "with_D":676,
+    "with_D":679,
     "with_R":2,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -3427,8 +3427,8 @@
     "Both":40,
     "Neither":1,
     "with_D":22,
-    "with_R":598,
-    "vote_count":734,
+    "with_R":601,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -3460,8 +3460,8 @@
     "Both":47,
     "Neither":3,
     "with_D":8,
-    "with_R":635,
-    "vote_count":734,
+    "with_R":638,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -3470,9 +3470,9 @@
     "Abstained":0,
     "Both":33,
     "Neither":13,
-    "with_D":642,
+    "with_D":645,
     "with_R":1,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -3515,8 +3515,8 @@
     "Both":46,
     "Neither":3,
     "with_D":89,
-    "with_R":571,
-    "vote_count":734,
+    "with_R":574,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -3558,9 +3558,9 @@
     "Abstained":0,
     "Both":17,
     "Neither":33,
-    "with_D":662,
+    "with_D":665,
     "with_R":1,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -3569,9 +3569,9 @@
     "Abstained":0,
     "Both":25,
     "Neither":26,
-    "with_D":674,
+    "with_D":677,
     "with_R":3,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -3616,7 +3616,7 @@
     "with_D":5,
     "with_R":631,
     "vote_count":723,
-    "missing_records":11
+    "missing_records":14
   },
   {
     "bioguideID":"M001194",
@@ -3647,8 +3647,8 @@
     "Both":47,
     "Neither":4,
     "with_D":0,
-    "with_R":677,
-    "vote_count":734,
+    "with_R":680,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -4054,8 +4054,8 @@
     "Both":44,
     "Neither":5,
     "with_D":0,
-    "with_R":682,
-    "vote_count":734,
+    "with_R":685,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -4065,8 +4065,8 @@
     "Both":49,
     "Neither":2,
     "with_D":1,
-    "with_R":662,
-    "vote_count":734,
+    "with_R":665,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -4076,8 +4076,8 @@
     "Both":40,
     "Neither":6,
     "with_D":1,
-    "with_R":674,
-    "vote_count":726,
+    "with_R":677,
+    "vote_count":729,
     "missing_records":8
   },
   {
@@ -4240,9 +4240,9 @@
     "Abstained":0,
     "Both":42,
     "Neither":4,
-    "with_D":607,
+    "with_D":610,
     "with_R":30,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -4306,9 +4306,9 @@
     "Abstained":0,
     "Both":28,
     "Neither":19,
-    "with_D":644,
+    "with_D":647,
     "with_R":14,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -4328,9 +4328,9 @@
     "Abstained":0,
     "Both":46,
     "Neither":3,
-    "with_D":626,
+    "with_D":629,
     "with_R":42,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -4351,8 +4351,8 @@
     "Both":22,
     "Neither":27,
     "with_D":79,
-    "with_R":567,
-    "vote_count":734,
+    "with_R":570,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -4493,9 +4493,9 @@
     "Abstained":0,
     "Both":46,
     "Neither":5,
-    "with_D":632,
+    "with_D":635,
     "with_R":43,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -4549,8 +4549,8 @@
     "Both":46,
     "Neither":3,
     "with_D":0,
-    "with_R":666,
-    "vote_count":734,
+    "with_R":669,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -4562,7 +4562,7 @@
     "with_D":0,
     "with_R":5,
     "vote_count":8,
-    "missing_records":726
+    "missing_records":729
   },
   {
     "bioguideID":"R000599",
@@ -4604,8 +4604,8 @@
     "Both":51,
     "Neither":0,
     "with_D":8,
-    "with_R":671,
-    "vote_count":734,
+    "with_R":674,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -4625,9 +4625,9 @@
     "Abstained":0,
     "Both":51,
     "Neither":0,
-    "with_D":591,
+    "with_D":594,
     "with_R":81,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -4692,8 +4692,8 @@
     "Both":51,
     "Neither":0,
     "with_D":3,
-    "with_R":678,
-    "vote_count":734,
+    "with_R":681,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -4746,9 +4746,9 @@
     "Abstained":0,
     "Both":17,
     "Neither":33,
-    "with_D":624,
+    "with_D":627,
     "with_R":2,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -4757,9 +4757,9 @@
     "Abstained":0,
     "Both":43,
     "Neither":8,
-    "with_D":671,
+    "with_D":674,
     "with_R":8,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -4867,9 +4867,9 @@
     "Abstained":0,
     "Both":32,
     "Neither":16,
-    "with_D":632,
+    "with_D":635,
     "with_R":37,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -4933,9 +4933,9 @@
     "Abstained":0,
     "Both":49,
     "Neither":0,
-    "with_D":552,
+    "with_D":555,
     "with_R":103,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -4956,8 +4956,8 @@
     "Both":46,
     "Neither":1,
     "with_D":1,
-    "with_R":662,
-    "vote_count":734,
+    "with_R":665,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -5021,9 +5021,9 @@
     "Abstained":0,
     "Both":30,
     "Neither":21,
-    "with_D":665,
+    "with_D":668,
     "with_R":9,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -5055,8 +5055,8 @@
     "Both":50,
     "Neither":1,
     "with_D":17,
-    "with_R":646,
-    "vote_count":734,
+    "with_R":649,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -5098,9 +5098,9 @@
     "Abstained":0,
     "Both":35,
     "Neither":16,
-    "with_D":646,
+    "with_D":649,
     "with_R":0,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -5131,9 +5131,9 @@
     "Abstained":0,
     "Both":48,
     "Neither":2,
-    "with_D":600,
+    "with_D":603,
     "with_R":62,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -5209,8 +5209,8 @@
     "Both":34,
     "Neither":17,
     "with_D":3,
-    "with_R":678,
-    "vote_count":734,
+    "with_R":681,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -5297,8 +5297,8 @@
     "Both":47,
     "Neither":4,
     "with_D":0,
-    "with_R":673,
-    "vote_count":734,
+    "with_R":676,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -5352,8 +5352,8 @@
     "Both":49,
     "Neither":1,
     "with_D":2,
-    "with_R":660,
-    "vote_count":734,
+    "with_R":663,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -5385,8 +5385,8 @@
     "Both":51,
     "Neither":0,
     "with_D":18,
-    "with_R":664,
-    "vote_count":734,
+    "with_R":667,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -5396,8 +5396,8 @@
     "Both":41,
     "Neither":8,
     "with_D":1,
-    "with_R":647,
-    "vote_count":734,
+    "with_R":650,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -5484,8 +5484,8 @@
     "Both":44,
     "Neither":5,
     "with_D":14,
-    "with_R":587,
-    "vote_count":734,
+    "with_R":590,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -5626,9 +5626,9 @@
     "Abstained":0,
     "Both":26,
     "Neither":25,
-    "with_D":670,
+    "with_D":673,
     "with_R":0,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -5717,7 +5717,7 @@
     "with_D":0,
     "with_R":0,
     "vote_count":1,
-    "missing_records":733
+    "missing_records":736
   },
   {
     "bioguideID":"V000138",
@@ -5759,8 +5759,8 @@
     "Both":45,
     "Neither":3,
     "with_D":7,
-    "with_R":649,
-    "vote_count":734,
+    "with_R":652,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -5769,9 +5769,9 @@
     "Abstained":0,
     "Both":34,
     "Neither":17,
-    "with_D":662,
+    "with_D":665,
     "with_R":4,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -5791,9 +5791,9 @@
     "Abstained":0,
     "Both":43,
     "Neither":5,
-    "with_D":624,
+    "with_D":627,
     "with_R":42,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -5835,9 +5835,9 @@
     "Abstained":0,
     "Both":28,
     "Neither":14,
-    "with_D":618,
+    "with_D":621,
     "with_R":24,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -5846,9 +5846,9 @@
     "Abstained":0,
     "Both":47,
     "Neither":2,
-    "with_D":624,
+    "with_D":627,
     "with_R":31,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -5868,9 +5868,9 @@
     "Abstained":0,
     "Both":48,
     "Neither":2,
-    "with_D":591,
+    "with_D":594,
     "with_R":76,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -5945,9 +5945,9 @@
     "Abstained":0,
     "Both":19,
     "Neither":32,
-    "with_D":667,
+    "with_D":670,
     "with_R":2,
-    "vote_count":734,
+    "vote_count":737,
     "missing_records":0
   },
   {
@@ -6023,8 +6023,8 @@
     "Both":45,
     "Neither":6,
     "with_D":4,
-    "with_R":673,
-    "vote_count":734,
+    "with_R":676,
+    "vote_count":737,
     "missing_records":0
   },
   {

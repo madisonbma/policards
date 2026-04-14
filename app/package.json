@@ -57,11 +57,11 @@
     },
     "win": {
       "target": "nsis",
-      "icon": "icon.ico"
+      "icon": "icons/pp_logo.ico"
     },
     "mac": {
       "target": "dmg",
-      "icon": "icon.icns"
+      "icon": "icons/"
     }
   }
 }
