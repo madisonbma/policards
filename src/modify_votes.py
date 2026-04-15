@@ -126,10 +126,11 @@ def get_root(url):
         root = ET.fromstring(xml_content)
         return root
     except requests.exceptions.ConnectionError as e:
-        print(f"Connection error: {e}")
+        print(f"modify_votes.get_root Connection error: {e}")
+        raise e
     except requests.exceptions.HTTPError as e:
-        print(f"HTTP error: {e}")
-
+        print(f"modify_votes.get_root HTTP error: {e}")
+        raise e
 
 def sen_id_to_bioguide_id():
     """
@@ -153,8 +154,8 @@ def sen_id_to_bioguide_id():
         return sen_id_bioguide_id
     
     except ET.ParseError as e:
-        print(f"Error parsing XML: {e}")
-        return None
+        print(f"modify_votes.sen_id_to_bioguide_id Error parsing XML: {e}")
+        raise e
 
 def uniquify_senate_vote_id(senate_df):
     senate_df['identifier'] = senate_df['congress'].astype(str) + senate_df['session'].astype(str) + senate_df['identifier'].astype(str)

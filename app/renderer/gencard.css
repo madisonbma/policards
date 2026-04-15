@@ -403,6 +403,17 @@ button {
   margin-bottom: 10px;
 }
 
+.failure-message {
+  text-align: center;
+  padding: 20px;
+}
+
+.failure-message h3 {
+  color: #a01616;
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
 /*.modal-content button {
   min-width: 120px;
   margin: 5px;

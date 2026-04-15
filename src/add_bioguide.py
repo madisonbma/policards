@@ -1,7 +1,5 @@
 import json
-import pandas as pd
 from datetime import datetime
-import numpy as np
 import re
 import os
 from dateutil.relativedelta import relativedelta
@@ -82,22 +80,21 @@ def load_json(filepath):
         with open(filepath, 'r', encoding='utf-8') as file:
             data = json.load(file)
         return data
-    except FileNotFoundError:
+    except FileNotFoundError as e:
         print(f"ERROR: The file '{filepath}' was not found.")
         missing_file = os.path.basename(filepath)
         print(f"TO FIX:")
         print(f"1. Navigate to https://bioguide.congress.gov/search/bio/{missing_file}")
         print(f"2. Right Click > Save as > Save to politician_pages/bioguide_data")
         print(f"3. Close the app, reopen. Gen card > Update Records > No > No")
-        return None
-    except json.JSONDecodeError:
+        raise e
+    except json.JSONDecodeError as e:
         print(f"Error: The file '{filepath}' contains invalid JSON format.")
-        print(f"TO FIX: Copy this and send to Madison")
-        return None
+        raise e
     except Exception as e:
         print(f"An unexpected error occurred on {filepath}: {e}")
-        print(f"TO FIX: Copy this and send to Madison")
-        return None
+        raise e
+
 
 
 ############################################
@@ -2774,6 +2771,7 @@ def add_bioguide(input_json, root):
     elif isinstance(input_json, list):
         list_of_congressmen = input_json
     else:
+        print("Invalid input type for add_bioguide. Expected string or list.")
         raise TypeError(f"Expected string or list, got {type(input_json)}")
     
     updated_list = add_bioguide_congress_data(list_of_congressmen, root) #list of dicts

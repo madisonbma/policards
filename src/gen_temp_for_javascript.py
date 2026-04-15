@@ -109,10 +109,13 @@ def pull_pic_from_web(rep, root, dummy=False):
                     #my_logger.debug(f'Success image pull for {rep['name']}')
                 except HTTPError as http_err:
                     print(f"HTTP error occurred: {http_err}")
+                    img = Image.new('RGB', (PIC_WIDTH, PIC_HEIGHT), color = 'lightgray')
                 except RequestException as req_err:
                     print(f"Request exception occurred: {req_err}")
+                    img = Image.new('RGB', (PIC_WIDTH, PIC_HEIGHT), color = 'lightgray')
                 except Exception as e:
                     print(f"An unexpected error occurred: {e}")
+                    img = Image.new('RGB', (PIC_WIDTH, PIC_HEIGHT), color = 'lightgray')
             else:
                 img = Image.new('RGB', (PIC_WIDTH,PIC_WIDTH), color = 'lightgray')
                 #my_logger.debug(f'Face path invalid for {rep['name']}. Generating dummy image.')
@@ -137,8 +140,8 @@ def pull_pic_from_web(rep, root, dummy=False):
         pass # Continue without dummy images if PIL issues persist
     except Exception as e:
         print(f"Unexpected error pulling image for {rep['name']}: {e}")
+        raise e
 
-    #return img
 
 def draw_wrapped_text(draw_context, text, font, max_width):
     lines = []

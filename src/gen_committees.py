@@ -12,10 +12,11 @@ def get_root(url):
         root = ET.fromstring(xml_content)
         return root
     except requests.exceptions.ConnectionError as e:
-        print(f"Connection error: {e}")
+        print(f"gen_committees.get_root Connection error: {e}")
+        raise e
     except requests.exceptions.HTTPError as e:
-        print(f"HTTP error: {e}")
-
+        print(f"gen_committees.get_root HTTP error: {e}")
+        raise e
 
 def get_committee_codes_senate(root):
     """
@@ -54,9 +55,9 @@ def get_committee_codes_senate(root):
         return member_assignments
     
     except ET.ParseError as e:
-        print(f"Error parsing XML: {e}")
-        return None
-    
+        print(f"gen_committees.get_committee_codes_senate Error parsing XML: {e}")
+        raise e
+
 
 
 def get_committee_codes_house(root):
@@ -81,7 +82,7 @@ def get_committee_codes_house(root):
 
         if members_list is None:
             print("Error: The <members> element was not found.")
-            return None
+            raise ValueError("The <members> element was not found in the XML.")
 
         # Iterate through each <member> child of the <members> list
         for member_element in members_list.findall('member'):
@@ -107,8 +108,8 @@ def get_committee_codes_house(root):
         return member_assignments
 
     except ET.ParseError as e:
-        print(f"Error parsing XML: {e}")
-        return None
+        print(f"gen_committees.get_committee_codes_house Error parsing XML: {e}")
+        raise e
 
 
 
@@ -122,8 +123,8 @@ def get_comm_codes_to_names_house(root):
     committees_list = root.find('committees')
     if committees_list is None:
         print("Error: The <committees> element was not found.")
-        return None
-    
+        raise ValueError("The <committees> element was not found in the XML.")
+
     for comm in committees_list:
         comcode = comm.attrib.get('comcode')
         comname = comm.find('committee-fullname').text

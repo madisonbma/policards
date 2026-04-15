@@ -16,59 +16,6 @@ HEADERS = {
 }
 RATE_LIMIT_DELAY_SECONDS = 0.2 
 
-def setup():
-    """
-    This function is deprecated. Now we pass these variables in at CLI
-    so that pathing changes are reflected.
-    """
-
-    # --- Configuration ---
-    if getattr(sys, 'frozen', False):
-        application_path = os.path.dirname(sys.executable)
-        parent_dir = os.path.join(application_path, os.path.pardir, os.path.pardir, os.path.pardir)
-        config_path = os.path.join(parent_dir, "politician_pages_assets")
-        config_file = os.path.join(config_path, "config.json")
-        
-        try:
-            with open(config_file, 'r') as f:
-                config = json.load(f)
-                CONGRESS_API_KEY = config.get('CONGRESS_API_KEY')
-                print("Loaded API key from config.json")
-        except FileNotFoundError:
-            print(f"ERROR: {config_file} not found")
-            print(f"TO FIX: Make sure politician_pages_assets repo has been cloned.")
-            CONGRESS_API_KEY = None
-            sys.exit()
-    else:
-        # 1. Try to load from the private config repo
-        try:
-            application_path = os.path.dirname(__file__)
-            parent_dir = os.path.join(application_path, os.path.pardir, os.path.pardir)
-            config_path = os.path.join(parent_dir, "politician_pages_assets")
-            config_file = os.path.join(config_path, "config.json")
-            
-            with open(config_file, 'r') as f:
-                config = json.load(f)
-                CONGRESS_API_KEY = config.get('CONGRESS_API_KEY')
-                print("Loaded API key from config.json")
-
-        # 2. Fallback to environment variables if file/repo is missing
-        except (ImportError, ModuleNotFoundError, FileNotFoundError):
-            CONGRESS_API_KEY = os.getenv("CONGRESS_API_KEY")
-            
-            if not CONGRESS_API_KEY:
-                print("ERROR: Neither config.json nor environment variables found.")
-                print(f"TO FIX: Make sure politician_pages_assets repo has been cloned.")
-            else:
-                print("Loaded CONGRESS_API_KEY from environment variables")
-
-        # Finally, remove the path to keep the environment clean
-        finally:
-            if 'config_path' in locals() and config_path in sys.path:
-                sys.path.remove(config_path)
-
-
-########################################################
 
 
 def get_bills_list(api_key, congress="119", bill_type="hr", limit=20, offset=0, sort="updateDateDesc"):
@@ -106,16 +53,20 @@ def get_bills_list(api_key, congress="119", bill_type="hr", limit=20, offset=0, 
 
     except requests.exceptions.HTTPError as e:
         print(f"HTTP Error: {e.response.status_code} - {e.response.text}")
+        raise e
     except requests.exceptions.ConnectionError as e:
         print(f"Connection Error: {e}")
+        raise e
     except requests.exceptions.Timeout as e:
         print(f"Timeout Error: {e}")
+        raise e
     except requests.exceptions.RequestException as e:
         print(f"An unexpected error occurred: {e}")
+        raise e
     except json.JSONDecodeError as e:
         print(f"Error decoding JSON response: {e}")
         print(f"Raw response: {response.text}")
-    return None
+        raise e
 
 
 def get_bill_details(api_key, congress, bill_type, bill_number):
@@ -146,12 +97,14 @@ def get_bill_details(api_key, congress, bill_type, bill_number):
 
     except requests.exceptions.HTTPError as e:
         print(f"HTTP Error: {e.response.status_code} - {e.response.text}")
+        raise e
     except requests.exceptions.RequestException as e:
         print(f"An unexpected error occurred: {e}")
+        raise e
     except json.JSONDecodeError as e:
         print(f"Error decoding JSON response: {e}")
         print(f"Raw response: {response.text}")
-    return None
+        raise e
 
 
 
@@ -229,26 +182,25 @@ def get_congress_members(api_key, congress=None, chamber=None, limit_per_page=25
                 break
 
         except requests.exceptions.HTTPError as e:
-            print(f"HTTP Error: {e.response.status_code} - {e.response.text}")
+            print(f"gen_reps_json.get_congress_members HTTP Error: {e.response.status_code} - {e.response.text}")
             if e.response.status_code == 429: # Too Many Requests
-                print("Rate limit hit. Waiting and retrying (if logic supports, otherwise exiting).")
-                time.sleep(RATE_LIMIT_DELAY_SECONDS * 5)
-            break
+                print("Rate limit hit. Exiting.")
+            raise e
         except requests.exceptions.ConnectionError as e:
-            print(f"Connection Error: {e}")
-            break
+            print(f"gen_reps_json.get_congress_members Connection Error: {e}")
+            raise e
         except requests.exceptions.Timeout as e:
-            print(f"Timeout Error: {e}")
-            break
+            print(f"gen_reps_json.get_congress_members Timeout Error: {e}")
+            raise e
         except requests.exceptions.RequestException as e:
-            print(f"An unexpected error occurred: {e}")
-            break
+            print(f"gen_reps_json.get_congress_members An unexpected error occurred: {e}")
+            raise e
         except json.JSONDecodeError as e:
-            print(f"Error decoding JSON response: {e}")
-            break
+            print(f"gen_reps_json.get_congress_members Error decoding JSON response: {e}")
+            raise e
         except Exception as e:
-            print(f"An unhandled error occurred: {e}")
-            break
+            print(f"gen_reps_json.get_congress_members An unhandled error occurred: {e}")
+            raise e
 
     # If max_members was specified, truncate the list
     if max_members is not None and len(all_members_data) > max_members:

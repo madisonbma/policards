@@ -124,19 +124,26 @@ def get_house_vote_members(vote_number, api_key, congress=119, session=1, limit=
         #my_logger.info(f"  - Fetched {len(member_votes_on_page)} member votes. Total: {len(all_member_votes)}")
 
     except requests.exceptions.HTTPError as e:
-        print(f"HTTP Error for vote members: {e.response.status_code} - {e.response.text}")
+        print(f"gen_voting_record_json.get_house_vote_members HTTP Error for vote members: {e.response.status_code} - {e.response.text}")
         if e.response.status_code == 404:
-            print("Vote not found or invalid congress/session/voteNumber combination.")
+            print("Vote not found.")
+        else:
+            raise e
     except requests.exceptions.ConnectionError as e:
-        print(f"Connection Error for vote members: {e}")
+        print(f"gen_voting_record_json.get_house_vote_members Connection Error for vote members: {e}")
+        raise e
     except requests.exceptions.Timeout as e:
-        print(f"Timeout Error for vote members: {e}")
+        print(f"gen_voting_record_json.get_house_vote_members Timeout Error for vote members: {e}")
+        raise e
     except requests.exceptions.RequestException as e:
-        print(f"An unexpected error occurred for vote members: {e}")
+        print(f"gen_voting_record_json.get_house_vote_members An unexpected error occurred for vote members: {e}")
+        raise e
     except json.JSONDecodeError as e:
-        print(f"Error decoding JSON response for vote members: {e}")
+        print(f"gen_voting_record_json.get_house_vote_members Error decoding JSON response for vote members: {e}")
+        raise e
     except Exception as e:
-        print(f"An unhandled error occurred for vote members: {e}")
+        print(f"gen_voting_record_json.get_house_vote_members An unhandled error occurred for vote members: {e}")
+        raise e
 
     return data.get('houseRollCallVoteMemberVotes')
 
@@ -196,10 +203,10 @@ def get_voting_record(old_votes, api_key, congress, session, max_records=1000, s
             i = i + 1
         except UnboundLocalError as e:
             print(f"Voting record not found for {i}, either timeout or doesn't exist.")
-            break
+            return full_voting_record
         except Exception as e:
             print(f"An unhandled error occurred: {e}")
-            break
+            raise e
 
     return full_voting_record
 
@@ -212,8 +219,10 @@ def get_root(url):
         return root
     except requests.exceptions.ConnectionError as e:
         print(f"Connection error: {e}")
+        raise e
     except requests.exceptions.HTTPError as e:
         print(f"HTTP error: {e}")
+        raise e
 
 
 
@@ -243,7 +252,7 @@ def get_voting_record_senate(old_votes, congress, session, max_records=1000, sta
 
             if root is None:
                 print(f"No root found for {i}. Quitting.")
-                break
+                raise ValueError(f"No root found for {i}")
 
             dict_i['congress'] = root.find('congress').text
             dict_i['session'] = root.find('session').text
@@ -256,7 +265,7 @@ def get_voting_record_senate(old_votes, congress, session, max_records=1000, sta
 
             if members_list is None:
                 print("Error: The <members> element was not found.")
-                break
+                raise ValueError("Missing <members> element in XML.")
 
             # Iterate through each <member> child of the <members> list
             for member_element in members_list.findall('member'):
@@ -271,16 +280,16 @@ def get_voting_record_senate(old_votes, congress, session, max_records=1000, sta
 
         except ET.ParseError as e:
             print(f"XML {i} doesn't exist yet. Quitting.")
-            break
+            return full_voting_record
         except ConnectionResetError as e:
             print(f"Voting record not found for {i}, likely timeout issue. Quitting.")
-            break
+            raise e
         except requests.exceptions.HTTPError as e:
             print(f"Senate voting record {i} does not exist, quitting" )
-            break
+            raise e
         except Exception as e:
             print(f"An unhandled error occurred: {e}")
-            break
+            raise e
         
         time.sleep(RATE_LIMIT_DELAY_SECONDS)
         i += 1
@@ -314,14 +323,12 @@ def get_starting_point(starting_file):
     except FileNotFoundError:
         print(f"Error: The file {starting_file} was not found. Starting from vote 1.")
         return 119, 1, 1
-    except json.JSONDecodeError:
+    except json.JSONDecodeError as e:
         print(f"Error: Failed to decode JSON from {starting_file}. Check if the JSON is well-formed.")
-        print("To FIX: Send to Madison")
-        return None
+        raise e
     except Exception as e:
         print(f"An unexpected error occurred in gen_voting_record_json.py/get_starting_point: {e}")
-        print(f"TO FIX: Send to Madison")
-        return None
+        raise e
 
     
 def get_stop_point():
@@ -364,9 +371,9 @@ def gen_voting_record_json(api_key, root, max_records=1000):
         with open(voting_records_json, 'r') as file:
             file_house_votes = json.load(file)
             print(f"Found file at {voting_records_json}. Will load that in first")
-    except FileNotFoundError:
+    except FileNotFoundError as e:
         print(f"File not found: {voting_records_json}. Make sure the config file is configured.")
-        sys.exit()
+        raise e
         #file_house_votes = []
 
     #Read pre-existing voting records to pick up where you left off.
@@ -403,9 +410,9 @@ def gen_voting_record_json(api_key, root, max_records=1000):
     try:
         with open(voting_records_senate_json, 'r') as file:
             file_senate_votes = json.load(file)
-    except FileNotFoundError:
+    except FileNotFoundError as e:
         print(f"File not found: {voting_records_senate_json}. Make sure the config file is configured.")
-        sys.exit()
+        raise e
 
     #Read pre-existing voting records to pick up where you left off
     congress, session, senate_start = get_starting_point(voting_records_senate_json)

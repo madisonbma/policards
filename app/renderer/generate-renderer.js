@@ -32,6 +32,7 @@ const step5 = document.getElementById('step5');
 const step6 = document.getElementById('step6');
 const step7 = document.getElementById('step7');
 const step8 = document.getElementById('step8');
+const step9 = document.getElementById('step9');
 
 //Step 1 elements
 const yesConBtn = document.getElementById('yesGenCongressmenBtn')
@@ -75,6 +76,8 @@ const missingItemWarning2 = document.getElementById('missingItemWarning2');
 const genNewCardBtn = document.getElementById('genNewCardBtn');
 const quitBtn = document.getElementById('quitBtn');
 
+//Step 9 elements
+const errorMessage = document.getElementById('errorMessage');
 
 ////////////////////////////////
 
@@ -109,13 +112,13 @@ clearOutputBtn.addEventListener('click', clearOutput);
 
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-function showStatus(message, isSuccess) {
+function showStatus(message, isSuccess, duration=3000) {
   console.log(message);
   status_doc.textContent = message;
   status_doc.className = 'status show ' + (isSuccess ? 'success' : 'error');
   setTimeout(() => {
     status_doc.className = 'status';
-  }, 5000);
+  }, duration);
 }
 
 function showPopup(message) {
@@ -159,7 +162,6 @@ function showPopup(message) {
     setLoading(true);
     console.log("running gen card");
     console.log("Sending to main.js: ", selectedRep.name);
-    //showStatus('Generating card. May take 1-2 minutes if Photoshop not open yet.', true);
 
     const result = await window.electronAPI.genCard(selectedRep.name);
 
@@ -169,7 +171,9 @@ function showPopup(message) {
       showStep(8);
     }
     else {
-      showStatus('Error generating card: ' + result.message, false);
+      //showStatus('Error generating card: ' + result.message, false);
+      errorMessage.textContent = result.message;
+      showStep(9);
       setLoading(false);
     }
   });
@@ -198,7 +202,7 @@ function setLoading(isLoading) {
 }
 
 function showStep(stepNum) {
-  [step1, step2, step3, step4, step5, step6, step7, step8].forEach(s => s.classList.add('hidden'));
+  [step1, step2, step3, step4, step5, step6, step7, step8, step9].forEach(s => s.classList.add('hidden'));
   
   if (stepNum === 1) step1.classList.remove('hidden');
   else if (stepNum === 2) step2.classList.remove('hidden');
@@ -208,6 +212,7 @@ function showStep(stepNum) {
   else if (stepNum === 6) step6.classList.remove('hidden');
   else if (stepNum === 7) step7.classList.remove('hidden');
   else if (stepNum === 8) step8.classList.remove('hidden');
+  else if (stepNum === 9) step9.classList.remove('hidden');
 }
 
 function openModal() {
@@ -587,11 +592,15 @@ yesConBtn.addEventListener('click', async () => {
     //await delay(5000); // Wait 5s
     showStep(2);
   } else {
-    showStatus('Error making congressmen.json: ' + result.message, false);
-    p.textContent = "ERROR: Copy this section, send to Madison, and close the window.";
-    terminal1.appendChild(p);
-    yesConBtn.disabled = false;
+    const e = result.message;
+    const p2 = document.createElement('p');
+    p2.style.whiteSpace = "pre-line";
+    p2.textContent = "Error making congressmen.json: " + e + "\n\nPlease copy this error message, send to Madison, and close the window.";
+    terminal1.appendChild(p2);
+    showStatus('Error making congressmen.json: ' + e , false);
+    yesConBtn.disabled = true;
     noConBtn.disabled = true;
+    setLoading(false);
 
   }
 
@@ -622,13 +631,14 @@ yesVoteBtn.addEventListener('click', async () => {
   };
 
   window.electronAPI.onTerminalUpdate(handler2);
-  console.log("Listener is active, now triggering Python...");
   const result_vote = await window.electronAPI.genVotingRecordJSON();
 
+  //success generating vote record
   if (result_vote.success) {
     console.log("Success in genVotingRecordJSON");
     const result_combine = await window.electronAPI.combineData();
 
+    //success combining data too
     if (result_combine.success) {
       //showStatus('Success in combineData. Loading data...', true);
       const loaded = await loadData();
@@ -639,21 +649,28 @@ yesVoteBtn.addEventListener('click', async () => {
         showStep(3);
       }
     }
+    //yes vote record, fail combine data
     else {
-      showStatus('Error combining data: ' + result_combine.message, false);
-      const p = document.createElement('p');
+      const e = result_combine.message;
+      const p2 = document.createElement('p');
+      p2.style.whiteSpace = "pre-line";
+      p2.textContent = "Error combining data: " + e + "\n\nPlease copy this error message, send to Madison, and close the window.";
+      terminal2.appendChild(p2);
+      showStatus('Error combining data: ' + e , false);
       setLoading(false);
-      p.textContent = "ERROR: Copy this section, send to Madison, and close the window.";
-      terminal2.appendChild(p);
-    }
 
+    }
+  //fail vote record
   } else {
-    showStatus('Error making voting_record.json: ' + result_vote.message, false);
-    const p = document.createElement('p');
-    p.textContent = "ERROR: Copy this section, send to Madison, and close the window.";
-    terminal2.appendChild(p);
+    const e = result_vote.message;
+    const p2 = document.createElement('p');
+    p2.style.whiteSpace = "pre-line";
+    p2.textContent = "Error generating voting_record.json: " + e + "\n\nPlease copy this error message, send to Madison, and close the window.";
+    terminal2.appendChild(p2);
+    showStatus('Error generating voting_record.json: ' + e , false);
     setLoading(false);
   }
+
   window.electronAPI.removeTerminalListener(handler2);
 
 });
@@ -694,11 +711,13 @@ noVoteBtn.addEventListener('click', async () => {
       }
     }
     else {
-      showStatus('Error loading/combining data: ' + result_combine.message, false);
-      const p = document.createElement('p');
+      const e = result_vote.message;
+      const p2 = document.createElement('p');
+      p2.style.whiteSpace = "pre-line";
+      p2.textContent = "Error loading/combining data: " + e + "\n\nPlease copy this error message, send to Madison, and close the window.";
+      terminal2.appendChild(p2);
+      showStatus('Error loading/combining data: ' + e , false);
       setLoading(false);
-      p.textContent = "ERROR: Copy this section, send to Madison, and close the window.";
-      terminal2.appendChild(p);
     }
   }
   else {
@@ -840,7 +859,9 @@ noUpdateBtn.addEventListener('click', async () => {
       showStep(8);
     }
     else {
-      showStatus('Error generating card: ' + result.message, false);
+      //showStatus('Error generating card: ' + result.message, false);
+      errorMessage.textContent = result.message;
+      showStep(9);
       setLoading(false);
     }
     
@@ -958,9 +979,9 @@ saveBtn.addEventListener('click', async () => {
       missingItemWarning2.textContent = "";
 
     }
-    } else {
-      showStatus('Error saving data: ' + result.message, false);
-    }
+  } else {
+    showStatus('Error saving data: ' + result.message + '. Please screenshot, send to Madison, and close.', false, 20000);
+  }
 
 });
 
@@ -987,7 +1008,9 @@ genCardBtn.addEventListener('click', async () => {
       showStep(8);
     }
     else {
-      showStatus('Error generating card: ' + result.message, false);
+      //showStatus('Error generating card: ' + result.message, false);
+      errorMessage.textContent = result.message;
+      showStep(9);
       setLoading(false);
     }
   }

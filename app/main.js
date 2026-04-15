@@ -149,6 +149,7 @@ function getBinaryPath(file) {
     const filepath = path.join(config['politician_pages_path'], 'resources/bin', folder, filename);
     if (!fs.existsSync(filepath)) {
       console.log("FILE NOT FOUND: ", filepath)
+      throw new Error(`File not found: ${filepath}`);
     }
     else {
       console.log("Using file ", filepath);
@@ -159,6 +160,7 @@ function getBinaryPath(file) {
     const filepath = path.join(process.resourcesPath, 'bin', filename);
     if (!fs.existsSync(filepath)) {
       console.log("FILE NOT FOUND: ", filepath)
+      throw new Error(`File not found: ${filepath}`);
     }
     else {
       console.log("Using file ", filepath);
@@ -398,6 +400,7 @@ ipcMain.handle('gen-card', async (_event, name) => {
   console.log("Received from renderer: ", name)
   try {
     const pythonScript = 'gen_temp_for_javascript';
+
     const jsxScript = path.join(config['politician_pages_path'], 'src/fill_social_template.jsx');
     const tempFile = path.join(config['politician_pages_path'], 'src/generated_outputs/temp.txt');
     const outputDir = path.join(config['politician_pages_path'], 'cards_ps');
@@ -440,8 +443,7 @@ ipcMain.handle('gen-card', async (_event, name) => {
       // Mac: Use osascript to tell Photoshop to run the script
       command = `osascript -e 'tell application "Adobe Photoshop 2026" to do javascript file("${jsxScript}")' &`;
     } else {
-      reject('Unsupported operating system');
-      return;
+      throw new Error('Unsupported operating system');
     }
 
     exec(command);

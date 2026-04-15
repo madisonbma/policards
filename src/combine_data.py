@@ -14,10 +14,10 @@ def combine_data(root_dir):
     voting_records_senate = os.path.join(root_dir, "src", "generated_outputs", "voting_records_senate.json")
     if not os.path.exists(voting_records):
         print(f"Error: File not found at '{voting_records}'")
-        return None
+        raise FileNotFoundError()
     elif not os.path.exists(voting_records_senate):
         print(f"Error: File not found at '{voting_records_senate}'")
-        return None
+        raise FileNotFoundError()
     else:
         modify_votes.modify_votes(voting_records, voting_records_senate)
         print("Combined senate and house votes successfully")
@@ -26,10 +26,10 @@ def combine_data(root_dir):
     vote_avg = os.path.join(root_dir, "src", "generated_outputs", "vote_avg.json")
     if not os.path.exists(congressmen):
         print(f"Error: File not found at '{congressmen}'")
-        return None
+        raise FileNotFoundError()
     elif not os.path.exists(vote_avg):
         print(f"Error: File not found at '{vote_avg}'")
-        return None
+        raise FileNotFoundError()
     else:
         modify_reps.modify_reps(congressmen, vote_avg)   
         print("Combined congressmen and voting records successfully")
