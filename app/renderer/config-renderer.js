@@ -31,11 +31,9 @@ async function loadAndDisplayData() {
 
 function displayConfigData() {
   currentDataDisplay.innerHTML = '';
-  console.log("Made it in");
 
   Object.keys(config).forEach(key => {
     const value = config[key];
-    console.log("Making new fields for ", key, value);
 
     const row = document.createElement('div');
     row.className = 'data-row';
@@ -47,14 +45,18 @@ function displayConfigData() {
     const valueDiv = document.createElement('input');
     valueDiv.setAttribute('type', 'text');
     valueDiv.setAttribute('id', 'cfg_' + key);
-    valueDiv.setAttribute('placeholder', value);
+    //valueDiv.setAttribute('placeholder', value);
+    valueDiv.value = value;
+
     
     if (value === undefined || value === null || value === '') {
       valueDiv.setAttribute('placeholder', '(empty)');
       valueDiv.style.fontStyle = 'italic';
       valueDiv.style.color = '#adb5bd';
     } else {
-      valueDiv.textContent = value;
+      valueDiv.value = value;
+      valueDiv.setAttribute('placeholder', value);
+
     }
 
     
@@ -79,13 +81,12 @@ saveBtn.addEventListener('click', async () => {
         const valueInput = row.children[1]; //0 is key, 1 is value
 
         const newValue = valueInput.value.trim();
+        //if updated val, save that one
         if (newValue) {
             config[key] = newValue;
             console.log("saving ", key, ": ", newValue);
-        }
-        else {
-            config[key] = "";
-            console.log("saving ", key, ": \"\"");
+            valueInput.setAttribute('placeholder', newValue);
+            valueInput.value = newValue;
         }
 
     });

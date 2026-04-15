@@ -9,6 +9,7 @@ from datetime import date
 import xml.etree.ElementTree as ET
 import sys
 import argparse
+import atexit
 
 sys.stdout.reconfigure(line_buffering=True)
 BASE_URL = "https://api.congress.gov/v3/"
@@ -16,6 +17,18 @@ HEADERS = {
     "Accept": "application/json"
 }
 RATE_LIMIT_DELAY_SECONDS = 0.2 
+
+def cleanup_data(root):
+    voting_records_json_tmp = os.path.join(root, "src", "generated_outputs", "voting_records.json.tmp")
+    voting_records_senate_json_tmp = os.path.join(root, "src", "generated_outputs", "voting_records_senate.json.tmp")
+
+    if os.path.exists(voting_records_json_tmp):
+        os.remove(voting_records_json_tmp)
+        print("CLEANUP: Removed voting_records.json.tmp")
+
+    if os.path.exists(voting_records_senate_json_tmp):
+        os.remove(voting_records_senate_json_tmp)
+        print("CLEANUP: Removed voting_records_senate.json.tmp")
 
 
 
@@ -367,6 +380,7 @@ def gen_voting_record_json(api_key, root, max_records=1000):
     print("Getting House Voting Records")
 
     voting_records_json = os.path.join(root, "src", "generated_outputs", "voting_records.json")
+    voting_records_json_tmp = os.path.join(root, "src", "generated_outputs", "voting_records.json.tmp")
     try:
         with open(voting_records_json, 'r') as file:
             file_house_votes = json.load(file)
@@ -396,16 +410,22 @@ def gen_voting_record_json(api_key, root, max_records=1000):
 
     print("Now saving House records.")
     #Now save with full voting records
-    with open(voting_records_json, 'w') as file:
+    with open(voting_records_json_tmp, 'w') as file:
         # Use indent for clean formatting
         json.dump(new_house_data, file, indent=2)
 
-
+    if os.path.exists(voting_records_json_tmp):
+        os.replace(voting_records_json_tmp, voting_records_json)
+    else:
+        print("Something went wrong saving the voting_records.json file.")
+        raise RuntimeError("Something went wrong saving the house voting_records.json file.")
+    
     print("House voting records all retrieved.")
     print("##############################################")
     print("Now getting Senate Voting Records")
 
     voting_records_senate_json = os.path.join(root, "src", "generated_outputs", "voting_records_senate.json")
+    voting_records_senate_json_tmp = os.path.join(root, "src", "generated_outputs", "voting_records_senate.json.tmp")
 
     try:
         with open(voting_records_senate_json, 'r') as file:
@@ -433,10 +453,16 @@ def gen_voting_record_json(api_key, root, max_records=1000):
 
     print("Now saving Senate voting records.")
     #Now save with full voting records
-    with open(voting_records_senate_json, 'w') as file:
+    with open(voting_records_senate_json_tmp, 'w') as file:
         # Use indent for clean formatting
         json.dump(new_senate_data, file, indent=2)
 
+    if os.path.exists(voting_records_senate_json_tmp):
+        os.replace(voting_records_senate_json_tmp, voting_records_senate_json)
+    else:
+        print("Something went wrong saving the senate voting_records.json file.")
+        raise RuntimeError("Something went wrong saving the senate voting_records.json file.")
+    
 
     print("Senate voting records all retrieved.")
 
@@ -464,5 +490,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     CONGRESS_API_KEY = args.api
     root = args.pp_path
+
+    atexit.register(cleanup_data, root)
 
     gen_voting_record_json(CONGRESS_API_KEY, root)

@@ -3,8 +3,18 @@ import sys
 import modify_reps
 import modify_votes
 import argparse
+import atexit
 
 sys.stdout.reconfigure(line_buffering=True)
+
+def cleanup_data(root_dir):
+    #clean up all temp files generated in this process:
+    congressmen_mod_json_tmp_path = os.path.join(root_dir, 'src', 'generated_outputs', 'congressmen_mod.json.tmp')
+
+    if os.path.exists(congressmen_mod_json_tmp_path):
+        os.remove(congressmen_mod_json_tmp_path)
+        print("CLEANUP: Removed congressmen_mod.json.tmp")
+
 
 
 def combine_data(root_dir):
@@ -45,5 +55,7 @@ if __name__ == "__main__":
     parser.add_argument('pp_path', help="path to politician_pages repo")
     args = parser.parse_args()
     root_dir = args.pp_path
+
+    atexit.register(cleanup_data, root_dir)
 
     combine_data(root_dir)

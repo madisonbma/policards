@@ -574,7 +574,6 @@ yesConBtn.addEventListener('click', async () => {
         const p = document.createElement('p');
         p.textContent = message;
         terminal1.appendChild(p);
-        //terminal2.innterText += message;
         terminal1.scrollTop = terminal1.scrollHeight;
   };
 

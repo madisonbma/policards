@@ -1,5 +1,38 @@
 [
   {
+    "bioguideID": "G000594",
+    "name": "Gonzales, Tony",
+    "partyName": "Republican",
+    "state": "Texas",
+    "url": "https://api.congress.gov/v3/member/G000594?format=json",
+    "attribution": "Image courtesy of the Member",
+    "imageUrl": "https://www.congress.gov/img/member/g000594_200.jpg",
+    "chamber": "House of Representatives",
+    "endYear": 2026,
+    "startYear": 2021
+  },
+  {
+    "bioguideID": "F000485",
+    "name": "Fuller, Clay",
+    "partyName": "Republican",
+    "state": "Georgia",
+    "url": "https://api.congress.gov/v3/member/F000485?format=json",
+    "chamber": "House of Representatives",
+    "startYear": 2026
+  },
+  {
+    "bioguideID": "S001193",
+    "name": "Swalwell, Eric",
+    "partyName": "Democratic",
+    "state": "California",
+    "url": "https://api.congress.gov/v3/member/S001193?format=json",
+    "attribution": "Image courtesy of the Member",
+    "imageUrl": "https://www.congress.gov/img/member/s001193_200.jpg",
+    "chamber": "House of Representatives",
+    "endYear": 2026,
+    "startYear": 2013
+  },
+  {
     "bioguideID": "E000179",
     "name": "Engel, Eliot L.",
     "partyName": "Democratic",
@@ -5264,17 +5297,6 @@
     "startYear": 2021
   },
   {
-    "bioguideID": "G000594",
-    "name": "Gonzales, Tony",
-    "partyName": "Republican",
-    "state": "Texas",
-    "url": "https://api.congress.gov/v3/member/G000594?format=json",
-    "attribution": "Image courtesy of the Member",
-    "imageUrl": "https://www.congress.gov/img/member/g000594_200.jpg",
-    "chamber": "House of Representatives",
-    "startYear": 2021
-  },
-  {
     "bioguideID": "F000471",
     "name": "Fitzgerald, Scott",
     "partyName": "Republican",
@@ -5417,17 +5439,6 @@
     "imageUrl": "https://www.congress.gov/img/member/v000129_200.jpg",
     "chamber": "House of Representatives",
     "startYear": 2021
-  },
-  {
-    "bioguideID": "S001193",
-    "name": "Swalwell, Eric",
-    "partyName": "Democratic",
-    "state": "California",
-    "url": "https://api.congress.gov/v3/member/S001193?format=json",
-    "attribution": "Image courtesy of the Member",
-    "imageUrl": "https://www.congress.gov/img/member/s001193_200.jpg",
-    "chamber": "House of Representatives",
-    "startYear": 2013
   },
   {
     "bioguideID": "B001287",

@@ -86,7 +86,7 @@ def load_json(filepath):
         print(f"TO FIX:")
         print(f"1. Navigate to https://bioguide.congress.gov/search/bio/{missing_file}")
         print(f"2. Right Click > Save as > Save to politician_pages/bioguide_data")
-        print(f"3. Close the app, reopen. Gen card > Update Records > No > No")
+        print(f"3. Close the app, reopen. Gen card > Update Records > No > Yes")
         raise e
     except json.JSONDecodeError as e:
         print(f"Error: The file '{filepath}' contains invalid JSON format.")

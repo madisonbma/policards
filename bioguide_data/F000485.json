@@ -1,0 +1,63 @@
+{
+  "data": {
+    "usCongressBioId": "F000485",
+    "familyName": "Fuller",
+    "givenName": "Clay",
+    "unaccentedFamilyName": "Fuller",
+    "unaccentedGivenName": "Clay",
+    "birthDate": "1981-04-09",
+    "birthCirca": false,
+    "birthDateUnknown": false,
+    "deathCirca": false,
+    "profileText": "a Representative from Georgia; born in Brazoria, Brazoria County, Tex., April 9, 1981; attended Cheshire Academy, Cheshire, Conn., 2000; B.A., Emory University, Atlanta, Ga.; M.P.A., Cornell University, Ithaca, N.Y.; J.D., Dedman School of Law, Southern Baptist University, Dallas, Tex., 2009; M.M.O.A.S., Air University; U.S. Air Force, 2010-2014; Alabama Air National Guard, 2014-present; Lookout Mountain, Ga., judicial circuit, assistant district attorney, 2015-2018; White House fellow during the Donald J. Trump administration, 2018-2019; Lookout Mountain, Ga., judicial circuit, district attorney, 2023-2026; unsuccessful candidate for nomination to the One Hundred Seventeenth Congress in 2020; elected as a Republican to the One Hundred Nineteenth Congress, by special election, to fill the vacancy caused by the resignation of United States Representative Marjorie Taylor Greene (April 7, 2026-present).",
+    "relationship": [],
+    "asset": [],
+    "jobPositions": [
+      {
+        "job": {
+          "name": "Representative",
+          "jobType": "CongressMemberJob"
+        },
+        "startDate": "2026-04-07",
+        "startCirca": false,
+        "endCirca": false,
+        "congressAffiliation": {
+          "congress": {
+            "name": "The 119th United States Congress",
+            "congressNumber": 119,
+            "congressType": "USCongress",
+            "startDate": "2025-01-03"
+          },
+          "partyAffiliation": [
+            {
+              "party": {
+                "name": "Republican"
+              },
+              "startCirca": false,
+              "endCirca": false
+            }
+          ],
+          "caucusAffiliation": [
+            {
+              "party": {
+                "name": "Republican"
+              },
+              "startCirca": false,
+              "endCirca": false
+            }
+          ],
+          "represents": {
+            "regionType": "DistrictRegion",
+            "regionCode": "GA"
+          },
+          "electionType": "Special Runoff"
+        }
+      }
+    ],
+    "creativeWork": [],
+    "researchRecord": [],
+    "deleted": false,
+    "publishedDate": "2026-04-15T10:24:39.072",
+    "publishedDateISO": "2026-04-15T14:24:39.072Z"
+  }
+}

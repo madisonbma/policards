@@ -2,23 +2,18 @@ import os
 import json
 import pandas as pd
 import sys
+import atexit
 
 sys.stdout.reconfigure(line_buffering=True)
 
-
-
 import add_bioguide
 import gen_committees
-import sys
-import os
 from datetime import date
 import numpy as np
 
 DEBUG = False
 
 ####################################################################################################
-
-
 
 def update_endyear(df):
     """
@@ -461,9 +456,16 @@ def modify_reps(input_json_f, vote_f):
 
     modified_congressmen_json = tenure_df.replace({np.nan: None}).to_dict(orient='records')
     ####Write to file
+    congressmen_mod_json_tmp_path = os.path.join(os.path.dirname(input_json_f), 'congressmen_mod.json.tmp')
     congressmen_mod_json_path = os.path.join(os.path.dirname(input_json_f), 'congressmen_mod.json')
-    with open(congressmen_mod_json_path, 'w') as json_file:
+    with open(congressmen_mod_json_tmp_path, 'w') as json_file:
         json.dump(modified_congressmen_json, json_file, indent=4) # indent for pretty printing
 
+    if os.path.exists(congressmen_mod_json_tmp_path):
+        os.replace(congressmen_mod_json_tmp_path, congressmen_mod_json_path)
+    else:
+        print("Something went wrong saving the congressmen_mod.json file.")
+        raise RuntimeError("Something went wrong saving the congressmen_mod.json file.")
+    
     print(f"Modified congressmen.json with voting and committee info, wrote mods to {congressmen_mod_json_path}")
 

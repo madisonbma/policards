@@ -7,6 +7,7 @@ import json
 import time
 import argparse
 import sys
+import atexit
 
 sys.stdout.reconfigure(line_buffering=True)
 
@@ -16,6 +17,12 @@ HEADERS = {
 }
 RATE_LIMIT_DELAY_SECONDS = 0.2 
 
+def cleanup_data(root):
+    congressmen_json_tmp = os.path.join(root, "src", "generated_outputs", "congressmen.json.tmp")
+
+    if os.path.exists(congressmen_json_tmp):
+        print("CLEANUP: Deleted congressmen_json_tmp")
+        os.remove(congressmen_json_tmp)
 
 
 def get_bills_list(api_key, congress="119", bill_type="hr", limit=20, offset=0, sort="updateDateDesc"):
@@ -277,11 +284,18 @@ def gen_reps_json(api_key, root):
     members_json = flatten_user_terms(members_dict)
 
     congressmen_json = os.path.join(root, "src", "generated_outputs", "congressmen.json")
+    congressmen_json_tmp = os.path.join(root, "src", "generated_outputs", "congressmen.json.tmp")
 
 
-    with open(congressmen_json, 'w') as f:
+    with open(congressmen_json_tmp, 'w') as f:
         json.dump(members_json, f, indent=2)
 
+    if os.path.exists(congressmen_json_tmp):
+        os.replace(congressmen_json_tmp, congressmen_json)
+    else:
+        print("Something went wrong saving the congressmen.json file.")
+        raise RuntimeError("Something went wrong saving the house congressmen.json file.")
+    
     print(f"Wrote to file {congressmen_json}")
 
 ###############################################
@@ -304,6 +318,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
     CONGRESS_API_KEY = args.api
     root = args.pp_path
+
+    atexit.register(cleanup_data, root)
 
     gen_reps_json(CONGRESS_API_KEY, root)
 

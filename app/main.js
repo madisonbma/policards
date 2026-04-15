@@ -11,8 +11,12 @@ let mainWindow;
 let updateWindow;
 let configWindow;
 let genWindow;
+let pythonProcess = null;
 
 let config;
+
+const userDataPath = app.getPath('userData')
+const configPath = path.join(userDataPath, 'config.json');
 
 function createMainWindow() {
   mainWindow = new BrowserWindow({
@@ -28,7 +32,7 @@ function createMainWindow() {
 
   mainWindow.loadFile('renderer/index.html');
   try {
-    const configPath = path.join(__dirname, '../src/config.json');
+    //const configPath = path.join(__dirname, '../src/config.json');
     // Load config.json
     if (fs.existsSync(configPath)) {
       const configData = fs.readFileSync(configPath, 'utf8');
@@ -171,7 +175,8 @@ function getBinaryPath(file) {
 
 function scriptname_to_py(name) {
   const filename = name + ".py";
-  return path.join(__dirname, '../src', filename);
+  
+  return path.join(config['politician_pages_path'], 'src', filename);
 }
 
 const { spawn } = require('child_process');
@@ -218,7 +223,6 @@ function sendSafe(sender, channel, data) {
 
 
 function runPythonScriptAndStream(scriptName, args, sender) {
-    let pythonProcess;
     return new Promise((resolve, reject) => {
       if (debug) {
         if (process.platform === "darwin") {
@@ -262,36 +266,6 @@ function runPythonScriptAndStream(scriptName, args, sender) {
 }
 
 
-function runPythonScriptAndStream_nopromise(scriptName, args, sender) {
-  let pythonProcess;
-  if (debug) {
-    if (process.platform === "darwin") {
-      pythonProcess = spawn('python3.14', [scriptname_to_py(scriptName), ...args]);
-    }
-    else {
-      pythonProcess = spawn('python', [scriptname_to_py(scriptName), ...args]);
-    }
-  } else {
-    pythonProcess = spawn(getBinaryPath(scriptName), args, {
-      stdio: 'pipe'
-    });
-  }
-  pythonProcess.stdout.on('data', (data) => {
-      // Send each chunk of data to the UI
-      sendSafe(sender, 'terminal-update', data.toString());    
-      console.log(`Python: ${data}`);
-  });
-
-  pythonProcess.stderr.on('data', (data) => {
-    sendSafe(sender, 'terminal-update', `ERROR: ${data.toString()}`);
-    console.log(`ERROR: ${data.toString()}`);
-  });
-
-  sender.on('destroyed', () => {
-      pythonProcess.kill();
-      console.log('Killed process')
-  });
-}
 
 
 function change_permissions_for_mac() {
@@ -318,6 +292,14 @@ app.whenReady().then(() => {
       createMainWindow();
     }
   });
+});
+
+app.on('will-quit', () => {
+    if (pythonProcess) {
+        // 'SIGTERM' tells Python "Please stop," which is safer than 'SIGKILL'
+        pythonProcess.kill('SIGTERM'); 
+        pythonProcess = null;
+    }
 });
 
 app.on('window-all-closed', () => {
@@ -521,9 +503,10 @@ ipcMain.handle('load-congressmen-data', async () => {
 // Load config data
 ipcMain.handle('load-config-data', async () => {
   try {
-    const configPath = path.join(__dirname, '../src/config.json');
+    //const configPath = path.join(__dirname, '../src/config.json');
     // Load config.json
     if (fs.existsSync(configPath)) {
+      console.log("Loading data from ", configPath);
       const configData = fs.readFileSync(configPath, 'utf8');
       config = JSON.parse(configData);
       if (Object.keys(config).length <= 0) {
@@ -543,7 +526,7 @@ ipcMain.handle('load-config-data', async () => {
 // Save config data
 ipcMain.handle('save-config-data', async (event, configData) => {
   try {
-    const configPath = path.join(__dirname, '../src/config.json');
+    //const configPath = path.join(__dirname, '../src/config.json');
 
     //load the data to use directly:
     config = configData;
