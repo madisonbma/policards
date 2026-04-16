@@ -14,6 +14,9 @@
   "author": "madisonbma",
   "type": "commonjs",
   "main": "main.js",
+  "directories": {
+    "test": "test"
+  },
   "scripts": {
     "start": "electron-forge start",
     "build": "cross-env NODE_ENV=production electron-builder",
@@ -35,35 +38,42 @@
     "@electron-forge/plugin-fuses": "^7.11.1",
     "@electron/fuses": "^1.8.0",
     "cross-env": "^10.1.0",
-    "electron": "^39.8.0"
+    "electron": "^39.8.8"
   },
   "build": {
-    "extraResources": [
-      {
-        "from": "resources/bin/${os}",
-        "to": "bin",
-        "filter": [
-          "**/*"
-        ]
-      }
-    ],
     "appId": "com.cardgenerator.app",
-    "productName": "Card Generator",
-    "files": [
-      "main.js",
-      "preload.js",
-      "renderer/**/*"
-    ],
+    "productName": "PoliticianPages",
     "directories": {
       "output": "dist"
     },
+    "files": [
+      "main.js",
+      "preload.js",
+      "package.json",
+      "app/renderer/**/*",
+      "app/icons/**/*",
+      "resources/bin/**/*",
+      "bioguide_data/**/*",
+      "src/generated_outputs/**/*"
+    ],
+    "asar": true,
+    "asarUnpack": [
+      "resources/bin/win/*.exe",
+      "resources/bin/mac/*",
+      "bioguide_data/**/*"
+    ],
     "win": {
       "target": "nsis",
-      "icon": "icons/pp_logo.ico"
+      "icon": "app/icons/pp_logo.ico"
+    },
+    "nsis": {
+      "oneClick": true,
+      "allowToChangeInstallationDirectory": false,
+      "createDesktopShortcut": true
     },
     "mac": {
       "target": "dmg",
-      "icon": "icons/"
+      "icon": "app/icons/pp_logo.icns"
     }
   }
 }

@@ -22,7 +22,7 @@ function createMainWindow() {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 500,
-    icon: path.join(__dirname, 'icons/pp_logo.png'),
+    icon: path.join(__dirname, 'app/icons/pp_logo.png'),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -30,7 +30,7 @@ function createMainWindow() {
     }
   });
 
-  mainWindow.loadFile('renderer/index.html');
+  mainWindow.loadFile('app/renderer/index.html');
 
 }
 
@@ -39,7 +39,7 @@ function createUpdateWindow() {
     width: 800,
     height: 500,
     parent: mainWindow,
-    icon: path.join(__dirname, 'icons/pp_logo.png'),
+    icon: path.join(__dirname, 'app/icons/pp_logo.png'),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -47,7 +47,7 @@ function createUpdateWindow() {
     }
   });
 
-  updateWindow.loadFile('renderer/update.html');
+  updateWindow.loadFile('app/renderer/update.html');
 
   updateWindow.on('closed', () => {
     updateWindow = null;
@@ -60,7 +60,7 @@ function createConfigWindow() {
     width: 800,
     height: 500,
     parent: mainWindow,
-    icon: path.join(__dirname, 'icons/pp_logo.png'),
+    icon: path.join(__dirname, 'app/icons/pp_logo.png'),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -68,7 +68,7 @@ function createConfigWindow() {
     }
   });
 
-  configWindow.loadFile('renderer/config.html');
+  configWindow.loadFile('app/renderer/config.html');
 
   configWindow.on('closed', () => {
     configWindow = null;
@@ -81,7 +81,7 @@ function createGenWindow() {
     width: 800,
     height: 500,
     parent: mainWindow,
-    icon: path.join(__dirname, 'icons/pp_logo.png'),
+    icon: path.join(__dirname, 'app/icons/pp_logo.png'),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -89,7 +89,7 @@ function createGenWindow() {
     }
   });
 
-  genWindow.loadFile('renderer/gencard.html');
+  genWindow.loadFile('app/renderer/gencard.html');
 
   genWindow.on('closed', () => {
     genWindow = null;
