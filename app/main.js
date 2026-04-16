@@ -31,23 +31,6 @@ function createMainWindow() {
   });
 
   mainWindow.loadFile('renderer/index.html');
-  try {
-    //const configPath = path.join(__dirname, '../src/config.json');
-    // Load config.json
-    if (fs.existsSync(configPath)) {
-      const configData = fs.readFileSync(configPath, 'utf8');
-      config = JSON.parse(configData);
-      if (Object.keys(config).length <= 0) {
-        config = default_config(configPath);
-      }
-    } else {
-      //create new config file with prepopulated fields
-      config = default_config(configPath);
-    }
-    console.log("Loaded config data", config);
-  } catch (error) {
-    throw new Error(`Failed to load data: ${error.message}`);
-  }
 
 }
 
@@ -148,7 +131,7 @@ async function deleteFile(filePath) {
 function getBinaryPath(file) {
   const isWin = process.platform === "win32";
   const folder = isWin ? 'win' : 'mac';
-  const filename = isWin ? file + '.exe' : file + '-binary';
+  const filename = isWin ? file + '.exe' : file ;
   if (isDev) {
     const filepath = path.join(config['politician_pages_path'], 'resources/bin', folder, filename);
     if (!fs.existsSync(filepath)) {
@@ -282,7 +265,6 @@ function change_permissions_for_mac() {
 // Start running the app
 //////////////////////////////////////////////////////
 
-change_permissions_for_mac();
 
 app.whenReady().then(() => {
   createMainWindow();
@@ -320,6 +302,26 @@ ipcMain.handle('open-gen-card', async () => {
   } else {
     createGenWindow();
   }
+
+  //load config data when loading generate
+  try {
+    // Load config.json
+    if (fs.existsSync(configPath)) {
+      const configData = fs.readFileSync(configPath, 'utf8');
+      config = JSON.parse(configData);
+      if (Object.keys(config).length <= 0) {
+        config = default_config(configPath);
+      }
+    } else {
+      //create new config file with empty fields
+      config = default_config(configPath);
+    }
+    console.log("Loaded config data", config);
+  } catch (error) {
+    throw new Error(`Failed to load data: ${error.message}`);
+  }
+  change_permissions_for_mac();
+
 });
 
 // Handle Update Data button - opens new window
@@ -500,7 +502,7 @@ ipcMain.handle('load-congressmen-data', async () => {
 
 
 
-// Load config data
+// Load config data when opening config page
 ipcMain.handle('load-config-data', async () => {
   try {
     //const configPath = path.join(__dirname, '../src/config.json');
