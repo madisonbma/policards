@@ -2,11 +2,21 @@
 #target photoshop
 
 
-var rootdir = new File($.fileName);
-rootdir = rootdir.parent;
-var dataFilePath = rootdir + "/generated_outputs/temp.txt";
-var picFilePath = rootdir + "/generated_outputs/temp.png";
-var LogFilePath = rootdir + "/generated_outputs/log_js.log";
+var generated_outputs = $.getenv("GEN_OUTPUT_DIR");
+
+if (generated_outputs) {
+    // Photoshop paths often need to be converted to File objects
+    var dataFolder = new Folder(generated_outputs);
+    alert("Loading data from: " + dataFolder.fsName);
+    
+    // Now you can use dataFolder to find your JSONs
+    var dataFilePath = dataFolder + "/temp.txt";
+    var picFilePath = dataFolder + "/temp.png";
+    var LogFilePath = dataFolder + "/log_js.log";
+} else {
+    alert("Error: GEN_OUTPUT_DIR environment variable not found.");
+}
+
 
 
 var CARD_WIDTH  = 1080;

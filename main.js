@@ -1,8 +1,9 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { dialog, app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const { exec } = require('child_process');
 const fs = require('fs');
 const fsPromises = fs.promises; 
+
 
 const isDev = process.env.NODE_ENV !== 'production';
 const debug = false;
@@ -14,6 +15,9 @@ let genWindow;
 let pythonProcess = null;
 
 let config;
+const generated_outputs = path.join(app.getPath('sessionData'), 'generated_outputs');
+const bioguideDataDir = path.join(generated_outputs, 'bioguide_data');
+
 
 const userDataPath = app.getPath('userData')
 const configPath = path.join(userDataPath, 'config.json');
@@ -22,7 +26,7 @@ function createMainWindow() {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 500,
-    icon: path.join(__dirname, 'app/icons/pp_logo.png'),
+    icon: path.join(__dirname, 'app/assets/icons/pp_logo.png'),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -39,7 +43,7 @@ function createUpdateWindow() {
     width: 800,
     height: 500,
     parent: mainWindow,
-    icon: path.join(__dirname, 'app/icons/pp_logo.png'),
+    icon: path.join(__dirname, 'app/assets/icons/pp_logo.png'),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -60,7 +64,7 @@ function createConfigWindow() {
     width: 800,
     height: 500,
     parent: mainWindow,
-    icon: path.join(__dirname, 'app/icons/pp_logo.png'),
+    icon: path.join(__dirname, 'app/assets/icons/pp_logo.png'),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -81,7 +85,7 @@ function createGenWindow() {
     width: 800,
     height: 500,
     parent: mainWindow,
-    icon: path.join(__dirname, 'app/icons/pp_logo.png'),
+    icon: path.join(__dirname, 'app/assets/icons/pp_logo.png'),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -96,18 +100,76 @@ function createGenWindow() {
   });
 }
 
+async function load_config() {
+  // Load config.json
+  if (fs.existsSync(configPath)) {
+    const configData = fs.readFileSync(configPath, 'utf8');
+    config = JSON.parse(configData);
+  }
+  const config_fields = [
+    'CONGRESS_API_KEY',
+    'FEC_API_KEY',
+    'photoshop_year',
+    'politician_pages_path',
+    'politician_pages_assets_path',
+    'save_path'
+  ]
+
+  config_fields.forEach (field => {
+    if (!config.hasOwnProperty(field)) {
+      config[field] = "";
+    }
+  });
+  console.log("Loaded config data", config);
+
+}
+
+async function bootstrap_data() {
+  load_config();
+  const seedDir = app.isPackaged 
+      ? path.join(process.resourcesPath, 'app.asar.unpacked', 'src', 'generated_outputs')
+      : path.join(__dirname, 'src', 'generated_outputs');
+      //: path.join(config['politician_pages_path'], 'src', 'generated_outputs');
+
+  console.log(generated_outputs);
+  //make generated_outputs dir if doesn't exist
+  if (!fs.existsSync(generated_outputs)) {
+    fs.mkdirSync(generated_outputs, { recursive: true });
+    console.log("Made dir ", generated_outputs);
+  }
+
+  const dataFiles = ['voting_records.json', 'voting_records_senate.json', 'congressmen.json',
+    'supplement_congressmen.json', 'congressmen_mod.json'];
+
+  dataFiles.forEach(file => {  
+    const dest = path.join(generated_outputs, file);
+    const src = path.join(seedDir, file);
+    if (!fs.existsSync(dest)) {
+      try {
+        // Use copyFileSync for a blocking, reliable first-time copy
+        fs.copyFileSync(src, dest);
+          console.log(`Bootstrapped: ${file}`);
+      } catch (err) {
+        console.error(`Failed to bootstrap ${file}:`, err.message);
+      }
+    }
+  });
+
+}
+
 function default_config(configPath) {
   const default_config = {
     'CONGRESS_API_KEY': "",
     'FEC_API_KEY': "",
     'photoshop_year': "",
     'politician_pages_path': "",
-    'politician_pages_assets_path': ""
+    'politician_pages_assets_path': "",
+    'save_path': ""
   }
   const jsonString = JSON.stringify(default_config);
   fs.writeFile(configPath, jsonString, (err) => {
       if (err) {
-          console.error('Error writing to file', err);
+          console.error('Error writing to file', err.message);
       } else {
           console.log(`Data written to ${configPath} as JSON.`);
       }
@@ -123,7 +185,7 @@ async function deleteFile(filePath) {
     console.log(`File ${filePath} deleted successfully`);
   } catch (err) {
     if (!(err.code === 'ENOENT')) {
-      console.error('Error deleting file:', err);
+      console.error('Error deleting file:', err.message);
     }
   }
 }
@@ -157,6 +219,7 @@ function getBinaryPath(file) {
 }
 
 function scriptname_to_py(name) {
+  /* Used for non-packaged binaries anyways. Fine to use config path.*/
   const filename = name + ".py";
   
   return path.join(config['politician_pages_path'], 'src', filename);
@@ -180,15 +243,15 @@ function runPythonScript(scriptName, args = []) {
       });
     }
     
-
+    let error_data = "";
     pyProcess.stdout.on('data', (data) => console.log(`Python: ${data}`));
-    pyProcess.stderr.on('data', (data) => console.error(`Python Error: ${data}`));
+    pyProcess.stderr.on('data', (data) => error_data += data.toString());
 
     pyProcess.on('close', (code) => {
       if (code === 0) {
         resolve();
       } else {
-        reject(new Error(`Python script exited with code ${code}`));
+        reject(new Error(`Python script exited with code ${code}: ${error_data}`));
       }
     });
   });
@@ -233,17 +296,18 @@ function runPythonScriptAndStream(scriptName, args, sender) {
 
       // Resolve the promise when the process exits successfully
       pythonProcess.on('close', (code) => {
-          if (code === 0) {
-              console.log(scriptName, " finished successfully.");
-              resolve(); 
-          } else {
-              reject(new Error(`Python process exited with code ${code}`));
-          }
+        if (code === 0) {
+          console.log(scriptName, " finished successfully.");
+          resolve(); 
+        } else {
+          console.error(`Python Error Output:\n${errorData}`);
+          reject(new Error(`${scriptName} failed (Code ${code}).\nDetails: ${errorData}`));
+        }
       });
 
       pythonProcess.on('error', (err) => {
-          console.log(err);
-          reject(err);
+        console.log(err.message);
+        reject(err);
       });
     });
 }
@@ -265,7 +329,6 @@ function change_permissions_for_mac() {
 // Start running the app
 //////////////////////////////////////////////////////
 
-
 app.whenReady().then(() => {
   createMainWindow();
 
@@ -274,6 +337,7 @@ app.whenReady().then(() => {
       createMainWindow();
     }
   });
+  bootstrap_data();
 });
 
 app.on('will-quit', () => {
@@ -294,6 +358,9 @@ app.on('window-all-closed', () => {
 //////////////////////////////////
 // GEN CARD 
 /////////////////////////////////
+ipcMain.handle('check-bioguide-exists', () => {
+  return fs.existsSync(bioguideDataDir) && fs.readdirSync(bioguideDataDir).length > 0;
+});
 
 // Handle Gen Card button - opens new window
 ipcMain.handle('open-gen-card', async () => {
@@ -305,21 +372,11 @@ ipcMain.handle('open-gen-card', async () => {
 
   //load config data when loading generate
   try {
-    // Load config.json
-    if (fs.existsSync(configPath)) {
-      const configData = fs.readFileSync(configPath, 'utf8');
-      config = JSON.parse(configData);
-      if (Object.keys(config).length <= 0) {
-        config = default_config(configPath);
-      }
-    } else {
-      //create new config file with empty fields
-      config = default_config(configPath);
-    }
-    console.log("Loaded config data", config);
+    load_config();
   } catch (error) {
     throw new Error(`Failed to load data: ${error.message}`);
   }
+
   change_permissions_for_mac();
 
 });
@@ -346,7 +403,7 @@ ipcMain.handle('open-config-window', () => {
 ipcMain.handle('gen-reps-json', async (event) => {
   try {
     const pythonScript = 'gen_reps_json';
-    await runPythonScriptAndStream(pythonScript, [config['CONGRESS_API_KEY'], config['politician_pages_path']], event.sender);
+    await runPythonScriptAndStream(pythonScript, [config['CONGRESS_API_KEY'], generated_outputs], event.sender);
 
     return { success: true, message: 'Generated Reps' };
   } catch (error) {
@@ -354,11 +411,59 @@ ipcMain.handle('gen-reps-json', async (event) => {
   }
 });
 
+
+
+const AdmZip = require('adm-zip'); // Import the zip library
+
+ipcMain.handle('import-bioguide-data', async () => {
+  const { canceled, filePaths } = await dialog.showOpenDialog({
+    properties: ['openFile'],
+    filters: [{ name: 'Bioguide Data', extensions: ['zip', 'json'] }]
+  });
+
+  if (canceled || filePaths.length === 0) return { success: false };
+
+  const sourcePath = filePaths[0];
+
+  // 1. Ensure the destination directory exists. Remove and reset if it does
+  if (!fs.existsSync(bioguideDataDir)) {
+    fs.mkdirSync(bioguideDataDir, { recursive: true });
+  } else {
+    fs.rmSync(bioguideDataDir, { recursive: true, force: true });
+    fs.mkdirSync(bioguideDataDir, { recursive: true });
+  }
+
+  try {
+    if (path.extname(sourcePath).toLowerCase() === '.zip') {
+      // 2. Handle ZIP extraction
+      const zip = new AdmZip(sourcePath);
+          
+      // Extract everything to the bioguide_data folder
+      // overwrite: true ensures old data is replaced by the new export
+      zip.extractAllTo(bioguideDataDir, true);
+      console.log('ZIP extraction complete');
+    } else {
+      // 3. Handle single JSON file
+      const destPath = path.join(bioguideDataDir, path.basename(sourcePath));
+      fs.copyFileSync(sourcePath, destPath);
+      console.log('JSON copy complete');
+    }
+
+    // 4. Trigger your Python processing script here
+    // spawn(processExePath, [destDir]); 
+
+    return { success: true, message: "Data imported and unpacked successfully!" };
+  } catch (err) {
+    console.error("Import failed:", err);
+    return { success: false, error: err.message };
+  }
+});
+
 // Handle gen votes (step 2 of gen card): python call
 ipcMain.handle('gen-voting-record-json', async (event) => {
   try {
     const pythonScript = 'gen_voting_record_json';
-    await runPythonScriptAndStream(pythonScript, [config['CONGRESS_API_KEY'], config['politician_pages_path']], event.sender);
+    await runPythonScriptAndStream(pythonScript, [config['CONGRESS_API_KEY'], generated_outputs], event.sender);
 
     return { success: true, message: 'Generated Votes' };
   } catch (error) {
@@ -371,7 +476,7 @@ ipcMain.handle('combine-data', async (event) => {
   try {
     console.log("Now running combine data");
     const pythonScript = 'combine_data';
-    await runPythonScriptAndStream(pythonScript, [config['politician_pages_path']], event.sender);
+    await runPythonScriptAndStream(pythonScript, [generated_outputs], event.sender);
 
     return { success: true, message: 'Created congressmen_mod.json' };
   } catch (error) {
@@ -385,9 +490,9 @@ ipcMain.handle('gen-card', async (_event, name) => {
   try {
     const pythonScript = 'gen_temp_for_javascript';
 
-    const jsxScript = path.join(config['politician_pages_path'], 'src/fill_social_template.jsx');
-    const tempFile = path.join(config['politician_pages_path'], 'src/generated_outputs/temp.txt');
-    const outputDir = path.join(config['politician_pages_path'], 'cards_ps');
+    const jsxScript = path.join(__dirname, 'app/assets/photoshop/fill_social_template.jsx');
+    const tempFile = path.join(generated_outputs, 'temp.txt');
+    const outputDir = config['save_path'];
     const replacements = {
       ',': '',
       '"': '',
@@ -399,11 +504,11 @@ ipcMain.handle('gen-card', async (_event, name) => {
                           .toLowerCase();
     const outputFileName = `${sanitizedName}_card.psd`;
     const outputPath = path.join(outputDir, outputFileName);
-
+    const fontDir = path.join(__dirname, 'app/assets/fonts')
 
     //1: gen temp for javascript
     await deleteFile(tempFile);
-    await runPythonScript(pythonScript, [name, config['politician_pages_path'], config['politician_pages_assets_path']]);
+    await runPythonScript(pythonScript, [name, generated_outputs, config['politician_pages_assets_path'], outputDir, fontDir]);
     console.log("Success! temp.txt has been created.");
 
 
@@ -419,19 +524,22 @@ ipcMain.handle('gen-card', async (_event, name) => {
     const isWindows = process.platform === 'win32';
     const isMac = process.platform === 'darwin';
 
+    const env = { ...process.env, GEN_OUTPUT_DIR: generated_outputs };
     let command;
     if (isWindows) {
       // Windows: Use Photoshop's executable with the script
-      command = `start "" "C:\\Program Files\\Adobe\\Adobe Photoshop 2026\\Photoshop.exe" "${jsxScript}"`;
+      command = `start "" "C:\\Program Files\\Adobe\\Adobe Photoshop ${config['photoshop_year']}\\Photoshop.exe" "${jsxScript}"`;
     } else if (isMac) {
       // Mac: Use osascript to tell Photoshop to run the script
-      command = `osascript -e 'tell application "Adobe Photoshop 2026" to do javascript file("${jsxScript}")' &`;
+      command = `osascript -e 'tell application "Adobe Photoshop ${config['photoshop_year']}" to do javascript file("${jsxScript}")' &`;
     } else {
       throw new Error('Unsupported operating system');
     }
 
-    exec(command);
-    console.log("Photoshop executed");
+    exec(command, { env }, (error) => {
+        if (error) console.error(`Photoshop Launch Error: ${error}`);
+        else console.log("Photoshop executed");
+    });
 
     //4: Wait for file completion
     return await new Promise((resolve, reject) => {
@@ -471,9 +579,8 @@ ipcMain.handle('gen-card', async (_event, name) => {
 // Load congressmen data for manual entry
 ipcMain.handle('load-congressmen-data', async () => {
   try {
-    console.log("Starting with ", config['politician_pages_path']);
-    const congressmenModPath = path.join(config['politician_pages_path'], 'src/generated_outputs/congressmen_mod.json');
-    const supplementPath = path.join(config['politician_pages_path'], 'src/generated_outputs/supplement_congressmen.json');
+    const congressmenModPath = path.join(generated_outputs, 'congressmen_mod.json');
+    const supplementPath = path.join(generated_outputs, 'supplement_congressmen.json');
     console.log("Using paths", congressmenModPath, supplementPath);
     let congressmenMod = [];
     let supplement = [];
@@ -504,21 +611,9 @@ ipcMain.handle('load-congressmen-data', async () => {
 
 // Load config data when opening config page
 ipcMain.handle('load-config-data', async () => {
-  try {
-    //const configPath = path.join(__dirname, '../src/config.json');
     // Load config.json
-    if (fs.existsSync(configPath)) {
-      console.log("Loading data from ", configPath);
-      const configData = fs.readFileSync(configPath, 'utf8');
-      config = JSON.parse(configData);
-      if (Object.keys(config).length <= 0) {
-        config = default_config(configPath);
-      }
-    } else {
-      //create new config file with prepopulated fields
-      config = default_config(configPath);
-    }
-    console.log("Loaded config data", config);
+  try {
+    load_config();
     return { config };
   } catch (error) {
     throw new Error(`Failed to load data: ${error.message}`);
@@ -528,8 +623,6 @@ ipcMain.handle('load-config-data', async () => {
 // Save config data
 ipcMain.handle('save-config-data', async (event, configData) => {
   try {
-    //const configPath = path.join(__dirname, '../src/config.json');
-
     //load the data to use directly:
     config = configData;
 
@@ -544,7 +637,7 @@ ipcMain.handle('save-config-data', async (event, configData) => {
 // Save supplement data
 ipcMain.handle('save-supplement', async (event, supplementData) => {
   try {
-    const supplementPath = path.join(config['politician_pages_path'], 'src/generated_outputs/supplement_congressmen.json');
+    const supplementPath = path.join(generated_outputs, 'supplement_congressmen.json');
     
     fs.writeFileSync(supplementPath, JSON.stringify(supplementData, null, 4), 'utf8');
     

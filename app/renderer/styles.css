@@ -17,7 +17,7 @@ body {
   height: 100vh;
   margin: 0;
   /*background: linear-gradient(135deg, var(--blue) 0%, var(--red) 100%);*/
-  background-image: url('../icons/stars_full.png');
+  background-image: url('../assets/icons/stars_full.png');
   background-size: cover;
 }
 

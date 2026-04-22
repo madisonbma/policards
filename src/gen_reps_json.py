@@ -17,8 +17,8 @@ HEADERS = {
 }
 RATE_LIMIT_DELAY_SECONDS = 0.2 
 
-def cleanup_data(root):
-    congressmen_json_tmp = os.path.join(root, "src", "generated_outputs", "congressmen.json.tmp")
+def cleanup_data(generated_outputs_path):
+    congressmen_json_tmp = os.path.join(generated_outputs_path, "congressmen.json.tmp")
 
     if os.path.exists(congressmen_json_tmp):
         print("CLEANUP: Deleted congressmen_json_tmp")
@@ -273,7 +273,7 @@ def flatten_user_terms(users_list):
     return all_flattened_terms
 
 
-def gen_reps_json(api_key, root):
+def gen_reps_json(api_key, generated_outputs):
     """
     This script pulls all congressmen data from the Congress.gov API.
     The output is "congressmen.json", which is a json with info about each representative.
@@ -283,8 +283,8 @@ def gen_reps_json(api_key, root):
     members_dict = get_congress_members(api_key)
     members_json = flatten_user_terms(members_dict)
 
-    congressmen_json = os.path.join(root, "src", "generated_outputs", "congressmen.json")
-    congressmen_json_tmp = os.path.join(root, "src", "generated_outputs", "congressmen.json.tmp")
+    congressmen_json = os.path.join(generated_outputs, "congressmen.json")
+    congressmen_json_tmp = os.path.join(generated_outputs, "congressmen.json.tmp")
 
 
     with open(congressmen_json_tmp, 'w') as f:
@@ -314,12 +314,12 @@ if __name__ == "__main__":
     # Get user inputs for API path and path to the repo
     parser = argparse.ArgumentParser(description="Get congressional data")
     parser.add_argument('api', help="CONGRESS_API_KEY")
-    parser.add_argument('pp_path', help="path to politician_pages repo")
+    parser.add_argument('generated_outputs_path', help="path to generated_outputs internal data")
     args = parser.parse_args()
     CONGRESS_API_KEY = args.api
-    root = args.pp_path
+    generated_outputs = args.generated_outputs_path
 
-    atexit.register(cleanup_data, root)
+    atexit.register(cleanup_data, generated_outputs)
 
-    gen_reps_json(CONGRESS_API_KEY, root)
+    gen_reps_json(CONGRESS_API_KEY, generated_outputs)
 

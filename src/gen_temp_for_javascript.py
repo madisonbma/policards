@@ -9,15 +9,15 @@ from requests.exceptions import RequestException, HTTPError
 import argparse
 
 
-def load_global_fonts(root):
+def load_global_fonts(font_path):
     global NN_EXTRA_BOLD
     global NN_MEDIUM
     global NN_BOLD_ITALIC
     global FONT_CHECK_DICT
 
-    NN_EXTRA_BOLD = os.path.join(root, "fonts", "NeulisNeue", "NeulisNeue-ExtraBold.ttf")
-    NN_MEDIUM = os.path.join(root, "fonts", "NeulisNeue", "NeulisNeue-Medium.ttf")
-    NN_BOLD_ITALIC = os.path.join(root, "fonts", "NeulisNeue", "NeulisNeue-BoldItalic.ttf")
+    NN_EXTRA_BOLD = os.path.join(font_path, "NeulisNeue", "NeulisNeue-ExtraBold.ttf")
+    NN_MEDIUM = os.path.join(font_path, "NeulisNeue", "NeulisNeue-Medium.ttf")
+    NN_BOLD_ITALIC = os.path.join(font_path, "NeulisNeue", "NeulisNeue-BoldItalic.ttf")
 
     FONT_CHECK_DICT = {
         "name": (100, NN_EXTRA_BOLD, 15.72),
@@ -46,7 +46,7 @@ def resize_image(img, desired_width):
 
 
 
-def pull_pic_from_web(rep, root, dummy=False):
+def pull_pic_from_web(rep, generated_outputs, dummy=False):
     """
     Pull the photo from the web link. 
     If no link was given, fill with an empty photo.
@@ -130,7 +130,7 @@ def pull_pic_from_web(rep, root, dummy=False):
         img = resize_image(img, PIC_WIDTH)
 
         #Save the image to generated_outputs/temp.png
-        pic_file = os.path.join(root, "src", "generated_outputs", "temp.png")
+        pic_file = os.path.join(generated_outputs, "temp.png")
         img.save(pic_file)
         print(f"Saved photo for {rep['name']}")
         
@@ -385,7 +385,7 @@ def gen_bonus_section(rep_info, draw, font, max_width, rep_stats):
 
 
 
-def create_temp(rep_info, absolute_stats, root, assets_dir):
+def create_temp(rep_info, absolute_stats, generated_outputs, assets_dir, save_path):
     """
     Create the temp file needed for javascript. Format is:
     NAME
@@ -572,9 +572,9 @@ def create_temp(rep_info, absolute_stats, root, assets_dir):
     ####### Add in paths for save, template
     ################################################
 
-    temp_file = os.path.join(root, "src", "generated_outputs", "temp.txt")
+    temp_file = os.path.join(generated_outputs, "temp.txt")
 
-    cards_dir = os.path.join(root, "cards_ps")
+    cards_dir = save_path
     os.makedirs(cards_dir, exist_ok=True)
 
     replacements = str.maketrans({",": "", "\"": "", ".":"", " ":"_"})
@@ -636,11 +636,11 @@ def get_rep_info(full_rep_info, name):
 
 
 #used for main.py
-def gen_temp_for_javascript(name, root, assets_dir):
+def gen_temp_for_javascript(name, generated_outputs, assets_dir, save_path, font_path):
 
-    abs_stat_f = os.path.join(root, "src", "generated_outputs", "absolute_stats.json")
-    supplement_f = os.path.join(root, "src", "generated_outputs", "supplement_congressmen.json")
-    congressmen_f = os.path.join(root, "src", "generated_outputs", "congressmen_mod.json")
+    abs_stat_f = os.path.join(generated_outputs, "absolute_stats.json")
+    supplement_f = os.path.join(generated_outputs, "supplement_congressmen.json")
+    congressmen_f = os.path.join(generated_outputs, "congressmen_mod.json")
 
     #Load in rep_info
     try: 
@@ -667,22 +667,26 @@ def gen_temp_for_javascript(name, root, assets_dir):
         print("There is an issue with the supplement_congressmen.json. Quitting.")
         return
 
-    load_global_fonts(root)
+    load_global_fonts(font_path)
 
     rep_info = merge_in_supplement(rep_info, supplement_data)
-    create_temp(rep_info, absolute_stats, root, assets_dir)
-    pull_pic_from_web(rep_info, root, dummy=False)
+    create_temp(rep_info, absolute_stats, generated_outputs, assets_dir, save_path)
+    pull_pic_from_web(rep_info, generated_outputs, dummy=False)
 
 
 #used for electron
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Pull info for Photoshop automation")
     parser.add_argument('name', help="Name of congressman to run")
-    parser.add_argument('pp_repo', help="Path to politician_pages repo")
+    parser.add_argument('generated_outputs', help="Path to generated_outputs")
     parser.add_argument('pp_assets', help="Path for psd assets")
+    parser.add_argument('save_path', help="Path for outputs")
+    parser.add_argument('font_path', help="Path for fonts")
     args = parser.parse_args()
     name = args.name
-    root = args.pp_repo
+    generated_outputs = args.generated_outputs
     assets_dir = args.pp_assets
+    save_path = args.save_path
+    font_path = args.font_path
 
-    gen_temp_for_javascript(name, root, assets_dir)
+    gen_temp_for_javascript(name, generated_outputs, assets_dir, save_path, font_path)

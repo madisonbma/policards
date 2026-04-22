@@ -1,16 +1,3 @@
-/**
- * STEP 1: would you like to update congressmen data? Should be done at least Jan 3 of every year
- *  yes/no
- * STEP 2: would you like to update voting records? The more often this is done the shorter it'll take
- *  yes/no
- * STEP 3: get name input of rep to generate
- *  nameInput, nameSuggestions, nameSubmitBtn, cancelBtn
- * STEP 4: this is the current info. update as needed.
- *  key, field for all keys
- *  add new field
- *  submit
- * STEP 5: close or add another
- */
 
 const genCardsBtn = document.getElementById('genCardsBtn');
 const updateDataBtn = document.getElementById('updateDataBtn');
@@ -33,6 +20,7 @@ const step6 = document.getElementById('step6');
 const step7 = document.getElementById('step7');
 const step8 = document.getElementById('step8');
 const step9 = document.getElementById('step9');
+const step10 = document.getElementById('step10');
 
 //Step 1 elements
 const yesConBtn = document.getElementById('yesGenCongressmenBtn')
@@ -79,6 +67,9 @@ const quitBtn = document.getElementById('quitBtn');
 //Step 9 elements
 const errorMessage = document.getElementById('errorMessage');
 
+//Step 10 elements
+const movedBioguideBtn = document.getElementById('movedBioguideBtn');
+
 ////////////////////////////////
 
 // State
@@ -93,24 +84,9 @@ let recommend_update = [];
 
 const LIST_FIELDS = ['committees', 'education', 'military', 'illegal', 'failed_runs', 'work_history', 'congress_highlights', 'accolades', 'family', 'top_donors', 'top_issues'];
 
-/*function showOutput(text) {
-  outputContainer.classList.add('show');
-  const timestamp = new Date().toLocaleTimeString();
-  outputDisplay.textContent += `[${timestamp}]\n${text}\n\n`;
-  outputDisplay.scrollTop = outputDisplay.scrollHeight;
-
-  
-}
-
-function clearOutput() {
-  outputDisplay.textContent = '';
-  outputContainer.classList.remove('show');
-}
-
-clearOutputBtn.addEventListener('click', clearOutput);
-*/
-
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+
 
 function showStatus(message, isSuccess, duration=3000) {
   console.log(message);
@@ -202,7 +178,7 @@ function setLoading(isLoading) {
 }
 
 function showStep(stepNum) {
-  [step1, step2, step3, step4, step5, step6, step7, step8, step9].forEach(s => s.classList.add('hidden'));
+  [step1, step2, step3, step4, step5, step6, step7, step8, step9, step10].forEach(s => s.classList.add('hidden'));
   
   if (stepNum === 1) step1.classList.remove('hidden');
   else if (stepNum === 2) step2.classList.remove('hidden');
@@ -213,6 +189,7 @@ function showStep(stepNum) {
   else if (stepNum === 7) step7.classList.remove('hidden');
   else if (stepNum === 8) step8.classList.remove('hidden');
   else if (stepNum === 9) step9.classList.remove('hidden');
+  else if (stepNum === 10) step10.classList.remove('hidden');
 }
 
 function openModal() {
@@ -558,6 +535,48 @@ async function loadData() {
   }
 }
 
+async function checkBioguideExists() {
+  /**
+   * If sessionData/bioguide_data doesn't exist, disable genCardsBtn
+   */
+    // 'electronAPI' matches what we defined in the preload script
+    const bioguide_exists = await window.electronAPI.checkBioguideExists();
+    if (bioguide_exists) {
+      genCardsBtn.disabled = false;
+    } else {
+      genCardsBtn.disabled = true;
+    }
+    //console.log("The session data path is:", path);
+    return path;
+}
+
+
+/////////////////////////////////////////////
+checkBioguideExists();
+
+movedBioguideBtn.addEventListener('click', async () => {
+  setLoading(true);
+  updated_data = true;
+  movedBioguideBtn.disabled = true;
+  const result = await window.electronAPI.importBioguideData();
+  if (result.success) {
+    setLoading(false);
+    console.log("bioguide refreshed.");
+    genCardsBtn.disabled = false;
+    movedBioguideBtn.disabled = false;
+
+    showStep(2);
+  } else {
+    showStatus("Failed to move bioguide.", false);
+    genCardsBtn.disabled = false;
+    movedBioguideBtn.disabled = false;
+    setLoading(false);
+  }
+  
+});
+
+
+
 //Step 1: Ask to update congressmen data
 yesConBtn.addEventListener('click', async () => {
   updated_data = true;
@@ -588,8 +607,7 @@ yesConBtn.addEventListener('click', async () => {
     setLoading(false);
     yesConBtn.disabled = false;
     noConBtn.disabled = false;
-    //await delay(5000); // Wait 5s
-    showStep(2);
+    showStep(10); //go to bioguide requirement
   } else {
     const e = result.message;
     const p2 = document.createElement('p');

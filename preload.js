@@ -13,5 +13,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   combineData: () => ipcRenderer.invoke('combine-data'),
   saveSupplement: (data) => ipcRenderer.invoke('save-supplement', data),
   saveConfigData: (data) => ipcRenderer.invoke('save-config-data', data),
-  openConfigWindow: () => ipcRenderer.invoke('open-config-window')
+  openConfigWindow: () => ipcRenderer.invoke('open-config-window'),
+  importBioguideData: () => ipcRenderer.invoke('import-bioguide-data'),
+  checkBioguideExists: () => ipcRenderer.invoke('check-bioguide-exists')
+
 });

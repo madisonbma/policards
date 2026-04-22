@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="gencard.css">
 </head>
 <header>
-  <img src="../icons/pp_logo.png" alt="App Logo" width="70">
+  <img src="../assets/icons/pp_logo.png" alt="App Logo" width="70">
 </header>
 
 <body>
@@ -27,7 +27,7 @@
       <h2>Generate Card</h2>
       <!-- Step 1: Regenerate congressmen.json -->
       <div id="step1" class="step">
-        <p>Do you want to update congressmen.json? Do this when people update, like Jan 3.</p>
+        <p>Do you want to update congressmen.json? Do this when there are new people in Congress, like Jan 3.</p>
         <button class="btn-primary" id="yesGenCongressmenBtn">Yes</button>
         <button class="btn-primary" id="noGenCongressmenBtn">No</button>
         <div id="terminalOutput1" class="terminal"></div>
@@ -139,6 +139,14 @@
           <p id="errorMessage"></p>
           <p>Please screenshot this message, send to Madison, and close the app.</p>
         </div>
+      </div>
+      <!-- Step 10: Bioguide load data -->
+      <div id="step10" class="step hidden">
+        <p>Follow these steps:</p>
+        <p>1. Go to https://bioguide.congress.gov/search</p>
+        <p>2. Click download > download bulk data in JSON format > download all profiles</p>
+        <p>3. Click button below and select the downloaded bulk data.</p>
+        <button class="btn-primary" id="movedBioguideBtn">I've done this</button>
       </div>
     </div>
   </div>

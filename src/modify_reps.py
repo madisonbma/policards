@@ -392,7 +392,7 @@ def add_bioguide_tenure_ranks(modified_congressmen_json):
 ####################################################################################################
 
 
-def modify_reps(input_json_f, vote_f):
+def modify_reps(input_json_f, vote_f, generated_outputs):
     """
     Takes the congressmen.json file path and will save a congressmen_mod.json 
     1. Updates endYear for current members
@@ -412,8 +412,7 @@ def modify_reps(input_json_f, vote_f):
         input_json_f [str]: File path to congressmen.json
 
     """
-    root = os.path.join(os.path.dirname(input_json_f), os.path.pardir, os.path.pardir)
-    print(root)
+
     #Load in the JSON
     try: 
         df = pd.read_json(input_json_f)
@@ -449,7 +448,7 @@ def modify_reps(input_json_f, vote_f):
     print("Starting the add_bioguide")
     #Last, modify the JSON with add_bioguide.py
     
-    modified_congressmen_json_pre = add_bioguide.add_bioguide(con_json, root) #list of dicts python Obj
+    modified_congressmen_json_pre = add_bioguide.add_bioguide(con_json, generated_outputs) #list of dicts python Obj
 
     tenure_df = add_bioguide_tenure_ranks(modified_congressmen_json_pre)
     get_absolute_stats(tenure_df, input_json_f)

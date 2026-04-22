@@ -2120,13 +2120,12 @@ def get_profile_photo(bioguide_data, rep):
 
 
 
-def add_bioguide_congress_data(list_of_dict, root):
+def add_bioguide_congress_data(list_of_dict, generated_outputs):
     """
     Using the data loaded from bioguide.congress.gov, which has been downloaded to bioguide_data dir,
     update the current json with the relevant info
 
     """
-    print(root)
 
     seen_rep = {}
     uncaptured_length = 0
@@ -2177,7 +2176,7 @@ def add_bioguide_congress_data(list_of_dict, root):
         #    seen_rep[rep.get('bioguideID')] = 1
             
 
-        newjson_path = os.path.join(root, "bioguide_data", f"{rep.get('bioguideID')}.json")
+        newjson_path = os.path.join(generated_outputs, "bioguide_data", f"{rep.get('bioguideID')}.json")
         bioguide_data = load_json(newjson_path)
         if bioguide_data is None:
             break
@@ -2754,7 +2753,7 @@ def to_state_code (str_in, delimiter, swap_full_state):
 ####################################################################################################
 
 
-def add_bioguide(input_json, root):
+def add_bioguide(input_json, generated_outputs):
     """
     Takes the json string object and will save a congressmen_mod.json 
     
@@ -2774,5 +2773,5 @@ def add_bioguide(input_json, root):
         print("Invalid input type for add_bioguide. Expected string or list.")
         raise TypeError(f"Expected string or list, got {type(input_json)}")
     
-    updated_list = add_bioguide_congress_data(list_of_congressmen, root) #list of dicts
+    updated_list = add_bioguide_congress_data(list_of_congressmen, generated_outputs) #list of dicts
     return updated_list

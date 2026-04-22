@@ -26,6 +26,7 @@
     "make": "electron-forge make"
   },
   "dependencies": {
+    "adm-zip": "^0.5.17",
     "electron-squirrel-startup": "^1.0.1"
   },
   "devDependencies": {
@@ -51,20 +52,19 @@
       "preload.js",
       "package.json",
       "app/renderer/**/*",
-      "app/icons/**/*",
+      "app/assets/**/*",
       "resources/bin/**/*",
-      "bioguide_data/**/*",
       "src/generated_outputs/**/*"
     ],
     "asar": true,
     "asarUnpack": [
       "resources/bin/win/*.exe",
       "resources/bin/mac/*",
-      "bioguide_data/**/*"
+      "app/assets/photoshop/fill_social_template.jsx"
     ],
     "win": {
       "target": "nsis",
-      "icon": "app/icons/pp_logo.ico"
+      "icon": "app/assets/icons/pp_logo.ico"
     },
     "nsis": {
       "oneClick": true,
@@ -73,7 +73,7 @@
     },
     "mac": {
       "target": "dmg",
-      "icon": "app/icons/pp_logo.icns"
+      "icon": "app/assets/icons/pp_logo.icns"
     }
   }
 }

@@ -18,9 +18,9 @@ HEADERS = {
 }
 RATE_LIMIT_DELAY_SECONDS = 0.2 
 
-def cleanup_data(root):
-    voting_records_json_tmp = os.path.join(root, "src", "generated_outputs", "voting_records.json.tmp")
-    voting_records_senate_json_tmp = os.path.join(root, "src", "generated_outputs", "voting_records_senate.json.tmp")
+def cleanup_data(generated_outputs):
+    voting_records_json_tmp = os.path.join(generated_outputs, "voting_records.json.tmp")
+    voting_records_senate_json_tmp = os.path.join(generated_outputs, "voting_records_senate.json.tmp")
 
     if os.path.exists(voting_records_json_tmp):
         os.remove(voting_records_json_tmp)
@@ -359,7 +359,7 @@ def get_stop_point():
     congress = (current_year - 1787 - session )/2
     return (congress, session)
 
-def gen_voting_record_json(api_key, root, max_records=1000):
+def gen_voting_record_json(api_key, generated_outputs, max_records=1000):
     """
     This script pulls all voting record data from the Congress.gov API.
     The output is "voting_records.json", which compiles all the data for each vote.
@@ -379,8 +379,8 @@ def gen_voting_record_json(api_key, root, max_records=1000):
     print("##############################################")
     print("Getting House Voting Records")
 
-    voting_records_json = os.path.join(root, "src", "generated_outputs", "voting_records.json")
-    voting_records_json_tmp = os.path.join(root, "src", "generated_outputs", "voting_records.json.tmp")
+    voting_records_json = os.path.join(generated_outputs, "voting_records.json")
+    voting_records_json_tmp = os.path.join(generated_outputs, "voting_records.json.tmp")
     try:
         with open(voting_records_json, 'r') as file:
             file_house_votes = json.load(file)
@@ -424,8 +424,8 @@ def gen_voting_record_json(api_key, root, max_records=1000):
     print("##############################################")
     print("Now getting Senate Voting Records")
 
-    voting_records_senate_json = os.path.join(root, "src", "generated_outputs", "voting_records_senate.json")
-    voting_records_senate_json_tmp = os.path.join(root, "src", "generated_outputs", "voting_records_senate.json.tmp")
+    voting_records_senate_json = os.path.join(generated_outputs, "voting_records_senate.json")
+    voting_records_senate_json_tmp = os.path.join(generated_outputs, "voting_records_senate.json.tmp")
 
     try:
         with open(voting_records_senate_json, 'r') as file:
@@ -486,11 +486,11 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="API Key")
     parser.add_argument('api', help="CONGRESS_API_KEY")
-    parser.add_argument('pp_path', help="path to politician_pages repo")
+    parser.add_argument('generated_outputs_path', help="path to generated_outputs")
     args = parser.parse_args()
     CONGRESS_API_KEY = args.api
-    root = args.pp_path
+    generated_outputs = args.generated_outputs_path
 
-    atexit.register(cleanup_data, root)
+    atexit.register(cleanup_data, generated_outputs)
 
-    gen_voting_record_json(CONGRESS_API_KEY, root)
+    gen_voting_record_json(CONGRESS_API_KEY, generated_outputs)
