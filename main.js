@@ -549,7 +549,7 @@ ipcMain.handle('gen-card', async (_event, name) => {
 
     //4: Wait for file completion
     return await new Promise((resolve, reject) => {
-        const timeoutMs = 90000; // 90 second limit
+        const timeoutMs = 120000; // 2 minute limit
         
         // Setup the Timeout
         const timer = setTimeout(() => {
