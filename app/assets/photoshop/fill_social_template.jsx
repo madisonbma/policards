@@ -7,7 +7,6 @@ var generated_outputs = $.getenv("GEN_OUTPUT_DIR");
 if (generated_outputs) {
     // Photoshop paths often need to be converted to File objects
     var dataFolder = new Folder(generated_outputs);
-    alert("Loading data from: " + dataFolder.fsName);
     
     // Now you can use dataFolder to find your JSONs
     var dataFilePath = dataFolder + "/temp.txt";

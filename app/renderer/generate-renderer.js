@@ -168,8 +168,6 @@ function showPopup(message) {
 }
 
 function setLoading(isLoading) {
-  genCardsBtn.disabled = isLoading;
-  updateDataBtn.disabled = isLoading;
   if (isLoading) {
     spinner.classList.add('show');
   } else {
@@ -543,16 +541,42 @@ async function checkBioguideExists() {
     const bioguide_exists = await window.electronAPI.checkBioguideExists();
     if (bioguide_exists) {
       genCardsBtn.disabled = false;
+      noConBtn.disabled = false;
     } else {
       genCardsBtn.disabled = true;
+      noConBtn.disabled = true;
     }
     //console.log("The session data path is:", path);
     return path;
 }
 
+async function disableButtons() {
+  const bioguide_exists = await window.electronAPI.checkBioguideExists();
+  const congressmen_exists = await window.electronAPI.checkCongressmenExists();
+  const vote_exists = await window.electronAPI.checkVoteExists();
+
+  if (bioguide_exists && congressmen_exists) {
+    genCardsBtn.disabled = false;
+    if (vote_exists) {
+      noConBtn.disabled = false;
+    } else {
+      noConBtn.disabled = true;
+    }
+  } else {
+    genCardsBtn.disabled = true;
+    noConBtn.disabled = true;
+  }
+
+  if (vote_exists) {
+    noVoteBtn.disabled = false;
+  } else {
+    noVoteBtn.disabled = true;
+  }
+}
 
 /////////////////////////////////////////////
-checkBioguideExists();
+//checkBioguideExists();
+disableButtons();
 
 movedBioguideBtn.addEventListener('click', async () => {
   setLoading(true);
@@ -563,12 +587,14 @@ movedBioguideBtn.addEventListener('click', async () => {
     setLoading(false);
     console.log("bioguide refreshed.");
     genCardsBtn.disabled = false;
+    noConBtn.disabled = false;
     movedBioguideBtn.disabled = false;
 
     showStep(2);
   } else {
     showStatus("Failed to move bioguide.", false);
     genCardsBtn.disabled = false;
+    noConBtn.disabled = false;
     movedBioguideBtn.disabled = false;
     setLoading(false);
   }
@@ -1050,14 +1076,16 @@ quitBtn.addEventListener('click', closeModal);
 
 //updateData (step 0): do not load data, will need to run steps 1 and 2 and combine data
 updateDataBtn.addEventListener('click', async () => {
-  setLoading(true);
-  const loaded = await loadData();
+  /*setLoading(true);
+  const loaded = await loadData(); //madison
   setLoading(false);
   
   if (loaded) {
     openModal();
     showStep(1);
-  }
+  }*/
+  openModal();
+  showStep(1);
 });
 
 //genCards (step 0): load data and go to look for name

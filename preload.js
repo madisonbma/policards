@@ -15,6 +15,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
   saveConfigData: (data) => ipcRenderer.invoke('save-config-data', data),
   openConfigWindow: () => ipcRenderer.invoke('open-config-window'),
   importBioguideData: () => ipcRenderer.invoke('import-bioguide-data'),
-  checkBioguideExists: () => ipcRenderer.invoke('check-bioguide-exists')
+  checkBioguideExists: () => ipcRenderer.invoke('check-bioguide-exists'),
+  checkCongressmenExists: () => ipcRenderer.invoke('check-congressmen-exists'),
+  checkVoteExists: () => ipcRenderer.invoke('check-vote-exists'),
+  configIsClean: () => ipcRenderer.invoke('config-is-clean'),
+  onConfigClosed: (callback) => ipcRenderer.on('config-closed', callback)
 
 });

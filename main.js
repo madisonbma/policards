@@ -1,4 +1,4 @@
-const { dialog, app, BrowserWindow, ipcMain } = require('electron');
+const { dialog, app, BrowserWindow, ipcMain, nativeImage } = require('electron');
 const path = require('path');
 const { exec } = require('child_process');
 const fs = require('fs');
@@ -19,21 +19,26 @@ const generated_outputs = path.join(app.getPath('sessionData'), 'generated_outpu
 const bioguideDataDir = path.join(generated_outputs, 'bioguide_data');
 
 
-const userDataPath = app.getPath('userData')
+const userDataPath = app.getPath('userData');
 const configPath = path.join(userDataPath, 'config.json');
+
+
 
 function createMainWindow() {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 500,
-    icon: path.join(__dirname, 'app/assets/icons/pp_logo.png'),
+    icon: path.join(__dirname, 'app/assets/icons/pp_logo_1024.png'),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
       preload: path.join(__dirname, 'preload.js')
     }
   });
-
+  if(process.platform === "darwin") {
+    const icon = nativeImage.createFromPath('app/assets/icons/pp_logo_1024.png');
+    app.dock.setIcon(icon);
+  }
   mainWindow.loadFile('app/renderer/index.html');
 
 }
@@ -43,7 +48,7 @@ function createUpdateWindow() {
     width: 800,
     height: 500,
     parent: mainWindow,
-    icon: path.join(__dirname, 'app/assets/icons/pp_logo.png'),
+    icon: path.join(__dirname, 'app/assets/icons/pp_logo_1024.png'),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -64,7 +69,7 @@ function createConfigWindow() {
     width: 800,
     height: 500,
     parent: mainWindow,
-    icon: path.join(__dirname, 'app/assets/icons/pp_logo.png'),
+    icon: path.join(__dirname, 'app/assets/icons/pp_logo_1024.png'),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -76,6 +81,9 @@ function createConfigWindow() {
 
   configWindow.on('closed', () => {
     configWindow = null;
+    if (mainWindow) {
+      mainWindow.webContents.send('config-closed');
+    }
   });
 }
 
@@ -85,7 +93,7 @@ function createGenWindow() {
     width: 800,
     height: 500,
     parent: mainWindow,
-    icon: path.join(__dirname, 'app/assets/icons/pp_logo.png'),
+    icon: path.join(__dirname, 'app/assets/icons/pp_logo_1024.png'),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -105,12 +113,13 @@ async function load_config() {
   if (fs.existsSync(configPath)) {
     const configData = fs.readFileSync(configPath, 'utf8');
     config = JSON.parse(configData);
+  } else {
+    config = {};
   }
   const config_fields = [
     'CONGRESS_API_KEY',
     'FEC_API_KEY',
     'photoshop_year',
-    'politician_pages_path',
     'politician_pages_assets_path',
     'save_path'
   ]
@@ -125,58 +134,38 @@ async function load_config() {
 }
 
 async function bootstrap_data() {
-  load_config();
-  const seedDir = app.isPackaged 
+  const seedDir = path.join(config['politician_pages_assets_path'], 'json');
+  /*const seedDir = app.isPackaged 
       ? path.join(process.resourcesPath, 'app.asar.unpacked', 'src', 'generated_outputs')
-      : path.join(__dirname, 'src', 'generated_outputs');
-      //: path.join(config['politician_pages_path'], 'src', 'generated_outputs');
+      : path.join(__dirname, 'src', 'generated_outputs');*/
+  if (!fs.existsSync(seedDir)) {
+    console.error("ERROR: ", seedDir, " does not exist.");
+  } else {
+    console.log("Copying ", seedDir, "to ", generated_outputs);
+  }
 
-  console.log(generated_outputs);
   //make generated_outputs dir if doesn't exist
   if (!fs.existsSync(generated_outputs)) {
     fs.mkdirSync(generated_outputs, { recursive: true });
     console.log("Made dir ", generated_outputs);
   }
 
-  const dataFiles = ['voting_records.json', 'voting_records_senate.json', 'congressmen.json',
-    'supplement_congressmen.json', 'congressmen_mod.json'];
+  const dataFiles = ['voting_records.json', 'voting_records_senate.json', 'supplement_congressmen.json'];
 
   dataFiles.forEach(file => {  
     const dest = path.join(generated_outputs, file);
     const src = path.join(seedDir, file);
-    if (!fs.existsSync(dest)) {
+    if (!fs.existsSync(dest)) { //only if file doesn't exist yet
       try {
         // Use copyFileSync for a blocking, reliable first-time copy
         fs.copyFileSync(src, dest);
-          console.log(`Bootstrapped: ${file}`);
+        console.log(`Bootstrapped: ${file}`);
       } catch (err) {
         console.error(`Failed to bootstrap ${file}:`, err.message);
       }
     }
   });
-
 }
-
-function default_config(configPath) {
-  const default_config = {
-    'CONGRESS_API_KEY': "",
-    'FEC_API_KEY': "",
-    'photoshop_year': "",
-    'politician_pages_path': "",
-    'politician_pages_assets_path': "",
-    'save_path': ""
-  }
-  const jsonString = JSON.stringify(default_config);
-  fs.writeFile(configPath, jsonString, (err) => {
-      if (err) {
-          console.error('Error writing to file', err.message);
-      } else {
-          console.log(`Data written to ${configPath} as JSON.`);
-      }
-  });
-  return default_config;
-}
-
 
 
 async function deleteFile(filePath) {
@@ -194,35 +183,28 @@ function getBinaryPath(file) {
   const isWin = process.platform === "win32";
   const folder = isWin ? 'win' : 'mac';
   const filename = isWin ? file + '.exe' : file ;
-  if (isDev) {
-    const filepath = path.join(config['politician_pages_path'], 'resources/bin', folder, filename);
-    if (!fs.existsSync(filepath)) {
-      console.log("FILE NOT FOUND: ", filepath)
-      throw new Error(`File not found: ${filepath}`);
-    }
-    else {
-      console.log("Using file ", filepath);
-    }
 
-    return filepath;
+  if (!app.isPackaged) {
+    // DEVELOPMENT: Root/resources/bin/mac/file
+    filepath = path.join(__dirname, 'resources', 'bin', folder, filename);
   } else {
-    const filepath = path.join(process.resourcesPath, 'bin', filename);
-    if (!fs.existsSync(filepath)) {
-      console.log("FILE NOT FOUND: ", filepath)
-      throw new Error(`File not found: ${filepath}`);
-    }
-    else {
-      console.log("Using file ", filepath);
-    }
-    return filepath;
+    // PRODUCTION: Contents/Resources/bin/mac/file
+    filepath = path.join(process.resourcesPath, 'bin', folder, filename);
   }
+
+  if (!fs.existsSync(filepath)) {
+    console.error("FILE NOT FOUND:", filepath);
+    throw new Error(`File not found: ${filepath}`);
+  }
+
+  return filepath;
 }
 
 function scriptname_to_py(name) {
   /* Used for non-packaged binaries anyways. Fine to use config path.*/
   const filename = name + ".py";
   
-  return path.join(config['politician_pages_path'], 'src', filename);
+  return path.join(__dirname, 'src', filename);
 }
 
 const { spawn } = require('child_process');
@@ -255,16 +237,6 @@ function runPythonScript(scriptName, args = []) {
       }
     });
   });
-}
-
-function sendSafe(sender, channel, data) {
-    // 1. Check if sender exists
-    // 2. Check if the window hasn't been destroyed (user closed the modal)
-    if (sender && !sender.isDestroyed()) {
-        sender.send(channel, data);
-    } else {
-        console.warn("Attempted to send to a destroyed window. Ignoring.");
-    }
 }
 
 
@@ -337,7 +309,7 @@ app.whenReady().then(() => {
       createMainWindow();
     }
   });
-  bootstrap_data();
+
 });
 
 app.on('will-quit', () => {
@@ -361,6 +333,36 @@ app.on('window-all-closed', () => {
 ipcMain.handle('check-bioguide-exists', () => {
   return fs.existsSync(bioguideDataDir) && fs.readdirSync(bioguideDataDir).length > 0;
 });
+ipcMain.handle('check-congressmen-exists', () => {
+  return fs.existsSync(path.join(generated_outputs, 'congressmen.json'));
+});
+ipcMain.handle('check-vote-exists', () => {
+  return fs.existsSync(path.join(generated_outputs, 'voting_records.json')) && fs.existsSync(path.join(generated_outputs, 'voting_records_senate.json'));
+});
+
+ipcMain.handle('config-is-clean', () => {
+  load_config();
+  if (config) {
+    if (config['CONGRESS_API_KEY'] === "") {
+      console.log("CONGRESS_API_KEY is not valid. Gating genCard option.");
+      return false;
+    } else if (config['photoshop_year'] === "") {
+      console.log("photoshop_year is not valid. Gating genCard option.");
+      return false
+    } else if (config['politician_pages_assets_path'] === "") {
+      console.log("politician_pages_assets_path is not valid. Gating genCard option.");
+      return false;
+    } else if (config['save_path'] === "") {
+      console.log("save_path is not valid. Gating genCard option.");
+      return false;
+    } else {
+      return true;
+    }
+  } else {
+    console.log("Config does not exist");
+    return false;
+  }
+});
 
 // Handle Gen Card button - opens new window
 ipcMain.handle('open-gen-card', async () => {
@@ -373,6 +375,7 @@ ipcMain.handle('open-gen-card', async () => {
   //load config data when loading generate
   try {
     load_config();
+    bootstrap_data();
   } catch (error) {
     throw new Error(`Failed to load data: ${error.message}`);
   }
@@ -490,7 +493,9 @@ ipcMain.handle('gen-card', async (_event, name) => {
   try {
     const pythonScript = 'gen_temp_for_javascript';
 
-    const jsxScript = path.join(__dirname, 'app/assets/photoshop/fill_social_template.jsx');
+    const jsxScript = app.isPackaged
+      ? path.join(process.resourcesPath, 'photoshop', 'fill_social_template.jsx')
+      : path.join(__dirname, 'app', 'assets', 'photoshop', 'fill_social_template.jsx'); 
     const tempFile = path.join(generated_outputs, 'temp.txt');
     const outputDir = config['save_path'];
     const replacements = {
@@ -504,8 +509,9 @@ ipcMain.handle('gen-card', async (_event, name) => {
                           .toLowerCase();
     const outputFileName = `${sanitizedName}_card.psd`;
     const outputPath = path.join(outputDir, outputFileName);
-    const fontDir = path.join(__dirname, 'app/assets/fonts')
-
+    const fontDir = app.isPackaged
+      ? path.join(process.resourcesPath, 'fonts')
+      : path.join(__dirname, 'app', 'assets', 'fonts');
     //1: gen temp for javascript
     await deleteFile(tempFile);
     await runPythonScript(pythonScript, [name, generated_outputs, config['politician_pages_assets_path'], outputDir, fontDir]);

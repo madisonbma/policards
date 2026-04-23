@@ -1,5 +1,5 @@
 {
-  "name": "politician_pages_app",
+  "name": "politicianpages",
   "version": "1.0.0",
   "description": "desktop app to generate cards and format data",
   "homepage": "https://github.com/madisonbma/policards",
@@ -14,57 +14,57 @@
   "author": "madisonbma",
   "type": "commonjs",
   "main": "main.js",
-  "directories": {
-    "test": "test"
-  },
   "scripts": {
-    "start": "electron-forge start",
+    "start": "electron .",
     "build": "cross-env NODE_ENV=production electron-builder",
     "build:win": "cross-env NODE_ENV=production electron-builder --win",
     "build:mac": "cross-env NODE_ENV=production electron-builder --mac",
-    "package": "electron-forge package",
-    "make": "electron-forge make"
+    "postinstall": "electron-builder install-app-deps"
   },
   "dependencies": {
     "adm-zip": "^0.5.17",
     "electron-squirrel-startup": "^1.0.1"
   },
   "devDependencies": {
-    "@electron-forge/cli": "^7.11.1",
-    "@electron-forge/maker-deb": "^7.11.1",
-    "@electron-forge/maker-rpm": "^7.11.1",
-    "@electron-forge/maker-squirrel": "^7.11.1",
-    "@electron-forge/maker-zip": "^7.11.1",
-    "@electron-forge/plugin-auto-unpack-natives": "^7.11.1",
-    "@electron-forge/plugin-fuses": "^7.11.1",
-    "@electron/fuses": "^1.8.0",
     "cross-env": "^10.1.0",
-    "electron": "^39.8.8"
+    "electron": "^39.8.8",
+    "electron-builder": "^26.8.1"
   },
   "build": {
     "appId": "com.cardgenerator.app",
     "productName": "PoliticianPages",
     "directories": {
-      "output": "dist"
+      "output": "dist",
+      "buildResources": "build" 
     },
     "files": [
       "main.js",
       "preload.js",
       "package.json",
       "app/renderer/**/*",
-      "app/assets/**/*",
-      "resources/bin/**/*",
-      "src/generated_outputs/**/*"
+      "app/assets/**/*"
     ],
     "asar": true,
-    "asarUnpack": [
-      "resources/bin/win/*.exe",
-      "resources/bin/mac/*",
-      "app/assets/photoshop/fill_social_template.jsx"
-    ],
     "win": {
       "target": "nsis",
-      "icon": "app/assets/icons/pp_logo.ico"
+      "icon": "app/assets/icons/pp_logo.ico",
+      "extraResources": [
+        {
+          "from": "resources/bin/win",
+          "to": "bin/win",
+          "filter": [
+            "**/*"
+          ]
+        },
+        {
+          "from": "app/assets/fonts",
+          "to": "fonts"
+        },
+        {
+          "from": "app/assets/photoshop/fill_social_template.jsx",
+          "to": "photoshop/fill_social_template.jsx"        
+        }
+      ]
     },
     "nsis": {
       "oneClick": true,
@@ -73,7 +73,24 @@
     },
     "mac": {
       "target": "dmg",
-      "icon": "app/assets/icons/pp_logo.icns"
+      "icon": "app/assets/icons/pp_logo_1024.icns",
+      "extraResources": [
+        {
+          "from": "resources/bin/mac",
+          "to": "bin/mac",
+          "filter": [
+            "**/*"
+          ]
+        },
+        {
+          "from": "app/assets/fonts",
+          "to": "fonts"
+        },
+        {
+          "from": "app/assets/photoshop/fill_social_template.jsx",
+          "to": "photoshop/fill_social_template.jsx"        
+        }
+      ]
     }
   }
 }
