@@ -70,6 +70,7 @@ def pull_pic_from_web(rep, generated_outputs, dummy=False):
             if face_path is None:
                 #failed to get rep['photo'], try backup image
                 face_path = rep['imageUrl']
+                dims_1 = (0,0)
             elif "http" in face_path:
                 #if image is big enough be done, otherwise try backup image
                 try:
@@ -95,7 +96,9 @@ def pull_pic_from_web(rep, generated_outputs, dummy=False):
                 #my_logger.debug(f'No image found for {rep['name']}. Generating dummy image.')
             elif face_path == rep['photo']:
                 #my_logger.debug(f'Primary image for {rep['name']} was sufficient.')
+                dims_2 = (0,0)
                 pass
+                
             elif "http" in face_path:
                 try:
                     face_path_url = requests.get(face_path)

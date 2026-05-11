@@ -71,11 +71,12 @@ function displayConfigData() {
 /////////////////////////
 window.onload = loadAndDisplayData;
 
+
 saveBtn.addEventListener('click', async () => {
     //go row by row and save the value if it exists, otherwise throw an error
     //check if any configs are empty, error if so
     const rows = currentDataDisplay.children;
-    Array.from(rows).forEach(row => {
+    for (const row of Array.from(rows)) {
         const keyDiv = row.children[0];
         const key = keyDiv.textContent;
         const valueInput = row.children[1]; //0 is key, 1 is value
@@ -83,13 +84,21 @@ saveBtn.addEventListener('click', async () => {
         const newValue = valueInput.value.trim();
         //if updated val, save that one
         if (newValue) {
+          //now check if it's safe to save:
+          if (key === "politician_pages_assets_path") {
+            const assets_ok = await window.electronAPI.checkPathExists(newValue);
+            if (!assets_ok) {
+              showStatus("Won't save, politician_pages_assets_path invalid");
+              return;
+            }
+          }
             config[key] = newValue;
             console.log("saving ", key, ": ", newValue);
             valueInput.setAttribute('placeholder', newValue);
             valueInput.value = newValue;
         }
 
-    });
+    }
     //now save the configs to file
     console.log("Sending: ", config);
     const result = await window.electronAPI.saveConfigData(config);

@@ -244,9 +244,11 @@ function runPythonScriptAndStream(scriptName, args, sender) {
     return new Promise((resolve, reject) => {
       if (debug) {
         if (process.platform === "darwin") {
+          console.log("Running python3.14 ", scriptname_to_py(scriptName));
           pythonProcess = spawn('python3.14', [scriptname_to_py(scriptName), ...args]);
         }
         else {
+          console.log("Running python ", scriptname_to_py(scriptName));
           pythonProcess = spawn('python', [scriptname_to_py(scriptName), ...args]);
         }
       } else {
@@ -339,6 +341,10 @@ ipcMain.handle('check-congressmen-exists', () => {
 ipcMain.handle('check-vote-exists', () => {
   return fs.existsSync(path.join(generated_outputs, 'voting_records.json')) && fs.existsSync(path.join(generated_outputs, 'voting_records_senate.json'));
 });
+ipcMain.handle('check-path-exists', (_event, path) => {
+  return fs.existsSync(path);
+});
+
 
 ipcMain.handle('config-is-clean', () => {
   load_config();
@@ -354,6 +360,9 @@ ipcMain.handle('config-is-clean', () => {
       return false;
     } else if (config['save_path'] === "") {
       console.log("save_path is not valid. Gating genCard option.");
+      return false;
+    } else if (!fs.existsSync(config['politician_pages_assets_path'])) {
+      console.log("politician_pages_assets_path is not valid. Gating genCard option.");
       return false;
     } else {
       return true;
@@ -537,7 +546,7 @@ ipcMain.handle('gen-card', async (_event, name) => {
       command = `start "" "C:\\Program Files\\Adobe\\Adobe Photoshop ${config['photoshop_year']}\\Photoshop.exe" "${jsxScript}"`;
     } else if (isMac) {
       // Mac: Use osascript to tell Photoshop to run the script
-      command = `osascript -e 'tell application "Adobe Photoshop ${config['photoshop_year']}" to do javascript file("${jsxScript}")' &`;
+      command = `osascript -e 'tell application "Adobe Photoshop ${config['photoshop_year']}" to do javascript file "${jsxScript}" with arguments {"${generated_outputs}"}' &`;
     } else {
       throw new Error('Unsupported operating system');
     }

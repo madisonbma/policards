@@ -19,6 +19,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   checkCongressmenExists: () => ipcRenderer.invoke('check-congressmen-exists'),
   checkVoteExists: () => ipcRenderer.invoke('check-vote-exists'),
   configIsClean: () => ipcRenderer.invoke('config-is-clean'),
+  checkPathExists: (path) => ipcRenderer.invoke('check-path-exists', path),
   onConfigClosed: (callback) => ipcRenderer.on('config-closed', callback)
 
 });

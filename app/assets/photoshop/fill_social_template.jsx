@@ -2,7 +2,8 @@
 #target photoshop
 
 
-var generated_outputs = $.getenv("GEN_OUTPUT_DIR");
+//var generated_outputs = $.getenv("GEN_OUTPUT_DIR");
+var generated_outputs = arguments[0];
 
 if (generated_outputs) {
     // Photoshop paths often need to be converted to File objects
