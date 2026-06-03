@@ -247,7 +247,6 @@ def get_independent_expenditures(fec_mapping, cycle=2024):
             break
 
 
-
     return result
 
 def get_candidates_and_committees(office, page_start=1, election_cycle=2024):
@@ -943,7 +942,7 @@ if __name__ == "__main__":
         with open (os.path.join(gen_outputs, 'independent_expenditures.json'), 'w') as f:
             json.dump(ie, f, indent=2)
 
-    # TODO: get bundles of non-registered groups - not everyone will have, just should cap at 3300
+    # TODO: get bundles of non-registered groups (THE HARD PART) - not everyone will have, just should cap at 3300
     with open (os.path.join(gen_outputs, 'fec_mapping.json'), 'r') as f:
         fec = json.load(f)
     fec = remove_duplicates(fec, 'name')
