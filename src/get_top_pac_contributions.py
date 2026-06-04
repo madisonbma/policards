@@ -250,6 +250,24 @@ def fetch_totals(session: requests.Session, candidate_id: str, cycle: int) -> li
     This means that if someone ran for special election AND the next election, 
     both of these things would happen in one cycle. Then this reports both cases,
     which we don't really want - we want to distinguish.
+
+    Here is where my numbers differ:
+        total: 
+            - mine did not have grassroots. in order to incorporate grassroots i would 
+            need to include [33] from the F3N/A row, that will have the grassroots info
+            - mine can be split for special. fec checks for anything reported (which can
+            include old elections including specials) whereas I can break up by target 
+            election. Note that the grassroots will be imperfect since it applies to the whole
+            reporting period, regardless of how many races are included in the reporting period.
+
+        pac total: 
+            - fec determines pac total by summing anything in SA11C. I determine PAC total by
+            summing anything in SA* that has "PAC" in the name. My way would include bundling PACs.
+            This is still up for debate, but we decided PAC total should include only direct PAC
+            contributions so that we don't make candidates look worse than they are. PAC bundling
+            is currently contributing to the top donors, just not PAC totals. 
+            - to replicate FEC, we could sum just over SA11C regardless of row[5].
+
     """
     
     print(f"\n=== Getting totals for candidate {candidate_id} (cycle {cycle}) ===")
@@ -258,24 +276,36 @@ def fetch_totals(session: requests.Session, candidate_id: str, cycle: int) -> li
         "cycle": cycle
     }
     totals = get_first_page_numbered(session, f"/v1/candidate/{candidate_id}/totals/", params, "totals")[0]
-    #tot = {"pac_total": totals['other_political_committee_contributions'],
-    #    "ind_total": totals['individual_contributions'],
-    #    "total_in": totals['receipts']
-    #}
-    return totals
+    tot = {"pac_total": totals['other_political_committee_contributions'],
+        "ind_total": totals['individual_contributions'],
+        "net_contributions": totals["net_contributions"],
+        "total_in": totals['receipts']
+    }
+    return tot
     
 
 ######################################################
 # Step 1: probe the endpoint /v1/committee/{committee_id}/filings
 ######################################################
 
-def fetch_filings(session: requests.Session, committee_id: str, cycle: int) -> list:
+def fetch_filings_by_cycle(session: requests.Session, committee_id: str, cycle: int) -> list:
     print(f"\n=== Retrieveing all filings for {committee_id} (cycle {cycle}) ===")
     params = {
         "committee_id": committee_id,
         "cycle": cycle,
         "sort": "-receipt_date",
         "per_page": 100,
+        "form_type": "F3"
+    }
+    return get_all_pages_numbered(session, f"/v1/committee/{committee_id}/filings/", params, "filings")
+
+def fetch_filings(session: requests.Session, committee_id: str) -> list:
+    print(f"\n=== Retrieveing all filings for {committee_id}")
+    params = {
+        "committee_id": committee_id,
+        "sort": "-receipt_date",
+        "per_page": 100,
+        "form_type": "F3"
     }
     return get_all_pages_numbered(session, f"/v1/committee/{committee_id}/filings/", params, "filings")
 
@@ -306,7 +336,11 @@ def fetch_filing_csv(filings_report, cycle):
             skip_list.extend(filing['amendment_chain'][:-1]) #add all previous versions of the report to skip list
             #print(f"Skip this one {len(filing['amendment_chain'])-1} times")
 
+        print(f"==={filing['report_type_full']} {filing['report_year']}===")
         csv_data = get_csv_data(filing['csv_url'], filing['form_type'], cycle, refund_data, individual_data, pac_data)
+        if csv_data is None:
+            print("Breaking.")
+            break
 
         if debug:
             #TODO DELETE THIS, TEMPORARY: dumping everythign into csv_data for now
@@ -456,28 +490,92 @@ def consolidate_contribution_data(individual_data, pac_data):
 
 
 
-
-    #PACs and ORGs 
+    #non-IND. PACs will be dict, everything else just blind add.
     for k,v in pac_data.items():
         if isinstance(v, dict): #PAC data.
-            if (len(v) > 1):
-                print("Multiple PACs under the same committee_id:", k, v)
+            if (len(v) > 2):
+                print("So many PACs under the same committee_id!", k, v)
+            elif (len(v)==2):
                 str1 = list(v)[0]
                 str2 = list(v)[1]
-                similarity_score = fuzz.ratio(str1, str2)
-                if similarity_score > 60:
-                    print(f"Similarity {str1} to {str2}: {similarity_score:.2f}% > 60%. Merging.")
-                    final_data[str1] = final_data.get(str1, 0) + household["CONTRIBUTIONS"]
+                merge_pacs = pac_name_edit(str1, str2)
+                if merge_pacs:
+                    final_data[str1] = final_data.get(str1, 0) + v[str1] + v[str2]
                 else:
-                    print(f"Similarity {str1} to {str2}: {similarity_score:.2f}% <= 60%.")
-            for pac_name, contribution in v.items():
-                final_data[pac_name] = final_data.get(pac_name, 0) + contribution
+                    for pac_name, contribution in v.items():
+                        final_data[pac_name] = final_data.get(pac_name, 0) + contribution
+            else:
+                for pac_name, contribution in v.items():
+                    final_data[pac_name] = final_data.get(pac_name, 0) + contribution
+
         else: #ORG data.
             final_data[k] = v
             continue
 
     return final_data
 
+
+def pac_name_edit(pac1, pac2):
+    """
+    How to edit PAC names:
+    If they both have (), convert to ()
+    If one has (), convert to () and abbreviate the other
+    Abbreviate both
+
+    Increase score requirement when abbreviating
+    """
+    similarity_score = fuzz.ratio(pac1, pac2)
+    if similarity_score > 80:
+        print(f"{pac1} {pac2} merged.")
+        return True
+    
+
+    if "(" in pac1:
+        pac1_match = re.search(r"([^\()]+)\(([^\)]+)\)", pac1)
+        pac1_noparen = pac1_match.group(1)
+        pac1_abbr = pac1_match.group(2)
+        if "(" in pac2:
+            pac2_match = re.search(r"([^\()]+)\(([^\)]+)\)", pac2)
+            pac2_noparen = pac2_match.group(1)
+            pac2_abbr = pac2_match.group(2)
+        else:
+            pac2_noparen = pac2
+            pac2 = pac2.replace("-", " ")
+            pac2_abbr = "".join(word[0].upper() for word in pac2.split())
+
+    elif "(" in pac2:
+        pac2_match = re.search(r"([^\()]+)\(([^\)]+)\)", pac2)
+        pac2_noparen = pac1_match.group(1)
+        pac2_abbr = pac1_match.group(2)
+
+        pac1_noparen = pac1
+        pac1 = pac1.replace("-", " ")
+        pac1_abbr = "".join(word[0].upper() for word in pac1.split())
+
+    else:
+        pac1_noparen = pac1
+        pac1 = pac1.replace("-", " ")
+        pac1_abbr = "".join(word[0].upper() for word in pac1.split())
+
+        pac2_noparen = pac2
+        pac2 = pac2.replace("-", " ")
+        pac2_abbr = "".join(word[0].upper() for word in pac2.split())
+
+
+    similarity_score = fuzz.ratio(pac1_noparen, pac2_noparen)
+    if similarity_score > 75:
+        print(f"{pac1_noparen} {pac2_noparen} merged.")
+        return True
+    else:
+        print(f"{pac1_noparen}|{pac2_noparen} not merged: {similarity_score:.2f}%")
+    
+    similarity_score = fuzz.ratio(pac1_abbr, pac2_abbr)
+    if similarity_score > 90:
+        print(f"{pac1_abbr} {pac2_abbr} merged.")
+        return True
+    else:
+        print(f"{pac1_abbr}|{pac2_abbr} too different: {similarity_score:.2f}%.")
+        return False
 
 
 def get_csv_data(url, form_type, cycle, refund_data, individual_data, pac_data):
@@ -500,12 +598,18 @@ def get_csv_data(url, form_type, cycle, refund_data, individual_data, pac_data):
         csv_list = list(csv_reader)
 
         if form_type== "F3":
+            csv_for_cycle = keep_only_current_contributions(csv_list, cycle)
+            if csv_for_cycle is None:
+                print(f"No {cycle} donations found. Done.")
+                return None
+            
             print(f"=== Processing F3 {url} ===")
-            get_refund_data(csv_list, refund_data, cycle)
+            get_refund_data(csv_for_cycle, refund_data, cycle)
             #print(refund_data)
-            process_form(csv_list, individual_data, pac_data, refund_data, cycle)
+            process_form(csv_for_cycle, individual_data, pac_data, refund_data, cycle)
             refund_data = clean_refund_data(refund_data)
-            return csv_list
+            #print("PAC TOTAL: ", pac_data['PAC TOTAL'])
+            return csv_for_cycle
         elif form_type in ["F6", "F1", "F99"]:
             #F6==48hour notice of funds
             #F1==Statement of Organization
@@ -521,6 +625,36 @@ def get_csv_data(url, form_type, cycle, refund_data, individual_data, pac_data):
 
     except requests.exceptions.RequestException as e:
         print(f"Error fetching CSV from URL: {e}")
+        return None
+
+
+def keep_only_current_contributions(csv_list, cycle):
+    """
+    Takes in a csv F3. If there is no mention of the current election, return False
+    """
+
+    clean_csv = []
+    clean = False
+
+    for row in csv_list:
+        if row[0].upper() in ["HDR", "F6A", "F6N", "TEXT"]:
+            clean_csv.append(row)
+        elif row[0].upper() in ['F3N', 'F3A', 'F3S']:
+            #need to get contributions, already factors in refunds
+            #net_contributions = float(row[25])
+            #grassroots_contributions = float(row[33])
+            #pac_data['CAMPAIGN TOTAL'] = pac_data.get('CAMPAIGN TOTAL', 0) + net_contributions
+            clean_csv.append(row)
+            continue
+        elif str(cycle) in row[17] or "Special" in row[18]:
+            clean_csv.append(row)
+            clean = True
+
+        #elif str(cycle) in row[17] or "Special" in row[18]: #only for current cycle
+
+    if clean:
+        return clean_csv
+    else:
         return None
 
     
@@ -578,7 +712,7 @@ def get_refund_data(csv_data, refund_data, cycle):
             continue
 
         #only add to refund_data if it's the election we care about
-        if str(cycle) in row[17]: # or "Special" in row[18]: #only for current cycle
+        if str(cycle) in row[17] or "Special" in row[18]: #only for current cycle
             contribution = float(row[20])
             refund_data[key] = refund_data.get(key, 0) - contribution
 
@@ -618,7 +752,7 @@ def check_refund(refund_data, row):
             refund_code = row[3] if row[3] else row[2]
             refund_code = f"temp_{refund_code}"
             if refund_code in refund_data:
-                print("Not bundled, just IND moving money around. Removing.")
+                #print("Not bundled, just IND moving money around. Removing.")
                 refund_data.pop(refund_code)
                 return contribution
             else:
@@ -630,7 +764,7 @@ def check_refund(refund_data, row):
         refund_code = row[3] if row[3] else row[2]
         refund_code = f"temp_{refund_code}"
         if refund_code in refund_data:
-            print(f"Found bundle. {row[6]}")
+            #print(f"Found bundle. {row[6]}")
             update_contribution_amount = True
 
         #it wasn't bundled. then check for direct contributions
@@ -724,105 +858,24 @@ def process_form(csv_data, individual_data, pac_data, refund_data, cycle):
 
     form_version = csv_data[0][2]
     for row in csv_data: 
-        if row[0].upper() in ["HDR", "F3N", "F3A", "F3S", "F6A", "F6N", "TEXT"]:
+        if row[0].upper() in ["HDR", "F6A", "F6N", "TEXT"]:
+            continue
+        elif row[0].upper() in ['F3N', 'F3A', 'F3S']:
+            #need to get contributions, already factors in refunds
+            #net_contributions = float(row[25])
+            #grassroots_contributions = float(row[33])
+            #pac_data['CAMPAIGN TOTAL'] = pac_data.get('CAMPAIGN TOTAL', 0) + net_contributions
             continue
 
-        if str(cycle) not in row[17]: #and "Special" not in row[18]: #only for current cycle
+
+        if str(cycle) not in row[17] and "Special" not in row[18]: #only for current cycle
             continue
-        """
-        if form_version == "8.4":
-            if row[0].upper() == "SA11AI" or row[0].upper() == "SA12": #itemized individual contributions
-                contribution = check_refund(refund_data, row)
-                if row[5] == "PAC": #If PAC, sum contributions by committee_id.
-                    pac_data['PAC TOTAL'] = pac_data.get("PAC TOTAL", 0) + contribution
-                    name = row[26].upper().replace("POLITICAL ACTION COMMITTEE", "PAC")
-                    committee_id = row[25]
-                    if committee_id == "":
-                        print("Missing committee_id for PAC contribution from", name)
-                        pac_data[name] = pac_data.get(name, 0) + contribution
-                    else: 
-                        if committee_id in pac_data:
-                            if name in pac_data[committee_id]:
-                                pac_data[committee_id][name] += contribution
-                            else:
-                                pac_data[committee_id][name] = contribution
-                        else:
-                            pac_data[committee_id] = {name: contribution}
-                elif row[5] == "IND": #if IND, sum contributions by employer
-                    #pac_data["INDIVIDUAL TOTAL"] = pac_data.get("INDIVIDUAL TOTAL", 0) + contribution
-                    factor_in_family_for_contribution(row, individual_data)
-
-                elif row[5] == "ORG":
-                    #org doesn't have committee ID, treat as individual
-                    #pac_data["INDIVIDUAL TOTAL"] = pac_data.get("INDIVIDUAL TOTAL", 0) + contribution
-                    name = row[6].upper()
-                    if name == "":
-                        print("Missing name for ORG contribution from", row[6])
-                    else:
-                        pac_data[name] = pac_data.get(name, 0) + contribution
-                else:
-                    print("Unknown contribution type in v8.4:", row[5])
-            elif row[0].upper() == "SA11B":
-                contribution = float(row[20])
-                name = row[26].upper() if row[26] else row[6].upper()
-                committee_id = row[25]
-                if committee_id == "":
-                        print("Missing committee_id in SA11B party donation", name)
-                else: 
-                    if committee_id in pac_data:
-                        if name in pac_data[committee_id]:
-                            pac_data[committee_id][name] += contribution
-                        else:
-                            pac_data[committee_id][name] = contribution
-                    else:
-                        pac_data[committee_id] = {name: contribution}
-            elif row[0].upper() == "SA11C": #committee contributions
-                contribution = float(row[20])
-                if row[5] == "PAC":
-                    pac_data["PAC TOTAL"] = pac_data.get("PAC TOTAL", 0) + contribution
-
-                if row[5]== "PAC" or row[5] == "CCM" or row[5] == "COM":
-                    name = row[26].upper().replace("POLITICAL ACTION COMMITTEE", "PAC")
-                    committee_id = row[25]
-                    if committee_id == "":
-                        print("Missing committee_id for PAC contribution from", name)
-                        pac_data[name] = pac_data.get(name, 0) + contribution
-                    else: 
-                        if committee_id in pac_data:
-                            if name in pac_data[committee_id]:
-                                pac_data[committee_id][name] += contribution
-                            else:
-                                pac_data[committee_id][name] = contribution
-                        else:
-                            pac_data[committee_id] = {name: contribution}
-                
-                else:
-                    print("Unknown non-PAC SA11C contribution in v8.4:", row[5])
-            elif row[0].upper() == "SA11D": #self-funded:
-                pass
-            elif row[0].upper() == "SA14": #offsets to operating expenditures - not direct contribution so skip
-                pass
-            elif row[0].upper() == "SA15": #misc indirect (interest, rebate, dividend) - not direct contribution so skip
-                pass
-            elif row[0].upper() == "SB17": #operating expenditures - spending, not contribution so skip
-                pass  
-            elif row[0].upper() == "SB18": #operating expenditures - spending, not contribution so skip
-                pass   
-            elif row[0].upper() == "SB20A" or row[0].upper() == "SB20C": #already did refund data
-                pass
-            elif row[0].upper() == "SB21": #other disbursements, money given to other committees. not contribution skip
-                pass
-            elif row[0].upper() == "SD10": #debts. skip
-                pass
-            else:
-                print("Unknown row type in version 8.4:", row[0])
-        """
+        
         if form_version == "8.5" or form_version == "8.4":
             if row[0].upper() == "SA11AI" or row[0].upper() == "SA11C" or row[0].upper() == "SA12": #itemized individual contributions
                 contribution = check_refund(refund_data, row)
-
-                if row[5] == "PAC":
-                    pac_data["PAC TOTAL"] = pac_data.get("PAC TOTAL", 0) + contribution
+                #if row[5] == "PAC":
+                    #pac_data["PAC TOTAL"] = pac_data.get("PAC TOTAL", 0) + contribution
                 
                 if row[5] == "IND":
                     factor_in_family_for_contribution(row, individual_data)
@@ -1078,7 +1131,7 @@ def main2():
         return
     
     candidate_id = bioguide_map[args.bioguide_id]["candidate_id"]
-    #totals_dict = fetch_totals(session, candidate_id, args.cycle)
+    totals_dict = fetch_totals(session, candidate_id, args.cycle)
 
 
     # ── Step 1: fetch filings with debug save option ─────────────────────────
@@ -1096,7 +1149,7 @@ def main2():
         filings = json.loads(load_path.read_text(encoding="utf-8"))
         print(f"  Loaded {len(filings)} records.")
     else:
-        filings = fetch_filings(session, committee_id, args.cycle)
+        filings = fetch_filings(session, committee_id)
         save_json(filings, filings_path, "filings")
 
 
@@ -1106,8 +1159,8 @@ def main2():
 
     # ── Step 3: save contribution data────────────────────────────────
     contribution_data_path = out_dir / f"{committee_id}_contribution_data.json"
-    #save_json([totals_dict, contribution_data], contribution_data_path, "contribution data from filings")
-    save_json(contribution_data, contribution_data_path, "contribution data from filings")
+    save_json([totals_dict, contribution_data], contribution_data_path, "contribution data from filings")
+    #save_json(contribution_data, contribution_data_path, "contribution data from filings")
 
     print("\n=== Done ===")
     print(f"  results          : {contribution_data_path}")
