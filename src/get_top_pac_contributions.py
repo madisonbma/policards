@@ -7,6 +7,7 @@ import time
 from collections import defaultdict
 from pathlib import Path
 from rapidfuzz import fuzz
+from rapidfuzz.distance import JaroWinkler
 import re
 import os
 
@@ -16,6 +17,162 @@ import requests
 BASE_URL = "https://api.open.fec.gov"
 
 debug = True
+use_refund = False
+
+# ---------------------------------------------------------------------------
+# Name matching
+#
+# We compare donor names to decide "same person / same family" at an address.
+# Plain edit distance (fuzz.ratio) has two structural blind spots for names:
+#   1. nicknames  -> BOB/ROBERT, BILL/WILLIAM score ~0 but are the same person
+#   2. it is over-lenient on short names at a low threshold
+# So for *person* names we use Jaro-Winkler (built for name record-linkage:
+# prefix-weighted, transposition-aware) plus a nickname lookup. Company/PAC
+# strings keep using fuzz.ratio.
+# ---------------------------------------------------------------------------
+
+# Score (0-100) at/above which two person names are treated as the same name.
+# Jaro-Winkler runs higher than the old fuzz.ratio, so this is stricter than the
+# previous literal 50. Tune against real output if you see split/merged dupes.
+NAME_SIM_THRESHOLD = 85
+
+
+def _load_nickname_variants():
+    """
+    Load the nickname/diminutive lookup (resources/data/nicknames.csv, format
+    `name1,relationship,name2`) into an UPPERCASE adjacency map: each name -> set
+    of directly-linked variants, both directions.
+
+    Adjacency is kept DIRECT (not transitive) on purpose: 'bill' links to both
+    ROBERT and WILLIAM, but ROBERT and WILLIAM must NOT collapse into each other.
+    Returns {} if the file is missing so matching degrades to Jaro-Winkler only.
+    """
+    path = Path(__file__).resolve().parent.parent / "resources" / "data" / "nicknames.csv"
+    variants: dict[str, set[str]] = {}
+    try:
+        with path.open(newline="", encoding="utf-8") as f:
+            reader = csv.reader(f)
+            next(reader, None)  # skip header
+            for parts in reader:
+                if len(parts) < 3:
+                    continue
+                a = parts[0].strip().upper()
+                b = parts[2].strip().upper()
+                if not a or not b or a == b:
+                    continue
+                variants.setdefault(a, set()).add(b)
+                variants.setdefault(b, set()).add(a)
+    except FileNotFoundError:
+        print(f"WARNING: nickname lookup not found at {path}; "
+              f"falling back to Jaro-Winkler only.")
+    return variants
+
+
+NICKNAME_VARIANTS = _load_nickname_variants()
+
+
+def are_nickname_variants(a, b):
+    """True if a and b are directly linked as formal-name/nickname (either order)."""
+    return b.upper() in NICKNAME_VARIANTS.get(a.upper(), ())
+
+
+def name_similarity(a, b, use_nicknames=True):
+    """
+    Similarity score (0-100) between two person names. Exact match or a known
+    nickname pair scores 100; otherwise Jaro-Winkler. Pass use_nicknames=False
+    for last names (where nickname expansion does not apply).
+    """
+    a = a.upper()
+    b = b.upper()
+    if a == b:
+        return 100.0
+    if use_nicknames and are_nickname_variants(a, b):
+        return 100.0
+    return JaroWinkler.normalized_similarity(a, b) * 100
+
+
+# Vowels (incl. Y) used to tell a run-together initials token ("WJ") from a real
+# short name ("ED", "AL", "JO"), which almost always contain a vowel.
+_VOWELS = set("AEIOUY")
+
+
+def _initials_form(name):
+    """
+    If `name` is written as initials, return its ordered initials; else None.
+      'J.'    -> ['J']
+      'W. J.' -> ['W', 'J']
+      'WJ'    -> ['W', 'J']   (short, all-consonant single token)
+      'JOHN'  -> None         (a real name, not initials)
+    """
+    tokens = [t for t in re.split(r"[\s.]+", name.upper()) if t]
+    if not tokens:
+        return None
+    if all(len(t) == 1 for t in tokens):
+        return tokens
+    if len(tokens) == 1 and 2 <= len(tokens[0]) <= 3 and not (set(tokens[0]) & _VOWELS):
+        return list(tokens[0])
+    return None
+
+
+def _leading_initials(name):
+    """Ordered first letter of each token: 'JOHN T' -> ['J','T'], 'JOHN' -> ['J']."""
+    return [t[0] for t in re.split(r"[\s.]+", name.upper()) if t]
+
+
+def initials_compatible(a, b):
+    """
+    True if `a` and `b` could be the same person via initial abbreviation, with
+    their ordered initials agreeing on the overlap (so 'J. T.' matches 'JOHN' but
+    not 'JOHN R'). Only fires when at least one side is written as initials, so two
+    real names ('JOHN' vs 'JAMES') never match here.
+    """
+    if a.upper() == b.upper():
+        return False  # identical -> let exact-match logic handle it
+    ia, ib = _initials_form(a), _initials_form(b)
+    if ia is None and ib is None:
+        return False  # both real names; not an abbreviation case
+    seq_a = ia if ia is not None else _leading_initials(a)
+    seq_b = ib if ib is not None else _leading_initials(b)
+    n = min(len(seq_a), len(seq_b))
+    if n == 0:
+        return False
+    return all(seq_a[k] == seq_b[k] for k in range(n))
+
+
+def _name_tokens(name):
+    """Split a name into uppercase word tokens: 'Robert P.' -> ['ROBERT', 'P']."""
+    return [t for t in re.split(r"[\s.]+", name.upper()) if t]
+
+
+def _token_match(x, y):
+    """Two name tokens are compatible if equal, one is the other's initial
+    ('P' ~ 'PAUL'), or they are nickname variants ('BOB' ~ 'ROBERT')."""
+    if x == y:
+        return True
+    if len(x) == 1 and x == y[0]:
+        return True
+    if len(y) == 1 and y == x[0]:
+        return True
+    return are_nickname_variants(x, y)
+
+
+def names_same_person(a, b):
+    """
+    True if two first-name strings plausibly denote the same person, allowing an
+    optional / abbreviated MIDDLE name or initial but requiring the given name to
+    match and any provided middle tokens to AGREE on the overlap:
+      'ROBERT'   ~ 'ROBERT P'    -> True   (middle initial on one side only)
+      'ROBERT P' ~ 'ROBERT PAUL' -> True   ('P' is the initial of 'PAUL')
+      'BOB'      ~ 'ROBERT P'    -> True   (nickname given name + extra middle)
+      'ROBERT P' ~ 'ROBERT K'    -> False  (middle initials conflict)
+      'ROBERT'   ~ 'RICHARD'     -> False
+    """
+    ta, tb = _name_tokens(a), _name_tokens(b)
+    if not ta or not tb:
+        return False
+    if not _token_match(ta[0], tb[0]):
+        return False
+    return all(_token_match(x, y) for x, y in zip(ta[1:], tb[1:]))
 
 # ---------------------------------------------------------------------------
 # Set dicts
@@ -244,6 +401,40 @@ def cross_reference(fec_data, bioguide_data, cycle):
 # Step 0: probe the endpoint /v1/candidate/{candidate_id}/totals for totals
 ######################################################
 
+def fetch_totals_for_election_year(session: requests.Session, candidate_id: str, election_yr: int) -> list:
+
+    print(f"\n=== Getting totals for candidate {candidate_id} (election {election_yr}) ===")
+
+    params = {
+        "candidate_id": candidate_id,
+        "election_full": True,
+        "sort": "-candidate_election_year"
+    }
+
+    totals = get_first_page_numbered(session, f"/v1/candidate/{candidate_id}/totals/", params, "totals")
+    most_recent_election = totals[0].get('candidate_election_year')
+
+    if most_recent_election == election_yr:
+        report = totals[0]
+        print(f"Candidate {candidate_id} is up for election in {election_yr}")
+    
+    elif most_recent_election > election_yr:
+        report = totals[1]
+        print(f"Candidate {candidate_id} is not up for election in {election_yr}. Taking most previous in {report['candidate_election_year']}.")
+
+    else:
+        sys.exit(f"Candidate {candidate_id} is not rerunning in {election_yr}. Most recent run was {most_recent_election}")
+    
+    tot = {"election_year": report['candidate_election_year'],
+        "pac_total": report['other_political_committee_contributions'],
+        "ind_total": report['individual_contributions'],
+        "net_contributions": report["net_contributions"],
+        "total_in": report['receipts']
+    }
+    return tot
+
+
+
 def fetch_totals(session: requests.Session, candidate_id: str, cycle: int) -> list:
     """
     WARNING: This endpoint aggregates everything from the given cycle.
@@ -303,11 +494,43 @@ def fetch_filings(session: requests.Session, committee_id: str) -> list:
     print(f"\n=== Retrieveing all filings for {committee_id}")
     params = {
         "committee_id": committee_id,
-        "sort": "-receipt_date",
+        "sort": "-coverage_end_date",
         "per_page": 100,
         "form_type": "F3"
     }
-    return get_all_pages_numbered(session, f"/v1/committee/{committee_id}/filings/", params, "filings")
+    filings = get_all_pages_numbered(session, f"/v1/committee/{committee_id}/filings/", params, "filings")
+
+    # Process newest-PERIOD first so the first time we encounter a donor carries
+    # their latest cycle-to-date aggregate (that's what the "see them once" logic
+    # in factor_in_family_for_contribution_once relies on).
+    #
+    # coverage_end_date is the correct sort axis, NOT receipt_date: an amendment to
+    # an early report is *filed* recently (recent receipt_date) but *covers* an early
+    # period (early coverage_end_date). Sorting by receipt_date would process that
+    # amendment first and lock the donor in at their early/smaller aggregate, causing
+    # the later-period report with their true total to be skipped -> undercount.
+    # receipt_date is the tiebreaker so the newest amendment of a given period still
+    # comes before its superseded original (which the amendment_chain skip then drops).
+    filings.sort(
+        key=lambda f: (f.get("coverage_end_date") or "", f.get("receipt_date") or ""),
+        reverse=True,
+    )
+    return filings
+
+
+def candidate_period_cycles(candidate_id, election_year):
+    """
+    The two-year FEC periods to roll up for one election. A Senate seat (candidate_id
+    starts with 'S') is a 6-year campaign spanning THREE two-year cycles; a House seat
+    ('H') -- and anything else -- is a single cycle.
+
+    This matters because the FEC contribution_aggregate (row[21]) resets every two-year
+    period, so a donor's full election total is the SUM of their per-period aggregates.
+    We process each period separately and add the results.
+    """
+    if str(candidate_id).upper().startswith("S"):
+        return [election_year - 4, election_year - 2, election_year]
+    return [election_year]
 
 
 ######################################################
@@ -320,11 +543,20 @@ def fetch_filing_csv(filings_report, cycle):
     individual_data = {}
     skip_list = []
 
+    # The period being processed (all filings in this batch share the same two-year
+    # cycle); used to name the per-period debug dump so periods don't overwrite each
+    # other. Falls back to the election year if the batch is empty.
+    period_label = filings_report[0].get("cycle", cycle) if filings_report else cycle
+
     if debug:
         temp_aggregate = []
     for filing in filings_report:
 
         if filing['csv_url'] is None:
+            continue
+
+        #only get for years we care about
+        if filing['cycle'] > cycle:
             continue
 
         # print form_type, document_description, and report_type
@@ -339,8 +571,10 @@ def fetch_filing_csv(filings_report, cycle):
         print(f"==={filing['report_type_full']} {filing['report_year']}===")
         csv_data = get_csv_data(filing['csv_url'], filing['form_type'], cycle, refund_data, individual_data, pac_data)
         if csv_data is None:
-            print("Breaking.")
-            break
+            #This filing had no rows for the target election (or wasn't usable). Skip it
+            #rather than break: with per-period processing we must scan every filing in
+            #the period, and an early report with no target-designated rows isn't the end.
+            continue
 
         if debug:
             #TODO DELETE THIS, TEMPORARY: dumping everythign into csv_data for now
@@ -349,8 +583,8 @@ def fetch_filing_csv(filings_report, cycle):
                 temp_aggregate.extend(csv_data)
 
     if debug:
-        #TEMPORARY SAVE AGGREGATE CSV DATA TO DEBUG FILE
-        temp_aggregate_path = Path("temp_aggregate.csv")
+        #TEMPORARY SAVE AGGREGATE CSV DATA TO DEBUG FILE (one per period cycle)
+        temp_aggregate_path = Path(f"temp_aggregate_{period_label}.csv")
         with temp_aggregate_path.open("w", encoding="utf-8", newline="") as f:
             writer = csv.writer(f)
             writer.writerows(temp_aggregate)
@@ -361,7 +595,7 @@ def fetch_filing_csv(filings_report, cycle):
 
     if len(refund_data) > 0:
         print("\n*************************\nRefunds leftover: ", refund_data)
-    
+
     print("Saving contribution data")
     return final_data
     
@@ -407,11 +641,32 @@ def consolidate_contribution_data(individual_data, pac_data):
     ***If COMPANIES len==0, then they're excluded (unemployed or self-employed).
     """
     final_data = {}
+
+    # ── Reconciliation bookkeeping ────────────────────────────────────────────
+    # individual_input_total  = every dollar we stored across all households
+    #                           (i.e. what the "count each donor once" logic decided
+    #                            to keep). This is the money going INTO consolidation.
+    # individual_output_total = the dollars we actually write into final_data below.
+    # If these drift apart, money was dropped while bucketing households into
+    # companies (the most likely culprit is the multi-company couple branch).
+    individual_input_total = sum(
+        household["CONTRIBUTIONS"]
+        for households in individual_data.values()
+        for household in households
+    )
+    individual_output_total = 0.0
+
     #individual data, merge families
+    print("++++++++++++++++ LOOKING AT INDIVIDUAL DATA FIRST +++++++++++++++++")
     for k,v in individual_data.items():
+        #if len(v) > 1:
+            #print(f"{len(v)} people found at {k}")
+            #print(list(v))
+
         for household in v:
             #if len(household['NAMES'])>1:
-                #print(f"Household combined: {household["NAMES"]}")
+            #    print(f"Household pre-merged: {household["NAMES"]}, {household["COMPANIES"]}")
+
             if len(household['COMPANIES'])>1:
                 print("MORE THAN ONE COMPANY FOR THIS COUPLE:",
                         household['NAMES'],"-", household["COMPANIES"])
@@ -422,60 +677,101 @@ def consolidate_contribution_data(individual_data, pac_data):
                     if similarity_score != 100:
                         print(f"Similarity {str1} to {str2}: {similarity_score:.2f}% > 60%. Merging.")
                     final_data[str1] = final_data.get(str1, 0) + household["CONTRIBUTIONS"]
+                    individual_output_total += household["CONTRIBUTIONS"]
                 else:
-                    print(f"Similarity {str1} to {str2}: {similarity_score:.2f}% <= 60%.")
+                    # NOTE: this branch currently drops the household's contribution
+                    # entirely (it is never added to final_data). The reconciliation
+                    # check below will surface the dropped amount.
+                    print(f"Similarity {str1} to {str2}: {similarity_score:.2f}% <= 60%. "
+                          f"DROPPING ${household['CONTRIBUTIONS']:,.2f} (not added to any company).")
 
             elif len(household["COMPANIES"]) == 0:
                 #print("All members of household undisclosed.")
                 final_data["Undisclosed"] = final_data.get("Undisclosed", 0) + household['CONTRIBUTIONS']
+                individual_output_total += household["CONTRIBUTIONS"]
             else:
+                #Individual person
                 company = household["COMPANIES"][0]
                 final_data[company] = final_data.get(company, 0) + household["CONTRIBUTIONS"]
-        
+                individual_output_total += household["CONTRIBUTIONS"]
+
+
+    print("++++++++++++++++ DONE LOOKING AT INDIVIDUAL DATA  +++++++++++++++++")
+
+    # Reconcile what we stored vs what made it into final_data.
+    drift = individual_input_total - individual_output_total
+    if abs(drift) > 0.01:
+        print(f"!!! RECONCILIATION: ${drift:,.2f} of individual contributions were NOT "
+              f"carried into final_data (stored ${individual_input_total:,.2f} vs "
+              f"bucketed ${individual_output_total:,.2f}).")
+    else:
+        print(f"[OK] Reconciliation: all ${individual_input_total:,.2f} of individual "
+              f"contributions accounted for.")
+
+    # ── Collapse spelling variants by canonical name ──────────────────────────
+    # 'Google', 'Google Inc', 'GOOGLE LLC' share one canonical key -> one bucket.
+    # Exact and O(n), so the fuzzy pass below only has to handle typos and acronyms.
+    # Display name = the spelling that brought in the most money for that company.
+    canon_total, canon_display, canon_best = {}, {}, {}
+    for original, amt in final_data.items():
+        key = canonical_company(original)
+        canon_total[key] = canon_total.get(key, 0) + amt
+        if amt > canon_best.get(key, float("-inf")):
+            canon_best[key] = amt
+            canon_display[key] = original
+    collapsed = len(final_data) - len(canon_total)
+    if collapsed:
+        print(f"Canonical merge collapsed {collapsed} spelling variant(s) "
+              f"({len(final_data)} -> {len(canon_total)} company buckets).")
+    final_data = {canon_display[key]: total for key, total in canon_total.items()}
+
+    print("++++++++++++++++ NOW MERGING COMPANY DATA +++++++++++++++++")
+
     #go through companies and merge if score is high, merge on higher contribution amount.
-    companies = list(final_data)
-    for i in range(len(companies)):
-        for j in range(i+1, len(companies)):
-            if companies[i] in companies[j]:
-                #print(f"Found {companies[i]} in {companies[j]}")
-                pass
-            elif companies[j] in companies[i]:
-                #print(f"Found {companies[j]} in {companies[i]}")
-                pass
-            else:
-                company1 = companies[i].upper()
-                company2 = companies[j].upper()
-                similarity_score = fuzz.ratio(company1, company2)
-                if similarity_score == 100:
-                    #merge if they're the same, just caps difference.
-                    if final_data[companies[i]] >= final_data[companies[j]]:
-                        #print(f"{companies[i]} => {final_data[companies[i]]+final_data[companies[j]]}")
-                        final_data[companies[i]] += final_data[companies[j]]
-                        final_data[companies[j]] = 0
-                    else:
-                        #print(f"{companies[j]} => {final_data[companies[i]]+final_data[companies[j]]}")
-                        final_data[companies[j]] += final_data[companies[i]]
-                        final_data[companies[i]] = 0
-                        break
-                elif similarity_score > 90:
-                    company1_split = re.split(r"[ \-]", company1)
-                    company2_split = re.split(r"[ \-]", company2)
-                    if len(company1_split) > 1 and len(company1_split) == len(company2_split):
-                        similarity_score = 0
-                        count = 0
-                        for index in range(len(company1_split)):
-                            score = fuzz.ratio(company1_split[index], company2_split[index])
-                            if score != 100:
-                                similarity_score += score
-                                count += 1
-                        if similarity_score != 0:
-                            similarity_score = similarity_score / count
-                        else:
-                            similarity_score = 100
+    all_companies = list(final_data)
 
+    # This loop is O(n^2) over every company (n can be thousands), so anything done
+    # per-pair is multiplied tens of millions of times. Precompute the acronym data
+    # ONCE per company here; the inner loop then only does cheap dict/set lookups
+    # (no regex), which is what kept the merge fast before the acronym feature.
+    _acro_token = {c: _is_acronym_token(c) for c in all_companies}     # c is a short token?
+    _compact = {c: re.sub(r"[^A-Za-z0-9]+", "", c).upper() for c in all_companies}
+    _ntokens = {c: sum(1 for w in re.split(r"[^A-Za-z0-9]+", c) if w) for c in all_companies}
+    _acro_sets = {c: _company_acronyms(c) for c in all_companies}
 
-                    if similarity_score > 90:
-                        print(f"{similarity_score:.2f}% similar: {companies[i]}, {companies[j]}. Going to merge them.")
+    # Block by leading character. Two companies only merge here when their uppercased
+    # strings are near-identical (>90 / ==100) or one is the other's acronym -- both
+    # cases share a first letter -- so cross-block pairs never merge and are skipped.
+    # This turns one ~33M-pair sweep into many small per-letter ones (~18x fewer pairs
+    # for a large committee). 'companies' is rebound to each block so the merge body
+    # below is byte-for-byte the same as the flat version.
+    blocks = defaultdict(list)
+    for c in all_companies:
+        blocks[c[:1].upper()].append(c)
+
+    for companies in blocks.values():
+        for i in range(len(companies)):
+            for j in range(i+1, len(companies)):
+                if companies[i] in companies[j]:
+                    #print(f"Found {companies[i]} in {companies[j]}")
+                    pass
+                elif companies[j] in companies[i]:
+                    #print(f"Found {companies[j]} in {companies[i]}")
+                    pass
+                else:
+                    ci, cj = companies[i], companies[j]
+                    company1 = ci.upper()
+                    company2 = cj.upper()
+                    similarity_score = fuzz.ratio(company1, company2)
+                    # Acronym/abbreviation pairs ('HPU' ~ 'High Point University') score
+                    # ~0 on fuzz.ratio, so force a merge when one is the other's acronym.
+                    # Only possible when one side is a short token and the other multi-word;
+                    # the cheap _acro_token guard skips the set lookups for most pairs.
+                    if (_acro_token[cj] and _ntokens[ci] >= 2 and _compact[cj] in _acro_sets[ci]) or \
+                       (_acro_token[ci] and _ntokens[cj] >= 2 and _compact[ci] in _acro_sets[cj]):
+                        similarity_score = 100
+                    if similarity_score == 100:
+                        #merge if they're the same, just caps difference.
                         if final_data[companies[i]] >= final_data[companies[j]]:
                             #print(f"{companies[i]} => {final_data[companies[i]]+final_data[companies[j]]}")
                             final_data[companies[i]] += final_data[companies[j]]
@@ -485,9 +781,50 @@ def consolidate_contribution_data(individual_data, pac_data):
                             final_data[companies[j]] += final_data[companies[i]]
                             final_data[companies[i]] = 0
                             break
-                    else:
-                        print(f"Whittled: {similarity_score:.2f}% similar: {companies[i]}, {companies[j]}")
+                    elif similarity_score > 90:
+                        company1_split = re.split(r"[ \-]", company1)
+                        company2_split = re.split(r"[ \-]", company2)
+                        if len(company1_split) > 1 and len(company1_split) == len(company2_split):
+                            similarity_score = 0
+                            count = 0
+                            for index in range(len(company1_split)):
+                                score = fuzz.ratio(company1_split[index], company2_split[index])
+                                if score != 100:
+                                    similarity_score += score
+                                    count += 1
+                            if similarity_score != 0:
+                                similarity_score = similarity_score / count
+                            else:
+                                similarity_score = 100
 
+
+                        if similarity_score > 90:
+                            #print(f"{similarity_score:.2f}% similar: {companies[i]}, {companies[j]}. Going to merge them.")
+                            if final_data[companies[i]] >= final_data[companies[j]]:
+                                print(f"{companies[j]} => {companies[i]}")
+                                final_data[companies[i]] += final_data[companies[j]]
+                                final_data[companies[j]] = 0
+                            else:
+                                print(f"{companies[i]} => {companies[j]}")
+                                final_data[companies[j]] += final_data[companies[i]]
+                                final_data[companies[i]] = 0
+                                break
+                        else:
+                            print(f"Close but skipped: {similarity_score:.2f}% similar: {companies[i]}, {companies[j]}")
+
+    print("++++++++++++++++ DONE MERGING COMPANY DATA +++++++++++++++++")
+
+    # The company-merge step only moves money between buckets (and zeroes the
+    # emptied one), so the total must be unchanged. If it isn't, a merge branch
+    # double-added or lost money.
+    post_merge_total = sum(final_data.values())
+    merge_drift = post_merge_total - individual_output_total
+    if abs(merge_drift) > 0.01:
+        print(f"!!! RECONCILIATION: company-merge changed the individual total by "
+              f"${merge_drift:,.2f} (before ${individual_output_total:,.2f}, "
+              f"after ${post_merge_total:,.2f}).")
+
+    print("\n++++++++++++++++ NOW LOOKING AT PAC DATA +++++++++++++++++")
 
 
     #non-IND. PACs will be dict, everything else just blind add.
@@ -509,8 +846,16 @@ def consolidate_contribution_data(individual_data, pac_data):
                     final_data[pac_name] = final_data.get(pac_name, 0) + contribution
 
         else: #ORG data.
-            final_data[k] = v
+            #Accumulate (a refund stored as a negative v must subtract from any existing
+            #total for this key, not overwrite it).
+            final_data[k] = final_data.get(k, 0) + v
             continue
+
+    print("\n++++++++++++++++ DONE LOOKING AT PAC DATA +++++++++++++++++")
+
+    # Drop emptied buckets: the company-merge zeroes absorbed companies but leaves
+    # the keys behind, which otherwise clutter the output as "Company": 0.
+    final_data = {k: v for k, v in final_data.items() if v}
 
     return final_data
 
@@ -604,12 +949,18 @@ def get_csv_data(url, form_type, cycle, refund_data, individual_data, pac_data):
                 return None
             
             print(f"=== Processing F3 {url} ===")
-            get_refund_data(csv_for_cycle, refund_data, cycle)
-            #print(refund_data)
-            process_form(csv_for_cycle, individual_data, pac_data, refund_data, cycle)
-            refund_data = clean_refund_data(refund_data)
-            #print("PAC TOTAL: ", pac_data['PAC TOTAL'])
+
+            if use_refund:
+                get_refund_data(csv_for_cycle, refund_data, cycle)
+                #print(refund_data)
+                process_form(csv_for_cycle, individual_data, pac_data, refund_data, cycle)
+                refund_data = clean_refund_data(refund_data)
+
+            else:
+                process_form_no_refund(csv_for_cycle, individual_data, pac_data, cycle)
+
             return csv_for_cycle
+        
         elif form_type in ["F6", "F1", "F99"]:
             #F6==48hour notice of funds
             #F1==Statement of Organization
@@ -835,50 +1186,110 @@ def check_refund(refund_data, row):
 
     return contribution
 
-def process_form(csv_data, individual_data, pac_data, refund_data, cycle):
-    """Replacement process_form, just swapping with dict-style
-    family_data method since most of the data is there anyways.
-    
-    1234 5th St: [
-        {SURNAME: greene,
-        NAMES: [john greene, mary greene]
-        COMPANIES: [company.co, unemployed]
-        CONTRIBUTION: total
-        },
-        {SURNAME: brown,
-        NAMES: [leroy brown],
-        COMPANIES: [disney],
-        CONTRIBUTION: total
-        }
-    ],
-    C00001234+NAME OF COMMITTEE: float(contribution),
-    ORG_NAME: float(contribution)
-    
+def apply_signed(store, key, delta):
+    """
+    Fold a SIGNED amount into store[key] under the contribution/refund netting rules.
+    `delta` is +aggregate for a contribution (SA11) and -refund for a refund (SB20).
+
+      key absent      -> store[key] = delta     (first time we encounter the entity)
+      store[key] < 0  -> store[key] += delta    (a loaded refund: net the new amount in --
+                                                 a later contribution, or another refund)
+      store[key] >= 0 -> unchanged              (already counted; row[21] is the running
+                                                 cumulative total, so we don't re-add/sum)
+    """
+    cur = store.get(key)
+    if cur is None:
+        store[key] = delta
+        #print(f"Added: {key}: {delta}")
+    elif cur < 0:
+        store[key] = cur + delta
+        #print(f"Updated {key}: {cur} -> {cur + delta}")
+
+    # cur >= 0: already counted -> do nothing
+
+
+def refund_for_pac(row, pac_data, refund_amount):
+    """
+    SB20 refund for a PAC / ORG / COM. Net the refund into wherever the entity already
+    lives -- or, if we have not seen them yet, load it as a pending negative -- using
+    the same signed-netting rule as contributions (apply_signed with a negative delta).
+    """
+    if row[26] != "":
+        #this might not ever be true for SB20C, looks like it might be in [6] but keeping jic
+        name = row[26].upper().replace("POLITICAL ACTION COMMITTEE", "PAC")
+    elif row[6] != "":
+        name = row[6].upper().replace("POLITICAL ACTION COMMITTEE", "PAC")
+    else:
+        print(f"Missing name for SB20 refund, skipping.")
+        return
+
+    committee_id = row[24]  # SB20 committee_id column (SA11 uses 25)
+    delta = -refund_amount
+
+    # Net into the existing entry wherever it lives: committee-keyed under its own id,
+    # then name-keyed (a float org total), then any committee bucket holding the name.
+    if committee_id and isinstance(pac_data.get(committee_id), dict) and name in pac_data[committee_id]:
+        apply_signed(pac_data[committee_id], name, delta)
+        return
+    if isinstance(pac_data.get(name), (int, float)):
+        apply_signed(pac_data, name, delta)
+        return
+    for entry in pac_data.values():
+        if isinstance(entry, dict) and name in entry:
+            apply_signed(entry, name, delta)
+            return
+
+    # Not seen anywhere -> load a pending refund (negative), to be netted when (if) we
+    # reach their contribution in an older filing of the same period.
+    print(f"No previous data found for {name}. Loading pending refund {delta}")
+    if committee_id:
+        apply_signed(pac_data.setdefault(committee_id, {}), name, delta)
+    else:
+        apply_signed(pac_data, name, delta)
+
+def process_form_no_refund(csv_data, individual_data, pac_data, cycle):
+    """
+    ok so my current methodology sums everyone over their name.
+    the problem is, someone could have donated 200 in grassroots, then gotten a refund for that 200 
+    (which i won't have record of) and then donate more after that. then the -200 will have seemingly
+    come out of nowhere. 
+
+    also my actblue numbers aren't matching.
+
+    so i think we should take row[21], keyed by our key_id that we have for SA11AI entries. 
+    then we don't have to worry about sb* and it should have already accounted for grassroots and refunds.
+    we'll need to keep the same factor_in_families methodology, but instead it should be 
+    "if we've seen this person already, do not add their contribution" because we already hve their totals.
+
+    also, i'm only catching these people because they requested refunds. but there are probably
+    so many more people who didn't request refunds that have +$200 or something to their totals
+    that i'm missing because they weren't itemized yet!
     """
 
     form_version = csv_data[0][2]
     for row in csv_data: 
-        if row[0].upper() in ["HDR", "F6A", "F6N", "TEXT"]:
+        if row[0].upper() in ["HDR", "F6A", "F6N", "TEXT", "F3S"]:
             continue
-        elif row[0].upper() in ['F3N', 'F3A', 'F3S']:
+        elif row[0].upper() in ['F3N', 'F3A']:
             #need to get contributions, already factors in refunds
-            #net_contributions = float(row[25])
-            #grassroots_contributions = float(row[33])
+            net_contributions = float(row[25])
+            grassroots_contributions = float(row[33])
+            #pac_contributions = float(row[73])
+            pac_contributions = float(row[36])
+            print(f"Net contributions: {net_contributions}")
+            print(f"PAC contributions: {pac_contributions}")
             #pac_data['CAMPAIGN TOTAL'] = pac_data.get('CAMPAIGN TOTAL', 0) + net_contributions
             continue
-
 
         if str(cycle) not in row[17] and "Special" not in row[18]: #only for current cycle
             continue
         
-        if form_version == "8.5" or form_version == "8.4":
+        if form_version == "8.5" or form_version == "8.4" or form_version == "8.3":
             if row[0].upper() == "SA11AI" or row[0].upper() == "SA11C" or row[0].upper() == "SA12": #itemized individual contributions
-                contribution = check_refund(refund_data, row)
-                #if row[5] == "PAC":
-                    #pac_data["PAC TOTAL"] = pac_data.get("PAC TOTAL", 0) + contribution
-                
+                contribution = float(row[21]) #aggregate.
+
                 if row[5] == "IND":
-                    factor_in_family_for_contribution(row, individual_data)
+                    factor_in_family_for_contribution_once(row, individual_data, contribution)
                 else:
                     if row[26] != "":
                         name = row[26].upper().replace("POLITICAL ACTION COMMITTEE", "PAC")
@@ -887,32 +1298,22 @@ def process_form(csv_data, individual_data, pac_data, refund_data, cycle):
                     else:
                         print(f"Missing name for SA11 contribution {row}, skipping.")
                     
-                    if row[25] == "": #no committee ID. Merge on name.
-                        pac_data[name] = pac_data.get(name, 0) + contribution
-                    #if there's a committee, merge on committee_id and name.
-                    else:
-                        committee_id = row[25]
-                        if committee_id in pac_data:
-                            if name in pac_data[committee_id]:
-                                pac_data[committee_id][name] += contribution
-                            else:
-                                pac_data[committee_id][name] = contribution
-                        else:
-                            pac_data[committee_id] = {name: contribution}
+                    #row[21] is the cumulative cycle-to-date aggregate (for a conduit
+                    #like ActBlue/WinRed it is the running CONDUIT TOTAL repeated on every
+                    #earmark row), so we keep one value (apply_signed: set once, never sum;
+                    #but net in any pending refund loaded earlier).
+                    if row[25] == "": #no committee ID -> merge on name (ORG/COM)
+                        apply_signed(pac_data, name, contribution)
+                    else: #committee id present -> merge on committee_id + name
+                        apply_signed(pac_data.setdefault(row[25], {}), name, contribution)
             elif row[0].upper() == "SA11B":
-                contribution = float(row[20])
+                contribution = float(row[21]) #aggregate
                 name = row[26].upper() if row[26] else row[6].upper()
                 committee_id = row[25]
                 if committee_id == "":
                         print("Missing committee_id in SA11B party donation", name)
-                else: 
-                    if committee_id in pac_data:
-                        if name in pac_data[committee_id]:
-                            pac_data[committee_id][name] += contribution
-                        else:
-                            pac_data[committee_id][name] = contribution
-                    else:
-                        pac_data[committee_id] = {name: contribution} 
+                else:
+                    apply_signed(pac_data.setdefault(committee_id, {}), name, contribution)
             elif row[0].upper() == "SA11D": #self-funded:
                 pass
             elif row[0].upper() == "SA14": #offsets to operating expenditures - not direct contribution so skip
@@ -923,8 +1324,42 @@ def process_form(csv_data, individual_data, pac_data, refund_data, cycle):
                 pass  
             elif row[0].upper() == "SB18": #operating expenditures - spending, not contribution so skip
                 pass   
-            elif row[0].upper() == "SB20A" or row[0].upper() == "SB20C": #already did refund data
-                pass
+            elif row[0].upper() == "SB20A":
+                #if the last thing they do is get refunded, this will be their most recent data. Add it only if 
+                # we haven't seen their name
+                contribution = float(row[20])
+
+                if row[5] == "IND":
+                    #refund: pass a NEGATIVE delta so factor_in_family loads/nets it as a
+                    #pending refund (it is applied when we reach their contribution).
+                    factor_in_family_for_contribution_once(row, individual_data, -contribution)
+                elif row[5] == "ORG":
+                    refund_for_pac(row, pac_data, contribution)
+                elif row[5] == "COM":
+                    refund_for_pac(row, pac_data, contribution)
+                else:
+                    print(f"Dont know what to do with non-IND SB20A: {row}")
+                    continue
+                
+            elif row[0].upper() == "SB20C": #refund data
+                #if the last thing they do is get refunded, this will be their most recent data. Add it only if 
+                # we haven't seen their name
+
+                contribution = float(row[20])
+                print(f"SB20C using 20: {contribution}")
+
+
+                if row[5] == "PAC":
+                    refund_for_pac(row, pac_data, contribution)
+                elif row[5] == "ORG":
+                    refund_for_pac(row, pac_data, contribution)
+                elif row[5] == "CCM":
+                    refund_for_pac(row, pac_data, contribution)
+
+                else:
+                    print(f"Dont know what to do with non-PAC SB20C: {row}")
+                    continue
+                
             elif row[0].upper() == "SB21": #other disbursements, money given to other committees. not contribution skip
                 pass
             elif row[0].upper() == "SD10": #debts. skip
@@ -942,6 +1377,10 @@ def replace_company_name(employer):
         "U of ": "University of ",
         "Univ.": "University",
         "Univ ": "University ",
+        "Univeristy": "University",
+        "Universityof ": "University of ",
+        "Unversity": "University",
+        "Pulbic ": "Public ",
         " Of ": " of ",
         "Nyu": "NYU",
         " And ": " & ",
@@ -949,8 +1388,10 @@ def replace_company_name(employer):
         "U.S. ": "US ",
         "Calif ": "California",
         "Svc": "Service",
+        "Sch ": "School ",
         ",": "",
         ".": "",
+        "USA ": "US "
     }
 
     end_replacement = {
@@ -981,8 +1422,133 @@ def replace_company_name(employer):
     return full_name_replacement.get(employer, employer)
 
 
-def factor_in_family_for_contribution(row, individual_data):
+# Legal-entity suffixes stripped when forming a company's canonical key, so
+# 'Google', 'Google Inc' and 'Google LLC' collapse together. Conservative list:
+# only true entity types, nothing distinguishing (no GROUP/HOLDINGS/etc.).
+_COMPANY_SUFFIXES = {"INC", "INCORPORATED", "LLC", "LLP", "LP", "LTD",
+                     "CORP", "CORPORATION", "CO", "COMPANY", "PC", "PLLC"}
+
+
+def canonical_company(name):
     """
+    Canonical KEY for an employer/company name, used to merge spelling variants into
+    one bucket: 'Google', 'Google Inc', 'GOOGLE LLC' and 'The Google Company' all map
+    to 'GOOGLE'.
+
+    Single source of truth for company-name normalization: it folds in
+    replace_company_name (the alias map) and then uppercases, drops punctuation,
+    normalizes 'AND' -> '&', and strips trailing legal-entity suffixes and a leading
+    'The'. The returned key is for grouping only; a human-readable display name is
+    chosen separately from the original spellings.
+    """
+    name = replace_company_name(name)                      # alias map + existing fixups
+    s = re.sub(r"[^\w\s&]", " ", name.upper())             # punctuation -> space (keep &)
+    tokens = ["&" if t == "AND" else t for t in s.split()]
+    while len(tokens) > 1 and tokens[-1] in _COMPANY_SUFFIXES:
+        tokens.pop()
+    if len(tokens) > 1 and tokens[0] == "THE":
+        tokens = tokens[1:]
+    return " ".join(tokens)
+
+
+# Words dropped when deriving a company acronym, so
+# "University of North Carolina" -> "UNC", not "UONC".
+_ACRONYM_STOPWORDS = {"OF", "THE", "AND", "FOR", "AT", "IN", "A", "AN", "&"}
+
+
+def _company_acronyms(name):
+    """
+    Candidate acronyms for a company name, both keeping and dropping connector
+    words, since real-world abbreviations do both:
+      'University of North Carolina' -> {'UONC', 'UNC'}
+      'Bank of America'              -> {'BOA',  'BA'}
+      'High Point University'        -> {'HPU'}
+    """
+    words = [w for w in re.split(r"[^A-Za-z0-9]+", name.upper()) if w]
+    if not words:
+        return set()
+    all_words = "".join(w[0] for w in words)
+    significant = [w for w in words if w not in _ACRONYM_STOPWORDS]
+    sig = "".join(w[0] for w in significant) if len(significant) >= 2 else all_words
+    return {all_words, sig}
+
+
+def _is_acronym_token(name):
+    """A single 2-6 letter token that could be an acronym (HPU, UNC, NYU, IBM, GM)."""
+    token = re.sub(r"[^A-Za-z0-9]", "", name)
+    return token.isalpha() and 2 <= len(token) <= 6
+
+
+def is_company_acronym_match(a, b):
+    """
+    True if one employer string is the acronym of the other, e.g.
+    'Hpu' ~ 'High Point University', 'BOA' ~ 'Bank of America'.
+    Order-independent. Pure acronym test (no fuzzy fallback).
+    """
+    a_tokens = [w for w in re.split(r"[^A-Za-z0-9]+", a) if w]
+    b_tokens = [w for w in re.split(r"[^A-Za-z0-9]+", b) if w]
+    a_compact = "".join(a_tokens).upper()
+    b_compact = "".join(b_tokens).upper()
+    if len(a_tokens) >= 2 and _is_acronym_token(b) and b_compact in _company_acronyms(a):
+        return True
+    if len(b_tokens) >= 2 and _is_acronym_token(a) and a_compact in _company_acronyms(b):
+        return True
+    return False
+
+
+def same_company(a, b, threshold=88):
+    """
+    True if two employer strings denote the same organization: exact match,
+    an acronym/abbreviation pair, or a near-typo (fuzz.ratio >= threshold).
+    """
+    a = (a or "").strip()
+    b = (b or "").strip()
+    if not a or not b:
+        return False
+    if a.upper() == b.upper():
+        return True
+    if is_company_acronym_match(a, b):
+        return True
+    return fuzz.ratio(a.upper(), b.upper()) >= threshold
+
+
+def resolve_initial_abbreviation(persons, first_name, last_name, job, undisclosed):
+    """
+    Decide whether `first_name` is an initial-abbreviation of an existing household
+    member (e.g. 'J.' for 'JOHN', 'WJ' for 'W. J.') and return that person-dict.
+
+    Policy (from the user's choices):
+      * consider only existing people with the SAME last name whose names are
+        initials-compatible (ordered initials agree on the overlap);
+      * collapse only when the match is UNAMBIGUOUS -- exactly one such person;
+      * if several qualify, pick the one whose employer matches `job` (when exactly
+        one does); otherwise return None so the caller keeps them separate.
+    Returns the matching person-dict, or None.
+    """
+    candidates = []
+    for p in persons:
+        if p["LAST_NAME"] != last_name:
+            continue
+        if first_name in p["NAMES"]:
+            return None  # exact name already present -> normal logic handles it
+        if any(initials_compatible(first_name, nm) for nm in p["NAMES"]):
+            candidates.append(p)
+
+    if len(candidates) == 1:
+        return candidates[0]
+
+    if len(candidates) > 1 and job.upper() not in undisclosed:
+        job_matches = [p for p in candidates
+                       if any(same_company(job, c) for c in p["COMPANIES"])]
+        if len(job_matches) == 1:
+            return job_matches[0]
+
+    return None  # ambiguous (or no abbreviation match) -> keep separate
+
+
+def _factor_in_family_for_contribution(row, individual_data):
+    """
+    DEPRECATED
     Some contributions are made by family members, if they aren't working then
     we'll consider their contribution their spouse's contribution.
     Infer: same last name, same primary household."""
@@ -1002,6 +1568,9 @@ def factor_in_family_for_contribution(row, individual_data):
     name = (row[8]+row[7]).upper() #last name + first name, all uppercase to avoid case issues
     last_name = row[7].upper()
     new_person = True
+
+    if job == "":
+        print(f"No job found: {row}")
 
     #if no one lives here, add them
     if individual_data.get(address) is None:
@@ -1060,6 +1629,302 @@ def factor_in_family_for_contribution(row, individual_data):
 
 
 
+def factor_in_family_for_contribution_once(row, individual_data, contribution, debug=False):
+    """
+    Some contributions are made by family members, if they aren't working then
+    we'll consider their contribution their spouse's contribution.
+    Infer: same last name, same primary household.
+    
+    In this version, we want to only include the contributions once - do not overwrite.
+    If the person is already in there, skip them. 
+    
+    """
+
+    undisclosed = ["NOT EMPLOYED", "SELF EMPLOYED", "SELF-EMPLOYED", "ME", "HOME", "SELF",
+                   "N/A", "SELF- EMPLOYED", "UNEMPLOYED", "HOMEMAKER", "NOT-EMPLOYED",
+                   "RETIRED", "NONE", "RETRIED"]
+    # ADDRESS: [
+    #   {LAST_NAME: GREEN
+    #   NAMES: [person1, person2]
+    #   COMPANIES: [role1, role2]
+    #   CONTRIBUTIONS: contribution
+    #   }
+    # ]
+    address = row[12]+row[14]+row[15]
+    job = replace_company_name(row[23])
+    name = (row[8]+row[7]).upper() #last name + first name, all uppercase to avoid case issues
+    first_name = row[8].upper() #last name + first name, all uppercase to avoid case issues
+    middle_name = row[9].upper()
+    last_name = row[7].upper()
+    last_name = last_name.replace(" ", "").replace("'", "")
+    new_person = True
+
+    # Misfiled name fields: some donors put their middle initial in the first-name
+    # slot [8] and their actual first name in the middle slot [9] (e.g. 'fellows,w.,jay'
+    # = first 'W.', middle 'JAY'). Only when [8] is just an initial AND [9] is a real
+    # name, treat [9] as the first name (prefer the fuller name) and keep [8] as an
+    # alias so the donor is recognized as the same person.
+    name_aliases = []
+    if middle_name and _initials_form(first_name) is not None and _initials_form(middle_name) is None:
+        #print(f"Swapped name fields: [8]='{first_name}' is an initial, [9]='{middle_name}' "
+        #      f"is a name -> using '{middle_name}' as first name (alias '{first_name}')")
+        name_aliases.append(first_name)
+        first_name = middle_name
+
+    #if no one lives here, add them
+    #if this is SB20, then they refunded without a contribution in the same form.
+    #then add -contribution
+    if individual_data.get(address) is None:
+        if row[0] == "SB20A":
+            individual_data[address] = [{"LAST_NAME": last_name,
+                                "NAMES": [first_name] + name_aliases,
+                                "COMPANIES": [job] if job.upper() not in undisclosed else [],
+                                "CONTRIBUTIONS": -contribution
+                                }]
+        else:
+            individual_data[address] = [{"LAST_NAME": last_name,
+                                "NAMES": [first_name] + name_aliases,
+                                "COMPANIES": [job] if job.upper() not in undisclosed else [],
+                                "CONTRIBUTIONS": contribution
+                                }]
+
+        
+    #if someone already lives here, check if their last names match to combine      
+    else:
+
+        # Logged only if this row is ultimately added as a genuinely new household
+        # member, so re-processing the same donor (multiple filings / SB20 rows)
+        # doesn't re-print it on every scan.
+        two_jobs_note = None
+        typo_note = None
+
+        # Abbreviation pre-pass: an initialed first name ('J.' for 'JOHN', 'WJ' for
+        # 'W. J.') is the SAME person, not a new family member. Resolve it first so it
+        # isn't merged in as a separate contributor (which would double-count). Only
+        # collapses when unambiguous (or disambiguated by employer) per policy.
+        abbrev_match = resolve_initial_abbreviation(
+            individual_data[address], first_name, last_name, job, undisclosed)
+        if abbrev_match is not None:
+            if debug:
+                print(f"Initial abbreviation: {first_name} = {abbrev_match['NAMES']} "
+                    f"{last_name} (same person, not double-counted)")
+            abbrev_match["NAMES"].append(first_name)
+            new_person = False
+
+        for person in individual_data[address]:
+            if not new_person:
+                # resolved already (abbreviation pre-pass) -> stop scanning
+                break
+
+            #if last name is direct match - using this dict! not new person!
+            #(exact equality; substring matching over-merged short names like "AN" in "MORGAN".
+            # near-miss/typo last names are handled by the fuzzy branch in the else below.)
+            if last_name == person["LAST_NAME"]:
+                #print(f"Last name {last_name} match: check if {first_name} in {person["NAMES"]}")
+                
+                #last and first match - already have them.
+                if first_name in person["NAMES"]:
+                    new_person = False
+                    #If this household is currently NEGATIVE it is a loaded refund (an
+                    #SB20 we saw in a newer filing); net this contribution -- or another
+                    #refund -- into it. If it is already >= 0 it is counted, so skip.
+                    if person['CONTRIBUTIONS'] < 0:
+                        person['CONTRIBUTIONS'] += contribution
+                    if person['COMPANIES']==['']:
+                        #were added as SB20A, add their job
+                        person['COMPANIES'] = [job] if job.upper() not in undisclosed else []
+                    break
+
+                #last name match, not first.
+                #but might still be same person!
+                for name in person["NAMES"]:
+                    
+                    # if similar name and first_name, check if they work at same place
+                    # if they have the same job and their names are close, same person
+                    # Jaro-Winkler + nickname lookup (e.g. BOB == ROBERT scores 100).
+                    similarity_score = name_similarity(first_name, name)
+                    
+                    if similarity_score == 100:
+                        #nickname. add it, already seen them.
+                        if debug:
+                            print(f"Nickname, already found them: {first_name}/{name} {last_name}")
+                        person["NAMES"].append(first_name)
+                        person['COMPANIES'] = [] if person['COMPANIES']==[''] else person['COMPANIES']
+                        person['COMPANIES'] = [job] if job.upper() not in undisclosed else person['COMPANIES']
+                        #same person: if this household is a pending (negative) refund, net this in
+                        if person['CONTRIBUTIONS'] < 0:
+                            person['CONTRIBUTIONS'] += contribution
+                        new_person = False
+                        break
+                    if similarity_score >= NAME_SIM_THRESHOLD:
+                        #check if they're the same person
+                        companies_upper = [word.upper() for word in person['COMPANIES']]
+                        #if companies_upper == []:
+                            #if it's empty, check if first_name is unemployed too
+                        if job.upper() in undisclosed and companies_upper == []:
+                            if debug:
+                                print(f"Same unemployed {last_name} detected {similarity_score:.2f}%:", first_name, name)
+                            person["NAMES"].append(first_name)
+                            if person['CONTRIBUTIONS'] < 0:
+                                person['CONTRIBUTIONS'] += contribution
+                            new_person = False
+                            break
+
+                        elif job.upper() in companies_upper:
+                            if debug:
+                                print(f"Same {last_name} detected {similarity_score:.2f}%:", first_name, name)
+                            person["NAMES"].append(first_name)
+                            if person['CONTRIBUTIONS'] < 0:
+                                person['CONTRIBUTIONS'] += contribution
+                            new_person = False
+                            break
+                        else:
+                            
+                            if person['COMPANIES'] == ['']:
+                                #then the first entry was SB20
+                                #add the job but don't change anything. add the name.
+                                if debug:
+                                    print(f"{first_name} {last_name} was SB20 first: {person['NAMES']} {last_name}")
+                                person['COMPANIES'] = [job] if job.upper() not in undisclosed else []
+                                person['NAMES'].append(first_name)
+                                if person['CONTRIBUTIONS'] < 0:
+                                    person['CONTRIBUTIONS'] += contribution
+                                new_person = False
+                                break
+
+                            #https://github.com/madisonbma/policards/issues/12 
+                            if contribution <= person['CONTRIBUTIONS']:
+                                if debug:
+                                    print('Total contribution went down so assuming this is the same person that lost/changed job:', first_name, job, name, person['COMPANIES'])
+                                person['NAMES'].append(first_name)
+                                new_person = False
+                                break
+                            else:
+                                #this means they are different people. add the new person to the name.
+                                if debug:
+                                    print(f"Names close but different work and wrong contribution {last_name}:", first_name, job, name, person['COMPANIES'])
+                                person['CONTRIBUTIONS'] += contribution
+                                person["NAMES"].append(first_name)
+                                new_person = False
+                                break
+
+                else:
+                    # The for-loop above ran to completion WITHOUT break, meaning none
+                    # of the existing names was judged to be the same person. So this is
+                    # a genuinely different household member who shares the last name.
+
+                    # merge into household if unemployed
+                    if job.upper() in undisclosed:
+                        if debug:
+                            print(f"Add to household: {first_name} to {person['NAMES']} {last_name}, {person['COMPANIES']}")
+                        person['CONTRIBUTIONS'] += contribution
+                        person["NAMES"].append(first_name)
+                        new_person = False
+
+                    # family but decidedly different people.
+                    # merge into household and add work
+                    else:
+                        if person['COMPANIES'] == []:
+                            if debug:
+                                print(f"Add job {job} for {first_name} to household {person['NAMES']} {last_name}.")
+                            person['NAMES'].append(first_name)
+                            person['COMPANIES'].append(job)
+                            new_person = False
+                        elif same_company(job, person['COMPANIES'][0]):
+                            # Same employer written differently (e.g. 'Hpu' ~ 'High
+                            # Point University') -> one workplace, merge the couple.\
+                            if debug:
+                                print(f"Same employer for couple {last_name}: "
+                                    f"{job} ~ {person['COMPANIES'][0]}. Merging.")
+                            # keep the more descriptive (longer) spelling for display
+                            if len(job) > len(person['COMPANIES'][0]):
+                                person['COMPANIES'][0] = job
+                            person['NAMES'].append(first_name)
+                            person['CONTRIBUTIONS'] += contribution
+                            new_person = False
+                        else:
+                            two_jobs_note = (f"Two jobs for this couple: {first_name}:{job}, "
+                                             f"{person['NAMES']}:{person['COMPANIES']}.")
+
+                # If we resolved this person (merged, or recognized as already present),
+                # stop scanning. But in the genuine "two jobs" case new_person is still
+                # True: keep scanning, because another entry at this SAME address may BE
+                # this person (their name was added in an earlier filing / SB20 row). We
+                # must reach that entry to recognize them and avoid re-adding -> double
+                # counting their contribution.
+                if not new_person:
+                    break
+
+            #otherwise if they have a dash, check both last names
+            elif "-" in last_name:
+                last_name_parts = last_name.split("-")
+                for possible_last in last_name_parts:
+                    if possible_last in person["LAST_NAME"]:
+                        #print(f"Hyphenated name match found for {name} at {address} with possible last name {possible_last}")
+                        if first_name in person['NAMES']:
+                            new_person = False
+                            break
+                        else:
+                            if job.upper() in undisclosed:
+                                person['NAMES'].append(first_name)
+                                person['CONTRIBUTIONS'] += contribution
+                                if debug:
+                                    print(f"Unemployed person added to the family: {first_name} {last_name}")
+                                new_person = False
+                                break
+                            elif person['COMPANIES'] == []:
+                                person['NAMES'].append(first_name)
+                                person['CONTRIBUTIONS'] += contribution
+                                if debug:
+                                    print(f"{first_name} {last_name} is employed, but spouse is not. Merging.")
+                                new_person = False
+                                break
+                            else:
+                                if debug:
+                                    print(f"Couple with hyphenated name with 2 different jobs, keeping separate people")
+                            
+
+            else:
+                #Check for last name typos (Jaro-Winkler; no nickname expansion for surnames)
+                similarity_score = name_similarity(last_name, person['LAST_NAME'], use_nicknames=False)
+                if similarity_score >= NAME_SIM_THRESHOLD:
+                    #print(f"***Possible last name typo at {address}: {last_name}, {person['LAST_NAME']}")
+
+                    # match a bare given name to one stored with a middle name/initial
+                    # ('ROBERT' ~ 'ROBERT P'), without merging conflicting middles.
+                    if any(names_same_person(first_name, nm) for nm in person["NAMES"]):
+                        if debug:
+                            print(f"Matched person with typoed last name: {first_name} {last_name} ~ {person['NAMES']} {person['LAST_NAME']}")
+                        if first_name not in person["NAMES"]:
+                            person["NAMES"].append(first_name)
+                        new_person = False
+                        break
+                    else:
+                        #defer: only meaningful if this row is ultimately added as new,
+                        #so we don't re-print it on every scan past this household member.
+                        typo_note = (f"!!! Last name typo but no one found here: "
+                                     f"{first_name} {last_name} no match in {person}")
+
+
+
+            #if they don't match, add as a new person at the address
+        if new_person:
+            if two_jobs_note and debug:
+                print(two_jobs_note)
+            if typo_note and debug:
+                print(typo_note)
+            #print(f"No hyphenated name match found for {name} at {address}")
+            #`contribution` is the signed delta already (+aggregate for SA11, -refund for
+            #SB20 -- the caller negates row[20]), so store it directly. Do NOT re-negate
+            #for SB20A or refunds become positive and pile into the empty-employer "" key.
+            new_dict = {"LAST_NAME": last_name,
+                        "NAMES": [first_name] + name_aliases,
+                        "COMPANIES": [job] if job.upper() not in undisclosed else [],
+                        "CONTRIBUTIONS": contribution
+                        }
+            individual_data[address].append(new_dict)
+
+
 
 
 def main2():
@@ -1081,12 +1946,6 @@ def main2():
         help="Directory to write output files (default: current directory)",
     )
 
-    parser.add_argument(
-        "--filings-raw",
-        default=None,
-        help="Path to an existing filings.json file. When provided, "
-             "skips fetching filings from the API and loads data from this file instead.",
-    )
 
     args = parser.parse_args()
 
@@ -1131,20 +1990,23 @@ def main2():
         return
     
     candidate_id = bioguide_map[args.bioguide_id]["candidate_id"]
-    totals_dict = fetch_totals(session, candidate_id, args.cycle)
+    #totals_dict = fetch_totals(session, candidate_id, args.cycle)
+    totals_dict = fetch_totals_for_election_year(session, candidate_id, args.cycle)
+    print(totals_dict)
+    election = totals_dict['election_year']
 
 
     # ── Step 1: fetch filings with debug save option ─────────────────────────
     committee_id = bioguide_map[args.bioguide_id]["committee_id"]
     if len(committee_id) > 1:
-        print(f"Candidate has multiple committees for cycle {args.cycle}, using first committee: {committee_id[0]}")
+        print(f"Candidate has multiple committees for cycle {election}, using first committee: {committee_id[0]}")
         committee_id = committee_id[0]
     else:
         committee_id = committee_id[0]
-    filings_path = out_dir / f"filings_{committee_id}_{args.cycle}.json"
+    filings_path = out_dir / f"filings_{committee_id}_{election}.json"
 
-    if args.filings_raw:
-        load_path = Path(args.filings_raw)
+    if os.path.exists(filings_path):
+        load_path = Path(filings_path)
         print(f"\n=== Loading Filings from {load_path} ===")
         filings = json.loads(load_path.read_text(encoding="utf-8"))
         print(f"  Loaded {len(filings)} records.")
@@ -1154,8 +2016,32 @@ def main2():
 
 
     # ── Step 2: fetch CSV data from filings ────────────────────────────
-    contribution_data = fetch_filing_csv(filings, args.cycle)
+    # The aggregate resets each two-year period, so for a Senate seat (3 cycles) we
+    # process each period separately and SUM; House is a single period. candidate_id's
+    # first letter (S/H) tells us which.
+    period_cycles = candidate_period_cycles(candidate_id, election)
+    print(f"\nRolling up election {election} over period cycle(s): {period_cycles}")
+    contribution_data = {}
+    for period in period_cycles:
+        period_filings = [f for f in filings if f.get("cycle") == period]
+        if not period_filings:
+            print(f"  (no filings for period cycle {period}, skipping)")
+            continue
+        print(f"\n=== Period cycle {period}: {len(period_filings)} filing(s) ===")
+        period_data = fetch_filing_csv(period_filings, election)
+        for k, v in period_data.items():
+            contribution_data[k] = contribution_data.get(k, 0) + v
+
     contribution_data = dict(sorted(contribution_data.items(), key=lambda item: item[1], reverse=True)) #sort contribution data by amount, descending
+
+    # ── Ballpark check: sum of our contribution_data vs FEC total receipts ──────
+    # Expected to run HIGH: conduits (ActBlue/WinRed) are counted as their own bucket
+    # AND as the individual donations they bundle, so there is built-in double counting.
+    total_in = totals_dict.get("total_in")
+    print("\n=== BALLPARK vs FEC total_in ===")
+    print(f"  FEC total_in (receipts) : ${total_in:,.2f}")
+    print(f"  sum(contribution_data)  : ${sum(contribution_data.values()):,.2f}  "
+          f"(diff ${sum(contribution_data.values()) - total_in:,.2f})")
 
     # ── Step 3: save contribution data────────────────────────────────
     contribution_data_path = out_dir / f"{committee_id}_contribution_data.json"
