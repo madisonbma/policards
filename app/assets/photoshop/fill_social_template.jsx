@@ -23,6 +23,7 @@ var CARD_WIDTH  = 1080;
 var BOTTOM = 1245.55+76.72;
 var MIDDLE = 537.14+-51.06;
 var LEFT = 33;
+var RIGHT = 1080-33;
 var TOP = 91.87;
 var MAX_NAME_WIDTH = 482; //pixels
 var MAX_STATE_WIDTH = 342-49; //pixels
@@ -574,14 +575,33 @@ function fill_top_issues(top_issues_layer, rep_info) {
 }
 
 function fill_top_donors(top_donors_layer, rep_info) {
-    var donor_text_layer = top_donors_layer.layers[0];
-    write_bulleted_list(donor_text_layer, rep_info['top_donors']);
+    var donor_title_layer = top_donors_layer.layers[0];
+    var donor_text_layer = top_donors_layer.layers[1];
 
-    var opensecrets_layer = top_donors_layer.layers[1];
-    var offset = donor_text_layer.bounds[3].value + 10 - opensecrets_layer.bounds[1].value;
-    //move opensecrets to below layer[0]
-    opensecrets_layer.translate(0, offset);
+    // Title line, e.g. "DONORS (2025-2026)"
+    write(donor_title_layer, rep_info['donor_title']);
 
+    // donor_text: a plain totals header (||BREAK|| line breaks) followed by the top-3
+    // donors as bullets (||BREAK_DOT||). Render the header plain, the donors bulleted.
+    var text = rep_info['top_donors'];
+    var bullet = String.fromCharCode(8226);
+    var lines = [];
+
+    var parts = text.split("||BREAK_DOT||");
+    // parts[0] = plain header (its own ||BREAK|| line breaks); the rest are donor bullets.
+    var headerLines = parts[0].split("||BREAK||");
+    for (var i = 0; i < headerLines.length; i++) {
+        lines.push(headerLines[i]);
+    }
+    for (var k = 1; k < parts.length; k++) {
+        if (parts[k].length > 0) {
+            lines.push(bullet + parts[k]);
+        }
+    }
+
+    donor_text_layer.textItem.kind = TextType.POINTTEXT;
+    donor_text_layer.textItem.leading = 7;
+    donor_text_layer.textItem.contents = lines.join("\r");
 }
 
 /**
@@ -670,6 +690,7 @@ if (template_file.exists) {
         ];
         distribute_layers(layer_list, MIDDLE, BOTTOM, 0);
         realign_horizontally(top_donors_layer, top_issues_layer);
+        distribute_layers([top_issues_layer, lines_layer.layers.getByName("Line 4"), top_donors_layer], LEFT, RIGHT, 1)
         center(lines_layer.layers.getByName("Line 4"), top_issues_layer.bounds[2].value, top_donors_layer.bounds[0].value, 1)
         center(lines_layer.layers.getByName("Line 4"), lines_layer.layers.getByName("Line 2").bounds[2].value, lines_layer.layers.getByName("Line 3").bounds[0].value, 0)
     } else {
@@ -680,6 +701,7 @@ if (template_file.exists) {
         ];
         distribute_layers(layer_list, MIDDLE, BOTTOM, 0);
         realign_horizontally(top_issues_layer, top_donors_layer);
+        distribute_layers([top_issues_layer, lines_layer.layers.getByName("Line 4"), top_donors_layer], LEFT, RIGHT, 1)
         center(lines_layer.layers.getByName("Line 4"), top_issues_layer.bounds[2].value, top_donors_layer.bounds[0].value, 1)
         center(lines_layer.layers.getByName("Line 4"), lines_layer.layers.getByName("Line 2").bounds[2].value, lines_layer.layers.getByName("Line 3").bounds[0].value, 0)
     }

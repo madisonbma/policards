@@ -21,6 +21,8 @@ const step7 = document.getElementById('step7');
 const step8 = document.getElementById('step8');
 const step9 = document.getElementById('step9');
 const step10 = document.getElementById('step10');
+const step11 = document.getElementById('step11');
+const step12 = document.getElementById('step12');
 
 //Step 1 elements
 const yesConBtn = document.getElementById('yesGenCongressmenBtn')
@@ -32,6 +34,16 @@ const terminal1 = document.getElementById('terminalOutput1');
 const yesVoteBtn = document.getElementById('yesGenVotesBtn')
 const noVoteBtn = document.getElementById('noGenVotesBtn')
 const terminal2 = document.getElementById('terminalOutput2');
+
+// Step 11 elements (top-donors fetch)
+const terminal3 = document.getElementById('terminalOutput3');
+const topDonorsHeading = document.getElementById('topDonorsHeading');
+
+// Step 12 elements (top-donors review)
+const topDonorsReviewList = document.getElementById('topDonorsReviewList');
+const topDonorsReviewName = document.getElementById('topDonorsReviewName');
+const topDonorsConfirmBtn = document.getElementById('topDonorsConfirmBtn');
+let currentTopDonorsOverview = {};
 
 
 // Step 3 elements
@@ -176,8 +188,8 @@ function setLoading(isLoading) {
 }
 
 function showStep(stepNum) {
-  [step1, step2, step3, step4, step5, step6, step7, step8, step9, step10].forEach(s => s.classList.add('hidden'));
-  
+  [step1, step2, step3, step4, step5, step6, step7, step8, step9, step10, step11, step12].forEach(s => s.classList.add('hidden'));
+
   if (stepNum === 1) step1.classList.remove('hidden');
   else if (stepNum === 2) step2.classList.remove('hidden');
   else if (stepNum === 3) step3.classList.remove('hidden');
@@ -188,6 +200,8 @@ function showStep(stepNum) {
   else if (stepNum === 8) step8.classList.remove('hidden');
   else if (stepNum === 9) step9.classList.remove('hidden');
   else if (stepNum === 10) step10.classList.remove('hidden');
+  else if (stepNum === 11) step11.classList.remove('hidden');
+  else if (stepNum === 12) step12.classList.remove('hidden');
 }
 
 function openModal() {
@@ -248,8 +262,19 @@ function displayCurrentData() {
 
   let value;
   fieldsToDisplay.forEach(field => {
+    // top_donors is stored as [overview, {company: amount}] (not a plain string list),
+    // so render it as the list of donor company names with their amounts.
+    if (field === 'top_donors') {
+        const td = supplemental_data ? supplemental_data['top_donors'] : null;
+        if (Array.isArray(td) && td.length >= 2 && td[1] && typeof td[1] === 'object') {
+            value = Object.entries(td[1]).map(([company, amount]) =>
+                `${company}: $${Number(amount).toLocaleString()}`);
+        } else {
+            value = [];
+        }
+    }
     // Check if we should append both lists together
-    if (typeof LIST_FIELDS !== 'undefined' && LIST_FIELDS.includes(field)) {
+    else if (typeof LIST_FIELDS !== 'undefined' && LIST_FIELDS.includes(field)) {
         const baseList = Array.isArray(selectedRep[field]) ? selectedRep[field] : [];
         const suppList = (supplemental_data && Array.isArray(supplemental_data[field])) 
                          ? supplemental_data[field] 
@@ -353,12 +378,151 @@ function show4() {
 
   showStep(4);
   const currentDataSection = document.getElementById('currentDataSection');
-  
+
   window.scrollTo(0,0);
   modal.scrollTop = 0;
   currentDataSection.scrollTop = 0;
   step4.scrollTop = 0;
 }
+
+// Popup asking whether to regenerate existing top_donors. Resolves true/false.
+function askRegenerate(timestamp) {
+  return new Promise((resolve) => {
+    popup.innerHTML = '';
+    let when = timestamp;
+    try { when = new Date(timestamp).toLocaleString(); } catch (e) { /* keep raw */ }
+
+    const msg = document.createElement('p');
+    msg.textContent = `Top donors were last generated on ${when}. Regenerate?`;
+    popup.appendChild(msg);
+
+    const butDiv = document.createElement('div');
+    const yesBtn = document.createElement('button');
+    const noBtn = document.createElement('button');
+    yesBtn.className = 'confirm';
+    noBtn.className = 'cancel';
+    yesBtn.textContent = 'Regenerate';
+    noBtn.textContent = 'Use existing';
+    butDiv.appendChild(yesBtn);
+    butDiv.appendChild(noBtn);
+    popup.appendChild(butDiv);
+    popup.className = 'popup show';
+
+    const close = (val) => {
+      popup.className = 'popup';
+      popup.innerHTML = '';
+      resolve(val);
+    };
+    yesBtn.addEventListener('click', () => close(true));
+    noBtn.addEventListener('click', () => close(false));
+  });
+}
+
+// Run the FEC top-donors exe for selectedRep, stream output to terminal3, and on
+// success store [overview, {top 20}] into the in-memory supplement + persist it.
+// Returns { ok: boolean, message?: string }.
+async function runTopDonors() {
+  showStep(11);
+  if (topDonorsHeading) topDonorsHeading.textContent = `Getting top donors for ${selectedRep.name}`;
+  terminal3.innerHTML = '';
+
+  const handler = (data) => {
+    const p = document.createElement('p');
+    p.textContent = data;
+    terminal3.appendChild(p);
+    terminal3.scrollTop = terminal3.scrollHeight;
+  };
+  window.electronAPI.onTerminalUpdate(handler);
+
+  try {
+    const result = await window.electronAPI.getTopDonors(selectedRep.bioguideID, selectedRep.name);
+    window.electronAPI.removeTerminalListener(handler);
+
+    if (!result || !result.success) {
+      return { ok: false, message: (result && result.message) ? result.message : 'Unknown error fetching top donors.' };
+    }
+
+    let entry = supplement.find(s => s.name === selectedRep.name);
+    if (!entry) {
+      entry = { name: selectedRep.name };
+      supplement.push(entry);
+    }
+    entry.top_donors = result.top_donors;
+    await window.electronAPI.saveSupplement(supplement);
+    return { ok: true };
+  } catch (e) {
+    window.electronAPI.removeTerminalListener(handler);
+    return { ok: false, message: String(e) };
+  }
+}
+
+// Required review/edit page for top_donors. Renders the top-20 as editable
+// company-name rows (amounts read-only) with delete buttons, mirroring step 5.
+function showTopDonorsReview() {
+  const entry = supplement.find(s => s.name === selectedRep.name);
+  const td = entry ? entry.top_donors : null;
+  currentTopDonorsOverview = (Array.isArray(td) && td[0] && typeof td[0] === 'object') ? td[0] : {};
+  const donors = (Array.isArray(td) && td[1] && typeof td[1] === 'object') ? td[1] : {};
+
+  topDonorsReviewName.textContent = selectedRep.name;
+  topDonorsReviewList.innerHTML = '';
+
+  Object.entries(donors).forEach(([company, amount], index) => {
+    const row = document.createElement('div');
+    row.className = 'data-row';
+
+    const rowBtnAndInput = document.createElement('div');
+    rowBtnAndInput.className = 'input-l-button';
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.type = 'button';
+    deleteBtn.textContent = '-';
+    deleteBtn.setAttribute('id', 'top_donors_del_' + index);
+    deleteBtn.addEventListener('click', () => row.remove());
+
+    const nameInputEl = document.createElement('input');
+    nameInputEl.type = 'text';
+    nameInputEl.setAttribute('id', 'top_donors_' + index);
+    nameInputEl.value = company;
+    nameInputEl.setAttribute('data-amount', amount);
+
+    const amountSpan = document.createElement('span');
+    amountSpan.className = 'donor-amount';
+    amountSpan.textContent = ' $' + Number(amount).toLocaleString();
+
+    rowBtnAndInput.appendChild(deleteBtn);
+    rowBtnAndInput.appendChild(nameInputEl);
+    rowBtnAndInput.appendChild(amountSpan);
+    row.appendChild(rowBtnAndInput);
+    topDonorsReviewList.appendChild(row);
+  });
+
+  showStep(12);
+}
+
+// Confirm the reviewed top donors: rebuild [overview, {company: amount}] from the
+// (possibly edited) rows, persist, and only then proceed to the full data display.
+topDonorsConfirmBtn.addEventListener('click', async () => {
+  const newDonors = {};
+  Array.from(topDonorsReviewList.children).forEach(row => {
+    const input = row.children[0].children[1]; // input-l-button -> [delBtn, input, amountSpan]
+    const company = input.value.trim();
+    const amount = parseFloat(input.getAttribute('data-amount'));
+    if (company && !isNaN(amount)) {
+      newDonors[company] = (newDonors[company] || 0) + amount; // merge any renamed-into-each-other dupes
+    }
+  });
+
+  let entry = supplement.find(s => s.name === selectedRep.name);
+  if (!entry) {
+    entry = { name: selectedRep.name };
+    supplement.push(entry);
+  }
+  entry.top_donors = [currentTopDonorsOverview, newDonors];
+  await window.electronAPI.saveSupplement(supplement);
+
+  show4();
+});
 
 function displayFieldData(selectedField, displayValue) {
   //displayValue is the array or item to show
@@ -828,7 +992,7 @@ nameInput.addEventListener('input', () => {
   }
 });
 
-nameSubmitBtn.addEventListener('click', () => {
+nameSubmitBtn.addEventListener('click', async () => {
   const input = nameInput.value.trim();
   if (!input) {
     showStatus('Please enter a name', false);
@@ -842,11 +1006,31 @@ nameSubmitBtn.addEventListener('click', () => {
   }
   selectedRep = match;
   document.getElementById('selectedName').textContent = selectedRep.name;
-  displayCurrentData();
-  //scroll step4 to top
-  //step4.scrollTop = 0;
-  show4();
 
+  // Top donors: auto-generate if missing; if already present, show when it was last
+  // generated and ask whether to regenerate.
+  const supEntry = supplement.find(s => s.name === selectedRep.name);
+  const existing = supEntry ? supEntry.top_donors : null;
+  const hasTopDonors = Array.isArray(existing) && existing.length > 0;
+
+  let doRun = !hasTopDonors;
+  if (hasTopDonors) {
+    const ts = (existing[0] && existing[0].generated_at) ? existing[0].generated_at : 'an unknown date';
+    doRun = await askRegenerate(ts);
+  }
+
+  if (doRun) {
+    const res = await runTopDonors();
+    if (!res.ok) {
+      // No top donors to review; surface the error and go straight to the data.
+      showStatus('Could not fetch top donors: ' + res.message, false);
+      show4();
+      return;
+    }
+  }
+
+  // Force the operator to review the top donors before seeing the full data.
+  showTopDonorsReview();
 });
 
 cancelBtn.addEventListener('click', closeModal);

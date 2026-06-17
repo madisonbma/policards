@@ -537,7 +537,7 @@ def candidate_period_cycles(candidate_id, election_year):
 # Step 2: now that we have the endpoint, go through each filing (skip if already saw amended),
 # and get the csv
 ######################################################
-def fetch_filing_csv(filings_report, cycle):
+def fetch_filing_csv(filings_report, cycle, generated_outputs):
     refund_data = {}
     pac_data = {}
     individual_data = {}
@@ -584,7 +584,7 @@ def fetch_filing_csv(filings_report, cycle):
 
     if debug:
         #TEMPORARY SAVE AGGREGATE CSV DATA TO DEBUG FILE (one per period cycle)
-        temp_aggregate_path = Path(f"temp_aggregate_{period_label}.csv")
+        temp_aggregate_path = Path(generated_outputs) / f"temp_aggregate_{period_label}.csv"
         with temp_aggregate_path.open("w", encoding="utf-8", newline="") as f:
             writer = csv.writer(f)
             writer.writerows(temp_aggregate)
@@ -1223,7 +1223,12 @@ def refund_for_pac(row, pac_data, refund_amount):
         print(f"Missing name for SB20 refund, skipping.")
         return
 
-    committee_id = row[24]  # SB20 committee_id column (SA11 uses 25)
+    if row[24].startswith("C"):
+        committee_id = row[24]  # SB20 committee_id column (SA11 uses 25)
+    elif row[25].startswith("C"):
+        committee_id = row[25]
+    else:
+        print(f"Could not find committee_id for {row}")
     delta = -refund_amount
 
     # Net into the existing entry wherever it lives: committee-keyed under its own id,
@@ -1563,7 +1568,10 @@ def _factor_in_family_for_contribution(row, individual_data):
     #   }
     # ]
     address = row[12]+row[14]+row[15]
-    job = replace_company_name(row[23])
+    if row[0].upper() == "SB20" or row[0].upper() == "SB20C":
+        job = ''
+    else:
+        job = replace_company_name(row[23])
     contribution = float(row[20])
     name = (row[8]+row[7]).upper() #last name + first name, all uppercase to avoid case issues
     last_name = row[7].upper()
@@ -1651,7 +1659,10 @@ def factor_in_family_for_contribution_once(row, individual_data, contribution, d
     #   }
     # ]
     address = row[12]+row[14]+row[15]
-    job = replace_company_name(row[23])
+    if row[0].upper().startswith("SB20"):
+        job = ''
+    else:
+        job = replace_company_name(row[23])
     name = (row[8]+row[7]).upper() #last name + first name, all uppercase to avoid case issues
     first_name = row[8].upper() #last name + first name, all uppercase to avoid case issues
     middle_name = row[9].upper()
@@ -1941,24 +1952,24 @@ def main2():
     )
 
     parser.add_argument(
-        "--out-dir",
+        "--generated-outputs",
         default=".",
-        help="Directory to write output files (default: current directory)",
+        help="Directory to generated_outputs",
     )
 
 
     args = parser.parse_args()
 
-    out_dir = Path(args.out_dir)
-    out_dir.mkdir(parents=True, exist_ok=True)
+    generated_outputs = Path(args.generated_outputs)
+    generated_outputs.mkdir(parents=True, exist_ok=True)
 
     # Shared session with API key
     session = requests.Session()
     session.params = {"api_key": args.api_key}  # type: ignore[assignment]
 
     # ── Step N: get all running candidates names and comms ──────────────────────
-    house_runners_path = out_dir / f"house_runners_{args.cycle}.json"
-    senate_runners_path = out_dir / f"senate_runners_{args.cycle}.json"
+    house_runners_path = generated_outputs / f"house_runners_{args.cycle}.json"
+    senate_runners_path = generated_outputs / f"senate_runners_{args.cycle}.json"
     if house_runners_path.exists() and senate_runners_path.exists():
         house_runners = json.loads(house_runners_path.read_text(encoding="utf-8"))
         senate_runners = json.loads(senate_runners_path.read_text(encoding="utf-8"))
@@ -1975,14 +1986,14 @@ def main2():
 
 
     # ── Step N: open congressmen.json to get names and bioguide_ids ──────────────────────
-    bioguide_path = Path("generated_outputs") / "congressmen.json"
+    bioguide_path = generated_outputs / "congressmen.json"
     bioguide_data = json.loads(bioguide_path.read_text(encoding="utf-8"))
     print("Run for House")
     house_map = cross_reference(house_runners, bioguide_data, args.cycle)
     print("Run for Senate")
     senate_map = cross_reference(senate_runners, bioguide_data, args.cycle)
     bioguide_map = house_map | senate_map
-    save_json(bioguide_map, out_dir / f"bioguide_fec_map_{args.cycle}.json", "house bioguide map")
+    save_json(bioguide_map, generated_outputs / f"bioguide_fec_map_{args.cycle}.json", "house bioguide map")
 
     # ── Step 0: get PAC and ind totals ─────────────────────────
     if bioguide_map.get(args.bioguide_id) is None:
@@ -2003,7 +2014,7 @@ def main2():
         committee_id = committee_id[0]
     else:
         committee_id = committee_id[0]
-    filings_path = out_dir / f"filings_{committee_id}_{election}.json"
+    filings_path = generated_outputs / f"filings_{committee_id}_{election}.json"
 
     if os.path.exists(filings_path):
         load_path = Path(filings_path)
@@ -2020,6 +2031,8 @@ def main2():
     # process each period separately and SUM; House is a single period. candidate_id's
     # first letter (S/H) tells us which.
     period_cycles = candidate_period_cycles(candidate_id, election)
+    totals_dict["year_range"] = f"{period_cycles[0]-1}-{period_cycles[-1]}"
+    
     print(f"\nRolling up election {election} over period cycle(s): {period_cycles}")
     contribution_data = {}
     for period in period_cycles:
@@ -2028,7 +2041,7 @@ def main2():
             print(f"  (no filings for period cycle {period}, skipping)")
             continue
         print(f"\n=== Period cycle {period}: {len(period_filings)} filing(s) ===")
-        period_data = fetch_filing_csv(period_filings, election)
+        period_data = fetch_filing_csv(period_filings, election, generated_outputs)
         for k, v in period_data.items():
             contribution_data[k] = contribution_data.get(k, 0) + v
 
@@ -2044,12 +2057,18 @@ def main2():
           f"(diff ${sum(contribution_data.values()) - total_in:,.2f})")
 
     # ── Step 3: save contribution data────────────────────────────────
-    contribution_data_path = out_dir / f"{committee_id}_contribution_data.json"
+    contribution_data_path = generated_outputs / f"{committee_id}_contribution_data.json"
     save_json([totals_dict, contribution_data], contribution_data_path, "contribution data from filings")
     #save_json(contribution_data, contribution_data_path, "contribution data from filings")
 
+    # Also write a deterministic, bioguide-keyed copy so callers (the app) can find the
+    # output without knowing the resolved committee_id ahead of time.
+    bioguide_data_path = generated_outputs / f"{args.bioguide_id}_contribution_data.json"
+    save_json([totals_dict, contribution_data], bioguide_data_path, "contribution data (bioguide-keyed)")
+
     print("\n=== Done ===")
     print(f"  results          : {contribution_data_path}")
+    print(f"  bioguide results : {bioguide_data_path}")
 
 
 if __name__ == "__main__":

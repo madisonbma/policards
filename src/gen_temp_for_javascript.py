@@ -348,16 +348,50 @@ def gen_top_issues(rep_info, draw, font, max_width, rep_stats):
         rep_stats['top_issues'] = "||BREAK_DOT||Issue 1||BREAK_DOT||Issue 2||BREAK_DOT||Issue 3"
 
 
+def fmt_money_abbrev(n):
+    """Abbreviated dollars: 11700064 -> '$11.7M', 48269 -> '$48K', 250 -> '$250'."""
+    try:
+        n = float(n or 0)
+    except (TypeError, ValueError):
+        return "$0"
+    a = abs(n)
+    if a >= 1_000_000:
+        return f"${n / 1_000_000:.1f}M"
+    if a >= 1_000:
+        return f"${n / 1_000:.0f}K"
+    return f"${n:,.0f}"
+
+
 def gen_top_donors(rep_info, draw, font, max_width, rep_stats):
-    formatted_list = []
-    top_donors_list = rep_info.get('top_donors', [])
-    if top_donors_list:
-        for donor in top_donors_list:
-            formatted_list.append(draw_wrapped_text(draw, donor, font, max_width))
-        top_donors = "||BREAK_DOT||".join(formatted_list)
-        rep_stats['top_donors'] = f"||BREAK_DOT||{top_donors}"
+    # top_donors is now [overview_dict, {company: amount}] (overview has year_range,
+    # net_contributions, pac_total, ...). Title -> donor_title_layer; the rest is the
+    # donor_text_layer: plain totals header (||BREAK|| = line break) then the top 3
+    # donors as bullets (||BREAK_DOT||).
+    top_donors = rep_info.get('top_donors')
+    if (isinstance(top_donors, list) and len(top_donors) >= 2
+            and isinstance(top_donors[1], dict)):
+        overview = top_donors[0] if isinstance(top_donors[0], dict) else {}
+        donors = top_donors[1]
+
+        year_range = overview.get('year_range') or str(overview.get('election_year', ''))
+        rep_stats['donor_title'] = f"DONORS ({year_range})"
+
+        net = fmt_money_abbrev(overview.get('net_contributions', 0))
+        pac = fmt_money_abbrev(overview.get('pac_total', 0))
+        header = (f"Total Donations: {net}||BREAK||"
+                  f"Total from PACs: {pac}||BREAK||||BREAK||"
+                  f"Top 3 Donors:")
+
+        top3 = sorted(donors.items(), key=lambda kv: kv[1], reverse=True)[:3]
+        donor_lines = "".join(
+            f"||BREAK_DOT||{company} - {fmt_money_abbrev(amount)}" for company, amount in top3
+        )
+
+        rep_stats['top_donors'] = header + donor_lines
     else:
-        rep_stats['top_donors'] = "||BREAK_DOT||Donor 1||BREAK_DOT||Donor 2||BREAK_DOT||Donor 3"
+        rep_stats['donor_title'] = "DONORS"
+        rep_stats['top_donors'] = ("Total Donations: $0||BREAK||Total from PACs: $0||BREAK||||BREAK||"
+                                   "Top 3 Donors:||BREAK_DOT||Donor 1||BREAK_DOT||Donor 2||BREAK_DOT||Donor 3")
 
 
 def gen_bonus_section(rep_info, draw, font, max_width, rep_stats):

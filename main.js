@@ -542,8 +542,28 @@ ipcMain.handle('gen-card', async (_event, name) => {
     const env = { ...process.env, GEN_OUTPUT_DIR: generated_outputs };
     let command;
     if (isWindows) {
-      // Windows: Use Photoshop's executable with the script
-      command = `start "" "C:\\Program Files\\Adobe\\Adobe Photoshop ${config['photoshop_year']}\\Photoshop.exe" "${jsxScript}"`;
+      // Windows: drive Photoshop via COM (DoJavaScriptFile) so generated_outputs is
+      // passed as the JSX argument (arguments[0]) -- the same as the mac osascript
+      // "with arguments {...}". (Photoshop.exe on the CLI can't pass JSX arguments,
+      // and COM activation launches Photoshop if it isn't already open.)
+      //
+      // While Photoshop is still launching/busy, the COM call throws
+      // RPC_E_SERVERCALL_RETRYLATER (0x8001010A); retry until it's ready. Only retry
+      // on that busy error so a genuine JSX error still propagates (no double-run).
+      const psEsc = (s) => String(s).replace(/'/g, "''");
+      const psScript =
+        "$ErrorActionPreference='Stop'; " +
+        "$ps = New-Object -ComObject 'Photoshop.Application'; " +
+        "$deadline = (Get-Date).AddSeconds(90); " +
+        "while($true){ " +
+        "  try{ $ps.DoJavaScriptFile('" + psEsc(jsxScript) + "', @('" + psEsc(generated_outputs) + "')); break } " +
+        "  catch{ " +
+        "    if( ($_.Exception.Message -match 'RETRYLATER|8001010A|busy') -and ((Get-Date) -lt $deadline) ){ Start-Sleep -Milliseconds 750 } " +
+        "    else { throw } " +
+        "  } " +
+        "}";
+      const encoded = Buffer.from(psScript, 'utf16le').toString('base64');
+      command = `powershell -NoProfile -EncodedCommand ${encoded}`;
     } else if (isMac) {
       // Mac: Use osascript to tell Photoshop to run the script
       command = `osascript -e 'tell application "Adobe Photoshop ${config['photoshop_year']}" to do javascript file "${jsxScript}" with arguments {"${generated_outputs}"}' &`;
@@ -586,6 +606,46 @@ ipcMain.handle('gen-card', async (_event, name) => {
     });
 
     //return { success: true, message: 'Card generated successfully!' };
+  } catch (error) {
+    return { success: false, message: error.toString() };
+  }
+});
+
+// Run the FEC top-donors exe for one representative, stream output to the terminal,
+// and return [overview, {top 20 company: amount}] (with a generated_at timestamp).
+ipcMain.handle('get-top-donors', async (event, bioguideId, name) => {
+  try {
+    const fecKey = config['FEC_API_KEY'];
+    if (!fecKey || String(fecKey).trim() === "") {
+      return { success: false, message: "FEC_API_KEY is not set. Add it in the config window before fetching top donors." };
+    }
+
+    const cycle = String(new Date().getFullYear()); // default cycle = current year
+    const args = [
+      '--api-key', fecKey,
+      '--bioguide-id', bioguideId,
+      '--cycle', cycle,
+      '--generated-outputs', generated_outputs,
+    ];
+
+    await runPythonScriptAndStream('get_top_pac_contributions', args, event.sender);
+
+    // The script writes a deterministic, bioguide-keyed file: [overview, {company: amount}]
+    const outPath = path.join(generated_outputs, `${bioguideId}_contribution_data.json`);
+    if (!fs.existsSync(outPath)) {
+      throw new Error(`Top-donor output not found at ${outPath}`);
+    }
+    const parsed = JSON.parse(fs.readFileSync(outPath, 'utf8'));
+    const overview = parsed[0] || {};
+    const donors = parsed[1] || {};
+
+    // Top 20 by amount (script already sorts descending; sort again defensively)
+    const top20 = Object.fromEntries(
+      Object.entries(donors).sort((a, b) => b[1] - a[1]).slice(0, 20)
+    );
+    overview.generated_at = new Date().toISOString();
+
+    return { success: true, top_donors: [overview, top20] };
   } catch (error) {
     return { success: false, message: error.toString() };
   }

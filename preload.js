@@ -7,6 +7,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   onTerminalUpdate: (callback) => ipcRenderer.on('terminal-update', (event, data) => callback(data)),
   removeTerminalListener: (callback) => ipcRenderer.removeAllListeners('terminal-update', callback),
   genCard: (name) => ipcRenderer.invoke('gen-card', name),
+  getTopDonors: (bioguideId, name) => ipcRenderer.invoke('get-top-donors', bioguideId, name),
   openUpdateWindow: () => ipcRenderer.invoke('open-update-window'),
   loadCongressmenData: () => ipcRenderer.invoke('load-congressmen-data'),
   loadConfigData: () => ipcRenderer.invoke('load-config-data'),

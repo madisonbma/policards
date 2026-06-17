@@ -148,6 +148,25 @@
         <p>3. Click button below and select the downloaded bulk data.</p>
         <button class="btn-primary" id="movedBioguideBtn">I've done this</button>
       </div>
+      <!-- Step 11: Fetching top donors (FEC exe) -->
+      <div id="step11" class="step hidden">
+        <div class="success-message">
+          <h3 id="topDonorsHeading">Getting top donors...</h3>
+          <p>This can take a few minutes (more for senators).</p>
+        </div>
+        <div class="spinner show"></div>
+        <div id="terminalOutput3" class="terminal"></div>
+      </div>
+      <!-- Step 12: Review/edit top donors (required before the data display) -->
+      <div id="step12" class="step hidden">
+        <p><strong>Review Top Donors for:</strong> <span id="topDonorsReviewName"></span></p>
+        <p>Check these before continuing. Fix any mislabeled employers and remove bad entries, then confirm.</p>
+        <div class="current-field-data">
+          <h3>Top Donors:</h3>
+          <div id="topDonorsReviewList"></div>
+        </div>
+        <button class="btn-primary" id="topDonorsConfirmBtn">Confirm &amp; Continue</button>
+      </div>
     </div>
   </div>
 
