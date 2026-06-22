@@ -337,12 +337,12 @@ def create_vote_block(rep_info, absolute_stats, rep_stats):
 
 
 def gen_top_issues(rep_info, draw, font, max_width, rep_stats):
-    formatted_list = []
+    # PROTOTYPE: wrapping now happens in Photoshop (write_bulleted_list_wrapped),
+    # so we no longer pre-compute line breaks with draw_wrapped_text here -- just
+    # join the raw issues with the bullet delimiter. (draw/font/max_width unused.)
     top_issues_list = rep_info.get('top_issues', [])
     if top_issues_list:
-        for issue in top_issues_list:
-            formatted_list.append(draw_wrapped_text(draw, issue, font, max_width))
-        top_issues = "||BREAK_DOT||".join(formatted_list)
+        top_issues = "||BREAK_DOT||".join(top_issues_list)
         rep_stats['top_issues'] = f"||BREAK_DOT||{top_issues}"
     else:
         rep_stats['top_issues'] = "||BREAK_DOT||Issue 1||BREAK_DOT||Issue 2||BREAK_DOT||Issue 3"
@@ -380,18 +380,21 @@ def gen_top_donors(rep_info, draw, font, max_width, rep_stats):
         pac = fmt_money_abbrev(overview.get('pac_total', 0))
         header = (f"Total Donations: {net}||BREAK||"
                   f"Total from PACs: {pac}||BREAK||||BREAK||"
-                  f"Top 3 Donors:")
+                  f"Top 3 Donors:||BREAK||")
+
 
         top3 = sorted(donors.items(), key=lambda kv: kv[1], reverse=True)[:3]
-        donor_lines = "".join(
-            f"||BREAK_DOT||{company} - {fmt_money_abbrev(amount)}" for company, amount in top3
-        )
+        formatted_list = []
+        for company, amount in top3:
+            formatted_list.append(draw_wrapped_text(draw, f"{company} ({fmt_money_abbrev(amount)})", font, max_width))
+        donor_lines = "||BREAK_DOT||".join(formatted_list)
 
-        rep_stats['top_donors'] = header + donor_lines
+        rep_stats['top_donors_hdr'] = header
+        rep_stats['top_donors'] = donor_lines
     else:
         rep_stats['donor_title'] = "DONORS"
-        rep_stats['top_donors'] = ("Total Donations: $0||BREAK||Total from PACs: $0||BREAK||||BREAK||"
-                                   "Top 3 Donors:||BREAK_DOT||Donor 1||BREAK_DOT||Donor 2||BREAK_DOT||Donor 3")
+        rep_stats['top_donors_hdr'] = "Total Donations: $0||BREAK||Total from PACs: $0||BREAK||||BREAK||"
+        rep_stats['top_donors'] = "Top 3 Donors:||BREAK_DOT||Donor 1||BREAK_DOT||Donor 2||BREAK_DOT||Donor 3"
 
 
 def gen_bonus_section(rep_info, draw, font, max_width, rep_stats):

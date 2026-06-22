@@ -242,6 +242,7 @@ function runPythonScript(scriptName, args = []) {
 
 function runPythonScriptAndStream(scriptName, args, sender) {
     return new Promise((resolve, reject) => {
+      let errorData = "";
       if (debug) {
         if (process.platform === "darwin") {
           console.log("Running python3.14 ", scriptname_to_py(scriptName));
@@ -266,6 +267,17 @@ function runPythonScriptAndStream(scriptName, args, sender) {
         if (sender && !sender.isDestroyed()) {
             sender.send('terminal-update', text);
           }
+      });
+
+      // Capture stderr so a non-zero exit reports the real error (and show it in the
+      // terminal view too, not just a generic failure).
+      pythonProcess.stderr.on('data', (data) => {
+        const text = data.toString('utf8');
+        errorData += text;
+        console.error(text);
+        if (sender && !sender.isDestroyed()) {
+          sender.send('terminal-update', text);
+        }
       });
 
       // Resolve the promise when the process exits successfully

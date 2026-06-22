@@ -27,6 +27,9 @@ var RIGHT = 1080-33;
 var TOP = 91.87;
 var MAX_NAME_WIDTH = 482; //pixels
 var MAX_STATE_WIDTH = 342-49; //pixels
+var MAX_ISSUE_WIDTH = 450; //pixels -- wrap width for top issues (JSX measures against this).
+                           //Same px space as MAX_NAME_WIDTH(482)/donor box(450). TUNE to the
+                           //real top-issues column width.
 
 var NAME_SIZE = 15.72;
 var STATE_SIZE = 10.24;
@@ -377,7 +380,38 @@ function write(layer, text){
     }
 }
 
+function write_temp(text) {
+    var addme = "";
+
+    if (text.indexOf("||BREAK||") !== -1) {
+        log("||BREAK|| found in " + text);
+        var snippets = text.split("||BREAK||");
+        addme = snippets.join("\r");
+        log("Adding: "+addme);
+        return addme;
+    }
+    else {
+        log("No ||BREAK|| present in " + text);
+        return text;
+    }
+}
+
+
+
 function write_bulleted_list(layer, text){
+    /**
+     * Take a list in and parse for delimiters.
+     * ||BREAK_DOT||: standard delimiter. each BREAK_DOT gets a bullet and its own line
+     *   -> ||BREAK||: if present in BREAK_DOT delimiting, line too long and ran over. 
+     *                 start a new line, indent by 4 spaces
+     *   -> ||BREAK_SUBDOT||: for committees specifically. 
+     *                        add 4 spaces before, don't add the bullet bc already there
+     */
+    write_bulleted_list_with_pretext(layer, text, "");
+}
+
+
+function write_bulleted_list_with_pretext(layer, text, additional_text) {
     /**
      * Take a list in and parse for delimiters.
      * ||BREAK_DOT||: standard delimiter. each BREAK_DOT gets a bullet and its own line
@@ -427,19 +461,109 @@ function write_bulleted_list(layer, text){
             }
         }
     
-        addme = bulletizedLines.join("\r"); 
+        addme = additional_text + bulletizedLines.join("\r"); 
         log("Adding: "+addme);
         layer.textItem.contents = addme;
     }
     else {
         log("No ||BREAK|| present in " + text);
-        addme = bullet + text;
+        addme = additional_text + bullet + text;
         layer.textItem.contents = addme;
     }
 }
 
 
+function getTextLayerScale(layer) {
+    /**
+     * Read a type layer's baked-in transform scale (xx / yy of its matrix).
+     *
+     * textItem.width / firstLineIndent / size are all in the layer's PRE-transform
+     * space. If the template scaled the type layer (ours carries ~4.167x, == doc
+     * resolution / 72), the on-canvas size is value * scale. Read the real scale so
+     * callers can pass true canvas-pixel values and divide them back out.
+     *
+     * Returns {x, y}; defaults to {1, 1} if the layer has no transform.
+     */
+    try {
+        var ref = new ActionReference();
+        ref.putProperty(charIDToTypeID("Prpr"), stringIDToTypeID("textKey"));
+        ref.putIdentifier(charIDToTypeID("Lyr "), layer.id);
+        var tk = executeActionGet(ref).getObjectValue(stringIDToTypeID("textKey"));
+        if (tk.hasKey(stringIDToTypeID("transform"))) {
+            var t = tk.getObjectValue(stringIDToTypeID("transform"));
+            return { x: t.getDouble(stringIDToTypeID("xx")),
+                     y: t.getDouble(stringIDToTypeID("yy")) };
+        }
+    } catch (e) {
+        log("getTextLayerScale failed, defaulting to 1: " + e.message);
+    }
+    return { x: 1, y: 1 };
+}
 
+
+function write_bulleted_list_wrapped(layer, text, max_width, additional_text) {
+    /**
+     * PROTOTYPE alternative to write_bulleted_list().
+     *
+     * Instead of relying on Python to pre-compute line breaks (||BREAK|| markers),
+     * this renders the layer as PARAGRAPHTEXT so Photoshop wraps any line that
+     * exceeds max_width automatically. A hanging indent (leftIndent + negative
+     * firstLineIndent) keeps wrapped lines aligned UNDER the text rather than
+     * snapping back under the bullet.
+     *
+     * max_width / INDENT are given in TRUE CANVAS PIXELS; we divide them by the
+     * layer's transform scale before handing them to the DOM, because those text
+     * properties live in the layer's pre-transform space (see getTextLayerScale).
+     *
+     * Only ||BREAK_DOT|| (one bullet per item) is needed now. Any leftover
+     * ||BREAK|| is treated as a deliberate forced break.
+     *
+     * NOTE: the indent properties apply to the WHOLE layer, so this is meant for
+     * pure bullet layers. A layer that mixes a header + bullets (e.g. donors)
+     * would need the header split into its own layer first.
+     */
+    if (additional_text === undefined) { additional_text = ""; }
+
+    var bullet = String.fromCharCode(8226);
+    var INDENT = 8; // canvas px gutter for the bullet -- tune to bullet+space width
+
+    var items = text.split("||BREAK_DOT||");
+    var lines = [];
+    for (var i = 0; i < items.length; i++) {
+        var item = items[i];
+        if (item.length === 0) { continue; } // skip leading/empty splits
+        // any remaining ||BREAK|| is an intentional forced break, not a wrap marker
+        item = item.replace(/\|\|BREAK\|\|/g, "\r");
+        lines.push(bullet + " " + item);
+    }
+
+    // The DOM text props (width/height/indent) live in a 72-ppi point space, so on a
+    // higher-res doc the value is multiplied by doc.resolution/72 on render (that's
+    // the ~4.167x we saw, == 300/72). Divide it out so the numbers mean true canvas
+    // px. Also divide by any baked-in type-layer transform (usually 1.0 here).
+    var tScale = getTextLayerScale(layer);
+    var resFactor = doc.resolution / 72;
+    var box_w  = max_width / (resFactor * tScale.x);
+    var box_h  = 600 / (resFactor * tScale.y);   // generous height so text isn't clipped
+    var indent = INDENT / (resFactor * tScale.x);
+    log("write_bulleted_list_wrapped: res=" + doc.resolution + " resFactor=" + resFactor
+        + " tScale.x=" + tScale.x + " -> box_w=" + box_w + " indent=" + indent);
+
+    // Switch to paragraph text and give it a box. Width drives wrapping; layout
+    // still reads .bounds afterward.
+    layer.textItem.kind = TextType.PARAGRAPHTEXT;
+    layer.textItem.width  = new UnitValue(box_w, "px");
+    layer.textItem.height = new UnitValue(box_h, "px");
+    layer.textItem.leading = 7;
+
+    // Hanging indent for the bullets.
+    layer.textItem.firstLineIndent = new UnitValue(-indent, "px");
+    layer.textItem.leftIndent      = new UnitValue(indent, "px");
+
+    var addme = additional_text + lines.join("\r");
+    log("write_bulleted_list_wrapped adding: " + addme);
+    layer.textItem.contents = addme;
+}
 
 
 function save_file_as_png_export(save_file_path, doc) {
@@ -570,8 +694,36 @@ function name_and_title(name_and_info_layer, rep_info) {
     return education_size;
 }
 
+function fill_top_issues_tmp(top_issues_layer, rep_info) {
+    //PROTOTYPE: let Photoshop wrap instead of using pre-computed ||BREAK|| markers.
+    //Revert to write_bulleted_list(...) to compare against the old behavior.
+    write_bulleted_list_wrapped(top_issues_layer.layers[0], rep_info['top_issues'], MAX_ISSUE_WIDTH);
+    
+}
+
 function fill_top_issues(top_issues_layer, rep_info) {
-    write_bulleted_list(top_issues_layer.layers[0], rep_info['top_issues']);
+    var rawText = rep_info['top_issues'];
+    var items = rawText.split('||BREAK_DOT||');
+    var bulletLines = [];
+
+    for (var i = 0; i < items.length; i++) {
+        var item = items[i].replace(/^\s+|\s+$/g, ''); 
+        if (item.length > 0) {
+            bulletLines.push("- " + item);
+        }
+    }
+
+    var bulletedList = bulletLines.join('\n');
+
+    // Target index 0 inside the layer group
+    var targetTextLayer = top_issues_layer.layers[0];
+
+    if (targetTextLayer && targetTextLayer.kind == LayerKind.TEXT) {
+        targetTextLayer.textItem.contents = bulletedList;
+    } else {
+        alert("Error: The layer at index 0 is not a text layer!");
+    }
+
 }
 
 function fill_top_donors(top_donors_layer, rep_info) {
@@ -581,27 +733,25 @@ function fill_top_donors(top_donors_layer, rep_info) {
     // Title line, e.g. "DONORS (2025-2026)"
     write(donor_title_layer, rep_info['donor_title']);
 
-    // donor_text: a plain totals header (||BREAK|| line breaks) followed by the top-3
-    // donors as bullets (||BREAK_DOT||). Render the header plain, the donors bulleted.
-    var text = rep_info['top_donors'];
-    var bullet = String.fromCharCode(8226);
-    var lines = [];
+    addme = write_temp(rep_info['top_donors_hdr'])
+    write_bulleted_list_with_pretext(donor_text_layer, rep_info['top_donors'], addme);
 
-    var parts = text.split("||BREAK_DOT||");
-    // parts[0] = plain header (its own ||BREAK|| line breaks); the rest are donor bullets.
-    var headerLines = parts[0].split("||BREAK||");
-    for (var i = 0; i < headerLines.length; i++) {
-        lines.push(headerLines[i]);
-    }
-    for (var k = 1; k < parts.length; k++) {
-        if (parts[k].length > 0) {
-            lines.push(bullet + parts[k]);
-        }
-    }
 
-    donor_text_layer.textItem.kind = TextType.POINTTEXT;
+    /*donor_text_layer.textItem.kind = TextType.POINTTEXT;
     donor_text_layer.textItem.leading = 7;
-    donor_text_layer.textItem.contents = lines.join("\r");
+    donor_text_layer.textItem.contents = lines.join("\r");*/
+
+    // 1. Change kind to PARAGRAPHTEXT to allow automatic wrapping
+    donor_text_layer.textItem.kind = TextType.PARAGRAPHTEXT;
+    
+    // 2. Set your strict bounding box boundaries (use UnitValue for safety)
+    // Adjust these pixel values to perfectly fit your trading card layout dimensions
+    donor_text_layer.textItem.width = new UnitValue(450, "px"); 
+    donor_text_layer.textItem.height = new UnitValue(200, "px");
+
+    // 3. Keep your tight baseline formatting
+    donor_text_layer.textItem.leading = 7;
+    //donor_text_layer.textItem.contents = lines.join("\r");
 }
 
 /**

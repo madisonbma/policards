@@ -890,8 +890,8 @@ def pac_name_edit(pac1, pac2):
 
     elif "(" in pac2:
         pac2_match = re.search(r"([^\()]+)\(([^\)]+)\)", pac2)
-        pac2_noparen = pac1_match.group(1)
-        pac2_abbr = pac1_match.group(2)
+        pac2_noparen = pac2_match.group(1)
+        pac2_abbr = pac2_match.group(2)
 
         pac1_noparen = pac1
         pac1 = pac1.replace("-", " ")
