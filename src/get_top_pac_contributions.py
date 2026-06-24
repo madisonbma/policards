@@ -1228,7 +1228,8 @@ def refund_for_pac(row, pac_data, refund_amount):
     elif row[25].startswith("C"):
         committee_id = row[25]
     else:
-        print(f"Could not find committee_id for {row}")
+        print(f"Could not find committee_id, using name {row[6]} for {row}")
+        committee_id = row[6]
     delta = -refund_amount
 
     # Net into the existing entry wherever it lives: committee-keyed under its own id,

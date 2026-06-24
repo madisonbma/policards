@@ -424,6 +424,7 @@ function write_bulleted_list_with_pretext(layer, text, additional_text) {
     var addme = "";
     var bullet = String.fromCharCode(8226);
     layer.textItem.leading = 7;
+    layer.textItem.kind = TextType.PARAGRAPHTEXT;
 
     //start of bullet point
     if (text.indexOf("||BREAK_DOT||") !== -1) {
@@ -609,20 +610,7 @@ function state_and_photo(photocard_layer, rep_info) {
     log("Photo layer name and size after replacing photo: " + photo_layer.name + ", " + photo_layer.bounds);
 }
 
-function raise_bio_section(toplayer) {
-    /**
-     * When the education section is 2+, raise everything from the red bar to education up by 8.
-     */
-    //layers to raise: Line 1, text sections 2:9
-    var layer = toplayer.layers.getByName("Divider Lines").layers.getByName("Line 1");
-    layer.translate(0,-8)
-    for (var i = 2; i <= 9; i++) {
-        layer = toplayer.layers.getByName("NAME+INFO ").layers[i];
-        layer.translate(0,-8);
 
-    }
-
-}
 
 function shrink_voting_bar(voting_block) {
     var bar_to_shrink = voting_block.layers.getByName('Stat Bar')
@@ -690,18 +678,25 @@ function name_and_title(name_and_info_layer, rep_info) {
 
     move_age(name_and_info_layer, rep_info);
 
-    education_size = write_bulleted_list(name_and_info_layer.layers[9], rep_info["education_line"]);
-    return education_size;
-}
+    write_bulleted_list(name_and_info_layer.layers[9], rep_info["education_line"]);
+    const ed_length = rep_info['education_line'].split("||BREAK_DOT||").length - 1;
 
-function fill_top_issues_tmp(top_issues_layer, rep_info) {
-    //PROTOTYPE: let Photoshop wrap instead of using pre-computed ||BREAK|| markers.
-    //Revert to write_bulleted_list(...) to compare against the old behavior.
-    write_bulleted_list_wrapped(top_issues_layer.layers[0], rep_info['top_issues'], MAX_ISSUE_WIDTH);
-    
+    name_and_info_layer.layers[9].textItem.height = new UnitValue(ed_length*20, "px")
 }
 
 function fill_top_issues(top_issues_layer, rep_info) {
+    //PROTOTYPE: let Photoshop wrap instead of using pre-computed ||BREAK|| markers.
+    //Revert to write_bulleted_list(...) to compare against the old behavior.
+    //write_bulleted_list_wrapped(top_issues_layer.layers[0], rep_info['top_issues'], MAX_ISSUE_WIDTH);
+    
+    top_issues = top_issues_layer.layers[0]
+    write_bulleted_list(top_issues_layer.layers[0], rep_info['top_issues'], MAX_ISSUE_WIDTH);
+    top_issues.textItem.width = new UnitValue(110, "px"); 
+    top_issues.textItem.height = new UnitValue(200, "px");
+
+}
+
+function fill_top_issues_tmp(top_issues_layer, rep_info) {
     var rawText = rep_info['top_issues'];
     var items = rawText.split('||BREAK_DOT||');
     var bulletLines = [];
@@ -728,13 +723,15 @@ function fill_top_issues(top_issues_layer, rep_info) {
 
 function fill_top_donors(top_donors_layer, rep_info) {
     var donor_title_layer = top_donors_layer.layers[0];
-    var donor_text_layer = top_donors_layer.layers[1];
+    var donor_overview_layer = top_donors_layer.layers[1];
+    var donor_text_layer = top_donors_layer.layers[2];
 
     // Title line, e.g. "DONORS (2025-2026)"
     write(donor_title_layer, rep_info['donor_title']);
 
-    addme = write_temp(rep_info['top_donors_hdr'])
-    write_bulleted_list_with_pretext(donor_text_layer, rep_info['top_donors'], addme);
+    write(donor_overview_layer, rep_info['top_donors_hdr'])
+    //addme = write_temp(rep_info['top_donors_hdr'])
+    write_bulleted_list(donor_text_layer, rep_info['top_donors']);
 
 
     /*donor_text_layer.textItem.kind = TextType.POINTTEXT;
@@ -746,8 +743,8 @@ function fill_top_donors(top_donors_layer, rep_info) {
     
     // 2. Set your strict bounding box boundaries (use UnitValue for safety)
     // Adjust these pixel values to perfectly fit your trading card layout dimensions
-    donor_text_layer.textItem.width = new UnitValue(450, "px"); 
-    donor_text_layer.textItem.height = new UnitValue(200, "px");
+    donor_text_layer.textItem.width = new UnitValue(300, "px"); 
+    donor_text_layer.textItem.height = new UnitValue(300, "px");
 
     // 3. Keep your tight baseline formatting
     donor_text_layer.textItem.leading = 7;
@@ -794,7 +791,7 @@ if (template_file.exists) {
     app.preferences.rulerUnits = Units.PIXELS;
 
     var toplayer = doc.layers[0]; //Republican-House_Senate_Gov-Social
-    var toplayer = toplayer.layers[0]; //MASTER FOLDER
+    //var toplayer = toplayer.layers[0]; //MASTER FOLDER
     var layerNames = [];
 
     var lines_layer = toplayer.layers.getByName("Divider Lines");
@@ -805,9 +802,7 @@ if (template_file.exists) {
 
     var name_and_info_layer = toplayer.layers.getByName("NAME+INFO ");
     name_and_title(name_and_info_layer, rep_info);
-    if (education_size > 1) {
-        raise_bio_section(toplayer);
-    }
+
 
 
     var statbar_layer = toplayer.layers.getByName("Stat Bars");
