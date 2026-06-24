@@ -8,6 +8,7 @@ import time
 import argparse
 import sys
 import atexit
+from datetime import date
 
 sys.stdout.reconfigure(line_buffering=True)
 
@@ -115,7 +116,7 @@ def get_bill_details(api_key, congress, bill_type, bill_number):
 
 
 
-def get_congress_members(api_key, congress=None, chamber=None, limit_per_page=250, max_members=None, sort="lastNameAsc"):
+def get_congress_members(api_key, current=True, limit_per_page=250, max_members=None, sort="lastNameAsc"):
     """
     Fetches a list of members of Congress from the Congress.gov API, with pagination,
     and returns the collected data as a JSON formatted string.
@@ -149,10 +150,8 @@ def get_congress_members(api_key, congress=None, chamber=None, limit_per_page=25
         "sort": sort
     }
 
-    if congress:
-        params["congress"] = congress
-    if chamber:
-        params["chamber"] = chamber
+    if current:
+        params['currentMember'] = "true"
 
     while True:
         try:
@@ -219,6 +218,114 @@ def get_congress_members(api_key, congress=None, chamber=None, limit_per_page=25
     return all_members_data # indent=2 for pretty printing
 
 
+
+def get_congress_members_by_congress(api_key, congress=None, limit_per_page=250, max_members=None, sort="lastNameAsc"):
+    """
+    Fetches a list of members of Congress from the Congress.gov API, with pagination,
+    and returns the collected data as a JSON formatted string.
+
+    Args:
+        congress (str, optional): The Congress number (e.g., "118"). If None,
+                                  returns members from the current/latest Congress.
+        chamber (str, optional): The chamber ("house" or "senate"). If None,
+                                 returns members from both chambers for the specified congress.
+        limit_per_page (int): Number of results to request per page (max 250 for this API).
+        max_members (int, optional): The maximum number of members to fetch. If None,
+                                     fetches all available members matching criteria.
+        sort (str): How to sort the results. Common values:
+                    "lastNameAsc", "lastNameDesc", "firstNameAsc", "firstNameDesc",
+                    "birthDateAsc", "birthDateDesc".
+
+    Returns:
+        str: A JSON formatted string representing a list of member dictionaries.
+             Returns an empty JSON array string "[]" if no data is found or an error occurs.
+    """
+    endpoint = "member/congress"
+    all_members_data = []
+    current_offset = 0
+
+    # Initial parameters
+    params = {
+        "api_key": api_key,
+        "format": "json",
+        "limit": limit_per_page,
+        "offset": current_offset,
+        "sort": sort
+    }
+
+
+    while True:
+        try:
+            print(f"Fetching members from offset: {current_offset} (Limit: {limit_per_page})")
+            response = requests.get(f"{BASE_URL}{endpoint}/{congress}", headers=HEADERS, params=params)
+            response.raise_for_status() # Raise an exception for HTTP errors (4xx or 5xx)
+
+            data = response.json()
+
+            if 'members' in data and isinstance(data['members'], list):
+                new_members = data['members']
+                print(f"  - Got {len(new_members)} members from this page.")
+
+                # Add new members to the list
+                all_members_data.extend(new_members)
+
+                # Check if we've hit the max_members limit
+                if max_members is not None and len(all_members_data) >= max_members:
+                    print(f"  - Reached max_members limit ({max_members}). Stopping.")
+                    break
+
+                # Check for pagination:
+                pagination_info = data.get('pagination', {})
+                if 'next' in pagination_info and pagination_info['next']:
+                    current_offset += limit_per_page
+                    params['offset'] = current_offset
+                    time.sleep(RATE_LIMIT_DELAY_SECONDS)
+                else:
+                    print("  - No 'next' page indicated. All members fetched for this query.")
+                    break # No more pages
+
+            else:
+                print("No 'members' key found in API response or invalid format. Ending pagination.")
+                break
+
+        except requests.exceptions.HTTPError as e:
+            print(f"gen_reps_json.get_congress_members HTTP Error: {e.response.status_code} - {e.response.text}")
+            if e.response.status_code == 429: # Too Many Requests
+                print("Rate limit hit. Exiting.")
+            raise e
+        except requests.exceptions.ConnectionError as e:
+            print(f"gen_reps_json.get_congress_members Connection Error: {e}")
+            raise e
+        except requests.exceptions.Timeout as e:
+            print(f"gen_reps_json.get_congress_members Timeout Error: {e}")
+            raise e
+        except requests.exceptions.RequestException as e:
+            print(f"gen_reps_json.get_congress_members An unexpected error occurred: {e}")
+            raise e
+        except json.JSONDecodeError as e:
+            print(f"gen_reps_json.get_congress_members Error decoding JSON response: {e}")
+            raise e
+        except Exception as e:
+            print(f"gen_reps_json.get_congress_members An unhandled error occurred: {e}")
+            raise e
+
+    # If max_members was specified, truncate the list
+    if max_members is not None and len(all_members_data) > max_members:
+        all_members_data = all_members_data[:max_members]
+
+    print(f"\n--- Total members fetched: {len(all_members_data)} ---")
+
+    # Convert the list of dictionaries to a JSON string
+    return all_members_data # indent=2 for pretty printing
+
+
+def get_current_congress():
+    """Convert current year to determine which congress we're in"""
+    year = date.today().year
+    congress = (year - 1787) / 2
+    return int(congress)
+
+
 def flatten_user_terms(users_list):
     """
     The input is a list, with each entry a dictionary (with a dictionary inside). 
@@ -280,7 +387,7 @@ def gen_reps_json(api_key, generated_outputs):
     Use the output of this to generate the dataframe to merge with voting records.
     Only needs to be run when there is a change in representatives
     """
-    members_dict = get_congress_members(api_key)
+    members_dict = get_congress_members(api_key, current=True)
     members_json = flatten_user_terms(members_dict)
 
     congressmen_json = os.path.join(generated_outputs, "congressmen.json")

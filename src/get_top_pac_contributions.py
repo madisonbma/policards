@@ -16,8 +16,7 @@ import requests
 
 BASE_URL = "https://api.open.fec.gov"
 
-debug = True
-use_refund = False
+debug = False
 
 # ---------------------------------------------------------------------------
 # Name matching
@@ -340,6 +339,7 @@ def get_candidates_and_committees(session: requests.Session, office: str, cycle:
         'per_page': 100,
         'office': office,
         'is_active_candidate': "true",
+        'candidate_status': "C",
         'incumbent_challenge': "I"
     }
     return get_all_pages_numbered(session, f"/v1/candidates/search/", params, "house_candidates")
@@ -357,42 +357,72 @@ def cross_reference(fec_data, bioguide_data, cycle):
         if len(name_array) > 2:
             print(f"UHOH name {fec_person['name']} does not follow Last, First")
         else:
-            fec_last = name_array[0].replace("-", " ").replace("'", "").split(" ")[-1].upper()
-            fec_first = name_array[1].split(" ")[0].upper()
+            fec_last_array = name_array[0].upper().replace("-", " ").replace("'", "").split(" ")
+            fec_first_array = name_array[1].upper().replace("-", " ").replace("'", "").split(" ")
             appended_person = False
             for bio_person in bioguide_data:
                 append_person = False
+                state_match = False
+                party_match = False
+                name_match = False
+
+                if STATE_NAME_TO_CODE.get(bio_person['state'], None) == fec_person['state']:
+                    state_match = True
+
+                if fec_person['party']=="UNK":
+                    party_match = True
+                elif bio_person['partyName'][0] == "D":
+                    if fec_person['party'][0]=="D": #D
+                        party_match = True
+                elif bio_person['partyName'][0] == "R":
+                    if fec_person['party'][0]=="R": #R
+                        party_match = True
+                else: #I
+                    if not fec_person['party'][0].startswith(("D", "R")):
+                        party_match = True
+                
                 bioname = convert_to_ascii(bio_person['name'])
                 bioname_array = bioname.split(', ')
-                bio_last = bioname_array[0].replace("-", " ").replace("'", "").split(" ")[-1].upper()
-                bio_first = bioname_array[1].split(" ")[0].upper()
-
-                if fec_last == bio_last:
-                    if fec_first == bio_first:
-                        append_person = True
-                    elif STATE_NAME_TO_CODE.get(bio_person['state'], None) == fec_person['state']:
+                bio_last_array = bioname_array[0].upper().replace("-", " ").replace("'", "").split(" ")
+                bio_first_array = bioname_array[1].upper().replace("-", " ").replace("'", "").split(" ")
+                
+                first_match = set(bio_first_array) & set(fec_first_array)
+                last_match = set(bio_last_array) & set(fec_last_array)
+                if first_match and last_match:
+                    name_match = True
+                elif last_match:
+                    if bio_last_array == fec_last_array:
+                        if state_match and party_match:
+                            name_match = True
+                    else:
+                        print(f"Last name too long, can't use approx matching: {fec_person['name']} and {bioname}")
+                if name_match:
+                    if state_match and party_match:
                         append_person = True
                     else:
-                        append_person = False
+                        print(f"Names matched but party and state didn't: {bioname}")
+                        print(f"  - {bio_person['state']} {fec_person['state']} | {bio_person['partyName']} {fec_person['party']}")
                     
-                    if append_person:
-                        appended_person = True
-                        if len(fec_person['principal_committees'])>1:
-                            committee_list = []
-                            for comm in fec_person['principal_committees']:
-                                if cycle in comm['cycles']:
-                                    committee_list.append(comm['committee_id'])
-                                    #print(f" - Committee {comm['committee_id']} for {fec_person['name']} in cycle {cycle}")
-                        else:
-                            committee_list = [fec_person['principal_committees'][0]['committee_id']]
-                        people_map[bio_person['bioguideID']] = {
-                            "candidate_id": fec_person['candidate_id'],
-                            "committee_id": committee_list,
-                            "district_number": fec_person['district']
-                        }
-                        break
+                if append_person:
+                    appended_person = True
+                    print(f"Matched {bioname} to {fec_person['name']}")
+                    if len(fec_person['principal_committees'])>1:
+                        committee_list = []
+                        for comm in fec_person['principal_committees']:
+                            if cycle in comm['cycles']:
+                                committee_list.append(comm['committee_id'])
+                                #print(f" - Committee {comm['committee_id']} for {fec_person['name']} in cycle {cycle}")
+                    else:
+                        committee_list = [fec_person['principal_committees'][0]['committee_id']]
+                    people_map[bio_person['bioguideID']] = {
+                        "candidate_id": fec_person['candidate_id'],
+                        "committee_id": committee_list,
+                        "district_number": fec_person['district']
+                    }
+                    break
             if appended_person == False:
-                print(f"Could not find a match for {fec_person['name']} in bioguide data.")
+                print(f"Could not find a match for {fec_person['name']} in bioguide data. This person is"
+                      "likely not running again or died.")
     
     return people_map
 
@@ -950,14 +980,7 @@ def get_csv_data(url, form_type, cycle, refund_data, individual_data, pac_data):
             
             print(f"=== Processing F3 {url} ===")
 
-            if use_refund:
-                get_refund_data(csv_for_cycle, refund_data, cycle)
-                #print(refund_data)
-                process_form(csv_for_cycle, individual_data, pac_data, refund_data, cycle)
-                refund_data = clean_refund_data(refund_data)
-
-            else:
-                process_form_no_refund(csv_for_cycle, individual_data, pac_data, cycle)
+            process_form_no_refund(csv_for_cycle, individual_data, pac_data, cycle)
 
             return csv_for_cycle
         
@@ -1998,8 +2021,8 @@ def main2():
 
     # ── Step 0: get PAC and ind totals ─────────────────────────
     if bioguide_map.get(args.bioguide_id) is None:
-        print(f"Error: bioguide_id {args.bioguide_id} not found in bioguide map. Please check the bioguide_id and cycle, and ensure the candidate is running in that cycle.")
-        return
+        raise Exception("Error: bioguide_id {args.bioguide_id} not found in bioguide map."
+                "Please check the bioguide_id and cycle, and ensure the candidate is running in that cycle.")
     
     candidate_id = bioguide_map[args.bioguide_id]["candidate_id"]
     #totals_dict = fetch_totals(session, candidate_id, args.cycle)

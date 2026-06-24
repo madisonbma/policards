@@ -2,9 +2,10 @@ pyinstaller --onefile --noconfirm src/gen_reps_json.py && cp dist/gen_reps_json.
 pyinstaller --onefile --noconfirm src/gen_voting_record_json.py && cp dist/gen_voting_record_json.exe resources/bin/win/;
 pyinstaller --onefile --noconfirm --paths src src/combine_data.py && cp dist/combine_data.exe resources/bin/win/;
 pyinstaller --onefile --noconfirm src/gen_temp_for_javascript.py && cp dist/gen_temp_for_javascript.exe resources/bin/win/;
-
+pyinstaller --onefile --noconfirm src/get_top_pac_contributions.py && cp dist/get_top_pac_contributions.exe resources/bin/win/;
 
 python3.14 -m PyInstaller --onefile --noconfirm src/gen_reps_json.py && cp dist/gen_reps_json resources/bin/mac/;
 python3.14 -m PyInstaller --onefile --noconfirm src/gen_voting_record_json.py && cp dist/gen_voting_record_json resources/bin/mac/;
 python3.14 -m PyInstaller --onefile --noconfirm --paths src src/combine_data.py && cp dist/combine_data resources/bin/mac/;
 python3.14 -m PyInstaller --onefile --noconfirm src/gen_temp_for_javascript.py && cp dist/gen_temp_for_javascript resources/bin/mac/;
+python3.14 -m PyInstaller --onefile --noconfirm src/get_top_pac_contributions.py && cp dist/get_top_pac_contributions resources/bin/mac/;
