@@ -1,12 +1,24 @@
 const { dialog, app, BrowserWindow, ipcMain, nativeImage } = require('electron');
 const path = require('path');
+const os = require('os');
 const { exec } = require('child_process');
 const fs = require('fs');
-const fsPromises = fs.promises; 
+const fsPromises = fs.promises;
 
 
 const isDev = process.env.NODE_ENV !== 'production';
 const debug = false;
+
+// Exit code the top-donors script returns when the bioguide_id can't be resolved.
+// Keep in sync with BIOGUIDE_NOT_FOUND_EXIT in src/get_top_pac_contributions.py.
+// On this code we offer manual candidate-code entry instead of a generic failure.
+const BIOGUIDE_NOT_FOUND_EXIT = 42;
+
+// The top-donors script writes its [overview, {company: amount}] result here so we can
+// read it back and store it ONLY in the supplement (no duplicate copy in appData). It's
+// a throwaway handoff file in the OS temp dir, deleted after every run -- so the name is
+// fixed (runs are sequential; one python process at a time) rather than uniquified.
+const contributionTmpPath = path.join(os.tmpdir(), 'pp_contribution_data.json');
 
 let mainWindow;
 let updateWindow;
@@ -287,7 +299,9 @@ function runPythonScriptAndStream(scriptName, args, sender) {
           resolve(); 
         } else {
           console.error(`Python Error Output:\n${errorData}`);
-          reject(new Error(`${scriptName} failed (Code ${code}).\nDetails: ${errorData}`));
+          const err = new Error(`${scriptName} failed (Code ${code}).\nDetails: ${errorData}`);
+          err.code = code; // surface the exit code so callers can branch on it
+          reject(err);
         }
       });
 
@@ -623,8 +637,31 @@ ipcMain.handle('gen-card', async (_event, name) => {
   }
 });
 
+// Read the throwaway contribution_data file the top-donors script wrote at `outPath`
+// and shape it into the { success, top_donors:[overview, top20] } payload the renderer
+// expects. The caller owns the temp file's lifecycle (deletes it after).
+function readTopDonorsOutput(outPath) {
+  if (!fs.existsSync(outPath)) {
+    throw new Error(`Top-donor output not found at ${outPath}`);
+  }
+  const parsed = JSON.parse(fs.readFileSync(outPath, 'utf8'));
+  const overview = parsed[0] || {};
+  const donors = parsed[1] || {};
+
+  // Top 20 by amount (script already sorts descending; sort again defensively)
+  const top20 = Object.fromEntries(
+    Object.entries(donors).sort((a, b) => b[1] - a[1]).slice(0, 20)
+  );
+  overview.generated_at = new Date().toISOString();
+
+  return { success: true, top_donors: [overview, top20] };
+}
+
 // Run the FEC top-donors exe for one representative, stream output to the terminal,
 // and return [overview, {top 20 company: amount}] (with a generated_at timestamp).
+// The result is read from a temp file and stored only in the supplement (the renderer
+// does that) -- no duplicate copy in appData. If the bioguide can't be resolved (exit
+// code 42), return needsManualEntry so the renderer can prompt for a candidate code.
 ipcMain.handle('get-top-donors', async (event, bioguideId, name) => {
   try {
     const fecKey = config['FEC_API_KEY'];
@@ -638,28 +675,53 @@ ipcMain.handle('get-top-donors', async (event, bioguideId, name) => {
       '--bioguide-id', bioguideId,
       '--cycle', cycle,
       '--generated-outputs', generated_outputs,
+      '--output-path', contributionTmpPath,
     ];
 
     await runPythonScriptAndStream('get_top_pac_contributions', args, event.sender);
 
-    // The script writes a deterministic, bioguide-keyed file: [overview, {company: amount}]
-    const outPath = path.join(generated_outputs, `${bioguideId}_contribution_data.json`);
-    if (!fs.existsSync(outPath)) {
-      throw new Error(`Top-donor output not found at ${outPath}`);
+    return readTopDonorsOutput(contributionTmpPath);
+  } catch (error) {
+    if (error && error.code === BIOGUIDE_NOT_FOUND_EXIT) {
+      return { success: false, needsManualEntry: true, message: error.toString() };
     }
-    const parsed = JSON.parse(fs.readFileSync(outPath, 'utf8'));
-    const overview = parsed[0] || {};
-    const donors = parsed[1] || {};
+    return { success: false, message: error.toString() };
+  } finally {
+    await deleteFile(contributionTmpPath); // throwaway handoff file; clean up every run
+  }
+});
 
-    // Top 20 by amount (script already sorts descending; sort again defensively)
-    const top20 = Object.fromEntries(
-      Object.entries(donors).sort((a, b) => b[1] - a[1]).slice(0, 20)
-    );
-    overview.generated_at = new Date().toISOString();
+// Manual fallback: the user supplies a candidate id directly (used when the bioguide
+// lookup failed). Runs the same exe in --candidate-id mode, which writes the same
+// throwaway output file we then read back.
+ipcMain.handle('get-top-donors-manual', async (event, candidateId) => {
+  try {
+    const fecKey = config['FEC_API_KEY'];
+    if (!fecKey || String(fecKey).trim() === "") {
+      return { success: false, message: "FEC_API_KEY is not set. Add it in the config window before fetching top donors." };
+    }
 
-    return { success: true, top_donors: [overview, top20] };
+    const candidate = String(candidateId || '').trim().toUpperCase();
+    if (!candidate) {
+      return { success: false, message: "Candidate code is required." };
+    }
+    const cycle = String(new Date().getFullYear()); // default cycle = current year
+
+    const args = [
+      '--api-key', fecKey,
+      '--candidate-id', candidate,
+      '--cycle', cycle,
+      '--generated-outputs', generated_outputs,
+      '--output-path', contributionTmpPath,
+    ];
+
+    await runPythonScriptAndStream('get_top_pac_contributions', args, event.sender);
+
+    return readTopDonorsOutput(contributionTmpPath);
   } catch (error) {
     return { success: false, message: error.toString() };
+  } finally {
+    await deleteFile(contributionTmpPath); // throwaway handoff file; clean up every run
   }
 });
 

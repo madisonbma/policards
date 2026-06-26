@@ -338,10 +338,11 @@ def get_candidates_and_committees(session: requests.Session, office: str, cycle:
         'cycle': cycle,
         'per_page': 100,
         'office': office,
-        'is_active_candidate': "true",
-        'candidate_status': "C",
-        'incumbent_challenge': "I"
+        'candidate_status': "C"
     }
+    #        'is_active_candidate': "true",
+    #        'incumbent_challenge': "I"
+
     return get_all_pages_numbered(session, f"/v1/candidates/search/", params, "house_candidates")
 
 
@@ -352,79 +353,90 @@ def get_candidates_and_committees(session: requests.Session, office: str, cycle:
 def cross_reference(fec_data, bioguide_data, cycle):
     #'name', 'party', 'state'. if match, take "candidate_id" and "district_number"
     people_map = {}
-    for fec_person in fec_data:
-        name_array = fec_person['name'].split(', ')
-        if len(name_array) > 2:
-            print(f"UHOH name {fec_person['name']} does not follow Last, First")
-        else:
+    failed = []
+    for bio_person in bioguide_data:
+        bioname = convert_to_ascii(bio_person['name'])
+        bioname_array = bioname.split(', ')
+        bio_last_array = bioname_array[0].upper().replace("-", " ").replace("'", "").split(" ")
+        bio_first_array = bioname_array[1].upper().replace("-", " ").replace("'", "").split(" ")
+        
+        appended_person = False
+        
+        for fec_person in fec_data:
+            append_person = False
+            state_match = False
+            party_match = False
+            name_match = False
+
+            if STATE_NAME_TO_CODE.get(bio_person['state'], None) == fec_person['state']:
+                state_match = True
+
+            if fec_person.get('party') is None:
+                party_match = True
+            elif fec_person['party'].startswith("UN"):
+                party_match = True
+            elif bio_person['partyName'][0] == "D":
+                if fec_person['party'][0]=="D": #D
+                    party_match = True
+            elif bio_person['partyName'][0] == "R":
+                if fec_person['party'][0]=="R": #R
+                    party_match = True
+            else: #I
+                if not fec_person['party'][0].startswith(("D", "R")):
+                    party_match = True
+            
+            if fec_person.get('name') is None:
+                continue
+
+            name_array = fec_person['name'].split(', ')
+            if len(name_array) == 1:
+                #Typoed and didn't do the comma probably
+                name_array = fec_person['name'].split(" ")
+
             fec_last_array = name_array[0].upper().replace("-", " ").replace("'", "").split(" ")
             fec_first_array = name_array[1].upper().replace("-", " ").replace("'", "").split(" ")
-            appended_person = False
-            for bio_person in bioguide_data:
-                append_person = False
-                state_match = False
-                party_match = False
-                name_match = False
 
-                if STATE_NAME_TO_CODE.get(bio_person['state'], None) == fec_person['state']:
-                    state_match = True
-
-                if fec_person['party']=="UNK":
-                    party_match = True
-                elif bio_person['partyName'][0] == "D":
-                    if fec_person['party'][0]=="D": #D
-                        party_match = True
-                elif bio_person['partyName'][0] == "R":
-                    if fec_person['party'][0]=="R": #R
-                        party_match = True
-                else: #I
-                    if not fec_person['party'][0].startswith(("D", "R")):
-                        party_match = True
-                
-                bioname = convert_to_ascii(bio_person['name'])
-                bioname_array = bioname.split(', ')
-                bio_last_array = bioname_array[0].upper().replace("-", " ").replace("'", "").split(" ")
-                bio_first_array = bioname_array[1].upper().replace("-", " ").replace("'", "").split(" ")
-                
-                first_match = set(bio_first_array) & set(fec_first_array)
-                last_match = set(bio_last_array) & set(fec_last_array)
-                if first_match and last_match:
-                    name_match = True
-                elif last_match:
-                    if bio_last_array == fec_last_array:
-                        if state_match and party_match:
-                            name_match = True
-                    else:
-                        print(f"Last name too long, can't use approx matching: {fec_person['name']} and {bioname}")
-                if name_match:
+            first_match = set(bio_first_array) & set(fec_first_array)
+            last_match = set(bio_last_array) & set(fec_last_array)
+            if first_match and last_match:
+                name_match = True
+            elif last_match:
+                if bio_last_array == fec_last_array:
                     if state_match and party_match:
-                        append_person = True
-                    else:
-                        print(f"Names matched but party and state didn't: {bioname}")
-                        print(f"  - {bio_person['state']} {fec_person['state']} | {bio_person['partyName']} {fec_person['party']}")
-                    
-                if append_person:
-                    appended_person = True
-                    print(f"Matched {bioname} to {fec_person['name']}")
-                    if len(fec_person['principal_committees'])>1:
-                        committee_list = []
-                        for comm in fec_person['principal_committees']:
-                            if cycle in comm['cycles']:
-                                committee_list.append(comm['committee_id'])
-                                #print(f" - Committee {comm['committee_id']} for {fec_person['name']} in cycle {cycle}")
-                    else:
-                        committee_list = [fec_person['principal_committees'][0]['committee_id']]
-                    people_map[bio_person['bioguideID']] = {
-                        "candidate_id": fec_person['candidate_id'],
-                        "committee_id": committee_list,
-                        "district_number": fec_person['district']
-                    }
-                    break
-            if appended_person == False:
-                print(f"Could not find a match for {fec_person['name']} in bioguide data. This person is"
-                      "likely not running again or died.")
+                        name_match = True
+                            
+            if name_match:
+                if state_match and party_match:
+                    append_person = True
+                else:
+                    print(f"Names matched but party and state didn't: {bioname}")
+                    print(f"  - {bio_person['state']} {fec_person['state']} | {bio_person['partyName']} {fec_person['party']}")
+                
+            if append_person:
+                appended_person = True
+                #print(f"Matched {bioname} to {fec_person['name']}")
+                if len(fec_person['principal_committees'])>1:
+                    committee_list = []
+                    for comm in fec_person['principal_committees']:
+                        if cycle in comm['cycles']:
+                            committee_list.append(comm['committee_id'])
+                            #print(f" - Committee {comm['committee_id']} for {fec_person['name']} in cycle {cycle}")
+                else:
+                    committee_list = [fec_person['principal_committees'][0]['committee_id']]
+                people_map[bio_person['bioguideID']] = {
+                    "candidate_id": fec_person['candidate_id'],
+                    "committee_id": committee_list,
+                    "district_number": fec_person['district']
+                }
+                break
+        if not appended_person:
+            print(f"Could not find a match for {bio_person['name']} in FEC data. This person is "
+                    "likely not running again or died.")
+            failed.append(bio_person['bioguideID'])
+        else:
+            continue
     
-    return people_map
+    return people_map, failed
 
 
 ######################################################
@@ -630,9 +642,85 @@ def fetch_filing_csv(filings_report, cycle, generated_outputs):
     return final_data
     
 
+def merge_families(individual_data):
+    """
+    Collapse the per-person records produced by match_or_add_person into family
+    HOUSEHOLDS, reusing the family-merge heuristics from the original
+    factor_in_family_for_contribution_once (same-person merging is already done upstream,
+    so it is skipped here).
+
+    For people sharing a last name (or a hyphenated component of it) at one address:
+      * an unemployed member's contribution is folded into the household,
+      * an employed member is folded into an otherwise-unemployed household (taking its
+        employer) -- and unlike the original, their contribution IS added (bug fix),
+      * a couple at the SAME employer is folded together (longer spelling kept),
+      * a couple at DIFFERENT employers is kept as separate households.
+
+    Each person's employer is their latest-date COMPANIES[0]; people with a job history
+    (len(COMPANIES) > 1) are logged. Returns a NEW {address: [household, ...]} mapping of
+    households shaped { LAST_NAME, NAMES, COMPANIES, CONTRIBUTIONS } for consolidation.
+    """
+    def related(last_name, h_last):
+        if last_name == h_last:
+            return True
+        if "-" in last_name:
+            return any(part and part in h_last for part in last_name.split("-"))
+        return False
+
+    merged = {}
+    for address, persons in individual_data.items():
+        households = []
+        for person in persons:
+            last_name = person["LAST_NAME"]
+            companies = person["COMPANIES"]
+            if len(companies) > 1:
+                print(f"Person with multiple jobs at {address}: {person['NAMES']} "
+                      f"{companies} -> using latest '{companies[0]}'.")
+            job = companies[0] if companies else ""   # latest-date employer
+            contribution = person["CONTRIBUTIONS"]
+            names = list(person["NAMES"])
+
+            placed = False
+            for h in households:
+                if not related(last_name, h["LAST_NAME"]):
+                    continue
+                if not job:
+                    # incoming unemployed -> fold into the household
+                    h["CONTRIBUTIONS"] += contribution
+                    h["NAMES"].extend(names)
+                    placed = True
+                    break
+                if not h["COMPANIES"]:
+                    # household was unemployed -> take this earner's employer (and, unlike
+                    # the original, add their contribution too).
+                    h["COMPANIES"] = [job]
+                    h["CONTRIBUTIONS"] += contribution
+                    h["NAMES"].extend(names)
+                    placed = True
+                    break
+                if same_company(job, h["COMPANIES"][0]):
+                    # couple at the same employer -> fold; keep the longer spelling.
+                    if len(job) > len(h["COMPANIES"][0]):
+                        h["COMPANIES"][0] = job
+                    h["CONTRIBUTIONS"] += contribution
+                    h["NAMES"].extend(names)
+                    placed = True
+                    break
+                # employed at a DIFFERENT employer -> keep separate; try next household.
+            if not placed:
+                households.append({
+                    "LAST_NAME": last_name,
+                    "NAMES": names,
+                    "COMPANIES": [job] if job else [],
+                    "CONTRIBUTIONS": contribution,
+                })
+        merged[address] = households
+    return merged
+
+
 def consolidate_contribution_data(individual_data, pac_data):
     """
-    Contribution_data should look like this: 
+    Contribution_data should look like this:
 
     1234 5th St: [
         {SURNAME: greene,
@@ -670,6 +758,21 @@ def consolidate_contribution_data(individual_data, pac_data):
 
     ***If COMPANIES len==0, then they're excluded (unemployed or self-employed).
     """
+    # ── Step 1: collapse each person's signed total (SA aggregate + any net refund) ──
+    # match_or_add_person stored the most-recent-dated SA aggregate in CONTRIBUTION and any
+    # leftover refund (for people we never saw an SA from) in SB_REFUND; fold them into the
+    # single CONTRIBUTIONS field the family-merge + consolidation logic works with.
+    for address, persons in individual_data.items():
+        for person in persons:
+            person["CONTRIBUTIONS"] = (person.get("CONTRIBUTION") or 0) + (person.get("SB_REFUND") or 0)
+            if person["CONTRIBUTIONS"] < 0:
+                print(f"NOTE: net-negative contribution for {person['NAMES']} "
+                      f"{person['LAST_NAME']} at {address}: ${person['CONTRIBUTIONS']:,.2f} "
+                      f"(aggregate {person.get('CONTRIBUTION')}, refund {person.get('SB_REFUND')}).")
+
+    # ── Step 2: merge family members at each address into households ─────────────────
+    individual_data = merge_families(individual_data)
+
     final_data = {}
 
     # ── Reconciliation bookkeeping ────────────────────────────────────────────
@@ -677,8 +780,7 @@ def consolidate_contribution_data(individual_data, pac_data):
     #                           (i.e. what the "count each donor once" logic decided
     #                            to keep). This is the money going INTO consolidation.
     # individual_output_total = the dollars we actually write into final_data below.
-    # If these drift apart, money was dropped while bucketing households into
-    # companies (the most likely culprit is the multi-company couple branch).
+    # If these drift apart, money was dropped while bucketing households into companies.
     individual_input_total = sum(
         household["CONTRIBUTIONS"]
         for households in individual_data.values()
@@ -694,28 +796,10 @@ def consolidate_contribution_data(individual_data, pac_data):
             #print(list(v))
 
         for household in v:
-            #if len(household['NAMES'])>1:
-            #    print(f"Household pre-merged: {household["NAMES"]}, {household["COMPANIES"]}")
-
-            if len(household['COMPANIES'])>1:
-                print("MORE THAN ONE COMPANY FOR THIS COUPLE:",
-                        household['NAMES'],"-", household["COMPANIES"])
-                str1 = household["COMPANIES"][0]
-                str2 = household["COMPANIES"][1]
-                similarity_score = fuzz.ratio(str1.upper(), str2.upper())
-                if similarity_score > 60:
-                    if similarity_score != 100:
-                        print(f"Similarity {str1} to {str2}: {similarity_score:.2f}% > 60%. Merging.")
-                    final_data[str1] = final_data.get(str1, 0) + household["CONTRIBUTIONS"]
-                    individual_output_total += household["CONTRIBUTIONS"]
-                else:
-                    # NOTE: this branch currently drops the household's contribution
-                    # entirely (it is never added to final_data). The reconciliation
-                    # check below will surface the dropped amount.
-                    print(f"Similarity {str1} to {str2}: {similarity_score:.2f}% <= 60%. "
-                          f"DROPPING ${household['CONTRIBUTIONS']:,.2f} (not added to any company).")
-
-            elif len(household["COMPANIES"]) == 0:
+            # merge_families normalizes every household to <= 1 company (an unemployed
+            # household -> [], otherwise the latest-date employer), so we only handle the
+            # no-company and single-company cases here.
+            if len(household["COMPANIES"]) == 0:
                 #print("All members of household undisclosed.")
                 final_data["Undisclosed"] = final_data.get("Undisclosed", 0) + household['CONTRIBUTIONS']
                 individual_output_total += household["CONTRIBUTIONS"]
@@ -1224,6 +1308,12 @@ def apply_signed(store, key, delta):
     if cur is None:
         store[key] = delta
         #print(f"Added: {key}: {delta}")
+    elif isinstance(cur, dict):
+        # Structural collision: this key holds a committee bucket, not a scalar total, so
+        # the scalar netting below would crash ('dict < int'). The root cause is keying a
+        # name and a committee bucket to the same slot; warn rather than abort the run.
+        print(f"WARNING: apply_signed skipped {key!r} (delta {delta}): key holds a "
+              f"committee bucket, not a scalar total.")
     elif cur < 0:
         store[key] = cur + delta
         #print(f"Updated {key}: {cur} -> {cur + delta}")
@@ -1251,8 +1341,17 @@ def refund_for_pac(row, pac_data, refund_amount):
     elif row[25].startswith("C"):
         committee_id = row[25]
     else:
-        print(f"Could not find committee_id, using name {row[6]} for {row}")
-        committee_id = row[6]
+        # No real committee code -> treat as an ORG entry keyed by NAME at the top level,
+        # exactly like the ORG contribution path (apply_signed(pac_data, name, ...)).
+        # Using row[6] as the committee_id here previously created a DICT under a name key,
+        # which never netted against the scalar name-keyed contribution AND crashed
+        # apply_signed later with 'dict < int' when that name was hit as a top-level value.
+        if row[5].upper() in ["COM", "ORG"]:
+            #COM/ORG doesn't have committee id
+            committee_id = None
+        else:
+            print(f"Could not find committee_id for {name} ({row[5]}); keying refund by name at top level.")
+            committee_id = None
     delta = -refund_amount
 
     # Net into the existing entry wherever it lives: committee-keyed under its own id,
@@ -1276,6 +1375,96 @@ def refund_for_pac(row, pac_data, refund_amount):
     else:
         apply_signed(pac_data, name, delta)
 
+
+def check_row_format(row):
+    """
+    Validate that an SA11*/SA12/SB20* row has the columns we rely on, in the shape we
+    expect, before process_form_no_refund consumes it.
+
+    Returns True if the row is well-formed and should be processed; False if it should be
+    skipped -- either a known no-op (an SA11/SA12 with an empty aggregate row[21], which
+    is just money moving around) or a malformed row (a warning is printed so the bad row
+    is visible rather than silently miscounted or crashing a later float() call).
+
+    Column expectations (per row type):
+      17  cycle, [PGS]####            18  empty or any string (vacuous, not checked)
+      19  8 digits (date)             20  contribution/refund, float-convertible
+      21  aggregate, float (SA11/12)  25/24  C######## or empty (committee id)
+      26  name string (fallback 6)
+    """
+    form = row[0].upper() if row else ""
+
+    def col(i):
+        return row[i] if i < len(row) else ""
+
+    def is_cycle(s):
+        return bool(re.fullmatch(r"[PGSO]\d{4}", s))
+
+    def is_8_digits(s):
+        return bool(re.fullmatch(r"\d{8}", s))
+
+    def is_float(s):
+        try:
+            float(s)
+            return True
+        except (TypeError, ValueError):
+            return False
+
+    def is_committee_or_empty(s):
+        return s == "" or bool(re.fullmatch(r"C\d{8}", s))
+
+    problems = []
+
+    if form == "SA11D":
+        return True #skip SA11D, but do other SA11s
+    
+    if "SA11" in form or "SA12" in form:
+        # Shared by IND and non-IND (cols 17, 19, 20).
+        if not is_cycle(col(17)):
+            problems.append(f"col17 (cycle) not [PGSO]####: {col(17)!r}")
+        if not is_8_digits(col(19)):
+            problems.append(f"col19 (date) not 8 digits: {col(19)!r}")
+        if not is_float(col(20)):
+            problems.append(f"col20 (contribution) not float-convertible: {col(20)!r}")
+
+        # Aggregate (col 21): empty -> money moving around, skip (not an error).
+        if col(21) == "":
+            print("WARNING: No aggregate found.")
+            return False
+        if not is_float(col(21)):
+            problems.append(f"col21 (aggregate) not float-convertible: {col(21)!r}")
+
+        # Non-IND adds committee id + name fields (cols 25, 26 / fallback 6).
+        if col(5) != "IND":
+            if not is_committee_or_empty(col(25)):
+                problems.append(f"col25 (committee_id) not C######## or empty: {col(25)!r}")
+            if not col(26) and not col(6):
+                problems.append("name missing: neither col26 nor col6 is set")
+
+    elif "SB20" in form:
+        # Shared by IND and non-IND (cols 17, 19, 20). No aggregate (col 21) for refunds.
+        if not is_cycle(col(17)):
+            problems.append(f"col17 (cycle) not [PGS]####: {col(17)!r}")
+        if not is_8_digits(col(19)):
+            problems.append(f"col19 (date) not 8 digits: {col(19)!r}")
+        if not is_float(col(20)):
+            problems.append(f"col20 (refund) not float-convertible: {col(20)!r}")
+
+        # Non-IND refund carries the committee id in col 24.
+        if col(5) != "IND":
+            if not is_committee_or_empty(col(24)):
+                problems.append(f"col24 (committee_id) not C######## or empty: {col(24)!r}")
+
+    if problems:
+        print(f"WARNING: malformed {form} row [{col(5)}]: {'; '.join(problems)}")
+        print(row)
+        return False
+
+    return True
+
+
+
+
 def process_form_no_refund(csv_data, individual_data, pac_data, cycle):
     """
     ok so my current methodology sums everyone over their name.
@@ -1296,6 +1485,11 @@ def process_form_no_refund(csv_data, individual_data, pac_data, cycle):
     """
 
     form_version = csv_data[0][2]
+    if form_version not in ["8.5", "8.4", "8.3"]:
+        print(f"Unsupported form version: form_version")
+        return
+    
+
     for row in csv_data: 
         if row[0].upper() in ["HDR", "F6A", "F6N", "TEXT", "F3S"]:
             continue
@@ -1310,94 +1504,106 @@ def process_form_no_refund(csv_data, individual_data, pac_data, cycle):
             #pac_data['CAMPAIGN TOTAL'] = pac_data.get('CAMPAIGN TOTAL', 0) + net_contributions
             continue
 
+        row_ok = check_row_format(row)
+        if not row_ok:
+            continue
+
         if str(cycle) not in row[17] and "Special" not in row[18]: #only for current cycle
             continue
         
-        if form_version == "8.5" or form_version == "8.4" or form_version == "8.3":
-            if row[0].upper() == "SA11AI" or row[0].upper() == "SA11C" or row[0].upper() == "SA12": #itemized individual contributions
-                contribution = float(row[21]) #aggregate.
+        if row[0].upper() == "SA11AI" or row[0].upper() == "SA11C" or row[0].upper() == "SA12": #itemized individual contributions
+            contribution = float(row[21]) #aggregate.
 
-                if row[5] == "IND":
-                    factor_in_family_for_contribution_once(row, individual_data, contribution)
-                else:
-                    if row[26] != "":
-                        name = row[26].upper().replace("POLITICAL ACTION COMMITTEE", "PAC")
-                    elif row[6] != "":
-                        name = row[6].upper().replace("POLITICAL ACTION COMMITTEE", "PAC")    
-                    else:
-                        print(f"Missing name for SA11 contribution {row}, skipping.")
-                    
-                    #row[21] is the cumulative cycle-to-date aggregate (for a conduit
-                    #like ActBlue/WinRed it is the running CONDUIT TOTAL repeated on every
-                    #earmark row), so we keep one value (apply_signed: set once, never sum;
-                    #but net in any pending refund loaded earlier).
-                    if row[25] == "": #no committee ID -> merge on name (ORG/COM)
-                        apply_signed(pac_data, name, contribution)
-                    else: #committee id present -> merge on committee_id + name
-                        apply_signed(pac_data.setdefault(row[25], {}), name, contribution)
-            elif row[0].upper() == "SA11B":
-                contribution = float(row[21]) #aggregate
-                name = row[26].upper() if row[26] else row[6].upper()
-                committee_id = row[25]
-                if committee_id == "":
-                        print("Missing committee_id in SA11B party donation", name)
-                else:
-                    apply_signed(pac_data.setdefault(committee_id, {}), name, contribution)
-            elif row[0].upper() == "SA11D": #self-funded:
-                pass
-            elif row[0].upper() == "SA14": #offsets to operating expenditures - not direct contribution so skip
-                pass
-            elif row[0].upper() == "SA15": #misc indirect (interest, rebate, dividend) - not direct contribution so skip
-                pass
-            elif row[0].upper() == "SB17": #operating expenditures - spending, not contribution so skip
-                pass  
-            elif row[0].upper() == "SB18": #operating expenditures - spending, not contribution so skip
-                pass   
-            elif row[0].upper() == "SB20A":
-                #if the last thing they do is get refunded, this will be their most recent data. Add it only if 
-                # we haven't seen their name
-                contribution = float(row[20])
-
-                if row[5] == "IND":
-                    #refund: pass a NEGATIVE delta so factor_in_family loads/nets it as a
-                    #pending refund (it is applied when we reach their contribution).
-                    factor_in_family_for_contribution_once(row, individual_data, -contribution)
-                elif row[5] == "ORG":
-                    refund_for_pac(row, pac_data, contribution)
-                elif row[5] == "COM":
-                    refund_for_pac(row, pac_data, contribution)
-                else:
-                    print(f"Dont know what to do with non-IND SB20A: {row}")
-                    continue
-                
-            elif row[0].upper() == "SB20C": #refund data
-                #if the last thing they do is get refunded, this will be their most recent data. Add it only if 
-                # we haven't seen their name
-
-                contribution = float(row[20])
-                print(f"SB20C using 20: {contribution}")
-
-
-                if row[5] == "PAC":
-                    refund_for_pac(row, pac_data, contribution)
-                elif row[5] == "ORG":
-                    refund_for_pac(row, pac_data, contribution)
-                elif row[5] == "CCM":
-                    refund_for_pac(row, pac_data, contribution)
-
-                else:
-                    print(f"Dont know what to do with non-PAC SB20C: {row}")
-                    continue
-                
-            elif row[0].upper() == "SB21": #other disbursements, money given to other committees. not contribution skip
-                pass
-            elif row[0].upper() == "SD10": #debts. skip
-                pass
+            if row[5] == "IND":
+                #SA aggregate row[21] as of contribution_date row[19]; matcher keeps the
+                #most-recent-dated aggregate per person.
+                match_or_add_person(row, individual_data, contribution, row[19])
             else:
-                print("Unknown row type in version 8.5:", row[0])
-    
+                if row[26] != "":
+                    #name = re.sub(re.escape("political action committee"), "PAC", row[26], flags=re.IGNORECASE)
+                    name = row[26].upper().replace("POLITICAL ACTION COMMITTEE", "PAC")
+                elif row[6] != "":
+                    name = row[6].upper().replace("POLITICAL ACTION COMMITTEE", "PAC")    
+                else:
+                    print(f"Missing name for SA11 contribution {row}, skipping.")
+                
+                #row[21] is the cumulative cycle-to-date aggregate (for a conduit
+                #like ActBlue/WinRed it is the running CONDUIT TOTAL repeated on every
+                #earmark row), so we keep one value (apply_signed: set once, never sum;
+                #but net in any pending refund loaded earlier).
+                if row[25] == "": #no committee ID -> merge on name (ORG/COM)
+                    apply_signed(pac_data, name, contribution)
+                else: #committee id present -> merge on committee_id + name
+                    apply_signed(pac_data.setdefault(row[25], {}), name, contribution)
+        elif row[0].upper() == "SA11B":
+            if row[21] == '':
+                print(f"Row formatted weird: {row}")
+                contribution = float(row[20])
+            else:
+                contribution = float(row[21]) #aggregate
+            name = row[26].upper() if row[26] else row[6].upper()
+            committee_id = row[25]
+            if committee_id == "":
+                    print("Missing committee_id in SA11B party donation", name)
+            else:
+                apply_signed(pac_data.setdefault(committee_id, {}), name, contribution)
+        elif row[0].upper() == "SA11D": #self-funded:
+            pass
+        elif row[0].upper() == "SA14": #offsets to operating expenditures - not direct contribution so skip
+            pass
+        elif row[0].upper() == "SA15": #misc indirect (interest, rebate, dividend) - not direct contribution so skip
+            pass
+        elif row[0].upper() == "SB17": #operating expenditures - spending, not contribution so skip
+            pass  
+        elif row[0].upper() == "SB18": #operating expenditures - spending, not contribution so skip
+            pass   
+        elif row[0].upper() == "SB20A":
+            #if the last thing they do is get refunded, this will be their most recent data. Add it only if 
+            # we haven't seen their name
+            if row[20] == '':
+                print(f"Row formatted weird: {row}")
+            else:
+                contribution = float(row[20])
+
+            if row[5] == "IND":
+                #refund: pass the positive refund amount; the matcher accumulates it into
+                #the person's SB_REFUND (only while they have no SA aggregate yet).
+                match_or_add_person(row, individual_data, contribution, row[19])
+            elif row[5] == "ORG":
+                refund_for_pac(row, pac_data, contribution)
+            elif row[5] == "COM":
+                refund_for_pac(row, pac_data, contribution)
+            else:
+                print(f"Dont know what to do with non-IND SB20A: {row}")
+                continue
+            
+        elif row[0].upper() == "SB20C": #refund data
+            #if the last thing they do is get refunded, this will be their most recent data. Add it only if 
+            # we haven't seen their name
+            if row[20] == '':
+                print(f"Row formatted weird: {row}")
+            contribution = float(row[20])
+            #print(f"SB20C using 20: {contribution}")
+
+
+            if row[5] == "PAC":
+                refund_for_pac(row, pac_data, contribution)
+            elif row[5] == "ORG":
+                refund_for_pac(row, pac_data, contribution)
+            elif row[5] == "CCM":
+                refund_for_pac(row, pac_data, contribution)
+            elif row[5] == "COM":
+                refund_for_pac(row, pac_data, contribution)
+            else:
+                print(f"Dont know what to do with non-PAC SB20C: {row}")
+                continue
+            
+        elif row[0].upper() == "SB21": #other disbursements, money given to other committees. not contribution skip
+            pass
+        elif row[0].upper() == "SD10": #debts. skip
+            pass
         else:
-            print(f"Unsupported form version: {form_version}")
+            print("Unknown row type in version 8.5:", row[0])
 
 
 
@@ -1666,10 +1872,10 @@ def factor_in_family_for_contribution_once(row, individual_data, contribution, d
     Some contributions are made by family members, if they aren't working then
     we'll consider their contribution their spouse's contribution.
     Infer: same last name, same primary household.
-    
+
     In this version, we want to only include the contributions once - do not overwrite.
-    If the person is already in there, skip them. 
-    
+    If the person is already in there, skip them.
+
     """
 
     undisclosed = ["NOT EMPLOYED", "SELF EMPLOYED", "SELF-EMPLOYED", "ME", "HOME", "SELF",
@@ -1723,8 +1929,8 @@ def factor_in_family_for_contribution_once(row, individual_data, contribution, d
                                 "CONTRIBUTIONS": contribution
                                 }]
 
-        
-    #if someone already lives here, check if their last names match to combine      
+
+    #if someone already lives here, check if their last names match to combine
     else:
 
         # Logged only if this row is ultimately added as a genuinely new household
@@ -1756,7 +1962,7 @@ def factor_in_family_for_contribution_once(row, individual_data, contribution, d
             # near-miss/typo last names are handled by the fuzzy branch in the else below.)
             if last_name == person["LAST_NAME"]:
                 #print(f"Last name {last_name} match: check if {first_name} in {person["NAMES"]}")
-                
+
                 #last and first match - already have them.
                 if first_name in person["NAMES"]:
                     new_person = False
@@ -1773,12 +1979,12 @@ def factor_in_family_for_contribution_once(row, individual_data, contribution, d
                 #last name match, not first.
                 #but might still be same person!
                 for name in person["NAMES"]:
-                    
+
                     # if similar name and first_name, check if they work at same place
                     # if they have the same job and their names are close, same person
                     # Jaro-Winkler + nickname lookup (e.g. BOB == ROBERT scores 100).
                     similarity_score = name_similarity(first_name, name)
-                    
+
                     if similarity_score == 100:
                         #nickname. add it, already seen them.
                         if debug:
@@ -1814,7 +2020,7 @@ def factor_in_family_for_contribution_once(row, individual_data, contribution, d
                             new_person = False
                             break
                         else:
-                            
+
                             if person['COMPANIES'] == ['']:
                                 #then the first entry was SB20
                                 #add the job but don't change anything. add the name.
@@ -1827,7 +2033,7 @@ def factor_in_family_for_contribution_once(row, individual_data, contribution, d
                                 new_person = False
                                 break
 
-                            #https://github.com/madisonbma/policards/issues/12 
+                            #https://github.com/madisonbma/policards/issues/12
                             if contribution <= person['CONTRIBUTIONS']:
                                 if debug:
                                     print('Total contribution went down so assuming this is the same person that lost/changed job:', first_name, job, name, person['COMPANIES'])
@@ -1917,7 +2123,7 @@ def factor_in_family_for_contribution_once(row, individual_data, contribution, d
                             else:
                                 if debug:
                                     print(f"Couple with hyphenated name with 2 different jobs, keeping separate people")
-                            
+
 
             else:
                 #Check for last name typos (Jaro-Winkler; no nickname expansion for surnames)
@@ -1960,84 +2166,205 @@ def factor_in_family_for_contribution_once(row, individual_data, contribution, d
             individual_data[address].append(new_dict)
 
 
+def match_or_add_person(row, individual_data, contribution, date=None, debug=False):
+    """
+    Bucket an itemized IND row to the SAME PERSON at an address. We merge only genuine
+    same-person variants (nicknames, initials, last-name typos) -- NOT family members.
+    (Families are merged later, downstream, to stay compatible with consolidation.)
+
+    Per person we keep the cycle-to-date aggregate from the MOST RECENT contribution
+    date, because row[21] is the aggregate AS OF the row's date (row[19]) and is not
+    consistent/monotonic across the form.
+
+    Per-person record:
+      { LAST_NAME, NAMES:[variants], COMPANIES:[employers, latest-date first],
+        CONTRIBUTION, CONTRIBUTION_DATE, SB_REFUND }
+
+    `contribution` is the RAW positive amount; the row type decides how it is used:
+      SA11/SA12 -> aggregate row[21]; replace CONTRIBUTION/CONTRIBUTION_DATE iff `date`
+                   is newer (or the person has no SA aggregate yet).
+      SB20      -> refund row[20]; accumulate -contribution into SB_REFUND ONLY while
+                   CONTRIBUTION is still None (no SA seen). Once an SA has set
+                   CONTRIBUTION we ignore further refunds (the aggregate nets them).
+    """
+
+    undisclosed = ["NOT EMPLOYED", "SELF EMPLOYED", "SELF-EMPLOYED", "ME", "HOME", "SELF",
+                   "N/A", "SELF- EMPLOYED", "UNEMPLOYED", "HOMEMAKER", "NOT-EMPLOYED",
+                   "RETIRED", "NONE", "RETRIED"]
+
+    is_refund = row[0].upper().startswith("SB20")
+
+    address = row[12] + row[14] + row[15]
+    job = '' if is_refund else replace_company_name(row[23])
+    first_name = row[8].upper()
+    middle_name = row[9].upper()
+    last_name = row[7].upper().replace(" ", "").replace("'", "")
+
+    # Misfiled name fields: some donors put their middle initial in the first-name slot
+    # [8] and their actual first name in the middle slot [9] (e.g. 'fellows,w.,jay' =
+    # first 'W.', middle 'JAY'). Only when [8] is just an initial AND [9] is a real name,
+    # treat [9] as the first name and keep [8] as an alias so the donor is still matched.
+    name_aliases = []
+    if middle_name and _initials_form(first_name) is not None and _initials_form(middle_name) is None:
+        name_aliases.append(first_name)
+        first_name = middle_name
+
+    job_disclosed = bool(job) and job.upper() not in undisclosed
+
+    def norm_date(d):
+        # YYYYMMDD is chronologically sortable as a string; anything else -> "" (oldest).
+        d = (d or "").strip()
+        return d if re.fullmatch(r"\d{8}", d) else ""
+
+    def record_names(person):
+        for nm in [first_name] + name_aliases:
+            if nm and nm not in person["NAMES"]:
+                person["NAMES"].append(nm)
+
+    def add_employer(person, make_latest):
+        # COMPANIES holds the disclosed employers this person has had, latest-date first.
+        if not job_disclosed:
+            return
+        if make_latest:
+            others = [c for c in person["COMPANIES"] if not same_company(c, job)]
+            person["COMPANIES"] = [job] + others
+        elif not any(same_company(c, job) for c in person["COMPANIES"]):
+            person["COMPANIES"].append(job)  # an older/other job we hadn't recorded
+
+    def apply_to_person(person):
+        record_names(person)
+        if is_refund:
+            # Net the refund only while we still have no SA aggregate; once CONTRIBUTION
+            # is set, the aggregate already accounts for refunds, so ignore.
+            if person["CONTRIBUTION"] is None:
+                person["SB_REFUND"] = (person["SB_REFUND"] or 0) - contribution
+            return
+        new_d, old_d = norm_date(date), norm_date(person["CONTRIBUTION_DATE"])
+        if person["CONTRIBUTION"] is None or new_d > old_d:
+            person["CONTRIBUTION"] = contribution
+            person["CONTRIBUTION_DATE"] = date
+            add_employer(person, make_latest=True)
+        elif new_d == old_d and contribution > person["CONTRIBUTION"]:
+            # same date but a larger aggregate -> take the max
+            #print(f"NOTE: same-date ({date}) duplicate aggregate for {person['NAMES']} "
+            #      f"{last_name}: had {person['CONTRIBUTION']}, saw {contribution}; taking max.")
+            person["CONTRIBUTION"] = contribution
+            add_employer(person, make_latest=True)
+        else:
+            add_employer(person, make_latest=False)
+
+    def new_record():
+        return {
+            "LAST_NAME": last_name,
+            "NAMES": [first_name] + name_aliases,
+            "COMPANIES": [job] if job_disclosed else [],
+            "CONTRIBUTION": None if is_refund else contribution,
+            "CONTRIBUTION_DATE": None if is_refund else date,
+            "SB_REFUND": -contribution if is_refund else None,
+        }
+
+    def is_same_person(person):
+        p_last, names = person["LAST_NAME"], person["NAMES"]
+        # Exact last name: same first name, a nickname (BOB==ROBERT), or a similar first
+        # name AT THE SAME EMPLOYER. Similar name + different/unknown employer is treated
+        # as a DIFFERENT person now (the old "contribution went down" heuristic is dropped
+        # -- recency by date supersedes it).
+        if last_name == p_last:
+            if first_name in names:
+                return True
+            for nm in names:
+                sim = name_similarity(first_name, nm)
+                if sim == 100:
+                    return True
+                if sim >= NAME_SIM_THRESHOLD and job_disclosed and \
+                        any(same_company(job, c) for c in person["COMPANIES"]):
+                    return True
+            return False
+        # Hyphenated last name: a component matches and the given name is the same.
+        if "-" in last_name:
+            for part in last_name.split("-"):
+                if part and part in p_last and first_name in names:
+                    return True
+            return False
+        # Last-name typo (no nickname expansion for surnames) + same given name.
+        if name_similarity(last_name, p_last, use_nicknames=False) >= NAME_SIM_THRESHOLD:
+            if any(names_same_person(first_name, nm) for nm in names):
+                return True
+        return False
+
+    persons = individual_data.get(address)
+    if persons is None:
+        individual_data[address] = [new_record()]
+        return
+
+    # Same-person via initial abbreviation ('J.' for 'JOHN', 'WJ' for 'W. J.'),
+    # unambiguous only (disambiguated by employer when several qualify).
+    abbrev_match = resolve_initial_abbreviation(persons, first_name, last_name, job, undisclosed)
+    if abbrev_match is not None:
+        if debug:
+            print(f"Initial abbreviation: {first_name} = {abbrev_match['NAMES']} {last_name}")
+        apply_to_person(abbrev_match)
+        return
+
+    for person in persons:
+        if is_same_person(person):
+            apply_to_person(person)
+            return
+
+    # No same-person match -> a distinct person at this address (family or otherwise).
+    persons.append(new_record())
 
 
-def main2():
-    parser = argparse.ArgumentParser(
-        description="Get filing endpoints to parse the CSVs for full receipt data."
-    )
-    parser.add_argument("--api-key", required=True, help="FEC API key")
-    parser.add_argument("--bioguide-id", required=True, help="bioguideID of candidate")
-    parser.add_argument(
-        "--cycle",
-        required=True,
-        type=int,
-        help="Two-year transaction period / cycle (e.g. 2024)",
-    )
-
-    parser.add_argument(
-        "--generated-outputs",
-        default=".",
-        help="Directory to generated_outputs",
-    )
 
 
-    args = parser.parse_args()
-
-    generated_outputs = Path(args.generated_outputs)
-    generated_outputs.mkdir(parents=True, exist_ok=True)
-
-    # Shared session with API key
-    session = requests.Session()
-    session.params = {"api_key": args.api_key}  # type: ignore[assignment]
-
-    # ── Step N: get all running candidates names and comms ──────────────────────
-    house_runners_path = generated_outputs / f"house_runners_{args.cycle}.json"
-    senate_runners_path = generated_outputs / f"senate_runners_{args.cycle}.json"
-    if house_runners_path.exists() and senate_runners_path.exists():
-        house_runners = json.loads(house_runners_path.read_text(encoding="utf-8"))
-        senate_runners = json.loads(senate_runners_path.read_text(encoding="utf-8"))
-        print(f"  House already generated - loaded {len(house_runners)} records.")
-        print(f"  Senate already generated - loaded {len(senate_runners)} records.")
-    else:
-        house_runners = get_candidates_and_committees(session, "H", args.cycle)
-        print(f"  House generated {len(house_runners)} records.")
-        save_json(house_runners, house_runners_path, "house runners")
-
-        senate_runners = get_candidates_and_committees(session, "S", args.cycle)
-        print(f"  Senate generated {len(senate_runners)} records.")
-        save_json(senate_runners, senate_runners_path, "senate runners")
+# Exit code used when the requested bioguide_id is not in the resolved map. The app
+# branches on this specific code to offer manual committee-code entry; keep in sync
+# with the matching constant in main.js.
+BIOGUIDE_NOT_FOUND_EXIT = 42
 
 
-    # ── Step N: open congressmen.json to get names and bioguide_ids ──────────────────────
-    bioguide_path = generated_outputs / "congressmen.json"
-    bioguide_data = json.loads(bioguide_path.read_text(encoding="utf-8"))
-    print("Run for House")
-    house_map = cross_reference(house_runners, bioguide_data, args.cycle)
-    print("Run for Senate")
-    senate_map = cross_reference(senate_runners, bioguide_data, args.cycle)
-    bioguide_map = house_map | senate_map
-    save_json(bioguide_map, generated_outputs / f"bioguide_fec_map_{args.cycle}.json", "house bioguide map")
-
-    # ── Step 0: get PAC and ind totals ─────────────────────────
-    if bioguide_map.get(args.bioguide_id) is None:
-        raise Exception("Error: bioguide_id {args.bioguide_id} not found in bioguide map."
-                "Please check the bioguide_id and cycle, and ensure the candidate is running in that cycle.")
+def get_committee_id_for_candidate(session: requests.Session, candidate_id: str):
+    """
+    Derive the committee id(s) tied to a candidate via the FEC endpoint
+    /v1/candidate/{id}/committees (sorted by most recent cycle). Used by manual
+    --candidate-id mode, where there is no bioguide cross-reference to supply the
+    committee. Returns the committees active in the candidate's most recent cycle, or
+    None if the candidate has none.
+    """
+    params = {
+        'sort': "-cycles"
+    }
+    results = get_first_page_numbered(session, f"/v1/candidate/{candidate_id}/committees", params, "committee_detail")
+    if not results:
+        return None
     
-    candidate_id = bioguide_map[args.bioguide_id]["candidate_id"]
-    #totals_dict = fetch_totals(session, candidate_id, args.cycle)
-    totals_dict = fetch_totals_for_election_year(session, candidate_id, args.cycle)
+    comm_ids = []
+    recent_cycle = max(results[0]['cycles'])
+    for result in results:
+        if recent_cycle in result['cycles']:
+            comm_ids.append(result.get('committee_id'))
+
+    return comm_ids if comm_ids else None
+
+
+def _run_for_candidate(session, generated_outputs, candidate_id, committee_id, cycle, output_path):
+    """
+    Shared pipeline once candidate_id + committee_id are known (resolved from either the
+    bioguide cross-reference or manual --candidate-id mode): pull totals, fetch and roll
+    up filings across the relevant period cycle(s), and return [totals_dict, contribution_data].
+
+    The result is also written ONCE to `output_path` (a throwaway handoff file the app
+    supplies in the OS temp dir, then reads and deletes) so it isn't duplicated in appData.
+    The filings cache in generated_outputs is still written -- it's a legitimate, reusable
+    cross-run cache, separate from the per-candidate result.
+    """
+    # ── Step 0: get PAC and ind totals ─────────────────────────
+    #totals_dict = fetch_totals(session, candidate_id, cycle)
+    totals_dict = fetch_totals_for_election_year(session, candidate_id, cycle)
     print(totals_dict)
     election = totals_dict['election_year']
 
-
-    # ── Step 1: fetch filings with debug save option ─────────────────────────
-    committee_id = bioguide_map[args.bioguide_id]["committee_id"]
-    if len(committee_id) > 1:
-        print(f"Candidate has multiple committees for cycle {election}, using first committee: {committee_id[0]}")
-        committee_id = committee_id[0]
-    else:
-        committee_id = committee_id[0]
+    # ── Step 1: fetch filings (cached per committee+election in generated_outputs) ──
     filings_path = generated_outputs / f"filings_{committee_id}_{election}.json"
 
     if os.path.exists(filings_path):
@@ -2047,8 +2374,8 @@ def main2():
         print(f"  Loaded {len(filings)} records.")
     else:
         filings = fetch_filings(session, committee_id)
-        save_json(filings, filings_path, "filings")
-
+        if debug:
+            save_json(filings, filings_path, "filings")
 
     # ── Step 2: fetch CSV data from filings ────────────────────────────
     # The aggregate resets each two-year period, so for a Senate seat (3 cycles) we
@@ -2056,7 +2383,7 @@ def main2():
     # first letter (S/H) tells us which.
     period_cycles = candidate_period_cycles(candidate_id, election)
     totals_dict["year_range"] = f"{period_cycles[0]-1}-{period_cycles[-1]}"
-    
+
     print(f"\nRolling up election {election} over period cycle(s): {period_cycles}")
     contribution_data = {}
     for period in period_cycles:
@@ -2080,19 +2407,152 @@ def main2():
     print(f"  sum(contribution_data)  : ${sum(contribution_data.values()):,.2f}  "
           f"(diff ${sum(contribution_data.values()) - total_in:,.2f})")
 
-    # ── Step 3: save contribution data────────────────────────────────
-    contribution_data_path = generated_outputs / f"{committee_id}_contribution_data.json"
-    save_json([totals_dict, contribution_data], contribution_data_path, "contribution data from filings")
-    #save_json(contribution_data, contribution_data_path, "contribution data from filings")
+    # ── Step 3: write the result to the handoff path + return it ──────────────────
+    result = [totals_dict, contribution_data]
+    save_json(result, output_path, "contribution data from filings")
+    print(f"  results          : {output_path}")
 
-    # Also write a deterministic, bioguide-keyed copy so callers (the app) can find the
-    # output without knowing the resolved committee_id ahead of time.
-    bioguide_data_path = generated_outputs / f"{args.bioguide_id}_contribution_data.json"
-    save_json([totals_dict, contribution_data], bioguide_data_path, "contribution data (bioguide-keyed)")
+    print("Top 10:")
+    for name, amount in list(contribution_data.items())[:10]:
+        print(f"  {name}: ${amount:,.2f}")
 
-    print("\n=== Done ===")
-    print(f"  results          : {contribution_data_path}")
-    print(f"  bioguide results : {bioguide_data_path}")
+    return result
+
+
+def check_running(bioguide_map, congressmen_bioguide):
+    """
+    We cross_reference by going through the FEC candidates and finding the associated bioguide.
+    But what if they aren't running again? Then they won't show up as FEC candidate and we 
+    won't map. Search through the bioguide
+    """
+
+    for person in congressmen_bioguide:
+        if person.get('bioguideID') not in bioguide_map:
+            print(f"{person.get('name')} not mapped.")
+
+
+
+def main2():
+    parser = argparse.ArgumentParser(
+        description="Get filing endpoints to parse the CSVs for full receipt data."
+    )
+    parser.add_argument("--api-key", required=True, help="FEC API key")
+    parser.add_argument("--bioguide-id", help="bioguideID of candidate")
+    parser.add_argument(
+        "--candidate-id",
+        help="FEC candidate id (e.g. H4AS00036). Manual mode: when given, the bioguide "
+             "cross-reference is skipped and this candidate is used directly.",
+    )
+    parser.add_argument(
+        "--cycle",
+        required=True,
+        type=int,
+        help="Two-year transaction period / cycle (e.g. 2024)",
+    )
+
+    parser.add_argument(
+        "--generated-outputs",
+        default=".",
+        help="Directory to generated_outputs",
+    )
+
+    parser.add_argument(
+        "--output-path",
+        help="Path to write the [totals, contribution_data] result. The app passes a "
+             "throwaway temp file it reads then deletes. Defaults to "
+             "generated_outputs/contribution_data.json.",
+    )
+
+    parser.add_argument(
+        "--debug",
+        help="Enable debug mode, save files",
+        action='store_true'
+    )
+
+
+    args = parser.parse_args()
+
+    if not args.bioguide_id and not args.candidate_id:
+        parser.error("one of --bioguide-id or --candidate-id is required")
+
+    global debug
+    if args.debug:
+        debug = True
+
+    generated_outputs = Path(args.generated_outputs)
+    generated_outputs.mkdir(parents=True, exist_ok=True)
+
+    # Where the final result is written. The app supplies a throwaway temp path it reads
+    # then deletes (so the result lives only in the supplement, not duplicated in appData);
+    # standalone runs fall back to a fixed file in generated_outputs.
+    output_path = Path(args.output_path) if args.output_path else generated_outputs / "contribution_data.json"
+
+    # Shared session with API key
+    session = requests.Session()
+    session.params = {"api_key": args.api_key}  # type: ignore[assignment]
+
+    # ── Resolve candidate_id + committee_id ──────────────────────────────────────
+    # Manual mode (--committee-id given): skip the runner/cross-reference resolution
+    # entirely and derive the candidate_id straight from the committee. Otherwise the
+    # normal path resolves both from the bioguide cross-reference below.
+    if args.candidate_id:
+        candidate_id = args.candidate_id
+        committee_id = get_committee_id_for_candidate(session, candidate_id)
+        if committee_id is None:
+            sys.exit(f"Error: no committees found for candidate {candidate_id}. "
+                     "Please check the candidate code and cycle.")
+        print(f"Manual mode: candidate {candidate_id} -> committee {committee_id}")
+        if len(committee_id) > 1:
+            print(f"Candidate has multiple committees, using first committee: {committee_id[0]}")
+        committee_id = committee_id[0]
+        return _run_for_candidate(
+            session, generated_outputs, candidate_id, committee_id, args.cycle, output_path
+        )
+
+    # ── Step N: get all running candidates names and comms ──────────────────────
+    house_runners_path = generated_outputs / f"house_runners_{args.cycle}.json"
+    senate_runners_path = generated_outputs / f"senate_runners_{args.cycle}.json"
+    if house_runners_path.exists() and senate_runners_path.exists():
+        house_runners = json.loads(house_runners_path.read_text(encoding="utf-8"))
+        senate_runners = json.loads(senate_runners_path.read_text(encoding="utf-8"))
+        print(f"  House already generated - loaded {len(house_runners)} records.")
+        print(f"  Senate already generated - loaded {len(senate_runners)} records.")
+    else:
+        house_runners = get_candidates_and_committees(session, "H", args.cycle)
+        print(f"  House generated {len(house_runners)} records.")
+        save_json(house_runners, house_runners_path, "house runners")
+
+        senate_runners = get_candidates_and_committees(session, "S", args.cycle)
+        print(f"  Senate generated {len(senate_runners)} records.")
+        save_json(senate_runners, senate_runners_path, "senate runners")
+
+
+    # ── Step N: open congressmen.json to get names and bioguide_ids ──────────────────────
+    bioguide_path = generated_outputs / "congressmen.json"
+    bioguide_data = json.loads(bioguide_path.read_text(encoding="utf-8"))
+    bioguide_map, failed_map = cross_reference(house_runners + senate_runners, bioguide_data, args.cycle)
+    save_json(bioguide_map, generated_outputs / f"bioguide_fec_map_{args.cycle}.json", "bioguide map")
+
+
+    # ── Resolve candidate + committee from the cross-reference ───────────────────
+    # bioguide not found -> exit with a DISTINCT code so the app can tell this case
+    # apart from a generic failure and offer manual committee-code entry instead.
+    if bioguide_map.get(args.bioguide_id) is None:
+        print(f"Error: bioguide_id {args.bioguide_id} not found in bioguide map. "
+              "Please check the bioguide_id and cycle, and ensure the candidate is "
+              "running in that cycle.", file=sys.stderr)
+        sys.exit(BIOGUIDE_NOT_FOUND_EXIT)
+
+    candidate_id = bioguide_map[args.bioguide_id]["candidate_id"]
+
+    committee_id = bioguide_map[args.bioguide_id]["committee_id"]
+    if len(committee_id) > 1:
+        print(f"Candidate has multiple committees, using first committee: {committee_id[0]}")
+    committee_id = committee_id[0]
+
+    return _run_for_candidate(
+        session, generated_outputs, candidate_id, committee_id, args.cycle, output_path
+    )
 
 
 if __name__ == "__main__":

@@ -4,6 +4,7 @@
 
 //var generated_outputs = $.getenv("GEN_OUTPUT_DIR");
 var generated_outputs = arguments[0];
+const enable_log = false;
 
 if (generated_outputs) {
     // Photoshop paths often need to be converted to File objects
@@ -12,7 +13,9 @@ if (generated_outputs) {
     // Now you can use dataFolder to find your JSONs
     var dataFilePath = dataFolder + "/temp.txt";
     var picFilePath = dataFolder + "/temp.png";
-    var LogFilePath = dataFolder + "/log_js.log";
+    if (enable_log) {
+        var LogFilePath = dataFolder + "/log_js.log";
+    }
 } else {
     alert("Error: GEN_OUTPUT_DIR environment variable not found.");
 }
@@ -40,17 +43,18 @@ var STATE_SIZE = 10.24;
  * @param {string} message - The message to write.
  */
 function log(message) {
-    var logFile = new File(LogFilePath);
-    
-    try {
-        // Open the file for appending ('a')
-        logFile.open('a'); 
-        logFile.seek(0, 2); // Move to the end of the file
-        logFile.writeln((new Date().toLocaleTimeString()) + ": " + message);
-        logFile.close();
-    } catch (e) {
-        // If file writing fails, at least use the default alert
-        alert("LOGGING ERROR: Could not write to log file. " + e.message);
+    if (enable_log) {
+        var logFile = new File(LogFilePath);
+        try {
+            // Open the file for appending ('a')
+            logFile.open('a'); 
+            logFile.seek(0, 2); // Move to the end of the file
+            logFile.writeln((new Date().toLocaleTimeString()) + ": " + message);
+            logFile.close();
+        } catch (e) {
+            // If file writing fails, at least use the default alert
+            alert("LOGGING ERROR: Could not write to log file. " + e.message);
+        }
     }
 }
 
@@ -435,7 +439,9 @@ function write_bulleted_list_with_pretext(layer, text, additional_text) {
         // 2. Loop through the subcomponents.
         //check for BREAK to add indent, otherwise print normally with bullet
         for (var i = 0; i < snippets.length; i++) {
-            var line = snippets[i]; 
+            var line = snippets[i];
+            // the first snippet is the header/title -> no bullet, every later line gets one
+            var prefix = (i == 0) ? "" : bullet;
             if (line.indexOf("||BREAK||") !== -1) {
                 //if BREAK is present, split and indent
                 //this is either a subdot or intermediate line break,
@@ -443,10 +449,10 @@ function write_bulleted_list_with_pretext(layer, text, additional_text) {
                 var subsnips = line.split("||BREAK||");
                 for (var j = 0; j < subsnips.length; j++) {
                     var subline = subsnips[j];
-                    
-                    //to start, don't indent but include bullet
+
+                    //to start, don't indent but include bullet (unless this is the header)
                     if (j == 0) {
-                        bulletizedLines.push(bullet + subline);
+                        bulletizedLines.push(prefix + subline);
                     }
                     else if (subline.length > 0) {
                         bulletizedLines.push("    " + subline);
@@ -456,8 +462,8 @@ function write_bulleted_list_with_pretext(layer, text, additional_text) {
             else {
                 // 3. Skip empty lines that might result from splitting (e.g., "A,,B")
                 if (line.length > 0) {
-                    // 4. Add the bullet and a space to the front
-                    bulletizedLines.push(bullet + line);
+                    // 4. Add the bullet (header gets none) and a space to the front
+                    bulletizedLines.push(prefix + line);
                 }
             }
         }

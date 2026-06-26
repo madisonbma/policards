@@ -182,6 +182,11 @@ button {
   border: 1px solid #f5c6cb;
 }
 
+.error-message {
+  color: var(--red);
+  font-weight: 600;
+}
+
 .popup {
   margin-top: 20px;
   padding: 10px;

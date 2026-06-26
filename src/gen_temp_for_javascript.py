@@ -374,6 +374,35 @@ def fmt_money_abbrev(n):
     return f"${n:,.0f}"
 
 
+def fmt_name(pac_key):
+    """
+    PACs and ORGs come in caps lock. Convert to .capitalize(),
+    but keep PAC or one-word caps-locked
+    """
+    if pac_key.isupper():
+        if ' ' not in pac_key:
+            return pac_key #keep caps-locked if no spaces
+        elif '(' in pac_key:
+            match = re.match(r"([^\(]+)\(([^\)]+)\)", pac_key)
+            if match:
+                name1 = match.group(1)
+                name2 = match.group(2)
+                name = name2 if len(name1)>len(name2) else name1
+                if ' ' not in name:
+                    return name
+                else:
+                    name = name.title()
+                    name = re.sub(r"\bPac\b", "PAC", name)
+                    return name
+            else:
+                pac_key = pac_key.title()
+                pac_key = re.sub(r"\bPac\b", "PAC", pac_key)
+                return pac_key
+
+
+    else:
+        return pac_key
+
 def gen_top_donors_prototype(rep_info, draw, font, max_width, rep_stats):
     # top_donors is now [overview_dict, {company: amount}] (overview has year_range,
     # net_contributions, pac_total, ...). Title -> donor_title_layer; the rest is the
@@ -391,13 +420,12 @@ def gen_top_donors_prototype(rep_info, draw, font, max_width, rep_stats):
         net = fmt_money_abbrev(overview.get('net_contributions', 0))
         pac = fmt_money_abbrev(overview.get('pac_total', 0))
         header = (f"Total Donations: {net}||BREAK||"
-                  f"Total from PACs: {pac}||BREAK||||BREAK||"
-                  f"Top 3 Donors:")
+                  f"Total from PACs: {pac}")
 
 
         top3 = sorted(donors.items(), key=lambda kv: kv[1], reverse=True)[:3]
-        donor_lines = "||BREAK_DOT||".join(
-            f"{key} ({fmt_money_abbrev(value)})" for key, value in top3
+        donor_lines = "Top 3 Donors||BREAK_DOT||"+"||BREAK_DOT||".join(
+            f"{fmt_name(key)} ({fmt_money_abbrev(value)})" for key, value in top3
         )
 
         rep_stats['top_donors_hdr'] = header

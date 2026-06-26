@@ -23,6 +23,7 @@ const step9 = document.getElementById('step9');
 const step10 = document.getElementById('step10');
 const step11 = document.getElementById('step11');
 const step12 = document.getElementById('step12');
+const step13 = document.getElementById('step13');
 
 //Step 1 elements
 const yesConBtn = document.getElementById('yesGenCongressmenBtn')
@@ -43,6 +44,14 @@ const topDonorsHeading = document.getElementById('topDonorsHeading');
 const topDonorsReviewList = document.getElementById('topDonorsReviewList');
 const topDonorsReviewName = document.getElementById('topDonorsReviewName');
 const topDonorsConfirmBtn = document.getElementById('topDonorsConfirmBtn');
+
+// Step 13 elements (manual candidate entry, shown when bioguide can't be resolved)
+const manualCandidateName = document.getElementById('manualCandidateName');
+const manualCandidateInput = document.getElementById('manualCandidateInput');
+const manualEntryError = document.getElementById('manualEntryError');
+const manualCandidateSubmitBtn = document.getElementById('manualCandidateSubmitBtn');
+const manualSpinner = document.getElementById('manualSpinner');
+const terminal4 = document.getElementById('terminalOutput4');
 let currentTopDonorsOverview = {};
 
 
@@ -188,7 +197,7 @@ function setLoading(isLoading) {
 }
 
 function showStep(stepNum) {
-  [step1, step2, step3, step4, step5, step6, step7, step8, step9, step10, step11, step12].forEach(s => s.classList.add('hidden'));
+  [step1, step2, step3, step4, step5, step6, step7, step8, step9, step10, step11, step12, step13].forEach(s => s.classList.add('hidden'));
 
   if (stepNum === 1) step1.classList.remove('hidden');
   else if (stepNum === 2) step2.classList.remove('hidden');
@@ -202,6 +211,7 @@ function showStep(stepNum) {
   else if (stepNum === 10) step10.classList.remove('hidden');
   else if (stepNum === 11) step11.classList.remove('hidden');
   else if (stepNum === 12) step12.classList.remove('hidden');
+  else if (stepNum === 13) step13.classList.remove('hidden');
 }
 
 function openModal() {
@@ -418,9 +428,34 @@ function askRegenerate(timestamp) {
   });
 }
 
+// True only for the current top_donors shape: a 2-element array of [overview, donors],
+// where overview is an object carrying generated_at and donors is a {company: amount}
+// object. The legacy shape (an array of display strings, or []) returns false so we can
+// force regeneration instead of prompting.
+function isValidTopDonorsFormat(td) {
+  return Array.isArray(td)
+    && td.length === 2
+    && td[0] && typeof td[0] === 'object' && !Array.isArray(td[0])
+    && typeof td[0].generated_at === 'string'
+    && td[1] && typeof td[1] === 'object' && !Array.isArray(td[1]);
+}
+
+// Store [overview, {top 20}] for selectedRep into the in-memory supplement + persist.
+async function persistTopDonors(topDonors) {
+  let entry = supplement.find(s => s.name === selectedRep.name);
+  if (!entry) {
+    entry = { name: selectedRep.name };
+    supplement.push(entry);
+  }
+  entry.top_donors = topDonors;
+  await window.electronAPI.saveSupplement(supplement);
+}
+
 // Run the FEC top-donors exe for selectedRep, stream output to terminal3, and on
 // success store [overview, {top 20}] into the in-memory supplement + persist it.
-// Returns { ok: boolean, message?: string }.
+// Returns { ok: boolean, needsManualEntry?: boolean, message?: string }. When the
+// bioguide can't be resolved, needsManualEntry is set so the caller can prompt for a
+// candidate code instead of treating it as a hard failure.
 async function runTopDonors() {
   showStep(11);
   if (topDonorsHeading) topDonorsHeading.textContent = `Getting top donors for ${selectedRep.name}`;
@@ -439,22 +474,76 @@ async function runTopDonors() {
     window.electronAPI.removeTerminalListener(handler);
 
     if (!result || !result.success) {
-      return { ok: false, message: (result && result.message) ? result.message : 'Unknown error fetching top donors.' };
+      return {
+        ok: false,
+        needsManualEntry: !!(result && result.needsManualEntry),
+        message: (result && result.message) ? result.message : 'Unknown error fetching top donors.'
+      };
     }
 
-    let entry = supplement.find(s => s.name === selectedRep.name);
-    if (!entry) {
-      entry = { name: selectedRep.name };
-      supplement.push(entry);
-    }
-    entry.top_donors = result.top_donors;
-    await window.electronAPI.saveSupplement(supplement);
+    await persistTopDonors(result.top_donors);
     return { ok: true };
   } catch (e) {
     window.electronAPI.removeTerminalListener(handler);
     return { ok: false, message: String(e) };
   }
 }
+
+// Show the manual candidate-entry page (step 13). The submit handler (wired once
+// below) runs the exe in candidate mode and, on success, continues to the review step.
+function showManualCandidateEntry() {
+  if (manualCandidateName) manualCandidateName.textContent = selectedRep ? selectedRep.name : '';
+  if (manualEntryError) manualEntryError.textContent = '';
+  if (manualCandidateInput) manualCandidateInput.value = '';
+  if (terminal4) terminal4.innerHTML = '';
+  if (manualSpinner) manualSpinner.classList.remove('show');
+  showStep(13);
+}
+
+// Step 13: fetch top donors from a user-supplied candidate code, then continue
+// into the normal review step exactly as the bioguide path does.
+manualCandidateSubmitBtn.addEventListener('click', async () => {
+  const candidateId = manualCandidateInput.value.trim().toUpperCase();
+
+  manualEntryError.textContent = '';
+  if (!/^[HS][0-9A-Z]{8}$/.test(candidateId)) {
+    manualEntryError.textContent = 'Candidate ID must be 9 characters: H or S followed by 8 letters/digits (e.g. H8NY01234).';
+    return;
+  }
+
+
+  terminal4.innerHTML = '';
+  manualSpinner.classList.add('show');
+  manualCandidateSubmitBtn.disabled = true;
+
+  const handler = (data) => {
+    const p = document.createElement('p');
+    p.textContent = data;
+    terminal4.appendChild(p);
+    terminal4.scrollTop = terminal4.scrollHeight;
+  };
+  window.electronAPI.onTerminalUpdate(handler);
+
+  try {
+    const result = await window.electronAPI.getTopDonorsManual(candidateId);
+    window.electronAPI.removeTerminalListener(handler);
+    manualSpinner.classList.remove('show');
+    manualCandidateSubmitBtn.disabled = false;
+
+    if (!result || !result.success) {
+      manualEntryError.textContent = (result && result.message) ? result.message : 'Unknown error fetching top donors.';
+      return;
+    }
+
+    await persistTopDonors(result.top_donors);
+    showTopDonorsReview();
+  } catch (e) {
+    window.electronAPI.removeTerminalListener(handler);
+    manualSpinner.classList.remove('show');
+    manualCandidateSubmitBtn.disabled = false;
+    manualEntryError.textContent = String(e);
+  }
+});
 
 // Required review/edit page for top_donors. Renders the top-20 as editable
 // company-name rows (amounts read-only) with delete buttons, mirroring step 5.
@@ -1007,21 +1096,29 @@ nameSubmitBtn.addEventListener('click', async () => {
   selectedRep = match;
   document.getElementById('selectedName').textContent = selectedRep.name;
 
-  // Top donors: auto-generate if missing; if already present, show when it was last
-  // generated and ask whether to regenerate.
+  // Top donors: auto-generate if missing OR stored in the old/legacy format; only when
+  // a correctly-formatted entry already exists do we show its date and ask the operator
+  // whether to regenerate.
   const supEntry = supplement.find(s => s.name === selectedRep.name);
   const existing = supEntry ? supEntry.top_donors : null;
-  const hasTopDonors = Array.isArray(existing) && existing.length > 0;
 
-  let doRun = !hasTopDonors;
-  if (hasTopDonors) {
-    const ts = (existing[0] && existing[0].generated_at) ? existing[0].generated_at : 'an unknown date';
-    doRun = await askRegenerate(ts);
+  let doRun;
+  if (isValidTopDonorsFormat(existing)) {
+    doRun = await askRegenerate(existing[0].generated_at);
+  } else {
+    // Missing, empty, or legacy (array-of-strings) format -> force regeneration.
+    doRun = true;
   }
 
   if (doRun) {
     const res = await runTopDonors();
     if (!res.ok) {
+      if (res.needsManualEntry) {
+        // Bioguide couldn't be resolved: let the operator supply a candidate code.
+        // The manual submit handler continues into showTopDonorsReview() on success.
+        showManualCandidateEntry();
+        return;
+      }
       // No top donors to review; surface the error and go straight to the data.
       showStatus('Could not fetch top donors: ' + res.message, false);
       show4();
