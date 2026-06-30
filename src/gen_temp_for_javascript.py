@@ -379,9 +379,13 @@ def fmt_name(pac_key):
     PACs and ORGs come in caps lock. Convert to .capitalize(),
     but keep PAC or one-word caps-locked
     """
+    #print(pac_key)
     if pac_key.isupper():
-        if ' ' not in pac_key:
-            return pac_key #keep caps-locked if no spaces
+        if ' ' not in pac_key: #if one word
+            if pac_key.endswith("PAC"):#if ends in pac, keep it capitalized. else title
+                name = pac_key
+            else:
+                name = pac_key.title()
         elif '(' in pac_key:
             match = re.match(r"([^\(]+)\(([^\)]+)\)", pac_key)
             if match:
@@ -389,19 +393,25 @@ def fmt_name(pac_key):
                 name2 = match.group(2)
                 name = name2 if len(name1)>len(name2) else name1
                 if ' ' not in name:
-                    return name
+                    pass
                 else:
                     name = name.title()
                     name = re.sub(r"\bPac\b", "PAC", name)
-                    return name
             else:
-                pac_key = pac_key.title()
-                pac_key = re.sub(r"\bPac\b", "PAC", pac_key)
-                return pac_key
-
-
+                name = pac_key.title()
+                name = re.sub(r"\bPac\b", "PAC", name)
+        else:
+            name = pac_key.title()
+            name = re.sub(r"\bPac\b", "PAC", name)
     else:
-        return pac_key
+        name = pac_key
+
+
+    name = re.sub(r"\bPac\b", "PAC", name)
+    name = re.sub(r"\bLlc\b", "LLC", name)
+
+    #print("->", name)
+    return name
 
 def gen_top_donors_prototype(rep_info, draw, font, max_width, rep_stats):
     # top_donors is now [overview_dict, {company: amount}] (overview has year_range,
@@ -432,7 +442,7 @@ def gen_top_donors_prototype(rep_info, draw, font, max_width, rep_stats):
         rep_stats['top_donors'] = donor_lines
     else:
         rep_stats['donor_title'] = "DONORS"
-        rep_stats['top_donors_hdr'] = "Total Donations: $0||BREAK||Total from PACs: $0||BREAK||||BREAK||Top 3 Donors:"
+        rep_stats['top_donors_hdr'] = "Total Donations: $0||BREAK||Total from PACs: $0"
         rep_stats['top_donors'] = "Top 3 Donors:||BREAK_DOT||Donor 1||BREAK_DOT||Donor 2||BREAK_DOT||Donor 3"
 
 
