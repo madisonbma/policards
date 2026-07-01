@@ -191,6 +191,28 @@ async function deleteFile(filePath) {
   }
 }
 
+// The Python pac-contribution step caches house_runners_<cycle>.json /
+// senate_runners_<cycle>.json and reuses them if present. Clear them on each app launch
+// so the runner list is regenerated fresh -- a stale cache skewed the results. Matches any
+// cycle (2026, 2028, ...) rather than a hard-coded year.
+function deleteStaleRunnerFiles() {
+  try {
+    if (!fs.existsSync(generated_outputs)) return;
+    for (const file of fs.readdirSync(generated_outputs)) {
+      if (/^(house|senate)_runners_.*\.json$/.test(file)) {
+        try {
+          fs.unlinkSync(path.join(generated_outputs, file));
+          console.log('Cleared stale runner cache:', file);
+        } catch (err) {
+          console.error('Failed to delete stale runner file', file, err.message);
+        }
+      }
+    }
+  } catch (err) {
+    console.error('Error clearing stale runner files:', err.message);
+  }
+}
+
 function getBinaryPath(file) {
   const isWin = process.platform === "win32";
   const folder = isWin ? 'win' : 'mac';
@@ -330,6 +352,8 @@ function change_permissions_for_mac() {
 //////////////////////////////////////////////////////
 
 app.whenReady().then(() => {
+  // Remove stale runner caches so they regenerate fresh this session.
+  deleteStaleRunnerFiles();
   createMainWindow();
 
   app.on('activate', () => {
