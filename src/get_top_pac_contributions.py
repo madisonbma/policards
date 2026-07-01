@@ -579,11 +579,15 @@ def candidate_period_cycles(candidate_id, election_year):
 # Step 2: now that we have the endpoint, go through each filing (skip if already saw amended),
 # and get the csv
 ######################################################
-def fetch_filing_csv(filings_report, cycle, generated_outputs):
+def fetch_filing_csv(filings_report, cycle, generated_outputs, conduit_observations):
     refund_data = {}
     pac_data = {}
     individual_data = {}
     skip_list = []
+    seen = []
+    # `conduit_observations` is owned by the caller and accumulated across ALL period
+    # cycles (a conduit like WinRed reports col21 cumulatively across cycles), so it is
+    # reconciled ONCE by finalize_conduit_totals() after every period -- not here.
 
     # The period being processed (all filings in this batch share the same two-year
     # cycle); used to name the per-period debug dump so periods don't overwrite each
@@ -607,11 +611,29 @@ def fetch_filing_csv(filings_report, cycle, generated_outputs):
             continue
         #Skip the original if we already looked at the amended version of the same report
         if filing['amendment_indicator'] == "A":
-            skip_list.extend(filing['amendment_chain'][:-1]) #add all previous versions of the report to skip list
-            #print(f"Skip this one {len(filing['amendment_chain'])-1} times")
+            if filing['amendment_chain'] is not None:
 
+                skip_list.extend(filing['amendment_chain'][:-1]) #add all previous versions of the report to skip list
+                seen.append(filing['document_description'])
+                #print(f"Skip this one {len(filing['amendment_chain'])-1} times")
+            else:
+                #old formatting where they don't include the amendment chain.
+                # in this case we want to take first one and put it in "seen"      
+                name = filing['document_description']
+                if name in seen:
+                    #print(f"Skipping filing {filing['file_number']} since we already looked at an amended version of it")
+                    continue
+                else:
+                    seen.append(name)
+        elif filing['amendment_indicator'] == "N":
+            name = filing['document_description']
+            if name in seen:
+                #print(f"Skipping filing {filing['file_number']} since we already looked at an amended version of it")
+                continue
+            else:
+                seen.append(name)
         print(f"==={filing['report_type_full']} {filing['report_year']}===")
-        csv_data = get_csv_data(filing['csv_url'], filing['form_type'], cycle, refund_data, individual_data, pac_data)
+        csv_data = get_csv_data(filing['csv_url'], filing['form_type'], cycle, refund_data, individual_data, pac_data, conduit_observations)
         if csv_data is None:
             #This filing had no rows for the target election (or wasn't usable). Skip it
             #rather than break: with per-period processing we must scan every filing in
@@ -632,6 +654,9 @@ def fetch_filing_csv(filings_report, cycle, generated_outputs):
             writer.writerows(temp_aggregate)
 
     print("\n=====================================")
+    # NOTE: conduits are NOT folded here. Their observations live in `conduit_observations`
+    # (accumulated across every period) and are reconciled once by the caller after all
+    # periods, so a cross-cycle cumulative conduit isn't double-counted per period.
     print("Done retrieving data. Now consolidating contribution data.\n")
     final_data = consolidate_contribution_data(individual_data, pac_data)
 
@@ -991,10 +1016,16 @@ def pac_name_edit(pac1, pac2):
 
     if "(" in pac1:
         pac1_match = re.search(r"([^\()]+)\(([^\)]+)\)", pac1)
+        if not pac1_match:
+            pac1_match = re.search(r"([^\()]+)\(([^\)]+)$", pac1)
+            print(f"PAC name {pac1} has a '(' but no ')'")
         pac1_noparen = pac1_match.group(1)
         pac1_abbr = pac1_match.group(2)
         if "(" in pac2:
             pac2_match = re.search(r"([^\()]+)\(([^\)]+)\)", pac2)
+            if not pac2_match:
+                pac2_match = re.search(r"([^\()]+)\(([^\)]+)$", pac2)
+                print(f"PAC name {pac2} has a '(' but no ')' ")
             pac2_noparen = pac2_match.group(1)
             pac2_abbr = pac2_match.group(2)
         else:
@@ -1004,6 +1035,9 @@ def pac_name_edit(pac1, pac2):
 
     elif "(" in pac2:
         pac2_match = re.search(r"([^\()]+)\(([^\)]+)\)", pac2)
+        if not pac2_match:
+            pac2_match = re.search(r"([^\()]+)\(([^\)]+)$", pac2)
+            print(f"PAC name {pac2} has a '(' but no ')' ")
         pac2_noparen = pac2_match.group(1)
         pac2_abbr = pac2_match.group(2)
 
@@ -1037,7 +1071,7 @@ def pac_name_edit(pac1, pac2):
         return False
 
 
-def get_csv_data(url, form_type, cycle, refund_data, individual_data, pac_data):
+def get_csv_data(url, form_type, cycle, refund_data, individual_data, pac_data, conduit_observations):
     """
     Imports a CSV file from a given URL and returns its data as a list of dictionaries.
     """
@@ -1064,7 +1098,7 @@ def get_csv_data(url, form_type, cycle, refund_data, individual_data, pac_data):
             
             print(f"=== Processing F3 {url} ===")
 
-            process_form_no_refund(csv_for_cycle, individual_data, pac_data, cycle)
+            process_form_no_refund(csv_for_cycle, individual_data, pac_data, cycle, conduit_observations)
 
             return csv_for_cycle
         
@@ -1467,7 +1501,147 @@ def check_row_format(row):
 
 
 
-def process_form_no_refund(csv_data, individual_data, pac_data, cycle):
+# ── Conduit (earmark) handling ──────────────────────────────────────────────
+# A conduit (ActBlue/WinRed/AIPAC ...) forwards many earmarked contributions and reports
+# its bundled total in the aggregate field (col 21). We collect one value per FORM (across
+# ALL period cycles) and let finalize_conduit_totals() reduce them: a PER-REPORT conduit
+# (each report states its own bundling -- ActBlue, AIPAC) is SUMMED; a CUMULATIVE one
+# (col 21 is a running total -- WinRed) is reduced to the peak of each monotonic run. The
+# discriminator is max(col21) vs the total itemized earmarks (sum of col20); see finalize.
+CONDUIT_PAC_LIMIT = 10000  # a real PAC caps at $5k/election (x2 = $10k); above => conduit
+
+
+def conduit_signal_set(row):
+    """
+    Conduit signals present on a non-IND SA11 contribution row; an empty set means "treat
+    as a normal direct PAC". Any single signal is enough:
+      memo:conduit   col 24 == 'Conduit total listed in Agg. field'
+      memo:earmark   col 43 == 'Note: Above Contribution earmarked through this organization.'
+      PAC-in-SA11AI  a PAC entity on the itemized-INDIVIDUAL schedule (belongs in SA11C)
+      amount>10k     col 21 exceeds the PAC direct limit
+    """
+    signals = set()
+    if row[5] != "PAC":
+        return signals
+
+    def col(i):
+        return row[i] if i < len(row) else ""
+
+    if "conduit total" in str(col(24)).lower():
+        signals.add("memo:conduit")
+    if "earmark" in str(col(43)).lower():
+        signals.add("memo:earmark")
+    if row[0].upper() == "SA11AI":
+        signals.add("PAC-in-SA11AI")
+    try:
+        if float(col(21)) > CONDUIT_PAC_LIMIT:
+            signals.add("amount>10k")
+    except (TypeError, ValueError):
+        pass
+    return signals
+
+
+def _record_conduit_form(row, name, agg, signals, form_conduits):
+    """
+    Stash ONE conduit observation for the current form, keyed by committee id (else name).
+    Keeps the form's col21 (per-form max, in case it climbs as-of-date within the form) and
+    the sum of the form's itemized earmarks (col20), which finalize uses to tell a per-report
+    total from a cumulative one.
+    """
+    cid = row[25] if (len(row) > 25 and str(row[25]).startswith("C")) else None
+    key = cid or name
+    date = str(row[19]) if re.fullmatch(r"\d{8}", str(row[19] if len(row) > 19 else "")) else ""
+    try:
+        earmark = float(row[20])
+    except (TypeError, ValueError):
+        earmark = 0.0
+    e = form_conduits.get(key)
+    if e is None:
+        form_conduits[key] = {"name": name, "committee_id": cid, "agg": agg,
+                              "date": date, "earmarks": earmark, "signals": set(signals)}
+    else:
+        e["agg"] = max(e["agg"], agg)   # per-form max folds any as-of-date climb
+        e["date"] = max(e["date"], date)
+        e["earmarks"] += earmark
+        e["signals"] |= signals
+        if len(name) > len(e["name"]):
+            e["name"] = name
+
+
+def _merge_form_conduits(form_conduits, conduit_observations):
+    """Fold a completed form's conduit observations into the cross-form/period accumulator."""
+    for key, e in form_conduits.items():
+        obs = conduit_observations.get(key)
+        if obs is None:
+            obs = conduit_observations[key] = {"name": e["name"], "committee_id": e["committee_id"],
+                                               "forms": [], "signals": set()}
+        obs["forms"].append({"agg": e["agg"], "earmarks": e["earmarks"], "date": e["date"]})
+        obs["signals"] |= e["signals"]
+        if len(e["name"]) > len(obs["name"]):
+            obs["name"] = e["name"]
+
+
+def _sum_run_peaks(aggs):
+    """
+    Sum the peak of each maximal non-decreasing run. A cumulative-to-date total climbs
+    within a cycle then resets; each run == one cycle, its peak == that cycle's total.
+    """
+    total = 0.0
+    run_max = None
+    for a in aggs:
+        if run_max is None:
+            run_max = a
+        elif a < run_max - 0.01:   # dropped -> the counter reset; close this run
+            total += run_max
+            run_max = a
+        else:                      # still climbing/level -> extend the run
+            run_max = a
+    return total + (run_max if run_max is not None else 0.0)
+
+
+def finalize_conduit_totals(conduit_observations, contribution_data):
+    """
+    Reduce each conduit's cross-period per-form observations to one total and add it into
+    contribution_data (keyed by conduit name; the conduit-plus-donor double count is
+    intended). Runs ONCE after all period cycles, because a conduit like WinRed reports a
+    col21 that is cumulative ACROSS cycles -- a per-period fold would double-count it.
+
+    Discriminator = max(col21) vs the total itemized earmarks (sum of col20):
+      * max col21 >= itemized -> the peak already covers every itemized dollar (plus any
+                                 unitemized), so col21 is CUMULATIVE -> take the peak of each
+                                 monotonic run (one run for a never-resetting career total;
+                                 more if it resets between cycles).
+      * max col21 <  itemized -> no single report holds all the money, so col21 is a
+                                 PER-REPORT total -> SUM across forms.
+    (max-vs-total, NOT per-form col21-vs-col20: unitemized sub-$200 donors inflate col21 over
+    the itemized col20 for small-dollar conduits, which would skew a per-form comparison.)
+    """
+    for key, obs in conduit_observations.items():
+        forms = sorted(obs["forms"], key=lambda f: f["date"])
+        aggs = [f["agg"] for f in forms]
+        name = obs["name"]
+        if not aggs:
+            continue
+        itemized = sum(f["earmarks"] for f in forms)
+        max_agg = max(aggs)
+        if len(aggs) == 1:
+            total, mode = aggs[0], "single-form"
+        elif max_agg + 0.01 >= itemized:
+            total, mode = _sum_run_peaks(aggs), "cumulative(run-peaks)"
+        else:
+            total, mode = sum(aggs), "per-report(sum)"
+
+        print(f"CONDUIT {name} ({key}): {mode} over {len(aggs)} form(s) -> {total:,.2f} "
+              f"(max col21 = {max_agg:,.2f}; sum itemized col20 = {itemized:,.2f}; "
+              f"signals={sorted(obs['signals'])})")
+        if mode == "cumulative(run-peaks)":
+            # rarer path -- surface the per-form sequence so a misread is visible.
+            print(f"  cumulative sequence {[round(a, 2) for a in aggs]}")
+
+        contribution_data[name] = contribution_data.get(name, 0) + total
+
+
+def process_form_no_refund(csv_data, individual_data, pac_data, cycle, conduit_observations):
     """
     ok so my current methodology sums everyone over their name.
     the problem is, someone could have donated 200 in grassroots, then gotten a refund for that 200 
@@ -1490,9 +1664,10 @@ def process_form_no_refund(csv_data, individual_data, pac_data, cycle):
     if form_version not in ["8.5", "8.4", "8.3"]:
         print(f"Unsupported form version: form_version")
         return
-    
 
-    for row in csv_data: 
+
+    form_conduits = {}  # conduit committee -> ONE bundled total observed in THIS form
+    for row in csv_data:
         if row[0].upper() in ["HDR", "F6A", "F6N", "TEXT", "F3S"]:
             continue
         elif row[0].upper() in ['F3N', 'F3A']:
@@ -1525,18 +1700,26 @@ def process_form_no_refund(csv_data, individual_data, pac_data, cycle):
                     #name = re.sub(re.escape("political action committee"), "PAC", row[26], flags=re.IGNORECASE)
                     name = row[26].upper().replace("POLITICAL ACTION COMMITTEE", "PAC")
                 elif row[6] != "":
-                    name = row[6].upper().replace("POLITICAL ACTION COMMITTEE", "PAC")    
+                    name = row[6].upper().replace("POLITICAL ACTION COMMITTEE", "PAC")
                 else:
                     print(f"Missing name for SA11 contribution {row}, skipping.")
-                
-                #row[21] is the cumulative cycle-to-date aggregate (for a conduit
-                #like ActBlue/WinRed it is the running CONDUIT TOTAL repeated on every
-                #earmark row), so we keep one value (apply_signed: set once, never sum;
-                #but net in any pending refund loaded earlier).
-                if row[25] == "": #no committee ID -> merge on name (ORG/COM)
-                    apply_signed(pac_data, name, contribution)
-                else: #committee id present -> merge on committee_id + name
-                    apply_signed(pac_data.setdefault(row[25], {}), name, contribution)
+                    continue
+
+                signals = conduit_signal_set(row)
+                if signals:
+                    #Conduit (ActBlue/WinRed/AIPAC ...): row[21] is the per-REPORT conduit
+                    #total, which RESETS between forms -- so we can't "keep one value".
+                    #Collect one value per form here; finalize_conduit_totals() decides
+                    #sum-vs-max across forms once the whole period is processed.
+                    _record_conduit_form(row, name, contribution, signals, form_conduits)
+                else:
+                    #Normal direct PAC: row[21] is the cumulative cycle-to-date aggregate,
+                    #so we keep one value (apply_signed: set once, never sum; but net in any
+                    #pending refund loaded earlier).
+                    if row[25] == "": #no committee ID -> merge on name (ORG/COM)
+                        apply_signed(pac_data, name, contribution)
+                    else: #committee id present -> merge on committee_id + name
+                        apply_signed(pac_data.setdefault(row[25], {}), name, contribution)
         elif row[0].upper() == "SA11B":
             if row[21] == '':
                 print(f"Row formatted weird: {row}")
@@ -1606,6 +1789,10 @@ def process_form_no_refund(csv_data, individual_data, pac_data, cycle):
             pass
         else:
             print("Unknown row type in version 8.5:", row[0])
+
+    # This call processed exactly one form; fold its conduit totals into the cross-form
+    # accumulator so finalize_conduit_totals() can reconcile sum-vs-max at the period end.
+    _merge_form_conduits(form_conduits, conduit_observations)
 
 
 
@@ -2388,15 +2575,22 @@ def _run_for_candidate(session, generated_outputs, candidate_id, committee_id, c
 
     print(f"\nRolling up election {election} over period cycle(s): {period_cycles}")
     contribution_data = {}
+    # Conduit observations accumulate across EVERY period so a cross-cycle cumulative
+    # conduit (WinRed) is reconciled once below, not summed per period.
+    conduit_observations = {}
     for period in period_cycles:
         period_filings = [f for f in filings if f.get("cycle") == period]
         if not period_filings:
             print(f"  (no filings for period cycle {period}, skipping)")
             continue
         print(f"\n=== Period cycle {period}: {len(period_filings)} filing(s) ===")
-        period_data = fetch_filing_csv(period_filings, election, generated_outputs)
+        period_data = fetch_filing_csv(period_filings, election, generated_outputs, conduit_observations)
         for k, v in period_data.items():
             contribution_data[k] = contribution_data.get(k, 0) + v
+
+    # Reconcile conduits once across all periods (sum per-report, peak-of-runs if cumulative).
+    print("\nReconciling conduit (earmark) totals across all periods.")
+    finalize_conduit_totals(conduit_observations, contribution_data)
 
     contribution_data = dict(sorted(contribution_data.items(), key=lambda item: item[1], reverse=True)) #sort contribution data by amount, descending
 
