@@ -1104,6 +1104,8 @@ def keep_only_current_contributions(csv_list, cycle):
             #pac_data['CAMPAIGN TOTAL'] = pac_data.get('CAMPAIGN TOTAL', 0) + net_contributions
             clean_csv.append(row)
             continue
+        elif len(row) < 17:
+            print("SHORT ROW: ", row)
         elif str(cycle) in row[17] or "Special" in row[18]:
             clean_csv.append(row)
             clean = True

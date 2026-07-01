@@ -50,7 +50,7 @@ def modify_reps_standalone():
         print(f"Error: File not found at '{vote_avg}'")
         return None
     else:
-        src.modify_reps.modify_reps(congressmen, vote_avg)   
+        src.modify_reps.modify_reps(congressmen, vote_avg, os.path.join("..", "src", "generated_outputs"))   
 
 def add_bioguide_standalone():
 
@@ -111,7 +111,7 @@ def check_full_modify_json():
         print(f"Error: File not found at '{vote_avg}'")
         return None
     else:
-        src.modify_reps.modify_reps(congressmen, vote_avg)   
+        src.modify_reps.modify_reps(congressmen, vote_avg, os.path.join("..", "src", "generated_outputs"))   
 
 def check_modify_to_card_gen():
     """Regenerates the congressmen_mod.json, then generates a test card"""

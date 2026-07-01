@@ -20,9 +20,9 @@ VALID_DEGREES = ("S.J.D.", "B.E.E.", "D.C.S.", "LL.D.", "M. Div", "D. Div", "D.N
 
 VALID_ROLES = ("a delegate", "a representative", "a senator", "elected", "reelected")
 
-CABINET = ("Agriculture", "Commerce", "Defense", "Education", "Energy", "Health and Human Services",
-        "Homeland Security", "Housing and Urban Development", "Interior", "Labor", "Transportation",
-        "Treasury", "Veterans Affairs") #State too but keeps getting other things
+CABINET = ("Department of Agriculture", "Department of Commerce", "Department of Defense", "Department of Education", "Department of Energy", "Department of Health and Human Services",
+        "Department of Homeland Security", "Department of Housing and Urban Development", "Department of Interior", "Department of Labor", "Department of Transportation",
+        "Department of Treasury", "Department of Veterans Affairs") #State too but keeps getting other things
 STATES = (
     "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", 
     "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", 
@@ -1606,6 +1606,7 @@ def check_for_term_info(fact, terms):
         temp_list.append([date2, end_date, ch])
         #print(f"match_start_4 {fact} = {ch} = {temp_list}")
         terms.extend(temp_list)
+        #print(terms)
         return True, terms
     elif match_start_5:
         start_year = int(match_start_5.group('start_year'))+1
@@ -2057,15 +2058,19 @@ def check_for_personal(fact):
 def check_gov_highlights(fact):
     fact_lower = fact.lower()
     if "to conduct the impeachment" in fact_lower: #if they conducted an impeachment thing
+        #print(f"to conduct theimpeachment: {fact}")
         return True
     elif re.match(r".*\(.*Congress.*\).*", fact): #some committee work
+        #print(f"(Congress): {fact}")
         return True
     elif "in the Cabinet" in fact:
+        #print(f"in the Cabinet: {fact}")
         return True
-    elif any(re.search(rf"\b{re.escape(cabinet)}\b", fact, re.I) for cabinet in CABINET):
+    elif any(re.search(rf"\b{re.escape(cabinet)}\b", fact ) for cabinet in CABINET):
+        #print(f"Cabinet: {fact}")
         return True
     elif re.search(r"(Republican|Democratic) Conference", fact): #this is in congress, put it in highlights
-
+        #print(f"Conference: {fact}")
         return True
     else:
         return False
@@ -2175,6 +2180,7 @@ def add_bioguide_congress_data(list_of_dict, generated_outputs):
         #else:
         #    seen_rep[rep.get('bioguideID')] = 1
             
+        #newjson_path = os.path.join(generated_outputs, "..", "..", "bioguide_data", f"{rep.get('bioguideID')}.json")
 
         newjson_path = os.path.join(generated_outputs, "bioguide_data", f"{rep.get('bioguideID')}.json")
         bioguide_data = load_json(newjson_path)
@@ -2427,20 +2433,36 @@ def convert_terms_to_useful(terms):
                     final_list.append([start_date.strftime(date_format), end_date.strftime(date_format)])
                     start_date = curr_start
                     end_date = curr_end  
+                elif curr_ch == "s" or curr_ch == "s_se":
+                    #extend run of senate time
+                    end_date = curr_end
                 #senate to unknown special election should be senate to senate. means were appointed and then elected
                 elif curr_ch == "n_se":
                     end_date = curr_end
+                else:
+                    print(f"Uncaught: {terms[i-1]}-{terms[i]}")
+                    final_list.append([start_date.strftime(date_format), end_date.strftime(date_format)])
+                    start_date = curr_start
+                    end_date = curr_end    
             elif prev_ch == "h" or prev_ch == "h_se":
                 #house to senate = upload
                 if curr_ch == "s" or curr_ch == "s_se":
                     final_list.append([start_date.strftime(date_format), end_date.strftime(date_format)])
                     start_date = curr_start
                     end_date = curr_end  
+                elif curr_ch == "h" or curr_ch == "h_se":
+                    #extend run of house time
+                    end_date = curr_end 
                 #house to unknown should be house to senate
                 elif curr_ch == "n_se":
                     final_list.append([start_date.strftime(date_format), end_date.strftime(date_format)])
                     start_date = curr_start
                     end_date = curr_end  
+                else:
+                    print(f"Uncaught: {terms[i-1]}-{terms[i]}")
+                    final_list.append([start_date.strftime(date_format), end_date.strftime(date_format)])
+                    start_date = curr_start
+                    end_date = curr_end   
             else:
                 #days match but chamber changed. append what we've got and reset.
                 final_list.append([start_date.strftime(date_format), end_date.strftime(date_format)])
@@ -2506,61 +2528,7 @@ def convert_terms_to_useful(terms):
             start_date = curr_start
             end_date = curr_end  
         
-        """
-        elif abs((prev_end - curr_start).days) < 65:
-            #if within 65 days, this is likely confusion between the appointed/oathed.
-            #this should be a change, pick whichever one.
-            final_list.append([start_date.strftime(date_format), end_date.strftime(date_format)])
-            start_date = curr_start
-            end_date = curr_end
         
-        elif prev_start <= curr_start and prev_end >= curr_end: #if dates contained in the other one, skip it
-            #just take prev_terms
-            final_list.append([prev_start.strftime(date_format), prev_end.strftime(date_format)])
-        elif prev_start >= curr_start and prev_end <= curr_end: #if dates contained in the other one, skip it
-            #just take current_terms
-            final_list.append([curr_start.strftime(date_format), curr_end.strftime(date_format)])
-        else:
-            #if dates don't match now, it's because there was a genuine break.
-            final_list.append([start_date.strftime(date_format), end_date.strftime(date_format)])
-            start_date = curr_start
-            end_date = curr_end  
-        """
-
-
-        """
-        if prev_end == curr_start
-            diff_current = (curr_end - curr_start).days
-            diff_prev = (prev_end - prev_start).days
-            if diff_prev <= 365*2+2: #house or special election data point
-                if diff_current <= 365*2+1: #house/SE -> house/SE: combine and keep going
-                    end_date = curr_end
-                elif diff_current <= 365*6+2: #house/SE -> senate: no idea, print?
-                    if diff_prev == 365*2:
-                        #this is likely house to senate.
-                        final_list.append([start_date.strftime(date_format), end_date.strftime(date_format)])
-                        start_date = curr_start
-                        end_date = curr_end
-                    elif i == 1:
-                        #for the second one, this is likely to be special election for senate. continue.
-                        end_date = curr_end
-                    else:
-                        print(f"{i} TODO house to senate, or special election to senate, getting confused. diff_prev = {diff_prev}")
-                        final_list.append([start_date.strftime(date_format), end_date.strftime(date_format)])
-                        start_date, end_date = current_terms
-                else:
-                    print(f"WARNING1: difference between {current_terms} is bigger than {365*6} days: {diff_current}. Assuming senate special election.")
-                    end_date = current_terms[i]
-            elif diff_prev <= 365*6+2: #senate data point:
-                if diff_current <= 365*2+1: #senate -> house/SE: append and change
-                    final_list.append([start_date.strftime(date_format), end_date.strftime(date_format)])
-                    start_date, end_date = current_terms
-                elif diff_current <= 365*6+2: #senate -> senate: combine and keep going
-                    end_date = current_terms[1]
-                else:
-                    print(f"WARNING2: difference between {current_terms} is bigger than {365*6} days: {diff_current}. Assuming senate special election.")
-                    end_date = current_terms[1]
-        """
 
     final_list.append([start_date.strftime(date_format), end_date.strftime(date_format)])
     return final_list
