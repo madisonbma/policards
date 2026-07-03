@@ -465,8 +465,18 @@ def fetch_totals_for_election_year(session: requests.Session, candidate_id: str,
         print(f"Candidate {candidate_id} is not up for election in {election_yr}. Taking most previous in {report['candidate_election_year']}.")
 
     else:
-        sys.exit(f"Candidate {candidate_id} is not rerunning in {election_yr}. Most recent run was {most_recent_election}")
-    
+        # No committee re-registered for the requested cycle, so there are no totals for
+        # election_yr. If the candidate's most recent run is recent enough -- within one
+        # Senate term (6 years) -- report on that run instead of failing; older than that
+        # is too stale to be a meaningful stand-in.
+        if election_yr - most_recent_election <= 6:
+            report = totals[0]
+            print(f"Candidate {candidate_id} has no totals for {election_yr}. Most recent run "
+                  f"was {most_recent_election} (within 6 years); reporting on that run instead.")
+        else:
+            sys.exit(f"Candidate {candidate_id} is not rerunning in {election_yr}. "
+                     f"Most recent run was {most_recent_election} (more than 6 years ago).")
+
     tot = {"election_year": report['candidate_election_year'],
         "pac_total": report['other_political_committee_contributions'],
         "ind_total": report['individual_contributions'],
@@ -1718,7 +1728,9 @@ def process_form_no_refund(csv_data, individual_data, pac_data, cycle, committee
                 #most-recent-dated aggregate per person.
                 match_or_add_person(row, individual_data, contribution, row[19])
             else:
-                if row[26] != "":
+                if len(row) < 26:
+                    name = row[6].upper().replace("POLITICAL ACTION COMMITTEE", "PAC")
+                elif row[26] != "":
                     name = row[26].upper().replace("POLITICAL ACTION COMMITTEE", "PAC")
                 elif row[6] != "":
                     name = row[6].upper().replace("POLITICAL ACTION COMMITTEE", "PAC")
@@ -2526,13 +2538,28 @@ def match_or_add_person(row, individual_data, contribution, date=None, debug=Fal
 BIOGUIDE_NOT_FOUND_EXIT = 42
 
 
-def get_committee_id_for_candidate(session: requests.Session, candidate_id: str):
+def get_committee_id_for_candidate(session: requests.Session, candidate_id: str, election_year: int):
     """
     Derive the committee id(s) tied to a candidate via the FEC endpoint
-    /v1/candidate/{id}/committees (sorted by most recent cycle). Used by manual
-    --candidate-id mode, where there is no bioguide cross-reference to supply the
-    committee. Returns the committees active in the candidate's most recent cycle, or
-    None if the candidate has none.
+    /v1/candidate/{id}/committees, restricted to the committees active in `election_year`
+    -- the election we're actually reporting on, already resolved from the candidate
+    totals (which may differ from the raw requested cycle after the 6-year fallback).
+    Used by manual --candidate-id mode, where there is no bioguide cross-reference to
+    supply the committee.
+
+    Selection is by cycle membership, NOT the requested cycle or "most recent" heuristics:
+    a committee's `cycles` lists every two-year period it has filed in (a principal
+    committee spans many), so `election_year in cycles` is the signal it belongs to this
+    run. We deliberately do NOT widen to the other period cycles of a Senate term -- doing
+    so drags in stale joint fundraising committees from adjacent elections that merely
+    overlap the window.
+
+    Among the active committees we prefer the candidate's own campaign committees
+    (designation P/A). FEC data is unreliable here (it frequently mis-tags a principal
+    committee as J and leaves `principal_committees` empty), so when no P/A committee is
+    present we fall back to every committee active in the election year, printing the
+    designations we saw. Returns the committee ids, or None if the candidate has no
+    committee active in that election year.
     """
     params = {
         'sort': "-cycles"
@@ -2540,21 +2567,40 @@ def get_committee_id_for_candidate(session: requests.Session, candidate_id: str)
     results = get_first_page_numbered(session, f"/v1/candidate/{candidate_id}/committees", params, "committee_detail")
     if not results:
         return None
-    
-    comm_ids = []
-    recent_cycle = max(results[0]['cycles'])
-    for result in results:
-        if recent_cycle in result['cycles']:
-            comm_ids.append(result.get('committee_id'))
+
+    active = [r for r in results if election_year in (r.get('cycles') or [])]
+    if not active:
+        return None
+
+    # Prefer the candidate's own campaign committees (principal / authorized).
+    comm_ids = [r.get('committee_id') for r in active if r.get('designation') in ("P", "A")]
+    if not comm_ids:
+        # No P/A committee -- fall back to every committee active in the election year so we
+        # don't hard-fail on candidates whose committees carry unexpected designations.
+        # Print what designations we DID get so the mix is visible.
+        print(f"  No principal/authorized committees found for election {election_year}; "
+              "falling back to all committees active that year:")
+        for r in active:
+            desig = r.get('designation_full') or r.get('designation') or "unknown designation"
+            print(f"    {r.get('committee_id')} ({r.get('name', '?')}): {desig}")
+        comm_ids = [r.get('committee_id') for r in active]
 
     return comm_ids if comm_ids else None
 
 
-def _run_for_candidate(session, generated_outputs, candidate_id, committee_id, cycle, output_path):
+def _run_for_candidate(session, generated_outputs, candidate_id, committee_ids, cycle, output_path):
     """
-    Shared pipeline once candidate_id + committee_id are known (resolved from either the
+    Shared pipeline once candidate_id + committee_ids are known (resolved from either the
     bioguide cross-reference or manual --candidate-id mode): pull totals, fetch and roll
-    up filings across the relevant period cycle(s), and return [totals_dict, contribution_data].
+    up filings across every committee and the relevant period cycle(s), and return
+    [totals_dict, contribution_data].
+
+    `committee_ids` is a list -- a candidate may have several campaign committees (e.g. a
+    principal plus an authorized committee). Filings from all of them are merged before
+    the rollup so the contribution totals cover the candidate's whole campaign, not just
+    one committee. Manual --candidate-id mode passes committee_ids=None and lets this
+    function resolve them below, AFTER the election year is known, so committee selection
+    is tied to the election we actually report on (see get_committee_id_for_candidate).
 
     The result is also written ONCE to `output_path` (a throwaway handoff file the app
     supplies in the OS temp dir, then reads and deletes) so it isn't duplicated in appData.
@@ -2567,18 +2613,38 @@ def _run_for_candidate(session, generated_outputs, candidate_id, committee_id, c
     print(totals_dict)
     election = totals_dict['election_year']
 
-    # ── Step 1: fetch filings (cached per committee+election in generated_outputs) ──
-    filings_path = generated_outputs / f"filings_{committee_id}_{election}.json"
+    # Manual mode defers committee resolution to here so it can select the committees
+    # active in the RESOLVED election year (post 6-year fallback), not the raw requested
+    # cycle. Cross-reference mode already supplies its committee list.
+    if committee_ids is None:
+        committee_ids = get_committee_id_for_candidate(session, candidate_id, election)
+        if not committee_ids:
+            sys.exit(f"Error: no committees found for candidate {candidate_id} active in "
+                     f"election {election}. Please check the candidate code and cycle.")
+        print(f"Manual mode: candidate {candidate_id} (election {election}) -> committees {committee_ids}")
+    if len(committee_ids) > 1:
+        print(f"Candidate has {len(committee_ids)} committees, aggregating across all: {committee_ids}")
 
-    if os.path.exists(filings_path):
-        load_path = Path(filings_path)
-        print(f"\n=== Loading Filings from {load_path} ===")
-        filings = json.loads(load_path.read_text(encoding="utf-8"))
-        print(f"  Loaded {len(filings)} records.")
-    else:
-        filings = fetch_filings(session, committee_id)
-        if debug:
-            save_json(filings, filings_path, "filings")
+    # ── Step 1: fetch filings for every committee and merge ───────────────────────
+    # Cached per committee+election in generated_outputs; each committee keeps its own
+    # reusable cache file, and we concatenate them for the rollup below.
+    filings = []
+    for committee_id in committee_ids:
+        filings_path = generated_outputs / f"filings_{committee_id}_{election}.json"
+
+        if os.path.exists(filings_path):
+            load_path = Path(filings_path)
+            print(f"\n=== Loading Filings from {load_path} ===")
+            comm_filings = json.loads(load_path.read_text(encoding="utf-8"))
+            print(f"  Loaded {len(comm_filings)} records.")
+        else:
+            comm_filings = fetch_filings(session, committee_id)
+            if debug:
+                save_json(comm_filings, filings_path, "filings")
+        filings.extend(comm_filings)
+
+    if len(committee_ids) > 1:
+        print(f"\n  Aggregated {len(filings)} filing(s) across {len(committee_ids)} committees: {committee_ids}")
 
     # ── Step 2: fetch CSV data from filings ────────────────────────────
     # The aggregate resets each two-year period, so for a Senate seat (3 cycles) we
@@ -2718,16 +2784,10 @@ def main2():
     # normal path resolves both from the bioguide cross-reference below.
     if args.candidate_id:
         candidate_id = args.candidate_id
-        committee_id = get_committee_id_for_candidate(session, candidate_id)
-        if committee_id is None:
-            sys.exit(f"Error: no committees found for candidate {candidate_id}. "
-                     "Please check the candidate code and cycle.")
-        print(f"Manual mode: candidate {candidate_id} -> committee {committee_id}")
-        if len(committee_id) > 1:
-            print(f"Candidate has multiple committees, using first committee: {committee_id[0]}")
-        committee_id = committee_id[0]
+        # Committees are resolved inside _run_for_candidate, once the election year is
+        # known, so selection is tied to the election we actually report on.
         return _run_for_candidate(
-            session, generated_outputs, candidate_id, committee_id, args.cycle, output_path
+            session, generated_outputs, candidate_id, None, args.cycle, output_path
         )
 
     # ── Step N: get all running candidates names and comms ──────────────────────
@@ -2768,8 +2828,7 @@ def main2():
 
     committee_id = bioguide_map[args.bioguide_id]["committee_id"]
     if len(committee_id) > 1:
-        print(f"Candidate has multiple committees, using first committee: {committee_id[0]}")
-    committee_id = committee_id[0]
+        print(f"Candidate has {len(committee_id)} committees, aggregating across all: {committee_id}")
 
     return _run_for_candidate(
         session, generated_outputs, candidate_id, committee_id, args.cycle, output_path

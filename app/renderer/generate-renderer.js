@@ -50,6 +50,7 @@ const manualCandidateName = document.getElementById('manualCandidateName');
 const manualCandidateInput = document.getElementById('manualCandidateInput');
 const manualEntryError = document.getElementById('manualEntryError');
 const manualCandidateSubmitBtn = document.getElementById('manualCandidateSubmitBtn');
+const manualSkipDonorsBtn = document.getElementById('manualSkipDonorsBtn');
 const manualSpinner = document.getElementById('manualSpinner');
 const terminal4 = document.getElementById('terminalOutput4');
 let currentTopDonorsOverview = {};
@@ -543,6 +544,15 @@ manualCandidateSubmitBtn.addEventListener('click', async () => {
     manualCandidateSubmitBtn.disabled = false;
     manualEntryError.textContent = String(e);
   }
+});
+
+// Step 13: skip top donors entirely. Persist an empty top_donors so nothing is
+// carried over, then continue straight to the data step (no review needed when empty),
+// mirroring the "couldn't fetch" fallthrough above.
+manualSkipDonorsBtn.addEventListener('click', async () => {
+  manualEntryError.textContent = '';
+  await persistTopDonors([]);
+  show4();
 });
 
 // Required review/edit page for top_donors. Renders the top-20 as editable

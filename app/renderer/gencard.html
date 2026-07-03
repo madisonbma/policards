@@ -173,10 +173,11 @@
         <p>Enter the FEC candidate code manually to fetch top donors. (You can look them up at fec.gov)</p>
         <div class="current-field-data">
           <label for="manualCandidateInput">Candidate code (e.g. H/S00492785). Note, make sure you pick the right H/S if they have 2, otherwise you might get a really old run!:</label>
-          <input type="text" id="manualCandidateInput" placeholder="C00000000" />
+          <input type="text" id="manualCandidateInput" placeholder="H/S00000000" />
         </div>
         <p id="manualEntryError" class="error-message" style="white-space: pre-line;"></p>
         <button class="btn-primary" id="manualCandidateSubmitBtn">Fetch Top Donors</button>
+        <button class="btn-secondary" id="manualSkipDonorsBtn">Skip top donors</button>
         <div id="manualSpinner" class="spinner"></div>
         <div id="terminalOutput4" class="terminal"></div>
       </div>
