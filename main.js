@@ -578,8 +578,26 @@ function photoshopScriptPath(jsxRelName) {
     : path.join(__dirname, 'app', 'assets', 'photoshop', jsxRelName);
 }
 
-// Open `templatePath` in Photoshop and run `jsxScript` against it, passing jsxArgs
-// to the script (arguments[0], arguments[1], ...). Photoshop has no working CLI
+// PowerShell serializes its error stream as CLIXML whenever stderr is redirected,
+// so a COM failure arrives as a wall of XML. Pull the human-readable parts back out
+// and flatten to one line -- this is what the user sees on the failure page.
+function cleanHostError(text) {
+  let s = String(text || '');
+  if (s.indexOf('#< CLIXML') !== -1) {
+    const parts = [...s.matchAll(/<S S="Error">([\s\S]*?)<\/S>/g)].map(m => m[1]);
+    if (parts.length) s = parts.join('');
+  }
+  return s
+    .replace(/_x000D_/gi, '')
+    .replace(/_x000A_/gi, ' ')
+    .replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'").replace(/&amp;/g, '&')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+// Open `templatePath` in Photoshop and run `jsxScript` against it, passing the
+// outputs dir to the script as arguments[0]. Photoshop has no working CLI
 // script flag, so we drive it over COM on Windows / AppleScript on mac. The
 // template is opened HERE (not inside the JSX) so main.js controls which template
 // each flow uses.
@@ -587,8 +605,11 @@ function photoshopScriptPath(jsxRelName) {
 // Both hosts are synchronous, so this resolves only once Photoshop is done and
 // rejects with whatever the host reported -- that's how a Photoshop-side failure
 // reaches the UI as real text instead of an unexplained timeout.
-function runPhotoshop(templatePath, jsxScript, jsxArgs) {
-  const env = { ...process.env, GEN_OUTPUT_DIR: generated_outputs };
+// `genOutputsDir` deliberately does NOT reuse the module-level `generated_outputs`
+// name: shadowing it hid a bug where an array was passed here and String()'d into
+// a comma-joined path four layers down inside Photoshop.
+function runPhotoshop(templatePath, jsxScript, genOutputsDir) {
+  const env = { ...process.env, GEN_OUTPUT_DIR: genOutputsDir };
   const isWindows = process.platform === 'win32';
   const isMac = process.platform === 'darwin';
 
@@ -599,7 +620,7 @@ function runPhotoshop(templatePath, jsxScript, jsxArgs) {
     // (0x8001010A); retry ONLY on that busy error so a genuine Open/JSX error
     // still propagates (no double-run). Open the template first, then run the JSX.
     const psEsc = (s) => String(s).replace(/'/g, "''");
-    const argsPs = '@(' + jsxArgs.map(a => "'" + psEsc(a) + "'").join(',') + ')';
+    //const argsPs = '@(' + genOutputsDir  + ')';
     const psScript =
       "$ErrorActionPreference='Stop'; " +
       "$ps = New-Object -ComObject 'Photoshop.Application'; " +
@@ -614,8 +635,10 @@ function runPhotoshop(templatePath, jsxScript, jsxArgs) {
       "  } " +
       "} " +
       "Invoke-PsRetry { [void]$ps.Open('" + psEsc(templatePath) + "') }; " +
-      "Invoke-PsRetry { $ps.DoJavaScriptFile('" + psEsc(jsxScript) + "', " + argsPs + ") }";
-    const encoded = Buffer.from(psScript, 'utf16le').toString('base64');
+      "Invoke-PsRetry { $ps.DoJavaScriptFile('" + psEsc(jsxScript) + "', @('" + psEsc(genOutputsDir) + "')) }; ";
+      //"Invoke-PsRetry { $ps.DoJavaScriptFile('" + psEsc(jsxScript) + "', " + argsPs + ") }";
+
+      const encoded = Buffer.from(psScript, 'utf16le').toString('base64');
     command = `powershell -NoProfile -EncodedCommand ${encoded}`;
   } else if (isMac) {
     // Straight transplant of the sequence verified in Script Editor. Three things
@@ -638,7 +661,7 @@ function runPhotoshop(templatePath, jsxScript, jsxArgs) {
     const e = (applescript) => `-e '${shSq(applescript)}'`;
 
     const openJs = `app.open(new File("${jsStr(templatePath)}"))`;
-    const macArgs = jsxArgs.map(a => `"${asStr(a)}"`).join(',');
+    const macArgs = `"${asStr(genOutputsDir)}"`;
 
     command = [
       'osascript',
@@ -657,7 +680,7 @@ function runPhotoshop(templatePath, jsxScript, jsxArgs) {
       if (error) {
         // stderr carries the useful text: the AppleScript error (including
         // Photoshop's own message) or the PowerShell/COM exception.
-        const detail = [stderr, stdout].map(s => (s || '').trim()).filter(Boolean).join(' | ');
+        const detail = [stderr, stdout].map(cleanHostError).filter(Boolean).join(' | ');
         const message = `Photoshop error: ${detail || error.message}`;
         console.error(message);
         return reject(new Error(message));
@@ -745,7 +768,9 @@ async function generateCardSide(jsxRelName, templateSubdir, templateName, output
   await deleteFile(outputPath);
 
   // Rejects with the host's error text if Photoshop or the JSX fails.
-  await runPhotoshop(templatePath, jsxScript, [generated_outputs, outputPath]);
+  // Only the outputs dir crosses to the JSX now -- it derives the filename itself
+  // by appending _card.psd / _card_back.psd / _card_front.psd to file_save_path.
+  await runPhotoshop(templatePath, jsxScript, generated_outputs);
   return await waitForCardOutput(outputDir, outputFileName, outputPath);
 }
 

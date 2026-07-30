@@ -939,7 +939,11 @@ if (app.documents.length > 0) {
 } catch (e) {
     // Record exactly what failed and where, then re-throw so the process still
     // exits non-zero and run_jsx.py flags it.
-    log("FATAL: " + e.message + " (line " + e.line + ", file " + e.fileName + ")");
-    throw e;
+    // Re-throw a NEW error carrying the origin: the host (COM / AppleScript) only
+    // ever reports the RETHROW site -- i.e. this line -- so re-throwing `e` bare
+    // loses the line number that actually matters.
+    var where = " (line " + e.line + ", file " + e.fileName + ")";
+    log("FATAL: " + e.message + where);
+    throw new Error(e.message + where);
 }
 
