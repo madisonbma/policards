@@ -12,9 +12,15 @@
 // arguments[2] = absolute path to the target .jsx
 // arguments[3] = absolute path to the template .psd to open
 //
-// On failure the message is both returned (so it reaches stdout via osascript /
-// PowerShell) and written to <generated_outputs>/jsx_error.txt. The file is the
-// reliable channel; the return value is a convenience when testing by hand.
+// REPORT PROTOCOL -- <generated_outputs>/jsx_error.txt always ends up holding one of:
+//   "OK"               ran to completion
+//   "JSX ERROR: ..."   the target threw; message and line included
+//   "STARTED ..."      died between the breadcrumb and the catch (i.e. in this file)
+//   <no file at all>   this script never ran: bad path, or a syntax error in HERE
+// main.js reads it and treats anything that isn't "OK" as the failure message.
+// Keep this file ES3-only -- ExtendScript has no const/let/arrow functions, and
+// `arguments` cannot be used as an assignment target (doing so is a compile error
+// that silently kills the whole script before the try block is ever reached).
 
 var PP_GEN_OUTPUTS = arguments[0];
 var PP_SAVE_PATH   = arguments[1];
@@ -25,29 +31,29 @@ var PP_ERROR_FILE = new File(PP_GEN_OUTPUTS + "/jsx_error.txt");
 
 function pp_report(msg) {
     try {
-        PP_ERROR_FILE.open('w');
-        PP_ERROR_FILE.write(msg);
-        PP_ERROR_FILE.close();
+        PP_ERROR_FILE.encoding = "UTF-8";
+        if (PP_ERROR_FILE.open('w')) {
+            PP_ERROR_FILE.write(msg);
+            PP_ERROR_FILE.close();
+        }
     } catch (ignored) {}
 }
 
-// A stale file from an earlier run would be read as this run's failure.
-try {
-    if (PP_ERROR_FILE.exists) { PP_ERROR_FILE.remove(); }
-} catch (ignored) {}
+// Breadcrumb: overwritten with OK or the real error below. If it survives as-is,
+// something in this wrapper failed outside the try.
+pp_report("STARTED but did not finish: target=" + PP_TARGET_JSX + " template=" + PP_TEMPLATE);
 
-var pp_result;
 try {
     // Suppress Photoshop's own dialogs. A modal on macOS is unrecoverable -- it
     // blocks the AppleEvent indefinitely and the only symptom is a timeout.
     // NOTE: this does not suppress ExtendScript alert(); those still block.
     app.displayDialogs = DialogModes.NO;
 
-    // The targets read `arguments`, and $.evalFile evaluates in the global scope,
-    // so they see ours. Re-publish explicitly in case the host binds `arguments`
-    // per-script rather than as a plain global property.
-    $.global.arguments = [PP_GEN_OUTPUTS, PP_SAVE_PATH];
     // fill_social / fill_card_front check this env var before arguments[0].
+    // The targets also read `arguments` directly, and $.evalFile evaluates in the
+    // global scope, so they see the array Photoshop injected for this script --
+    // same indices (0 = outputs dir, 1 = save path), which is why the arg order
+    // above matters.
     $.setenv("GEN_OUTPUT_DIR", PP_GEN_OUTPUTS);
 
     // Open the template HERE rather than from the host. On macOS, AppleScript's
@@ -58,12 +64,13 @@ try {
     app.open(new File(PP_TEMPLATE));
 
     $.evalFile(new File(PP_TARGET_JSX));
-    pp_result = "OK";
+
+    pp_report("OK");
+    "OK";
 } catch (e) {
-    pp_result = "JSX ERROR: " + (e.message || e)
+    var pp_msg = "JSX ERROR: " + (e.message || e)
         + (e.line ? " (line " + e.line + ")" : "")
         + (e.fileName ? " in " + e.fileName : "");
-    pp_report(pp_result);
+    pp_report(pp_msg);
+    pp_msg;
 }
-
-pp_result;

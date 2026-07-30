@@ -667,23 +667,28 @@ function runPhotoshop(templatePath, jsxScript, jsxArgs) {
 
   return new Promise((resolve, reject) => {
     exec(command, { env, maxBuffer: 1024 * 1024 }, (error, stdout, stderr) => {
-      // The wrapper's error file is the reliable channel; stdout is the fallback
-      // for a failure early enough that the wrapper never got to write it.
-      const jsxError = readJsxError();
-      if (jsxError) {
-        console.error(`Photoshop JSX Error: ${jsxError}`);
-        return reject(new Error(jsxError));
+      // The wrapper's report file is the reliable channel (see its REPORT PROTOCOL
+      // comment); stdout is a fallback for failures too early to be written.
+      const report = readJsxError();
+      const hostDetail = [stderr, stdout].map(s => (s || '').trim()).filter(Boolean).join(' | ');
+
+      if (report && report !== 'OK') {
+        console.error(`Photoshop JSX Error: ${report}`);
+        return reject(new Error(report));
       }
       if (error) {
-        const detail = [stderr, stdout].map(s => (s || '').trim()).filter(Boolean).join(' | ');
-        const message = `Photoshop launch failed: ${detail || error.message}`;
+        // No report file at all means the wrapper never ran -- a bad script path,
+        // or a syntax error in run_jsx_wrapper.jsx itself (ExtendScript aborts the
+        // whole script at compile time, so its own try/catch never engages).
+        const message = report
+          ? `Photoshop launch failed: ${hostDetail || error.message}`
+          : `Photoshop could not run run_jsx_wrapper.jsx (no report file written -- ` +
+            `check the script path and that the wrapper compiles): ${hostDetail || error.message}`;
         console.error(message);
         return reject(new Error(message));
       }
-      const out = (stdout || '').trim();
-      if (out.indexOf('JSX ERROR') !== -1) {
-        console.error(`Photoshop JSX Error: ${out}`);
-        return reject(new Error(out));
+      if (!report) {
+        console.warn('Photoshop reported success but wrote no report file.');
       }
       console.log("Photoshop executed");
       resolve();
