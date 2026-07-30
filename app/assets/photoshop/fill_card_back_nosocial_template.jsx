@@ -5,7 +5,12 @@
 // run_jsx.py drives Photoshop over COM and passes the outputs dir as the first
 // script argument (app.DoJavaScriptFile(script, [dir], ...)), so it arrives as
 // arguments[0]. $.getenv is only a fallback for other launch methods.
-var generated_outputs = (arguments.length ? arguments[0] : null) || $.getenv("GEN_OUTPUT_DIR");
+// The typeof guard is required, not cosmetic: macOS `do javascript` provides no
+// `arguments` at all, and reading it bare is a ReferenceError that surfaces as an
+// untraceable Photoshop error 8800. Precedence is unchanged -- arguments still win
+// whenever they exist.
+var generated_outputs = (typeof arguments !== "undefined" && arguments.length ? arguments[0] : null)
+    || $.getenv("GEN_OUTPUT_DIR");
 const enable_log = false;
 
 if (generated_outputs) {

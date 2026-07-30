@@ -534,7 +534,7 @@ def gen_bonus_section(rep_info, draw, font, max_width, rep_stats):
 
 
 
-def create_temp(rep_info, absolute_stats, generated_outputs, assets_dir, save_path):
+def create_temp(rep_info, absolute_stats, generated_outputs, assets_dir, save_path, card_type):
     """
     Create the temp file needed for javascript. Format is:
     NAME
@@ -730,16 +730,13 @@ def create_temp(rep_info, absolute_stats, generated_outputs, assets_dir, save_pa
     replacements = str.maketrans({",": "", "\"": "", ".":"", " ":"_"})
     
     output_filename = os.path.join(cards_dir, \
-        f"{name.translate(replacements).lower()}_card.psd")
+        f"{name.translate(replacements).lower()}")
     rep_stats['file_save_path'] = output_filename
 
     party = rep_info.get('partyName')
-    if party=="Republican":
-        rep_stats['template_path'] = os.path.join(assets_dir, "templates", "Republican-House_Senate_Gov-Social.psd")
-    elif party=="Democrat":
-        rep_stats['template_path'] = os.path.join(assets_dir, "templates", "Democrat-House_Senate_Gov-Social.psd")
-    else:
-        rep_stats['template_path'] = os.path.join(assets_dir, "templates", "Independent-House_Senate_Gov-Social.psd")
+
+
+    rep_stats['template_path'] = os.path.join(assets_dir, "templates")
 
 
     #################################################
@@ -786,7 +783,7 @@ def get_rep_info(full_rep_info, name):
 
 
 #used for main.py
-def gen_temp_for_javascript(name, generated_outputs, assets_dir, save_path, font_path):
+def gen_temp_for_javascript(name, generated_outputs, assets_dir, save_path, font_path, card_type):
 
     abs_stat_f = os.path.join(generated_outputs, "absolute_stats.json")
     supplement_f = os.path.join(generated_outputs, "supplement_congressmen.json")
@@ -820,7 +817,7 @@ def gen_temp_for_javascript(name, generated_outputs, assets_dir, save_path, font
     load_global_fonts(font_path)
 
     rep_info = merge_in_supplement(rep_info, supplement_data)
-    create_temp(rep_info, absolute_stats, generated_outputs, assets_dir, save_path)
+    create_temp(rep_info, absolute_stats, generated_outputs, assets_dir, save_path, card_type)
     pull_pic_from_web(rep_info, generated_outputs, dummy=False)
 
 
@@ -832,11 +829,13 @@ if __name__ == "__main__":
     parser.add_argument('pp_assets', help="Path for psd assets")
     parser.add_argument('save_path', help="Path for outputs")
     parser.add_argument('font_path', help="Path for fonts")
+    #parser.add_argument('type', help="physical or digital")
     args = parser.parse_args()
     name = args.name
     generated_outputs = args.generated_outputs
     assets_dir = args.pp_assets
     save_path = args.save_path
     font_path = args.font_path
+    card_type = None
 
-    gen_temp_for_javascript(name, generated_outputs, assets_dir, save_path, font_path)
+    gen_temp_for_javascript(name, generated_outputs, assets_dir, save_path, font_path, card_type)

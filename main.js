@@ -641,16 +641,22 @@ function runPhotoshop(templatePath, jsxScript, genOutputsDir) {
       const encoded = Buffer.from(psScript, 'utf16le').toString('base64');
     command = `powershell -NoProfile -EncodedCommand ${encoded}`;
   } else if (isMac) {
-    // Straight transplant of the sequence verified in Script Editor. Three things
-    // matter and each cost a debugging round:
-    //  1. `POSIX file "..."` must be coerced OUTSIDE the tell block -- inside one
-    //     it collides with Photoshop's own `file` term and fails to compile (-1728).
-    //  2. It must be coerced `as alias`. A bare file specifier is a reference that
-    //     Photoshop tries to resolve in its own scope and rejects (-43).
-    //  3. The template is opened via ExtendScript (`do javascript` with a source
-    //     STRING), not AppleScript's `open`, which rejects the alias with -43.
-    // The `with timeout` block is the one addition: AppleEvents default to a 120s
-    // send timeout, which a full card render can exceed.
+    // The `do javascript file "<posix path>" with arguments {...}` form below is the
+    // one that has always worked here -- do not "fix" it:
+    //  - Do NOT write `POSIX file "..."` inside the tell block. Photoshop's own
+    //    dictionary defines `file`, which accepts a POSIX path directly; `POSIX file`
+    //    collides with it and fails to compile (-1728).
+    //  - Do NOT hoist it to an `alias` variable either. That parses, but Photoshop
+    //    then rejects it (-43 / bare 8800).
+    // The template is opened separately, via `do javascript` with a source STRING,
+    // because AppleScript's `open` rejects the same paths (-43). GEN_OUTPUT_DIR is
+    // also set there as a belt-and-braces second channel: same value, rewritten every
+    // run so it cannot go stale, and it keeps working if `arguments` ever comes up
+    // empty.
+    // No `with timeout` wrapper: wrapping these one-line `tell ... to ...` statements
+    // in one is a compile error (-2741). That leaves the default 120s AppleEvent send
+    // timeout, so a card render slower than that will report a timeout even though
+    // Photoshop is still working.
     const year = config['photoshop_year'];
     const appName = `Adobe Photoshop ${year}`;
     // Three nested syntaxes: ExtendScript source, inside an AppleScript string
@@ -660,16 +666,15 @@ function runPhotoshop(templatePath, jsxScript, genOutputsDir) {
     const shSq = (s) => String(s).replace(/'/g, `'\\''`);
     const e = (applescript) => `-e '${shSq(applescript)}'`;
 
-    const openJs = `app.open(new File("${jsStr(templatePath)}"))`;
-    const macArgs = `"${asStr(genOutputsDir)}"`;
+    const setupJs =
+      `$.setenv("GEN_OUTPUT_DIR","${jsStr(genOutputsDir)}");` +
+      `app.open(new File("${jsStr(templatePath)}"))`;
 
     command = [
       'osascript',
-      e(`set jsxFile to POSIX file "${asStr(jsxScript)}" as alias`),
-      e('with timeout of 300 seconds'),
-      e(`tell application "${appName}" to do javascript "${asStr(openJs)}"`),
-      e(`tell application "${appName}" to do javascript jsxFile with arguments {${macArgs}}`),
-      e('end timeout'),
+      e(`tell application "${appName}" to do javascript "${asStr(setupJs)}"`),
+      e(`tell application "${appName}" to do javascript file "${asStr(jsxScript)}" ` +
+        `with arguments {"${asStr(genOutputsDir)}"}`),
     ].join(' ');
   } else {
     throw new Error('Unsupported operating system');
