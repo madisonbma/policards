@@ -571,24 +571,54 @@ async function prepareTempForRep(name) {
 }
 
 
-// Open `templatePath` in Photoshop and run `jsxScript` against it, passing jsxArgs
-// to the script (arguments[0], arguments[1], ...). Photoshop has no working CLI
-// script flag, so we drive it over COM on Windows / AppleScript on mac. The
-// template is opened HERE (not inside the JSX) so main.js controls which template
-// each flow uses. Fire-and-forget; the caller watches for the output file.
-function launchPhotoshop(templatePath, jsxScript, jsxArgs) {
+// Absolute path to a .jsx we ship (packaged -> resources/photoshop, dev -> app/assets).
+function photoshopScriptPath(jsxRelName) {
+  return app.isPackaged
+    ? path.join(process.resourcesPath, 'photoshop', jsxRelName)
+    : path.join(__dirname, 'app', 'assets', 'photoshop', jsxRelName);
+}
+
+// run_jsx_wrapper.jsx writes a thrown JSX's real message here so we can show it
+// instead of a bare timeout. See app/assets/photoshop/run_jsx_wrapper.jsx.
+const jsxErrorFile = path.join(generated_outputs, 'jsx_error.txt');
+
+function readJsxError() {
+  try {
+    if (!fs.existsSync(jsxErrorFile)) return null;
+    return fs.readFileSync(jsxErrorFile, 'utf8').trim() || null;
+  } catch (err) {
+    console.error('Could not read jsx_error.txt:', err.message);
+    return null;
+  }
+}
+
+// Run `jsxScript` against `templatePath` in Photoshop and resolve once Photoshop
+// is done. Photoshop has no working CLI script flag, so we drive it over COM on
+// Windows / AppleScript on mac. Both hosts are synchronous, so this rejects with
+// the JSX's OWN error message when the script throws -- previously a thrown JSX
+// error was an opaque code (AppleScript 8800 / COM 0x80004005) and surfaced to
+// the user as an unexplained 2-minute timeout.
+//
+// Nothing calls a card JSX directly: everything goes through run_jsx_wrapper.jsx,
+// which opens the template, runs the target, and reports errors.
+function runPhotoshop(templatePath, jsxScript, jsxArgs) {
   const env = { ...process.env, GEN_OUTPUT_DIR: generated_outputs };
   const isWindows = process.platform === 'win32';
   const isMac = process.platform === 'darwin';
+
+  const wrapper = photoshopScriptPath('run_jsx_wrapper.jsx');
+  // [generated_outputs, save path, target .jsx, template .psd] -- the first two
+  // are what the card JSX itself reads as arguments[0]/arguments[1].
+  const wrapperArgs = [...jsxArgs, jsxScript, templatePath];
 
   let command;
   if (isWindows) {
     // COM (New-Object -ComObject) launches Photoshop if it isn't already open.
     // While it's still starting the call throws RPC_E_SERVERCALL_RETRYLATER
-    // (0x8001010A); retry ONLY on that busy error so a genuine Open/JSX error
-    // still propagates (no double-run). Open the template first, then run the JSX.
+    // (0x8001010A); retry ONLY on that busy error so a genuine JSX error still
+    // propagates (no double-run). Third arg 3 = PsDialogModes "no dialogs".
     const psEsc = (s) => String(s).replace(/'/g, "''");
-    const argsPs = '@(' + jsxArgs.map(a => "'" + psEsc(a) + "'").join(',') + ')';
+    const argsPs = '@(' + wrapperArgs.map(a => "'" + psEsc(a) + "'").join(',') + ')';
     const psScript =
       "$ErrorActionPreference='Stop'; " +
       "$ps = New-Object -ComObject 'Photoshop.Application'; " +
@@ -602,35 +632,75 @@ function launchPhotoshop(templatePath, jsxScript, jsxArgs) {
       "    } " +
       "  } " +
       "} " +
-      "Invoke-PsRetry { [void]$ps.Open('" + psEsc(templatePath) + "') }; " +
-      "Invoke-PsRetry { $ps.DoJavaScriptFile('" + psEsc(jsxScript) + "', " + argsPs + ") }";
+      "Invoke-PsRetry { $ps.DoJavaScriptFile('" + psEsc(wrapper) + "', " + argsPs + ", 3) }";
     const encoded = Buffer.from(psScript, 'utf16le').toString('base64');
     command = `powershell -NoProfile -EncodedCommand ${encoded}`;
   } else if (isMac) {
-    // Mac: open the template, then tell Photoshop to run the script with arguments.
+    // Three traps here, all of which cost a debugging session:
+    //  1. `POSIX file "..."` inside a `tell` block collides with Photoshop's own
+    //     `file` term and fails to compile (-1728) -- coerce OUTSIDE the tell.
+    //  2. Photoshop rejects a file specifier for the .jsx; it needs an `alias`.
+    //  3. AppleEvents default to a 120s send timeout, which a full card render
+    //     can exceed -- and it matched the old watcher timeout exactly, so a slow
+    //     render and a hang looked identical.
+    // The template is opened by the wrapper via ExtendScript rather than by
+    // AppleScript's `open`, which rejects the alias with -43.
     const year = config['photoshop_year'];
-    const macArgs = jsxArgs.map(a => `"${a}"`).join(',');
-    command =
-      `osascript ` +
-      `-e 'tell application "Adobe Photoshop ${year}" to open POSIX file "${templatePath}"' ` +
-      `-e 'tell application "Adobe Photoshop ${year}" to do javascript file "${jsxScript}" with arguments {${macArgs}}' &`;
+    const appName = `Adobe Photoshop ${year}`;
+    // Two nested syntaxes: an AppleScript string literal inside a single-quoted
+    // shell word. Escape innermost first so paths with quotes/apostrophes survive.
+    const asStr = (s) => String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+    const shSq = (s) => String(s).replace(/'/g, `'\\''`);
+    const e = (applescript) => `-e '${shSq(applescript)}'`;
+    const macArgs = wrapperArgs.map(a => `"${asStr(a)}"`).join(',');
+
+    command = [
+      'osascript',
+      e(`set jsxFile to POSIX file "${asStr(wrapper)}" as alias`),
+      e('with timeout of 300 seconds'),
+      e(`tell application "${appName}" to do javascript jsxFile with arguments {${macArgs}}`),
+      e('end timeout'),
+    ].join(' ');
   } else {
     throw new Error('Unsupported operating system');
   }
 
-  exec(command, { env }, (error) => {
-    if (error) console.error(`Photoshop Launch Error: ${error}`);
-    else console.log("Photoshop executed");
+  return new Promise((resolve, reject) => {
+    exec(command, { env, maxBuffer: 1024 * 1024 }, (error, stdout, stderr) => {
+      // The wrapper's error file is the reliable channel; stdout is the fallback
+      // for a failure early enough that the wrapper never got to write it.
+      const jsxError = readJsxError();
+      if (jsxError) {
+        console.error(`Photoshop JSX Error: ${jsxError}`);
+        return reject(new Error(jsxError));
+      }
+      if (error) {
+        const detail = [stderr, stdout].map(s => (s || '').trim()).filter(Boolean).join(' | ');
+        const message = `Photoshop launch failed: ${detail || error.message}`;
+        console.error(message);
+        return reject(new Error(message));
+      }
+      const out = (stdout || '').trim();
+      if (out.indexOf('JSX ERROR') !== -1) {
+        console.error(`Photoshop JSX Error: ${out}`);
+        return reject(new Error(out));
+      }
+      console.log("Photoshop executed");
+      resolve();
+    });
   });
 }
 
-// Resolve once the JSX writes `outputPath` (Photoshop runs async), or reject on timeout.
-function waitForCardOutput(outputDir, outputFileName, outputPath) {
+// Resolve once the JSX writes `outputPath`. Photoshop is driven synchronously now,
+// so by the time we get here saveAs has already returned -- this is a short backstop
+// for filesystem lag, not the primary success signal.
+function waitForCardOutput(outputDir, outputFileName, outputPath, timeoutMs = 30000) {
   return new Promise((resolve, reject) => {
-    const timeoutMs = 120000; // 2 minute limit
     const timer = setTimeout(() => {
       watcher.close();
-      reject(new Error("Timeout: Photoshop took too long to generate the card."));
+      reject(new Error(
+        `Photoshop finished without reporting an error, but no card appeared at ${outputPath}. ` +
+        `Check that the JSX saved to the expected filename.`));
     }, timeoutMs);
 
     const watcher = fs.watch(outputDir, (eventType, filename) => {
@@ -668,7 +738,9 @@ ipcMain.handle('gen-card', async (_event, name, party) => {
     return await generateCardSide(
       'fill_social_template.jsx', 'digital_cards', `digital_card_${suffix}.psd`, `${stem}_card.psd`);
   } catch (error) {
-    return { success: false, message: error.toString() };
+    // .message (not .toString()) so the failure page shows the JSX's own text
+    // without an "Error:" prefix in front of it.
+    return { success: false, message: error.message || String(error) };
   }
 });
 
@@ -678,9 +750,7 @@ ipcMain.handle('gen-card', async (_event, name, party) => {
 // Resolves { success, path }.
 async function generateCardSide(jsxRelName, templateSubdir, templateName, outputFileName) {
   const outputDir = config['save_path'];
-  const jsxScript = app.isPackaged
-    ? path.join(process.resourcesPath, 'photoshop', jsxRelName)
-    : path.join(__dirname, 'app', 'assets', 'photoshop', jsxRelName);
+  const jsxScript = photoshopScriptPath(jsxRelName);
   // Templates live in the user's assets folder under the given subdir.
   const templatePath = path.join(config['politician_pages_assets_path'], 'templates', templateSubdir, templateName);
   const outputPath = path.join(outputDir, outputFileName);
@@ -688,9 +758,18 @@ async function generateCardSide(jsxRelName, templateSubdir, templateName, output
   if (!fs.existsSync(templatePath)) {
     throw new Error(`Template not found: ${templatePath}`);
   }
+  if (!fs.existsSync(jsxScript)) {
+    throw new Error(`Photoshop script not found: ${jsxScript}`);
+  }
+  // Photoshop's saveAs fails with a bare "file not found" (-43) if the destination
+  // directory doesn't exist -- it won't create one.
+  fs.mkdirSync(outputDir, { recursive: true });
 
   await deleteFile(outputPath);
-  launchPhotoshop(templatePath, jsxScript, [generated_outputs, outputPath]);
+  await deleteFile(jsxErrorFile); // don't read a previous run's error as this one's
+
+  // Rejects with the JSX's own message if the script throws.
+  await runPhotoshop(templatePath, jsxScript, [generated_outputs, outputPath]);
   return await waitForCardOutput(outputDir, outputFileName, outputPath);
 }
 
@@ -725,7 +804,7 @@ ipcMain.handle('gen-manual-card', async (_event, name, party) => {
 
     return { success: true, paths: [backResult.path, frontResult.path] };
   } catch (error) {
-    return { success: false, message: error.toString() };
+    return { success: false, message: error.message || String(error) };
   }
 });
 

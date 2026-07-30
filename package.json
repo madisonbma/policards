@@ -1,6 +1,6 @@
 {
   "name": "politicianpages",
-  "version": "1.0.1",
+  "version": "1.1.1",
   "description": "desktop app to generate cards and format data",
   "homepage": "https://github.com/madisonbma/policards",
   "bugs": {
@@ -61,8 +61,11 @@
           "to": "fonts"
         },
         {
-          "from": "app/assets/photoshop/fill_social_template.jsx",
-          "to": "photoshop/fill_social_template.jsx"        
+          "from": "app/assets/photoshop",
+          "to": "photoshop",
+          "filter": [
+            "**/*.jsx"
+          ]
         }
       ]
     },
@@ -87,8 +90,11 @@
           "to": "fonts"
         },
         {
-          "from": "app/assets/photoshop/fill_social_template.jsx",
-          "to": "photoshop/fill_social_template.jsx"        
+          "from": "app/assets/photoshop",
+          "to": "photoshop",
+          "filter": [
+            "**/*.jsx"
+          ]
         }
       ]
     }
