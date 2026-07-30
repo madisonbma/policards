@@ -2,15 +2,16 @@
 #target photoshop
 
 
-// The outputs dir is passed in from run_jsx.py via an env var. Photoshop's CLI
-// can't forward args to a .jsx, so arguments[0] is only a fallback.
-var generated_outputs = $.getenv("GEN_OUTPUT_DIR") || arguments[0];
+// run_jsx.py drives Photoshop over COM and passes the outputs dir as the first
+// script argument (app.DoJavaScriptFile(script, [dir], ...)), so it arrives as
+// arguments[0]. $.getenv is only a fallback for other launch methods.
+var generated_outputs = (arguments.length ? arguments[0] : null) || $.getenv("GEN_OUTPUT_DIR");
 const enable_log = false;
 
 if (generated_outputs) {
     // Photoshop paths often need to be converted to File objects
     var dataFolder = new Folder(generated_outputs);
-    
+
     // Now you can use dataFolder to find your JSONs
     var dataFilePath = dataFolder + "/temp.txt";
     var picFilePath = dataFolder + "/temp.png";
@@ -18,25 +19,24 @@ if (generated_outputs) {
         var LogFilePath = dataFolder + "/log_js.log";
     }
 } else {
-    alert("Error: GEN_OUTPUT_DIR environment variable not found.");
+    // Don't alert() -- modal dialogs throw when Photoshop runs this headless.
+    generated_outputs = null;
 }
 
 
 
-var CARD_WIDTH  = 1080;
-var BOTTOM = 1245.55+76.72;
-var MIDDLE = 537.14+-51.06;
-var LEFT = 33;
-var RIGHT = 1080-33;
-var TOP = 91.87;
-var MAX_NAME_WIDTH = 482; //pixels
-var MAX_STATE_WIDTH = 342-49; //pixels
+var CARD_WIDTH  = 788;
+var BOTTOM = 104+932;
+var MIDDLE = 78+235+10;
+var LEFT = 57;
+var RIGHT = 57+675;
+var TOP = 78;
+//var MAX_NAME_WIDTH = 520; //pixels
 var MAX_ISSUE_WIDTH = 450; //pixels -- wrap width for top issues (JSX measures against this).
                            //Same px space as MAX_NAME_WIDTH(482)/donor box(450). TUNE to the
                            //real top-issues column width.
 
 var NAME_SIZE = 15.72;
-var STATE_SIZE = 10.24;
 
 
 /**
@@ -89,8 +89,11 @@ function center(layer_to_be_centered, bound1, bound2, axis) {
         //shift current_top - 
         if (h_of_space > h_of_layer) {
             layer_to_be_centered.translate(0, target - y);
+            log("Moved "+ layer_to_be_centered.name + " vertically  " + (target - y))
+
         }
         else {
+            log ("Failed to move layer "+ layer_to_be_centered.name)
             //alert("height of text box is bigger than the allotted space");
         }
         
@@ -102,6 +105,7 @@ function center(layer_to_be_centered, bound1, bound2, axis) {
         var target = ((w_of_space -  w_of_layer) / 2 ) + bound1;
 
         layer_to_be_centered.translate(target - x,0);
+        log("Moved "+ layer_to_be_centered.name + " horizontally " + (target - x))
 
     }
 
@@ -331,12 +335,14 @@ function reformat_top_section(name_and_info_layer, lines_layer) {
     var spacing_list = [
         name_and_info_layer.layers[0], name_and_info_layer.layers[1],
         lines_layer.layers.getByName("Line 1"), name_and_info_layer.layers[2],
-        name_and_info_layer.layers[3], name_and_info_layer.layers[7],
+        name_and_info_layer.layers[7],
         name_and_info_layer.layers[8], name_and_info_layer.layers[9]
     ];
 
 
     distribute_layers(spacing_list, TOP, MIDDLE, 0);
+    realign_horizontally(name_and_info_layer.layers[2], name_and_info_layer.layers[3]);
+
     realign_horizontally(name_and_info_layer.layers[7], name_and_info_layer.layers[4]);
     realign_horizontally(name_and_info_layer.layers[7], name_and_info_layer.layers[5]);
     realign_horizontally(name_and_info_layer.layers[7], name_and_info_layer.layers[6]);
@@ -405,19 +411,18 @@ function write(layer, text){
     // then combine the list elements by \r again.
     //2. otherwise, just add the text to the layer
     var addme = "";
-    layer.textItem.leading = 7;
-
-    if (text.indexOf("||BREAK||") !== -1) {
-        log("||BREAK|| found in " + text);
+    layer.textItem.leading = 5.5;
+    var temp_text = text.split("||BREAK||").join(" ");
+    layer.textItem.contents = temp_text;
+    /*if (text.indexOf("||BREAK||") !== -1) {
         var snippets = text.split("||BREAK||");
         addme = snippets.join("\r");
         log("Adding: "+addme);
         layer.textItem.contents = addme;
     }
     else {
-        log("No ||BREAK|| present in " + text);
         layer.textItem.contents = text;
-    }
+    }*/
 }
 
 function write_temp(text) {
@@ -437,7 +442,8 @@ function write_temp(text) {
 }
 
 
-function write_bulleted_list_pointtext(layer, text, resize) {
+
+function write_bulleted_list(layer, text_in, resize) {
     /**
      * Take a list in and parse for delimiters.
      * ||BREAK_DOT||: standard delimiter. each BREAK_DOT gets a bullet and its own line
@@ -446,6 +452,9 @@ function write_bulleted_list_pointtext(layer, text, resize) {
      *   -> ||BREAK_SUBDOT||: for committees specifically. 
      *                        add 4 spaces before, don't add the bullet bc already there
      */
+
+    var text = text_in.split("||BREAK||").join(" ");
+
     if (resize) {
         layer.textItem.kind = TextType.POINTTEXT; 
         var bounds = layer.bounds;
@@ -454,14 +463,12 @@ function write_bulleted_list_pointtext(layer, text, resize) {
         var scale = getTextLayerScale(layer);
         log("Starting bounds: " + exactWidth+ "x"+exactHeight);
     }
-    var addme = "";
-    var bullet = String.fromCharCode(8226);
-    layer.textItem.leading = 7;
+
+    layer.textItem.leading = 5.5;
     layer.textItem.kind = TextType.PARAGRAPHTEXT;
 
     //start of bullet point
     if (text.indexOf("||BREAK_DOT||") !== -1) {
-        log("||BREAK_DOT|| found in " + text);
         var snippets = text.split("||BREAK_DOT||");
 
         var bulletizedLines = [];
@@ -469,34 +476,29 @@ function write_bulleted_list_pointtext(layer, text, resize) {
         //check for BREAK to add indent, otherwise print normally with bullet
         for (var i = 0; i < snippets.length; i++) {
             var line = snippets[i];
-            // the first snippet is the header/title -> no bullet, every later line gets one
-            var prefix = (i == 0) ? "" : bullet;
-            if (line.indexOf("||BREAK||") !== -1) {
-                //if BREAK is present, split and indent
-                //this is either a subdot or intermediate line break,
-                //both of which are treated the same. add 4 space and return
-                var subsnips = line.split("||BREAK||");
-                for (var j = 0; j < subsnips.length; j++) {
-                    var subline = subsnips[j];
-
-                    //to start, don't indent but include bullet (unless this is the header)
-                    if (j == 0) {
-                        bulletizedLines.push(prefix + subline);
+            // 3. Skip empty lines that might result from splitting (e.g., "A,,B")
+            if (line.length === 0) {
+                continue;
+            }
+            // ||BREAK_SUBDOT|| -> start a new line and indent it with a tab, the
+            // same as pressing Tab in the type tool (committees: the bullet is
+            // already in the text, so don't add one).
+            if (line.indexOf("||BREAK_SUBDOT||") !== -1) {
+                var subparts = line.split("||BREAK_SUBDOT||");
+                for (var k = 0; k < subparts.length; k++) {
+                    if (subparts[k].length === 0) {
+                        continue;
                     }
-                    else if (subline.length > 0) {
-                        bulletizedLines.push("    " + subline);
-                    }
+                    // first subpart continues its line; each later one is a new tab-indented line
+                    bulletizedLines.push(k === 0 ? subparts[k] : "--" + subparts[k]);
                 }
             }
             else {
-                // 3. Skip empty lines that might result from splitting (e.g., "A,,B")
-                if (line.length > 0) {
-                    // 4. Add the bullet (header gets none) and a space to the front
-                    bulletizedLines.push(prefix + line);
-                }
+                bulletizedLines.push(line);
             }
         }
     
+
         layer.textItem.contents = bulletizedLines.join("\r");
     }
     else {
@@ -512,7 +514,7 @@ function write_bulleted_list_pointtext(layer, text, resize) {
         // textItem.width/height live in the layer's PRE-transform space, so divide the
         // canvas-px bounds back out by the layer's baked-in scale (~4.167x). Without this
         // the box renders scale-times bigger than the text.
-        log("Scale by "+ scale)
+        log("Scale by "+ scale.x + "/"+ scale.y)
         log("Final bounds: "+ (exactWidth / scale.x) + "x" +( exactWidth / scale.y));
 
         layer.textItem.width = new UnitValue(exactWidth / scale.x, "px");
@@ -521,7 +523,7 @@ function write_bulleted_list_pointtext(layer, text, resize) {
     }
 }
 
-function write_bulleted_list(layer, text, resize){
+function write_bulleted_list_bckup(layer, text_in, resize) {
     /**
      * Take a list in and parse for delimiters.
      * ||BREAK_DOT||: standard delimiter. each BREAK_DOT gets a bullet and its own line
@@ -530,19 +532,9 @@ function write_bulleted_list(layer, text, resize){
      *   -> ||BREAK_SUBDOT||: for committees specifically. 
      *                        add 4 spaces before, don't add the bullet bc already there
      */
-    write_bulleted_list_with_pretext(layer, text, "", resize);
-}
 
+    var text = text_in.split("||BREAK||").join(" ");
 
-function write_bulleted_list_with_pretext(layer, text, additional_text, resize) {
-    /**
-     * Take a list in and parse for delimiters.
-     * ||BREAK_DOT||: standard delimiter. each BREAK_DOT gets a bullet and its own line
-     *   -> ||BREAK||: if present in BREAK_DOT delimiting, line too long and ran over. 
-     *                 start a new line, indent by 4 spaces
-     *   -> ||BREAK_SUBDOT||: for committees specifically. 
-     *                        add 4 spaces before, don't add the bullet bc already there
-     */
     if (resize) {
         layer.textItem.kind = TextType.POINTTEXT; 
         var bounds = layer.bounds;
@@ -551,15 +543,15 @@ function write_bulleted_list_with_pretext(layer, text, additional_text, resize) 
         var scale = getTextLayerScale(layer);
         log("Starting bounds: " + exactWidth+ "x"+exactHeight);
     }
+
     var addme = "";
     //var bullet = String.fromCharCode(8226);
     var bullet = "";
-    layer.textItem.leading = 7;
+    layer.textItem.leading = 5.5;
     layer.textItem.kind = TextType.PARAGRAPHTEXT;
 
     //start of bullet point
     if (text.indexOf("||BREAK_DOT||") !== -1) {
-        log("||BREAK_DOT|| found in " + text);
         var snippets = text.split("||BREAK_DOT||");
 
         var bulletizedLines = [];
@@ -595,14 +587,12 @@ function write_bulleted_list_with_pretext(layer, text, additional_text, resize) 
             }
         }
     
-        addme = additional_text + bulletizedLines.join("\r"); 
-        log("Adding: "+addme);
-        layer.textItem.contents = addme;
+
+        layer.textItem.contents = bulletizedLines.join("\r");
     }
     else {
         log("No ||BREAK|| present in " + text);
-        addme = additional_text + bullet + text;
-        layer.textItem.contents = addme;
+        layer.textItem.contents = text;
     }
 
     if (resize) {
@@ -613,7 +603,7 @@ function write_bulleted_list_with_pretext(layer, text, additional_text, resize) 
         // textItem.width/height live in the layer's PRE-transform space, so divide the
         // canvas-px bounds back out by the layer's baked-in scale (~4.167x). Without this
         // the box renders scale-times bigger than the text.
-        log("Scale by "+ scale)
+        log("Scale by "+ scale.x + "/"+ scale.y)
         log("Final bounds: "+ (exactWidth / scale.x) + "x" +( exactWidth / scale.y));
 
         layer.textItem.width = new UnitValue(exactWidth / scale.x, "px");
@@ -651,70 +641,6 @@ function getTextLayerScale(layer) {
 }
 
 
-function write_bulleted_list_wrapped(layer, text, max_width, additional_text) {
-    /**
-     * PROTOTYPE alternative to write_bulleted_list().
-     *
-     * Instead of relying on Python to pre-compute line breaks (||BREAK|| markers),
-     * this renders the layer as PARAGRAPHTEXT so Photoshop wraps any line that
-     * exceeds max_width automatically. A hanging indent (leftIndent + negative
-     * firstLineIndent) keeps wrapped lines aligned UNDER the text rather than
-     * snapping back under the bullet.
-     *
-     * max_width / INDENT are given in TRUE CANVAS PIXELS; we divide them by the
-     * layer's transform scale before handing them to the DOM, because those text
-     * properties live in the layer's pre-transform space (see getTextLayerScale).
-     *
-     * Only ||BREAK_DOT|| (one bullet per item) is needed now. Any leftover
-     * ||BREAK|| is treated as a deliberate forced break.
-     *
-     * NOTE: the indent properties apply to the WHOLE layer, so this is meant for
-     * pure bullet layers. A layer that mixes a header + bullets (e.g. donors)
-     * would need the header split into its own layer first.
-     */
-    if (additional_text === undefined) { additional_text = ""; }
-
-    var bullet = String.fromCharCode(8226);
-    var INDENT = 8; // canvas px gutter for the bullet -- tune to bullet+space width
-
-    var items = text.split("||BREAK_DOT||");
-    var lines = [];
-    for (var i = 0; i < items.length; i++) {
-        var item = items[i];
-        if (item.length === 0) { continue; } // skip leading/empty splits
-        // any remaining ||BREAK|| is an intentional forced break, not a wrap marker
-        item = item.replace(/\|\|BREAK\|\|/g, "\r");
-        lines.push(bullet + " " + item);
-    }
-
-    // The DOM text props (width/height/indent) live in a 72-ppi point space, so on a
-    // higher-res doc the value is multiplied by doc.resolution/72 on render (that's
-    // the ~4.167x we saw, == 300/72). Divide it out so the numbers mean true canvas
-    // px. Also divide by any baked-in type-layer transform (usually 1.0 here).
-    var tScale = getTextLayerScale(layer);
-    var resFactor = doc.resolution / 72;
-    var box_w  = max_width / (resFactor * tScale.x);
-    var box_h  = 600 / (resFactor * tScale.y);   // generous height so text isn't clipped
-    var indent = INDENT / (resFactor * tScale.x);
-    log("write_bulleted_list_wrapped: res=" + doc.resolution + " resFactor=" + resFactor
-        + " tScale.x=" + tScale.x + " -> box_w=" + box_w + " indent=" + indent);
-
-    // Switch to paragraph text and give it a box. Width drives wrapping; layout
-    // still reads .bounds afterward.
-    layer.textItem.kind = TextType.PARAGRAPHTEXT;
-    layer.textItem.width  = new UnitValue(box_w, "px");
-    layer.textItem.height = new UnitValue(box_h, "px");
-    layer.textItem.leading = 7;
-
-    // Hanging indent for the bullets.
-    layer.textItem.firstLineIndent = new UnitValue(-indent, "px");
-    layer.textItem.leftIndent      = new UnitValue(indent, "px");
-
-    var addme = additional_text + lines.join("\r");
-    log("write_bulleted_list_wrapped adding: " + addme);
-    layer.textItem.contents = addme;
-}
-
 
 function save_file_as_png_export(save_file_path, doc) {
     var savePath = new File(save_file_path);
@@ -740,24 +666,6 @@ function save_file_as_png_export(save_file_path, doc) {
 
 /////////////////////// TEXT EDITING /////////////////////////////
 
-function state_and_photo(photocard_layer, rep_info) {
-    ///////////////////////////////////////////////////////////
-    // STATE AND PHOTO CARD LAYER
-    //////////////////////////////////////////////////////////
-    var state_layer = photocard_layer.layers[0];
-
-    var photo_layer = photocard_layer.layers.getByName("Photo").layers.getByName("photo");
-    write(state_layer, rep_info["state"]);
-    var resized = resize_text(state_layer, STATE_SIZE, MAX_STATE_WIDTH);
-    if (resized) {
-        //also recenter the state if resized
-        center(state_layer, photo_layer.bounds[0].value, photo_layer.bounds[2].value, 1)
-    }
-    log("Photo layer name and size before replacing photo: " + photo_layer.name + ", " + photo_layer.bounds);
-
-    add_photo(photo_layer, picFilePath);
-    log("Photo layer name and size after replacing photo: " + photo_layer.name + ", " + photo_layer.bounds);
-}
 
 
 
@@ -816,10 +724,10 @@ function name_and_title(name_and_info_layer, rep_info) {
     //for name, need to change the default line spacing
 
     write(name_and_info_layer.layers[0], rep_info["name_line"]);
-    resize_text(name_and_info_layer.layers[0], NAME_SIZE, MAX_NAME_WIDTH);
+    //resize_text(name_and_info_layer.layers[0], NAME_SIZE, MAX_NAME_WIDTH);
 
-    write(name_and_info_layer.layers[1], rep_info["title_line"]);
-    write(name_and_info_layer.layers[2], rep_info["chamber_line"]);
+    write(name_and_info_layer.layers[1], rep_info["chamber_line"]);
+    //write(name_and_info_layer.layers[2], rep_info["chamber_line"]);
     write(name_and_info_layer.layers[3], rep_info["reelection_line"]);
 
     write(name_and_info_layer.layers[6], rep_info["birthplace_line"]);
@@ -827,52 +735,38 @@ function name_and_title(name_and_info_layer, rep_info) {
 
     move_age(name_and_info_layer, rep_info);
 
-    write_bulleted_list_pointtext(name_and_info_layer.layers[9], rep_info["education_line"], false);
+    write_bulleted_list(name_and_info_layer.layers[9], rep_info["education_line"], false);
     const ed_length = rep_info['education_line'].split("||BREAK_DOT||").length - 1;
 
     name_and_info_layer.layers[9].textItem.height = new UnitValue(ed_length*20, "px")
 }
 
+function fill_committees(committee_layer, rep_info) {
+    log("COMMITTEES")
+    write_bulleted_list(committee_layer.layers[0], rep_info['committee_list'], false);
+
+
+}
+
+function fill_jobs(job_layer, rep_info) {
+    log("JOBS")
+    write_bulleted_list(job_layer.layers[0], rep_info['work_history'], false);
+    center(job_layer.layers[1], top_issues_layer.bounds[0].value, top_issues_layer.bounds[2].value, 1)
+
+
+}
+
 function fill_top_issues(top_issues_layer, rep_info) {
-    //PROTOTYPE: let Photoshop wrap instead of using pre-computed ||BREAK|| markers.
-    //Revert to write_bulleted_list(...) to compare against the old behavior.
-    //write_bulleted_list_wrapped(top_issues_layer.layers[0], rep_info['top_issues'], MAX_ISSUE_WIDTH);
-    
+    log("TOP ISSUES")
     top_issues = top_issues_layer.layers[0]
     write_bulleted_list(top_issues_layer.layers[0], rep_info['top_issues'], false);
-    //top_issues.textItem.width = new UnitValue(110, "px"); 
-    //top_issues.textItem.height = new UnitValue(200, "px");
 
 }
 
 
-
-function fill_top_issues_tmp(top_issues_layer, rep_info) {
-    var rawText = rep_info['top_issues'];
-    var items = rawText.split('||BREAK_DOT||');
-    var bulletLines = [];
-
-    for (var i = 0; i < items.length; i++) {
-        var item = items[i].replace(/^\s+|\s+$/g, ''); 
-        if (item.length > 0) {
-            bulletLines.push("- " + item);
-        }
-    }
-
-    var bulletedList = bulletLines.join('\n');
-
-    // Target index 0 inside the layer group
-    var targetTextLayer = top_issues_layer.layers[0];
-
-    if (targetTextLayer && targetTextLayer.kind == LayerKind.TEXT) {
-        targetTextLayer.textItem.contents = bulletedList;
-    } else {
-        alert("Error: The layer at index 0 is not a text layer!");
-    }
-
-}
 
 function fill_top_donors(top_donors_layer, rep_info) {
+    log("TOP DONORS")
     var donor_title_layer = top_donors_layer.layers[0];
     var donor_overview_layer = top_donors_layer.layers[1];
     var donor_text_layer = top_donors_layer.layers[2];
@@ -882,7 +776,10 @@ function fill_top_donors(top_donors_layer, rep_info) {
 
     write(donor_overview_layer, rep_info['top_donors_hdr'])
     //addme = write_temp(rep_info['top_donors_hdr'])
-    write_bulleted_list(donor_text_layer, rep_info['top_donors'], true);
+
+    //set width to 300.
+
+    write_bulleted_list(donor_text_layer, rep_info['top_donors'], false);
 
 
     /*donor_text_layer.textItem.kind = TextType.POINTTEXT;
@@ -919,7 +816,8 @@ function saveAsNewFile(newPath) {
     psdOptions.alphaChannels = true;
 
     // 3. Execute the Save As command
-    // Set 'asCopy' to true if you want to keep the original open
+    // asCopy = false so the OPEN document becomes the saved card (no leftover
+    // modified template with a '*'), matching fill_social_template.jsx.
     doc.saveAs(outputFile, psdOptions, false, Extension.LOWERCASE);
     
     // alert("File saved to: " + outputFile.fsName);
@@ -928,13 +826,21 @@ function saveAsNewFile(newPath) {
 
 //////////////////////////////////////////////////////////////
 
+// Wrap the whole run so any exception lands in log_js.log (with a line number)
+// instead of vanishing behind a bare "exit status 1". NOTE: alert() is not used
+// here on purpose -- when Photoshop runs a script headless via `-r`, modal
+// dialogs throw, so all diagnostics go to the log file.
+try {
+
 //this should load in dataFilePath which creates a var rep_info
 $.evalFile(dataFilePath);
+log("evalFile OK -- rep_info loaded, documents open: " + app.documents.length);
 
-// The template is opened by the caller (main.js reads rep_info.template_path
-// from temp.txt and opens it; run_jsx.py opens the CLI template) BEFORE this
-// script runs, so it's already the active document -- same as
-// fill_card_back_nosocial_template.jsx. We no longer open it here.
+// The template is passed on the command line to run_jsx.py, which hands it to
+// Photoshop as a positional arg. Photoshop opens it BEFORE running this script,
+// so it's already the active document. (Photoshop's CLI can't forward the path
+// into the script as an argument, so we read it off the open document instead
+// of rep_info['template_path'].)
 if (app.documents.length > 0) {
     var doc = app.activeDocument;
     app.preferences.rulerUnits = Units.PIXELS;
@@ -942,16 +848,13 @@ if (app.documents.length > 0) {
     var toplayer = doc.layers[0]; //Republican-House_Senate_Gov-Social
     //var toplayer = toplayer.layers[0]; //MASTER FOLDER
     var layerNames = [];
+    log("Top layer: " + toplayer.name);
 
     var lines_layer = toplayer.layers.getByName("Divider Lines");
-    var social_media_layer = toplayer.layers.getByName("Social");
 
-    var photocard_layer = toplayer.layers.getByName("PHOTO CARD");
-    state_and_photo(photocard_layer, rep_info);
 
-    var name_and_info_layer = toplayer.layers.getByName("NAME+INFO ");
+    var name_and_info_layer = toplayer.layers.getByName("NAME+INFO");
     name_and_title(name_and_info_layer, rep_info);
-
 
 
     var statbar_layer = toplayer.layers.getByName("Stat Bars");
@@ -960,8 +863,13 @@ if (app.documents.length > 0) {
     var top_issues_layer = toplayer.layers.getByName("Top Issues");
     var top_donors_layer = toplayer.layers.getByName("Top Donors");
 
+    var job_layer = toplayer.layers.getByName("Recent Jobs");
+    var committees_layer = toplayer.layers.getByName("Committees");
+
     fill_top_issues(top_issues_layer, rep_info);
     fill_top_donors(top_donors_layer, rep_info);
+    fill_committees(committees_layer, rep_info);
+    fill_jobs(job_layer, rep_info);
 
 
     /////// REDO SPACING ////////
@@ -969,41 +877,52 @@ if (app.documents.length > 0) {
     reformat_top_section(name_and_info_layer, lines_layer);
 
 
-    var copyright_layer = toplayer.layers.getByName("cPoliticianPages")
 
     
     //if top_issues is taller, use that. otherwise use top_donors. then realign to the one you used
 
     top_issues_h = (top_issues_layer.bounds[3].value - top_issues_layer.bounds[1].value);
     top_donors_h = (top_donors_layer.bounds[3].value - top_donors_layer.bounds[1].value);
+    jobs_h = (job_layer.bounds[3].value - job_layer.bounds[1].value);
+    committee_h = (committees_layer.bounds[3].value - committees_layer.bounds[1].value);
+    
     if (top_donors_h > top_issues_h) {
-        var layer_list = [
-            statbar_layer, lines_layer.layers.getByName("Line 2"),
-            top_donors_layer, lines_layer.layers.getByName("Line 3"),
-            social_media_layer, copyright_layer
-        ];
-        distribute_layers(layer_list, MIDDLE, BOTTOM, 0);
-        realign_horizontally(top_donors_layer, top_issues_layer);
-        distribute_layers([top_issues_layer, lines_layer.layers.getByName("Line 4"), top_donors_layer], LEFT, RIGHT, 1)
-        center(lines_layer.layers.getByName("Line 4"), top_issues_layer.bounds[2].value, top_donors_layer.bounds[0].value, 1)
-        center(lines_layer.layers.getByName("Line 4"), lines_layer.layers.getByName("Line 2").bounds[2].value, lines_layer.layers.getByName("Line 3").bounds[0].value, 0)
+        var layer2a = top_donors_layer;
+        var layer2b = top_issues_layer;
+    }
+    else {
+        var layer2a = top_issues_layer;
+        var layer2b = top_donors_layer;
+    }
+    if (jobs_h > committee_h) {
+        var layer1a = job_layer;
+        var layer1b = committees_layer;
     } else {
-        var layer_list = [
-            statbar_layer, lines_layer.layers.getByName("Line 2"),
-            top_issues_layer, lines_layer.layers.getByName("Line 3"),
-            social_media_layer, copyright_layer
-        ];
-        distribute_layers(layer_list, MIDDLE, BOTTOM, 0);
-        realign_horizontally(top_issues_layer, top_donors_layer);
-        distribute_layers([top_issues_layer, lines_layer.layers.getByName("Line 4"), top_donors_layer], LEFT, RIGHT, 1)
-        center(lines_layer.layers.getByName("Line 4"), top_issues_layer.bounds[2].value, top_donors_layer.bounds[0].value, 1)
-        center(lines_layer.layers.getByName("Line 4"), lines_layer.layers.getByName("Line 2").bounds[2].value, lines_layer.layers.getByName("Line 3").bounds[0].value, 0)
+        var layer1a = committees_layer;
+        var layer1b = job_layer;
     }
 
+    var layer_list = [
+        layer1a, 
+        lines_layer.layers.getByName("Line 5"),
+        statbar_layer, lines_layer.layers.getByName("Line 2"),
+        layer2a
+    ];
+    distribute_layers(layer_list, MIDDLE, BOTTOM, 0);
+    realign_horizontally(layer1a, layer1b);
+    realign_horizontally(layer2a, layer2b);
+    distribute_layers([top_issues_layer, lines_layer.layers.getByName("Line 4"), top_donors_layer], LEFT, RIGHT, 1)
+    distribute_layers([job_layer, lines_layer.layers.getByName("Line 6"), committees_layer], LEFT, RIGHT, 1)
+    center(lines_layer.layers.getByName("Line 4"), top_issues_layer.bounds[2].value, top_donors_layer.bounds[0].value, 1)
+    center(lines_layer.layers.getByName("Line 6"), job_layer.bounds[2].value, committees_layer.bounds[0].value, 1)
+    center(lines_layer.layers.getByName("Line 4"), lines_layer.layers.getByName("Line 2").bounds[2].value, BOTTOM, 0)
+    center(lines_layer.layers.getByName("Line 6"), MIDDLE,  lines_layer.layers.getByName("Line 5").bounds[0].value, 0)
+    
 
     SaveOptions.DONOTSAVECHANGES;
-    // Optional save-path override via arguments[1] (main.js passes the explicit
-    // output path). Falls back to temp.txt's file_save_path otherwise.
+    // Optional save-path override via arguments[1] -- the "Gen Manual Card" flow
+    // passes <name>_card_back.psd so it doesn't collide with the social
+    // <name>_card.psd. Falls back to temp.txt's file_save_path otherwise.
     var save_path = (arguments.length > 1 && arguments[1]) ? arguments[1] : rep_info["file_save_path"];
     saveAsNewFile(save_path);
 
@@ -1014,8 +933,13 @@ if (app.documents.length > 0) {
 
 
 } else {
-    // Headless: don't alert() (modal dialogs throw). No open document means the
-    // caller didn't open the template PSD before running this script.
-    throw new Error("No document open: caller must open the template PSD before running this script.");
+    log("ERROR: No document is open. Pass the template path to run_jsx.py so Photoshop opens it before running this script.");
+}
+
+} catch (e) {
+    // Record exactly what failed and where, then re-throw so the process still
+    // exits non-zero and run_jsx.py flags it.
+    log("FATAL: " + e.message + " (line " + e.line + ", file " + e.fileName + ")");
+    throw e;
 }
 

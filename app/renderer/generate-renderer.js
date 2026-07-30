@@ -24,6 +24,7 @@ const step10 = document.getElementById('step10');
 const step11 = document.getElementById('step11');
 const step12 = document.getElementById('step12');
 const step13 = document.getElementById('step13');
+const step14 = document.getElementById('step14');
 
 //Step 1 elements
 const yesConBtn = document.getElementById('yesGenCongressmenBtn')
@@ -79,6 +80,10 @@ const backToConfirmBtn = document.getElementById('backToConfirmBtn');
 // Step 6 elements
 const genCardBtn = document.getElementById('genCardBtn');
 const addAnotherBtn = document.getElementById('addAnotherBtn');
+// Step 14: template chooser
+const socialTemplateBtn = document.getElementById('socialTemplateBtn');
+const physicalTemplateBtn = document.getElementById('physicalTemplateBtn');
+const backFromChooserBtn = document.getElementById('backFromChooserBtn');
 const missingItemWarning2 = document.getElementById('missingItemWarning2');
 
 
@@ -119,7 +124,16 @@ function showStatus(message, isSuccess, duration=3000) {
   }, duration);
 }
 
-function showPopup(message) {
+// Advance to the template chooser (step 14), labeling it with the current rep.
+function goToChooser() {
+  const chooserRepName = document.getElementById('chooserRepName');
+  if (chooserRepName && selectedRep) chooserRepName.textContent = selectedRep.name;
+  showStep(14);
+}
+
+// Empty-field warning. On "Proceed" it runs onProceed() -- by default it advances
+// to the template chooser (step 14), where the user picks social vs physical.
+function showPopup(message, onProceed = goToChooser) {
 
   //add yes/no buttons to popup
   popup.textContent = message;
@@ -146,8 +160,8 @@ function showPopup(message) {
   genCardBtn.disabled = true;
   addAnotherBtn.disabled = true;
 
-  //on confirm, run the photoshop
-  popupConfirmBtn.addEventListener('click', async () => {
+  //on confirm, advance (default: to the template chooser)
+  popupConfirmBtn.addEventListener('click', () => {
     //re-enable the field buttons after confirmation
     fieldSubmitBtn.disabled = false;
     noUpdateBtn.disabled = false;
@@ -156,24 +170,7 @@ function showPopup(message) {
     addAnotherBtn.disabled = false;
     popup.className = 'popup';
 
-    showStep(7); //go to photoshop loading page
-    setLoading(true);
-    console.log("running gen card");
-    console.log("Sending to main.js: ", selectedRep.name);
-
-    const result = await window.electronAPI.genCard(selectedRep.name);
-
-    if (result.success) {
-      console.log("done with gen card");
-      setLoading(false);
-      showStep(8);
-    }
-    else {
-      //showStatus('Error generating card: ' + result.message, false);
-      errorMessage.textContent = result.message;
-      showStep(9);
-      setLoading(false);
-    }
+    onProceed();
   });
 
   //on cancel, go back to field selection page
@@ -189,6 +186,29 @@ function showPopup(message) {
   });
 }
 
+// Actually generate the card with the chosen JSX (social vs physical), driving
+// the loading/success/failure steps. Called from the template chooser (step 14).
+async function runGeneration(genApiFn) {
+  showStep(7); //go to photoshop loading page
+  setLoading(true);
+  console.log("Sending to main.js: ", selectedRep.name, selectedRep.partyName);
+
+  // Pass party too; genCard ignores the extra arg, genManualCard uses it to
+  // pick the party-specific (R/D/I) physical templates.
+  const result = await genApiFn(selectedRep.name, selectedRep.partyName);
+
+  if (result.success) {
+    console.log("done with gen card");
+    setLoading(false);
+    showStep(8);
+  }
+  else {
+    errorMessage.textContent = result.message;
+    showStep(9);
+    setLoading(false);
+  }
+}
+
 function setLoading(isLoading) {
   if (isLoading) {
     spinner.classList.add('show');
@@ -198,7 +218,7 @@ function setLoading(isLoading) {
 }
 
 function showStep(stepNum) {
-  [step1, step2, step3, step4, step5, step6, step7, step8, step9, step10, step11, step12, step13].forEach(s => s.classList.add('hidden'));
+  [step1, step2, step3, step4, step5, step6, step7, step8, step9, step10, step11, step12, step13, step14].forEach(s => s.classList.add('hidden'));
 
   if (stepNum === 1) step1.classList.remove('hidden');
   else if (stepNum === 2) step2.classList.remove('hidden');
@@ -213,6 +233,7 @@ function showStep(stepNum) {
   else if (stepNum === 11) step11.classList.remove('hidden');
   else if (stepNum === 12) step12.classList.remove('hidden');
   else if (stepNum === 13) step13.classList.remove('hidden');
+  else if (stepNum === 14) step14.classList.remove('hidden');
 }
 
 function openModal() {
@@ -1179,26 +1200,8 @@ noUpdateBtn.addEventListener('click', async () => {
     return;
   }
   else {
-    showStep(7); //go to photoshop loading page
-    setLoading(true);
-    console.log("running gen card");
-    console.log("Sending to main.js: ", selectedRep.name);
-    //showStatus('Generating card. May take 1-2 minutes if Photoshop not open yet.', true);
-
-    const result = await window.electronAPI.genCard(selectedRep.name);
-
-    if (result.success) {
-      console.log("done with gen card");
-      setLoading(false);
-      showStep(8);
-    }
-    else {
-      //showStatus('Error generating card: ' + result.message, false);
-      errorMessage.textContent = result.message;
-      showStep(9);
-      setLoading(false);
-    }
-    
+    //fields present -> pick which template to render
+    goToChooser();
   }
 });
 
@@ -1321,35 +1324,25 @@ saveBtn.addEventListener('click', async () => {
 
 backToConfirmBtn.addEventListener('click', () => showStep(3));
 
-// Step 6: Success updating congressman, gen card or update another field
+// Step 6: Success updating congressman -> gen card leads to the template chooser
 genCardBtn.addEventListener('click', async () => {
-  //check if top_issues or top_donors is empty, if so, show popup warning before gen card
+  //check if top_issues or top_donors is empty, if so, show popup warning before proceeding.
+  //showPopup's "Proceed" advances to the chooser (step 14) by default.
   if(recommend_update.length === 1) {
     showPopup(`Field ${recommend_update[0]} is empty. Are you sure you want to proceed without updating it?`);
   } else if(recommend_update.length > 1) {
     showPopup(`Fields ${recommend_update.join(', ')} are empty. Are you sure you want to proceed without updating them?`);
   } else {
-    setLoading(true);
-    console.log("running gen card");
-    console.log("Sending to main.js: ", selectedRep.name);
-    showStatus('Generating card. May take 1-2 minutes if Photoshop not open yet.', true);
-
-    const result = await window.electronAPI.genCard(selectedRep.name);
-
-    if (result.success) {
-      console.log("done with gen card");
-      setLoading(false);
-      showStep(8);
-    }
-    else {
-      //showStatus('Error generating card: ' + result.message, false);
-      errorMessage.textContent = result.message;
-      showStep(9);
-      setLoading(false);
-    }
+    goToChooser();
   }
-
 });
+
+// Step 14: template chooser -- pick which JSX renders the card.
+socialTemplateBtn.addEventListener('click', () => runGeneration(window.electronAPI.genCard));
+physicalTemplateBtn.addEventListener('click', () => runGeneration(window.electronAPI.genManualCard));
+if (backFromChooserBtn) {
+  backFromChooserBtn.addEventListener('click', () => showStep(6));
+}
 
 addAnotherBtn.addEventListener('click', () => {
   //openModal();

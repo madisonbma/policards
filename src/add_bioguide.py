@@ -16,7 +16,7 @@ VALID_DEGREES = ("S.J.D.", "B.E.E.", "D.C.S.", "LL.D.", "M. Div", "D. Div", "D.N
                 "B.S.F.S.", "M.I.L.R.", "M.P.P.A.", "B.S.B.A.", "M.P.H", "M.S.A.",
                 "M.H.S", "B.S.N", "M.P.P.M", "M. St.", "B.S.N", "M.E.M", "D.M.D.",
                 "A.L.B", "L.L.M.", "M.I.A.", "M.F.A.", "M. Phil.", "M.Phil.", "M.F.",
-                "M.S.S", "M.A.R.", "LLM", "Pharm.D")
+                "M.S.S", "M.A.R.", "LLM", "Pharm.D", "M.M.O.A.S.", "M.L.E.R.")
 
 VALID_ROLES = ("a delegate", "a representative", "a senator", "elected", "reelected")
 
@@ -44,7 +44,7 @@ JOBS = ("elementary", "medical doctor", "law", "business", "nonprofit", "non-pro
             "urologist", "commentator", "restauranteur", "technician", "reporter",
             "prison guard", "courier", "examiner", "pediatrician",
             "social worker", "program", "farmer", "entrepreneur", "sales", "banker",
-            "optometrist", "rancher", "union", "civil engineer", "marketing", 
+            "optometrist", "rancher", "civil engineer", "marketing", 
             "author", "instructor", "physician", "police", "sheriff", "realtor", "insurance",
             "psychologist", "founder", "co-founder",
             "owner", "ceo", "attorney", "faculty", "actor", "professor", "superintendent", 
@@ -2414,6 +2414,14 @@ def convert_terms_to_useful(terms):
     #    terms[0][1] = terms[0][0] + relativedelta(years=2)
 
     if len(terms) == 1:
+        if terms[0][1] is None:
+            #print (terms[0])
+            #terms[0][1] = terms[0][0] + relativedelta(years=2)
+            return [[terms[0][0].strftime(date_format), None]]
+        elif terms[0][0] is None:
+            #print(terms[0])
+            #terms[0][0] = terms[0][1] - relativedelta(years=2)
+            return [[None, terms[0][0].strftime(date_format)]]
         return [[terms[0][0].strftime(date_format), terms[0][1].strftime(date_format)]]
 
 

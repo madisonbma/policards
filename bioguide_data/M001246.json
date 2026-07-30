@@ -1,0 +1,85 @@
+{
+  "data": {
+    "usCongressBioId": "M001246",
+    "familyName": "Mejia",
+    "givenName": "Analilia",
+    "unaccentedFamilyName": "Mejia",
+    "unaccentedGivenName": "Analilia",
+    "birthDate": "1977-08-17",
+    "birthCirca": false,
+    "birthDateUnknown": false,
+    "deathCirca": false,
+    "image": [
+      {
+        "contentUrl": "/bioguide-staging/assets/69eb9743277642362f6112ce.jpg",
+        "caption": "Image courtesy of the Member",
+        "name": "M001246_001"
+      }
+    ],
+    "profileText": "a Representative from New Jersey; born in Elizabeth, Union County, N.J., August 19, 1977; B.A., Rutgers University, New Brunswick, N.J., 2000; M.P.A.P., Rutgers University, New Brunswick, N.J.; M.L.E.R., Rutgers University, New Brunswick, N.J.; professional advocate; staff, campaign of United States Senator Robert Menendez, 2012; campaign staff, presidential campaign of Bernie Sanders, 2019-2020; staff, transition team for President-elect Joseph R. Biden Jr.; deputy director, Women's Bureau, United States Department of Labor, 2021; elected as a Democrat to the One Hundred Nineteenth Congress, by special election, to fill the vacancy caused by the resignation of United States Representative Mikie Sherrill (April 16, 2026-present).",
+    "relationship": [],
+    "asset": [
+      {
+        "name": "M001246_001",
+        "assetType": "Image",
+        "contentUrl": "/bioguide-published/assets/69eb9743277642362f6112ce.jpg",
+        "creditLine": "Image courtesy of the Member",
+        "associatedEntity": [],
+        "accessionNumber": "PA2026.04.0002a",
+        "usageRight": [
+          "Import to Congress.gov",
+          "Restricted"
+        ],
+        "uploadDate": "2026-04-24T12:16:58.254",
+        "uploadDateISO": "2026-04-24T16:16:58.254Z"
+      }
+    ],
+    "jobPositions": [
+      {
+        "job": {
+          "name": "Representative",
+          "jobType": "CongressMemberJob"
+        },
+        "startDate": "2026-04-16",
+        "startCirca": false,
+        "endCirca": false,
+        "congressAffiliation": {
+          "congress": {
+            "name": "The 119th United States Congress",
+            "congressNumber": 119,
+            "congressType": "USCongress",
+            "startDate": "2025-01-03"
+          },
+          "electionType": "Special",
+          "partyAffiliation": [
+            {
+              "party": {
+                "name": "Democrat"
+              },
+              "startCirca": false,
+              "endCirca": false
+            }
+          ],
+          "caucusAffiliation": [
+            {
+              "party": {
+                "name": "Democrat"
+              },
+              "startCirca": false,
+              "endCirca": false
+            }
+          ],
+          "represents": {
+            "regionType": "DistrictRegion",
+            "regionCode": "NJ"
+          }
+        }
+      }
+    ],
+    "creativeWork": [],
+    "researchRecord": [],
+    "deleted": false,
+    "publishedDate": "2026-04-24T12:17:36.304",
+    "publishedDateISO": "2026-04-24T16:17:36.304Z"
+  }
+}

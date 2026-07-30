@@ -347,6 +347,22 @@ def get_candidates_and_committees(session: requests.Session, office: str, cycle:
 
 
 
+def setup_person_for_cross_reference(fec_person, cycle):
+    if len(fec_person['principal_committees'])>1:
+        committee_list = []
+        for comm in fec_person['principal_committees']:
+            if cycle in comm['cycles']:
+                committee_list.append(comm['committee_id'])
+                #print(f" - Committee {comm['committee_id']} for {fec_person['name']} in cycle {cycle}")
+    else:
+        committee_list = [fec_person['principal_committees'][0]['committee_id']]
+    possible_person = {
+        "candidate_id": fec_person['candidate_id'],
+        "committee_id": committee_list,
+        "district_number": fec_person['district']
+    }
+    return possible_person
+
 ######################################################
 # Step -1: get the bioguide name mapping
 ######################################################
@@ -354,14 +370,22 @@ def cross_reference(fec_data, bioguide_data, cycle):
     #'name', 'party', 'state'. if match, take "candidate_id" and "district_number"
     people_map = {}
     failed = []
+    unique_count = len(set(item['bioguideID'] for item in bioguide_data if 'bioguideID' in item))
+    print(unique_count, "unique congressmen")
     for bio_person in bioguide_data:
         bioname = convert_to_ascii(bio_person['name'])
+        bioname = bioname.replace("(", "")
+        bioname = bioname.replace(")", "")
         bioname_array = bioname.split(', ')
         bio_last_array = bioname_array[0].upper().replace("-", " ").replace("'", "").split(" ")
         bio_first_array = bioname_array[1].upper().replace("-", " ").replace("'", "").split(" ")
         
         appended_person = False
-        
+        possible_person = None
+        possible_inactive_person = None
+        inactive_match = None
+        fuzzy_score = 0
+        fuzzy_score_inactive = 0
         for fec_person in fec_data:
             append_person = False
             state_match = False
@@ -388,7 +412,10 @@ def cross_reference(fec_data, bioguide_data, cycle):
             if fec_person.get('name') is None:
                 continue
 
-            name_array = fec_person['name'].split(', ')
+            fec_name = fec_person['name']
+            fec_name = fec_name.replace("(", "")
+            fec_name = fec_name.replace(")", "")
+            name_array = fec_name.split(', ')
             if len(name_array) == 1:
                 #Typoed and didn't do the comma probably
                 name_array = fec_person['name'].split(" ")
@@ -399,11 +426,49 @@ def cross_reference(fec_data, bioguide_data, cycle):
             first_match = set(bio_first_array) & set(fec_first_array)
             last_match = set(bio_last_array) & set(fec_last_array)
             if first_match and last_match:
-                name_match = True
-            elif last_match:
+                if fec_person['candidate_inactive'] == True:
+                    inactive_match = setup_person_for_cross_reference(fec_person, cycle)
+                    #print(f"*****Inactive person but name perfect match: {bioname}/{fec_name}")
+                    continue
+                else:
+                    #print(f"*****ACTIVE PERSON person and perfect name match: {bioname}/{fec_name}")
+                    name_match = True
+
+            elif last_match: #if last name match and state and party match, flag as possible person
                 if bio_last_array == fec_last_array:
                     if state_match and party_match:
-                        name_match = True
+                        if fec_person['candidate_inactive'] == True:
+                            #print(f"*****Inactive person but possible person candidate: {bioname}/{fec_name}")
+                            if possible_person: #if we've already seen a possible person, check name closeness
+                                new_fuzzy_score_inactive = max(fuzz.ratio(name1, name2) for name1 in bio_first_array for name2 in fec_first_array)
+                                if new_fuzzy_score_inactive < fuzzy_score_inactive:
+                                    #print(f"--Skipping person replacement")
+                                    continue
+                                else:
+                                    #print("++Replacing fuzzy person")
+                                    fuzzy_score_inactive = new_fuzzy_score_inactive
+                            else:
+                                fuzzy_score_inactive = max(fuzz.ratio(name1, name2) for name1 in bio_first_array for name2 in fec_first_array)
+
+                            possible_inactive_person = setup_person_for_cross_reference(fec_person, cycle)
+                            continue
+                        else:
+                            #print(f"*****ACTIVE person but possible person candidate: {bioname}/{fec_name}")
+
+                            if possible_person: #if we've already seen a possible person, check name closeness
+                                new_fuzzy_score = max(fuzz.ratio(name1, name2) for name1 in bio_first_array for name2 in fec_first_array)
+                                if new_fuzzy_score < fuzzy_score:
+                                    #print(f"--Skipping person replacement")
+                                    continue
+                                else:
+                                    #print("++Replacing fuzzy person")
+                                    fuzzy_score = new_fuzzy_score
+                            else:
+                                fuzzy_score = max(fuzz.ratio(name1, name2) for name1 in bio_first_array for name2 in fec_first_array)
+
+                            #print(f"Adding possible person for {bioname}: {fec_name}")
+                            possible_person = setup_person_for_cross_reference(fec_person, cycle)
+                            continue
                             
             if name_match:
                 if state_match and party_match:
@@ -414,25 +479,23 @@ def cross_reference(fec_data, bioguide_data, cycle):
                 
             if append_person:
                 appended_person = True
-                #print(f"Matched {bioname} to {fec_person['name']}")
-                if len(fec_person['principal_committees'])>1:
-                    committee_list = []
-                    for comm in fec_person['principal_committees']:
-                        if cycle in comm['cycles']:
-                            committee_list.append(comm['committee_id'])
-                            #print(f" - Committee {comm['committee_id']} for {fec_person['name']} in cycle {cycle}")
-                else:
-                    committee_list = [fec_person['principal_committees'][0]['committee_id']]
-                people_map[bio_person['bioguideID']] = {
-                    "candidate_id": fec_person['candidate_id'],
-                    "committee_id": committee_list,
-                    "district_number": fec_person['district']
-                }
+                #print(f"Matched {bioname} to {fec_name}")
+                people_map[bio_person['bioguideID']] = setup_person_for_cross_reference(fec_person, cycle)
                 break
         if not appended_person:
-            print(f"Could not find a match for {bio_person['name']} in FEC data. This person is "
-                    "likely not running again or died.")
-            failed.append(bio_person['bioguideID'])
+            if inactive_match:
+                print("Using inactive perfect match")
+                people_map[bio_person['bioguideID']] = inactive_match
+            elif possible_person:
+                print("Using active possible person")
+                people_map[bio_person['bioguideID']] = possible_person
+            elif possible_inactive_person:
+                print("Using inactive possible person")
+                people_map[bio_person['bioguideID']] = possible_inactive_person
+            else:
+                print(f"Could not find a match for {bio_person['name']} in FEC data. This person is "
+                        "likely not running again or died.")
+                failed.append(bio_person['bioguideID'])
         else:
             continue
     
@@ -1148,7 +1211,7 @@ def keep_only_current_contributions(csv_list, cycle):
             #pac_data['CAMPAIGN TOTAL'] = pac_data.get('CAMPAIGN TOTAL', 0) + net_contributions
             clean_csv.append(row)
             continue
-        elif len(row) < 17:
+        elif len(row) < 19:
             print("SHORT ROW: ", row)
         elif str(cycle) in row[17] or "Special" in row[18] or "Runoff" in row[18]:
             clean_csv.append(row)
@@ -1192,6 +1255,10 @@ def get_refund_data(csv_data, refund_data, cycle):
                 contribution = float(row[20])
                 key = row[7] + row[8] + row[12] + row[15] + row[16]
                 key = key.upper()
+            elif row[5] == "PAC":
+                key = row[24]
+                if not re.match(r"C\d{8}", key):
+                    print(f"Invalid committee code for {row[6]}: {key}")
             else:
                 print(f"Found a non-IND/ORG in SB20A...: {row[5]}")
 
@@ -1373,7 +1440,9 @@ def refund_for_pac(row, pac_data, refund_amount):
     lives -- or, if we have not seen them yet, load it as a pending negative -- using
     the same signed-netting rule as contributions (apply_signed with a negative delta).
     """
-    if row[26] != "":
+    if len(row) < 26:
+        name = row[6].upper().replace("POLITICAL ACTION COMMITTEE", "PAC")
+    elif row[26] != "":
         #this might not ever be true for SB20C, looks like it might be in [6] but keeping jic
         name = row[26].upper().replace("POLITICAL ACTION COMMITTEE", "PAC")
     elif row[6] != "":
@@ -1382,7 +1451,14 @@ def refund_for_pac(row, pac_data, refund_amount):
         print(f"Missing name for SB20 refund, skipping.")
         return
 
-    if row[24].startswith("C"):
+    if len(row) < 25:
+        if row[5].upper() in ["COM", "ORG"]:
+            #COM/ORG doesn't have committee id
+            committee_id = None
+        else:
+            print(f"Could not find committee_id for {name} ({row[5]}); keying refund by name at top level.")
+            committee_id = None
+    elif row[24].startswith("C"):
         committee_id = row[24]  # SB20 committee_id column (SA11 uses 25)
     elif row[25].startswith("C"):
         committee_id = row[25]
@@ -1518,17 +1594,21 @@ def check_row_format(row):
 # it pools elections inconsistently (IBEW: P&G share one aggregate, O has its own) or reports
 # the FILER's own grand total (a JFC's whole joint pot, 25x+ our slice).
 #
-# The ONE exception is an EARMARK CONDUIT (ActBlue/WinRed/AIPAC...), flagged by an FEC memo
-# (see _is_conduit_row). There col 21 is the only record of sub-$200 UNITEMIZED donors who
-# never appear as their own col 20 rows, so col 20 would undercount. For conduits only we use
-# col 21 with the per-report-vs-cumulative rule below:
-#   * CUMULATIVE (a running total -- col21 only dips at cycle resets) -> peak of each
-#     monotonic run (== max when it never resets).
-#   * PER-REPORT (each filing an independent total -- col21 bounces) -> sum across filings.
-#
-# A running total falls only at cycle resets (nearly non-decreasing); a per-report total
-# bounces. Treat it as cumulative only if at most this fraction of consecutive steps drop.
-COMMITTEE_MONOTONIC_MAX_DROP_FRAC = 0.2
+# The ONE exception is an EARMARK CONDUIT (ActBlue/WinRed/AIPAC...), flagged either by its own
+# memo (_is_conduit_row) or structurally by having earmark attributions back-reference it (the
+# conduit_parent_txns pass in process_form_no_refund -- needed because WinRed's own row carries
+# no earmark keyword). There col 21 is the only complete record of the money: sub-$200
+# UNITEMIZED donors never appear as their own col 20 rows, so a plain col 20 sum undercounts
+# (WinRed: col20 catches only ~84% of dollars, as little as 1% in a single filing). For
+# conduits we read col 21 as one of two things:
+#   * CUMULATIVE (col21 is a running total-to-date) -> peak of each monotonic run
+#     (_sum_run_peaks; == max when it never resets).
+#   * PER-REPORT (each filing an independent total) -> sum across filings.
+# We pick between them by which one the de-duped col20 sum (`itemized`) lands closer to:
+# col20 telescopes to run_peaks in the cumulative case and to sum(aggs) in the per-report case.
+# This is robust even when col20 is an unreliable absolute (unitemized undershoot / refund
+# overshoot) because that noise (single-digit %) is tiny next to the max-vs-sum gap (N-fold
+# in the number of filings). See finalize_committee_totals.
 
 
 def _is_conduit_row(row):
@@ -1544,13 +1624,17 @@ def _is_conduit_row(row):
     return "conduit total" in str(col(24)).lower() or "earmark" in str(col(43)).lower()
 
 
-def _record_committee_form(row, name, agg, form_committees):
+def _record_committee_form(row, name, agg, form_committees, conduit_txns=frozenset()):
     """
     Stash ONE observation for the current filing, keyed by committee id (else name). Keeps
     the filing's col21 (per-filing max, in case it climbs as-of-date within the filing) and
     the itemized amounts keyed by FEC transaction id (col2). A cumulative filer re-lists the
     same transactions in every filing, so keying by transaction id lets finalize DE-DUPE them
     -- otherwise the repeated col20 inflates the itemized total and flips the rule.
+
+    conduit_txns: parent txn ids that earmark attributions back-reference (built per filing in
+    process_form_no_refund). A row whose col2 is in this set is a conduit even if its own memo
+    carries no earmark/conduit keyword (WinRed).
     """
     cid = row[25] if (len(row) > 25 and str(row[25]).startswith("C")) else None
     key = cid or name
@@ -1560,9 +1644,11 @@ def _record_committee_form(row, name, agg, form_committees):
     except (TypeError, ValueError):
         earmark = 0.0
     txn = str(row[2]) if (len(row) > 2 and row[2] not in (None, "")) else ""
-    # Only an EARMARK CONDUIT (memo present) has unitemized money col20 misses, so only then
-    # is col21 used. Everything else -> de-duped col20 sum. See finalize.
-    is_conduit = _is_conduit_row(row)
+    # Only an EARMARK CONDUIT has unitemized money col20 misses, so only then is col21 used.
+    # A conduit is flagged either by its own memo (_is_conduit_row) or structurally, by having
+    # earmark attributions that back-reference this txn id (conduit_txns). Everything else ->
+    # de-duped col20 sum. See finalize.
+    is_conduit = _is_conduit_row(row) or (txn in conduit_txns)
     e = form_committees.get(key)
     if e is None:
         e = form_committees[key] = {"name": name, "committee_id": cid, "agg": agg,
@@ -1623,14 +1709,20 @@ def finalize_committee_totals(committee_observations, contribution_data):
     the actual line amounts. col21 is ignored: it pools elections inconsistently or reports
     the filer's own grand total.
 
-    EARMARK CONDUIT ONLY (memo present): col20 misses sub-$200 unitemized donors, so use col21
-    with the per-report-vs-cumulative rule. Cumulative requires BOTH:
-      * run-peaks >= itemized -- the cumulative interpretation (sum of each monotonic run's
-        peak) already covers every itemized dollar (plus unitemized), and
-      * the sequence is (near-)monotonic -- a running total only falls at cycle resets.
-    Both hold -> running total -> that run-peak sum. Otherwise PER-REPORT -> SUM across forms.
-    run-peaks (not plain max) so a cumulative series with a trailing reset still qualifies; the
-    monotonicity guard so a viral mostly-unitemized quarter can't fake cumulative while bouncing.
+    EARMARK CONDUIT ONLY (memo present): col20 misses sub-$200 unitemized donors, so col21 is
+    the complete figure. It is read as ONE of two interpretations, chosen by which the de-duped
+    col20 sum (`itemized`) lands closer to:
+      * CUMULATIVE -> run_peaks (sum of each monotonic run's peak; == max when it never resets).
+        De-duped col20 telescopes to run_peaks here (each filing's col20 is only the increment).
+      * PER-REPORT -> sum(aggs). De-duped col20 telescopes to the sum here (each filing's col20
+        is fresh money).
+    We report whichever of the two `itemized` is nearer. This is robust to col20 being an
+    unreliable absolute (unitemized undershoot pulls it below max; refunds push it above) because
+    that noise is small next to the max-vs-sum gap (N-fold in the filing count): a cumulative
+    series can't be misread as per-report no matter how much unitemized money hides in col21.
+    The old `run_peaks >= itemized` threshold instead dumped to the per-report SUM whenever
+    refunds edged itemized just past max col21 -- turning SCF's ~1.04M into 11M. When itemized
+    sits near the midpoint (the pick is a genuine coin-flip), we flag it rather than guess.
     """
     for key, obs in committee_observations.items():
         forms = sorted(obs["forms"], key=lambda f: f["date"])
@@ -1639,16 +1731,8 @@ def finalize_committee_totals(committee_observations, contribution_data):
         if not aggs:
             continue
         itemized = sum(obs["txns"].values()) + obs["noid_earmarks"]  # de-duped by txn id
-        run_peaks = _sum_run_peaks(aggs)
-        # A cumulative running total rarely drops (only at cycle resets); a per-report total
-        # bounces. Measure the fraction of consecutive steps that fall.
-        drops = sum(1 for a, b in zip(aggs, aggs[1:]) if b < a - 0.01)
-        drop_frac = drops / max(len(aggs) - 1, 1)
-        # A cumulative series resets rarely (once per cycle). Allow at least one reset
-        # regardless of length -- a committee re-reported across few filings still gets one
-        # legit cycle reset -- or a small fraction for long sequences. (run_peaks >= itemized
-        # independently rejects a per-report series that happens to be monotonic.)
-        mostly_monotonic = drops <= 1 or drop_frac <= COMMITTEE_MONOTONIC_MAX_DROP_FRAC
+        run_peaks = _sum_run_peaks(aggs)       # cumulative reading (== max when it never resets)
+        per_report = sum(aggs)                 # per-report reading
 
         if not obs["is_conduit"]:
             # Not an earmark conduit: the de-duped line amounts ARE the money (no unitemized
@@ -1656,17 +1740,26 @@ def finalize_committee_totals(committee_observations, contribution_data):
             total, mode = itemized, "direct(sum col20)"
         elif len(aggs) == 1:
             total, mode = aggs[0], "single-form"
-        elif run_peaks + 0.01 >= itemized and mostly_monotonic:
+        elif abs(itemized - run_peaks) <= abs(itemized - per_report):
+            # de-duped col20 telescopes to run_peaks -> col21 is a running cumulative total.
             total, mode = run_peaks, "cumulative(run-peaks)"
         else:
-            total, mode = sum(aggs), "per-report(sum)"
+            # de-duped col20 telescopes to the sum -> each filing's col21 is fresh money.
+            total, mode = per_report, "per-report(sum)"
 
         # only the multi-filing / conduit committees are interesting to log; skip one-offs.
         if len(aggs) > 1 or obs["is_conduit"]:
             print(f"COMMITTEE {name} ({key}): {mode} over {len(aggs)} filing(s) -> {total:,.2f} "
-                  f"(run_peaks = {run_peaks:,.2f}; max col21 = {max(aggs):,.2f}; "
-                  f"sum itemized col20 = {itemized:,.2f}; drop_frac = {drop_frac:.0%})")
-        if mode == "cumulative(run-peaks)" and len(aggs) > 1:
+                  f"(run_peaks = {run_peaks:,.2f}; per-report sum = {per_report:,.2f}; "
+                  f"max col21 = {max(aggs):,.2f}; itemized col20 = {itemized:,.2f})")
+        # Ambiguity guard: if `itemized` sits near the midpoint between the two readings, the
+        # closer-wins pick is a coin-flip -- surface it instead of silently guessing (this is the
+        # "would need to see an example" case: a per-report conduit dominated by one filing).
+        span = abs(per_report - run_peaks)
+        if obs["is_conduit"] and span > 0 and abs(itemized - (run_peaks + per_report) / 2.0) < 0.15 * span:
+            print(f"  ** AMBIGUOUS conduit {name} ({key}): itemized {itemized:,.2f} near midpoint of "
+                  f"cumulative {run_peaks:,.2f} vs per-report {per_report:,.2f} -- verify manually")
+        elif mode == "cumulative(run-peaks)" and len(aggs) > 1:
             # rarer path -- surface the per-form sequence so a misread is visible.
             print(f"  cumulative sequence {[round(a, 2) for a in aggs]}")
 
@@ -1699,6 +1792,17 @@ def process_form_no_refund(csv_data, individual_data, pac_data, cycle, committee
 
 
     form_committees = {}  # non-IND committee -> ONE aggregate observed in THIS filing
+    # Identify EARMARK CONDUITS structurally: a conduit's OWN row often carries no earmark
+    # keyword (WinRed's memo is just "SEE BELOW FOR DONORS REQUIRING ITEMIZATION"), but the
+    # attributed donor rows beneath it back-reference it via col3 and DO carry an earmark/conduit
+    # memo ("EARMARKED FROM WINRED"). Collect the parent txn ids those attributions point to;
+    # any committee row with a matching txn id (col2) is then treated as a conduit.
+    conduit_parent_txns = set()
+    for row in csv_data:
+        if len(row) > 3 and row[3]:
+            memo = row[43].lower() if len(row) > 43 else ""
+            if "earmark" in memo or "conduit" in memo:
+                conduit_parent_txns.add(row[3])
     for row in csv_data:
         if row[0].upper() in ["HDR", "F6A", "F6N", "TEXT", "F3S"]:
             continue
@@ -1745,7 +1849,7 @@ def process_form_no_refund(csv_data, individual_data, pac_data, cycle, committee
                 # entity/memo/threshold heuristics -- the aggregate's own shape decides.
                 # Refunds (SB20) still net via pac_data -> consolidation, landing in the same
                 # contribution_data bucket keyed by this name.
-                _record_committee_form(row, name, contribution, form_committees)
+                _record_committee_form(row, name, contribution, form_committees, conduit_parent_txns)
         elif row[0].upper() == "SA11B":
             if row[21] == '':
                 print(f"Row formatted weird: {row}")
@@ -1783,6 +1887,8 @@ def process_form_no_refund(csv_data, individual_data, pac_data, cycle, committee
             elif row[5] == "ORG":
                 refund_for_pac(row, pac_data, contribution)
             elif row[5] == "COM":
+                refund_for_pac(row, pac_data, contribution)
+            elif row[5] == "PAC":
                 refund_for_pac(row, pac_data, contribution)
             else:
                 print(f"Dont know what to do with non-IND SB20A: {row}")

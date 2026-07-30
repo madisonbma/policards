@@ -546,116 +546,184 @@ ipcMain.handle('combine-data', async (event) => {
   }
 });
 
-//gen card
-ipcMain.handle('gen-card', async (_event, name) => {
-  console.log("Received from renderer: ", name)
-  try {
-    const pythonScript = 'gen_temp_for_javascript';
+// Sanitize a rep name into the card filename stem (e.g. "Lisa Murkowski" -> "lisa_murkowski").
+function sanitizeCardName(name) {
+  const replacements = { ',': '', '"': '', '.': '', ' ': '_' };
+  const regex = new RegExp(Object.keys(replacements).map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'), 'g');
+  return name.replace(regex, (match) => replacements[match] || '').toLowerCase();
+}
 
-    const jsxScript = app.isPackaged
-      ? path.join(process.resourcesPath, 'photoshop', 'fill_social_template.jsx')
-      : path.join(__dirname, 'app', 'assets', 'photoshop', 'fill_social_template.jsx'); 
-    const tempFile = path.join(generated_outputs, 'temp.txt');
-    const outputDir = config['save_path'];
-    const replacements = {
-      ',': '',
-      '"': '',
-      '.': '',
-      ' ': '_'
-    };
-    const regex = new RegExp(Object.keys(replacements).map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'), 'g');
-    const sanitizedName = name.replace(regex, (match) => replacements[match] || '')
-                          .toLowerCase();
-    const outputFileName = `${sanitizedName}_card.psd`;
-    const outputPath = path.join(outputDir, outputFileName);
-    const fontDir = app.isPackaged
-      ? path.join(process.resourcesPath, 'fonts')
-      : path.join(__dirname, 'app', 'assets', 'fonts');
-    //1: gen temp for javascript
-    await deleteFile(tempFile);
-    await runPythonScript(pythonScript, [name, generated_outputs, config['politician_pages_assets_path'], outputDir, fontDir]);
+// Run the Python step that writes temp.txt (rep_info) for the JSX. Shared by the
+// social ("Gen Card") and card-back ("Gen Manual Card") flows -- both consume the
+// same rep_info. Returns the temp.txt path once it's confirmed written.
+async function prepareTempForRep(name) {
+  const tempFile = path.join(generated_outputs, 'temp.txt');
+  const fontDir = app.isPackaged
+    ? path.join(process.resourcesPath, 'fonts')
+    : path.join(__dirname, 'app', 'assets', 'fonts');
+  await deleteFile(tempFile);
+  await runPythonScript('gen_temp_for_javascript',
+    [name, generated_outputs, config['politician_pages_assets_path'], config['save_path'], fontDir]);
+  if (!fs.existsSync(tempFile)) {
+    throw new Error('temp.txt was not generated');
+  }
+  return tempFile;
+}
+
+
+// Open `templatePath` in Photoshop and run `jsxScript` against it, passing jsxArgs
+// to the script (arguments[0], arguments[1], ...). Photoshop has no working CLI
+// script flag, so we drive it over COM on Windows / AppleScript on mac. The
+// template is opened HERE (not inside the JSX) so main.js controls which template
+// each flow uses. Fire-and-forget; the caller watches for the output file.
+function launchPhotoshop(templatePath, jsxScript, jsxArgs) {
+  const env = { ...process.env, GEN_OUTPUT_DIR: generated_outputs };
+  const isWindows = process.platform === 'win32';
+  const isMac = process.platform === 'darwin';
+
+  let command;
+  if (isWindows) {
+    // COM (New-Object -ComObject) launches Photoshop if it isn't already open.
+    // While it's still starting the call throws RPC_E_SERVERCALL_RETRYLATER
+    // (0x8001010A); retry ONLY on that busy error so a genuine Open/JSX error
+    // still propagates (no double-run). Open the template first, then run the JSX.
+    const psEsc = (s) => String(s).replace(/'/g, "''");
+    const argsPs = '@(' + jsxArgs.map(a => "'" + psEsc(a) + "'").join(',') + ')';
+    const psScript =
+      "$ErrorActionPreference='Stop'; " +
+      "$ps = New-Object -ComObject 'Photoshop.Application'; " +
+      "$deadline = (Get-Date).AddSeconds(90); " +
+      "function Invoke-PsRetry([ScriptBlock]$action){ " +
+      "  while($true){ " +
+      "    try{ & $action; break } " +
+      "    catch{ " +
+      "      if( ($_.Exception.Message -match 'RETRYLATER|8001010A|busy') -and ((Get-Date) -lt $deadline) ){ Start-Sleep -Milliseconds 750 } " +
+      "      else { throw } " +
+      "    } " +
+      "  } " +
+      "} " +
+      "Invoke-PsRetry { [void]$ps.Open('" + psEsc(templatePath) + "') }; " +
+      "Invoke-PsRetry { $ps.DoJavaScriptFile('" + psEsc(jsxScript) + "', " + argsPs + ") }";
+    const encoded = Buffer.from(psScript, 'utf16le').toString('base64');
+    command = `powershell -NoProfile -EncodedCommand ${encoded}`;
+  } else if (isMac) {
+    // Mac: open the template, then tell Photoshop to run the script with arguments.
+    const year = config['photoshop_year'];
+    const macArgs = jsxArgs.map(a => `"${a}"`).join(',');
+    command =
+      `osascript ` +
+      `-e 'tell application "Adobe Photoshop ${year}" to open POSIX file "${templatePath}"' ` +
+      `-e 'tell application "Adobe Photoshop ${year}" to do javascript file "${jsxScript}" with arguments {${macArgs}}' &`;
+  } else {
+    throw new Error('Unsupported operating system');
+  }
+
+  exec(command, { env }, (error) => {
+    if (error) console.error(`Photoshop Launch Error: ${error}`);
+    else console.log("Photoshop executed");
+  });
+}
+
+// Resolve once the JSX writes `outputPath` (Photoshop runs async), or reject on timeout.
+function waitForCardOutput(outputDir, outputFileName, outputPath) {
+  return new Promise((resolve, reject) => {
+    const timeoutMs = 120000; // 2 minute limit
+    const timer = setTimeout(() => {
+      watcher.close();
+      reject(new Error("Timeout: Photoshop took too long to generate the card."));
+    }, timeoutMs);
+
+    const watcher = fs.watch(outputDir, (eventType, filename) => {
+      if (filename === outputFileName && fs.existsSync(outputPath)) {
+        clearTimeout(timer);
+        watcher.close();
+        console.log("File generated successfully!");
+        resolve({ success: true, path: outputPath });
+      }
+    });
+
+    // Quick check in case it finished instantly before the watcher started
+    if (fs.existsSync(outputPath)) {
+      clearTimeout(timer);
+      watcher.close();
+      console.log("File generated successfully!");
+      resolve({ success: true, path: outputPath });
+    }
+  });
+}
+
+//gen card (social / digital template, party-specific)
+ipcMain.handle('gen-card', async (_event, name, party) => {
+  console.log("Received from renderer: ", name, party)
+  try {
+    const stem = sanitizeCardName(name);
+    const suffix = partyTemplateSuffix(party);
+
+    // 1: gen temp.txt for the JSX
+    await prepareTempForRep(name);
     console.log("Success! temp.txt has been created.");
 
+    // 2: pick the party-specific digital template here (no longer from temp.txt),
+    //    render it, and wait for the output file.
+    return await generateCardSide(
+      'fill_social_template.jsx', 'digital_cards', `digital_card_${suffix}.psd`, `${stem}_card.psd`);
+  } catch (error) {
+    return { success: false, message: error.toString() };
+  }
+});
 
-    // 2: Check if temp.txt was created, remove previous psd file if exists
-    if (!fs.existsSync(tempFile)) {
-      throw new Error('temp.txt was not generated');
-    }
-    await deleteFile(outputPath);
+// Render one card side/variant: open its template (under templates/<subdir>/),
+// run its JSX with an explicit save path (arguments[1]) so the output name is
+// exactly what we watch for, and wait for the file to appear.
+// Resolves { success, path }.
+async function generateCardSide(jsxRelName, templateSubdir, templateName, outputFileName) {
+  const outputDir = config['save_path'];
+  const jsxScript = app.isPackaged
+    ? path.join(process.resourcesPath, 'photoshop', jsxRelName)
+    : path.join(__dirname, 'app', 'assets', 'photoshop', jsxRelName);
+  // Templates live in the user's assets folder under the given subdir.
+  const templatePath = path.join(config['politician_pages_assets_path'], 'templates', templateSubdir, templateName);
+  const outputPath = path.join(outputDir, outputFileName);
 
+  if (!fs.existsSync(templatePath)) {
+    throw new Error(`Template not found: ${templatePath}`);
+  }
 
-    // 3: Launch Photoshop
-    //await new Promise((resolve, reject) => {
-    const isWindows = process.platform === 'win32';
-    const isMac = process.platform === 'darwin';
+  await deleteFile(outputPath);
+  launchPhotoshop(templatePath, jsxScript, [generated_outputs, outputPath]);
+  return await waitForCardOutput(outputDir, outputFileName, outputPath);
+}
 
-    const env = { ...process.env, GEN_OUTPUT_DIR: generated_outputs };
-    let command;
-    if (isWindows) {
-      // Windows: drive Photoshop via COM (DoJavaScriptFile) so generated_outputs is
-      // passed as the JSX argument (arguments[0]) -- the same as the mac osascript
-      // "with arguments {...}". (Photoshop.exe on the CLI can't pass JSX arguments,
-      // and COM activation launches Photoshop if it isn't already open.)
-      //
-      // While Photoshop is still launching/busy, the COM call throws
-      // RPC_E_SERVERCALL_RETRYLATER (0x8001010A); retry until it's ready. Only retry
-      // on that busy error so a genuine JSX error still propagates (no double-run).
-      const psEsc = (s) => String(s).replace(/'/g, "''");
-      const psScript =
-        "$ErrorActionPreference='Stop'; " +
-        "$ps = New-Object -ComObject 'Photoshop.Application'; " +
-        "$deadline = (Get-Date).AddSeconds(90); " +
-        "while($true){ " +
-        "  try{ $ps.DoJavaScriptFile('" + psEsc(jsxScript) + "', @('" + psEsc(generated_outputs) + "')); break } " +
-        "  catch{ " +
-        "    if( ($_.Exception.Message -match 'RETRYLATER|8001010A|busy') -and ((Get-Date) -lt $deadline) ){ Start-Sleep -Milliseconds 750 } " +
-        "    else { throw } " +
-        "  } " +
-        "}";
-      const encoded = Buffer.from(psScript, 'utf16le').toString('base64');
-      command = `powershell -NoProfile -EncodedCommand ${encoded}`;
-    } else if (isMac) {
-      // Mac: Use osascript to tell Photoshop to run the script
-      command = `osascript -e 'tell application "Adobe Photoshop ${config['photoshop_year']}" to do javascript file "${jsxScript}" with arguments {"${generated_outputs}"}' &`;
-    } else {
-      throw new Error('Unsupported operating system');
-    }
+// Map a party name to the physical-template suffix (R/D/I). Anything that isn't
+// Republican/Democrat (e.g. Independent) falls back to 'I'.
+function partyTemplateSuffix(party) {
+  switch (String(party || '').toLowerCase()) {
+    case 'republican': return 'R';
+    case 'democrat':   return 'D';
+    default:           return 'I';
+  }
+}
 
-    exec(command, { env }, (error) => {
-        if (error) console.error(`Photoshop Launch Error: ${error}`);
-        else console.log("Photoshop executed");
-    });
+//gen manual card (physical card: back + front, party-specific templates)
+ipcMain.handle('gen-manual-card', async (_event, name, party) => {
+  console.log("Received from renderer (manual): ", name, party)
+  try {
+    const stem = sanitizeCardName(name);
+    const suffix = partyTemplateSuffix(party);
 
-    //4: Wait for file completion
-    return await new Promise((resolve, reject) => {
-        const timeoutMs = 120000; // 2 minute limit
-        
-        // Setup the Timeout
-        const timer = setTimeout(() => {
-            watcher.close();
-            reject(new Error("Timeout: Photoshop took too long to generate the card."));
-        }, timeoutMs);
+    // 1: same data pipeline as Gen Card (one temp.txt feeds both sides)
+    await prepareTempForRep(name);
+    console.log("Success! temp.txt has been created.");
 
-        // Setup the File Watcher
-        const watcher = fs.watch(outputDir, (eventType, filename) => {
-            if (filename === outputFileName && fs.existsSync(outputPath)) {
-                clearTimeout(timer);
-                watcher.close();
-                console.log("File generated successfully!")
-                resolve({ success: true, path: outputPath });
-            }
-        });
+    // 2: render both sides sequentially, using the party-specific templates.
+    //    Photoshop is single-instance, so we wait for each side's file before
+    //    launching the next (avoids the two COM runs colliding in one process).
+    const backResult = await generateCardSide(
+      'fill_card_back_nosocial_template.jsx', 'physical_cards', `card_back_no_socials_${suffix}.psd`, `${stem}_card_back.psd`);
+    const frontResult = await generateCardSide(
+      'fill_card_front_template.jsx', 'physical_cards', `card_front_${suffix}.psd`, `${stem}_card_front.psd`);
 
-        // Quick check in case it finished instantly before the watcher started
-        if (fs.existsSync(outputPath)) {
-            clearTimeout(timer);
-            watcher.close();
-            console.log("File generated successfully!")
-            resolve({ success: true, path: outputPath });
-        }
-    });
-
-    //return { success: true, message: 'Card generated successfully!' };
+    return { success: true, paths: [backResult.path, frontResult.path] };
   } catch (error) {
     return { success: false, message: error.toString() };
   }

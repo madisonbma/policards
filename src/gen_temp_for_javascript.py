@@ -177,6 +177,7 @@ def draw_wrapped_text(draw_context, text, font, max_width):
     return return_me
 
 
+
 def num_to_percentile(num):
     if num%10 == 1:
         if num%100==11:
@@ -239,27 +240,36 @@ def gen_committee_list(rep_info, rep_stats):
     else:
         parent_com = []
         sub_com = []
+        comm_list = []
         for comm in committees:
-            comm = comm.replace("Committee on ", "")
-            if ":" not in comm:
-                parent_com.append(comm)
+            if not comm.startswith("Committee"):
+                split = comm.split(":")
+                addme = f" [{split[0]}]"
+                comm = ":".join(split[1:])
             else:
-                sub_com.append(comm)
+                addme = ""
+            #comm_list.append(comm + addme)
+            if ":" not in comm:
+                parent_com.append(comm + addme)
+            else:
+                sub_com.append(comm + addme)
 
+
+        #return_me += "||BREAK_DOT||".join(comm_list)
+        #rep_stats['committee_list'] = return_me
 
         #current template sets committee max length to 6
-        if len(committees) <= 7:
-            return_me = ""
+        return_me = ""
             #reorganize to include subcomms
-            for pcom in parent_com:
-                return_me += f"||BREAK_DOT||{pcom}"
-                for subcom in sub_com:
-                    if pcom in subcom:
-                        return_me += f"||BREAK||-- {subcom.split(": ")[1]}"
+        for pcom in parent_com:
+            return_me += f"||BREAK_DOT||{pcom}"
+            for subcom in sub_com:
+                if pcom in subcom:
+                    return_me += f"||BREAK_DOT||{subcom}"
         
-        else:
+        #else:
             #otherwise get rid of subcoms
-            return_me += "||BREAK_DOT||".join(parent_com)
+        #    return_me += "||BREAK_DOT||".join(parent_com)
 
 
         rep_stats['committee_list'] = return_me
@@ -272,7 +282,8 @@ def get_work_history(rep_info, draw, font, max_width, rep_stats):
         rep_stats['work_history'] = ""
     else:
         for work in work_history:
-            new_ed.append(draw_wrapped_text(draw, work, font, max_width))
+            new_ed.append(work)
+            #new_ed.append(draw_wrapped_text(draw, work, font, max_width))
         new_ed[0] = f"||BREAK_DOT||{new_ed[0]}"
         rep_stats['work_history'] = "||BREAK_DOT||".join(new_ed)
 
@@ -299,38 +310,48 @@ def create_vote_block(rep_info, absolute_stats, rep_stats):
         rep_stats['absent_percent'] = f"{novote_percent}"
         if with_d > with_r:
             rep_stats['vote_with_party_text'] = f"Votes {with_d}% Democrat, {with_r}% Republican,||BREAK||Not Voting {novote_percent}%"
+            #rep_stats['vote_with_party_text'] = f"Votes {with_d}% Democrat, {with_r}% Republican, Not Voting {novote_percent}%"
         else:
             rep_stats['vote_with_party_text'] = f"Votes {with_r}% Republican, {with_d}% Democrat,||BREAK||Not Voting {novote_percent}%"
+            #rep_stats['vote_with_party_text'] = f"Votes {with_r}% Republican, {with_d}% Democrat, Not Voting {novote_percent}%"
 
 
         #if they are D or R, show how often they vote with party:
         if party=="Republican":
             if chamber == "House of Representatives":
                 rep_stats['avg_vote_text'] = f"The average House Republican votes {absolute_stats.get('with_R_avg_vote_H_R'):.{3}g}% Republican||BREAK||and is not voting {absolute_stats.get('absent_percent_avg_vote_H_R'):.{3}g}% of the time"
+                #rep_stats['avg_vote_text'] = f"The average House Republican votes {absolute_stats.get('with_R_avg_vote_H_R'):.{3}g}% Republican and is not voting {absolute_stats.get('absent_percent_avg_vote_H_R'):.{3}g}% of the time"
             else:
+                #rep_stats['avg_vote_text'] = f"The average Senate Republican votes {absolute_stats.get('with_R_avg_vote_S_R'):.{3}g}% Republican and is not voting {absolute_stats.get('absent_percent_avg_vote_S_R'):.{3}g}% of the time"
                 rep_stats['avg_vote_text'] = f"The average Senate Republican votes {absolute_stats.get('with_R_avg_vote_S_R'):.{3}g}% Republican||BREAK||and is not voting {absolute_stats.get('absent_percent_avg_vote_S_R'):.{3}g}% of the time"
     
         elif party=="Democrat":
             if chamber == "House of Representatives":
                 rep_stats['avg_vote_text'] = f"The average House Democrat votes {absolute_stats.get('with_D_avg_vote_H_D'):.{3}g}% Democrat||BREAK||and is not voting {absolute_stats.get('absent_percent_avg_vote_H_D'):.{3}g}% of the time"
+                #rep_stats['avg_vote_text'] = f"The average House Democrat votes {absolute_stats.get('with_D_avg_vote_H_D'):.{3}g}% Democrat and is not voting {absolute_stats.get('absent_percent_avg_vote_H_D'):.{3}g}% of the time"
             else:
                 rep_stats['avg_vote_text'] = f"The average Senate Democrat votes {absolute_stats.get('with_D_avg_vote_S_D'):.{3}g}% Democrat||BREAK||and is not voting {absolute_stats.get('absent_percent_avg_vote_S_D'):.{3}g}% of the time"
+                #rep_stats['avg_vote_text'] = f"The average Senate Democrat votes {absolute_stats.get('with_D_avg_vote_S_D'):.{3}g}% Democrat and is not voting {absolute_stats.get('absent_percent_avg_vote_S_D'):.{3}g}% of the time"
 
         else: #if they're not D or R, show which party they vote with more often:
             if rep_info['with_D'] > rep_info['with_R']:
                 #Vote more often with democrats
                 if chamber == "House of Representatives":
                     rep_stats['avg_vote_text'] = f"Votes more often with House Democrats, who on average vote {absolute_stats.get('with_D_avg_vote_H_D'):.{3}g}% Democrat||BREAK||and is not voting {absolute_stats.get('absent_percent_avg_vote_H_D'):.{3}g}% of the time"
+                    #rep_stats['avg_vote_text'] = f"Votes more often with House Democrats, who on average vote {absolute_stats.get('with_D_avg_vote_H_D'):.{3}g}% Democrat and is not voting {absolute_stats.get('absent_percent_avg_vote_H_D'):.{3}g}% of the time"
                 else:
                     rep_stats['avg_vote_text'] = f"Votes more often with Senate Democrats, who on average vote {absolute_stats.get('with_D_avg_vote_S_D'):.{3}g}% Democrat||BREAK||and is not voting {absolute_stats.get('absent_percent_avg_vote_S_D'):.{3}g}% of the time"
+                    #rep_stats['avg_vote_text'] = f"Votes more often with Senate Democrats, who on average vote {absolute_stats.get('with_D_avg_vote_S_D'):.{3}g}% Democrat and is not voting {absolute_stats.get('absent_percent_avg_vote_S_D'):.{3}g}% of the time"
             elif rep_info['with_D'] == rep_info['with_R']:
                 rep_stats['avg_vote_text'] = "Votes with Democrats and Republicans 50% of the time"
             else:
                 #Vote more often with republicans
                 if chamber == "House of Representatives":
                     rep_stats['avg_vote_text'] = f"Votes more often with House Republicans, who on average vote {absolute_stats.get('with_R_avg_vote_H_R'):.{3}g}% Democrat||BREAK||and is not voting {absolute_stats.get('absent_percent_avg_vote_H_R'):.{3}g}% of the time"
+                    #rep_stats['avg_vote_text'] = f"Votes more often with House Republicans, who on average vote {absolute_stats.get('with_R_avg_vote_H_R'):.{3}g}% Republican and is not voting {absolute_stats.get('absent_percent_avg_vote_H_R'):.{3}g}% of the time"
                 else:
                     rep_stats['avg_vote_text'] = f"Votes more often with Senate Republicans, who on average vote {absolute_stats.get('with_R_avg_vote_S_R'):.{3}g}% Democrat||BREAK||and is not voting {absolute_stats.get('absent_percent_avg_vote_S_R'):.{3}g}% of the time"
+                    #rep_stats['avg_vote_text'] = f"Votes more often with Senate Republicans, who on average vote {absolute_stats.get('with_R_avg_vote_S_R'):.{3}g}% Republican and is not voting {absolute_stats.get('absent_percent_avg_vote_S_R'):.{3}g}% of the time"
 
     except Exception as e:
         print(f"No voting record for {rep_info['name']}. Skip this section.")
@@ -354,7 +375,8 @@ def gen_top_issues(rep_info, draw, font, max_width, rep_stats):
     if top_issues_list:
         formatted_list = []
         for issue in top_issues_list:
-            formatted_list.append(draw_wrapped_text(draw, issue, font, max_width))
+            formatted_list.append(issue)
+            #formatted_list.append(draw_wrapped_text(draw, issue, font, max_width))
         rep_stats['top_issues'] = "||BREAK_DOT||".join(formatted_list)
     else:
         rep_stats['top_issues'] = "||BREAK_DOT||Issue 1||BREAK_DOT||Issue 2||BREAK_DOT||Issue 3"
@@ -434,7 +456,7 @@ def gen_top_donors_prototype(rep_info, draw, font, max_width, rep_stats):
 
 
         top3 = sorted(donors.items(), key=lambda kv: kv[1], reverse=True)[:3]
-        donor_lines = "Top 3 Donors||BREAK_DOT||"+"||BREAK_DOT||".join(
+        donor_lines = "||BREAK_DOT||"+"||BREAK_DOT||".join(
             f"{fmt_name(key)} ({fmt_money_abbrev(value)})" for key, value in top3
         )
 
@@ -443,7 +465,7 @@ def gen_top_donors_prototype(rep_info, draw, font, max_width, rep_stats):
     else:
         rep_stats['donor_title'] = "DONORS"
         rep_stats['top_donors_hdr'] = "Total Donations: $0||BREAK||Total from PACs: $0"
-        rep_stats['top_donors'] = "Top 3 Donors:||BREAK_DOT||Donor 1||BREAK_DOT||Donor 2||BREAK_DOT||Donor 3"
+        rep_stats['top_donors'] = "||BREAK_DOT||Donor 1||BREAK_DOT||Donor 2||BREAK_DOT||Donor 3"
 
 
 
@@ -465,13 +487,14 @@ def gen_top_donors(rep_info, draw, font, max_width, rep_stats):
         pac = fmt_money_abbrev(overview.get('pac_total', 0))
         header = (f"Total Donations: {net}||BREAK||"
                   f"Total from PACs: {pac}||BREAK||||BREAK||"
-                  f"Top 3 Donors:||BREAK||")
+                  f"||BREAK||")
 
 
         top3 = sorted(donors.items(), key=lambda kv: kv[1], reverse=True)[:3]
         formatted_list = []
         for company, amount in top3:
-            formatted_list.append(draw_wrapped_text(draw, f"{company} ({fmt_money_abbrev(amount)})", font, max_width))
+            formatted_list.append(f"{company} ({fmt_money_abbrev(amount)})")
+            #formatted_list.append(draw_wrapped_text(draw, f"{company} ({fmt_money_abbrev(amount)})", font, max_width))
         donor_lines = "||BREAK_DOT||".join(formatted_list)
 
         rep_stats['top_donors_hdr'] = header
@@ -479,7 +502,7 @@ def gen_top_donors(rep_info, draw, font, max_width, rep_stats):
     else:
         rep_stats['donor_title'] = "DONORS"
         rep_stats['top_donors_hdr'] = "Total Donations: $0||BREAK||Total from PACs: $0||BREAK||||BREAK||"
-        rep_stats['top_donors'] = "Top 3 Donors:||BREAK_DOT||Donor 1||BREAK_DOT||Donor 2||BREAK_DOT||Donor 3"
+        rep_stats['top_donors'] = "||BREAK_DOT||Donor 1||BREAK_DOT||Donor 2||BREAK_DOT||Donor 3"
 
 
 def gen_bonus_section(rep_info, draw, font, max_width, rep_stats):
@@ -504,7 +527,8 @@ def gen_bonus_section(rep_info, draw, font, max_width, rep_stats):
     
     formatted_list = []
     for item in bonus_list:
-        formatted_list.append(draw_wrapped_text(draw, item, font, max_width))
+        formatted_list.append(item)
+        #formatted_list.append(draw_wrapped_text(draw, item, font, max_width))
     formatted_list[0] = f"||BREAK_DOT||{formatted_list[0]}"
     rep_stats['bonus_text'] = "||BREAK_DOT||".join(formatted_list)
 
@@ -554,6 +578,7 @@ def create_temp(rep_info, absolute_stats, generated_outputs, assets_dir, save_pa
 
     name_data = draw_wrapped_text(draw, name, font, max_width)
     rep_stats['name_line'] = f"{name_data}"
+    #rep_stats['name_line'] = f"{name}"
 
     ##################################################
     #      EITHER CONGRESS OR GOVERNOR               #
@@ -568,7 +593,7 @@ def create_temp(rep_info, absolute_stats, generated_outputs, assets_dir, save_pa
     else:
         rep_stats['title_line'] = "Unknown Position"
     
-    rep_stats['chamber_line'] = f"{chamber}:"
+    rep_stats['chamber_line'] = f"{chamber}"
     ##################################################
     #    XXXX-Present | Up for re-election in 20XX   #
     ##################################################
