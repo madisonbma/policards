@@ -1004,7 +1004,9 @@ if (app.documents.length > 0) {
     SaveOptions.DONOTSAVECHANGES;
     // Optional save-path override via arguments[1] (main.js passes the explicit
     // output path). Falls back to temp.txt's file_save_path otherwise.
-    var save_path = (arguments.length > 1 && arguments[1]) ? arguments[1] : rep_info["file_save_path"];
+    //var save_path = (arguments.length > 1 && arguments[1]) ? arguments[1] : rep_info["file_save_path"];
+    var save_path = rep_info["file_save_path"]+"_card.psd";
+
     saveAsNewFile(save_path);
 
     //save_file_as_png_export(file_save_path, doc);

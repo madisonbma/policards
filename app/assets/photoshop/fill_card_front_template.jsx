@@ -349,7 +349,7 @@ if (app.documents.length > 0) {
     // Optional save-path override via arguments[1] -- the "Gen Manual Card" flow
     // passes <name>_card_front.psd so it doesn't collide with the social
     // <name>_card.psd. Falls back to temp.txt's file_save_path otherwise.
-    var save_path = (arguments.length > 1 && arguments[1]) ? arguments[1] : rep_info["file_save_path"];
+    var save_path = rep_info["file_save_path"]+"_card_front.psd";
     saveAsNewFile(save_path);
 
     //save_file_as_png_export(file_save_path, doc);

@@ -578,47 +578,28 @@ function photoshopScriptPath(jsxRelName) {
     : path.join(__dirname, 'app', 'assets', 'photoshop', jsxRelName);
 }
 
-// run_jsx_wrapper.jsx writes a thrown JSX's real message here so we can show it
-// instead of a bare timeout. See app/assets/photoshop/run_jsx_wrapper.jsx.
-const jsxErrorFile = path.join(generated_outputs, 'jsx_error.txt');
-
-function readJsxError() {
-  try {
-    if (!fs.existsSync(jsxErrorFile)) return null;
-    return fs.readFileSync(jsxErrorFile, 'utf8').trim() || null;
-  } catch (err) {
-    console.error('Could not read jsx_error.txt:', err.message);
-    return null;
-  }
-}
-
-// Run `jsxScript` against `templatePath` in Photoshop and resolve once Photoshop
-// is done. Photoshop has no working CLI script flag, so we drive it over COM on
-// Windows / AppleScript on mac. Both hosts are synchronous, so this rejects with
-// the JSX's OWN error message when the script throws -- previously a thrown JSX
-// error was an opaque code (AppleScript 8800 / COM 0x80004005) and surfaced to
-// the user as an unexplained 2-minute timeout.
+// Open `templatePath` in Photoshop and run `jsxScript` against it, passing jsxArgs
+// to the script (arguments[0], arguments[1], ...). Photoshop has no working CLI
+// script flag, so we drive it over COM on Windows / AppleScript on mac. The
+// template is opened HERE (not inside the JSX) so main.js controls which template
+// each flow uses.
 //
-// Nothing calls a card JSX directly: everything goes through run_jsx_wrapper.jsx,
-// which opens the template, runs the target, and reports errors.
+// Both hosts are synchronous, so this resolves only once Photoshop is done and
+// rejects with whatever the host reported -- that's how a Photoshop-side failure
+// reaches the UI as real text instead of an unexplained timeout.
 function runPhotoshop(templatePath, jsxScript, jsxArgs) {
   const env = { ...process.env, GEN_OUTPUT_DIR: generated_outputs };
   const isWindows = process.platform === 'win32';
   const isMac = process.platform === 'darwin';
 
-  const wrapper = photoshopScriptPath('run_jsx_wrapper.jsx');
-  // [generated_outputs, save path, target .jsx, template .psd] -- the first two
-  // are what the card JSX itself reads as arguments[0]/arguments[1].
-  const wrapperArgs = [...jsxArgs, jsxScript, templatePath];
-
   let command;
   if (isWindows) {
     // COM (New-Object -ComObject) launches Photoshop if it isn't already open.
     // While it's still starting the call throws RPC_E_SERVERCALL_RETRYLATER
-    // (0x8001010A); retry ONLY on that busy error so a genuine JSX error still
-    // propagates (no double-run). Third arg 3 = PsDialogModes "no dialogs".
+    // (0x8001010A); retry ONLY on that busy error so a genuine Open/JSX error
+    // still propagates (no double-run). Open the template first, then run the JSX.
     const psEsc = (s) => String(s).replace(/'/g, "''");
-    const argsPs = '@(' + wrapperArgs.map(a => "'" + psEsc(a) + "'").join(',') + ')';
+    const argsPs = '@(' + jsxArgs.map(a => "'" + psEsc(a) + "'").join(',') + ')';
     const psScript =
       "$ErrorActionPreference='Stop'; " +
       "$ps = New-Object -ComObject 'Photoshop.Application'; " +
@@ -632,32 +613,38 @@ function runPhotoshop(templatePath, jsxScript, jsxArgs) {
       "    } " +
       "  } " +
       "} " +
-      "Invoke-PsRetry { $ps.DoJavaScriptFile('" + psEsc(wrapper) + "', " + argsPs + ", 3) }";
+      "Invoke-PsRetry { [void]$ps.Open('" + psEsc(templatePath) + "') }; " +
+      "Invoke-PsRetry { $ps.DoJavaScriptFile('" + psEsc(jsxScript) + "', " + argsPs + ") }";
     const encoded = Buffer.from(psScript, 'utf16le').toString('base64');
     command = `powershell -NoProfile -EncodedCommand ${encoded}`;
   } else if (isMac) {
-    // Three traps here, all of which cost a debugging session:
-    //  1. `POSIX file "..."` inside a `tell` block collides with Photoshop's own
-    //     `file` term and fails to compile (-1728) -- coerce OUTSIDE the tell.
-    //  2. Photoshop rejects a file specifier for the .jsx; it needs an `alias`.
-    //  3. AppleEvents default to a 120s send timeout, which a full card render
-    //     can exceed -- and it matched the old watcher timeout exactly, so a slow
-    //     render and a hang looked identical.
-    // The template is opened by the wrapper via ExtendScript rather than by
-    // AppleScript's `open`, which rejects the alias with -43.
+    // Straight transplant of the sequence verified in Script Editor. Three things
+    // matter and each cost a debugging round:
+    //  1. `POSIX file "..."` must be coerced OUTSIDE the tell block -- inside one
+    //     it collides with Photoshop's own `file` term and fails to compile (-1728).
+    //  2. It must be coerced `as alias`. A bare file specifier is a reference that
+    //     Photoshop tries to resolve in its own scope and rejects (-43).
+    //  3. The template is opened via ExtendScript (`do javascript` with a source
+    //     STRING), not AppleScript's `open`, which rejects the alias with -43.
+    // The `with timeout` block is the one addition: AppleEvents default to a 120s
+    // send timeout, which a full card render can exceed.
     const year = config['photoshop_year'];
     const appName = `Adobe Photoshop ${year}`;
-    // Two nested syntaxes: an AppleScript string literal inside a single-quoted
-    // shell word. Escape innermost first so paths with quotes/apostrophes survive.
+    // Three nested syntaxes: ExtendScript source, inside an AppleScript string
+    // literal, inside a single-quoted shell word. Escape innermost first.
+    const jsStr = (s) => String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
     const asStr = (s) => String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
     const shSq = (s) => String(s).replace(/'/g, `'\\''`);
     const e = (applescript) => `-e '${shSq(applescript)}'`;
-    const macArgs = wrapperArgs.map(a => `"${asStr(a)}"`).join(',');
+
+    const openJs = `app.open(new File("${jsStr(templatePath)}"))`;
+    const macArgs = jsxArgs.map(a => `"${asStr(a)}"`).join(',');
 
     command = [
       'osascript',
-      e(`set jsxFile to POSIX file "${asStr(wrapper)}" as alias`),
+      e(`set jsxFile to POSIX file "${asStr(jsxScript)}" as alias`),
       e('with timeout of 300 seconds'),
+      e(`tell application "${appName}" to do javascript "${asStr(openJs)}"`),
       e(`tell application "${appName}" to do javascript jsxFile with arguments {${macArgs}}`),
       e('end timeout'),
     ].join(' ');
@@ -667,28 +654,13 @@ function runPhotoshop(templatePath, jsxScript, jsxArgs) {
 
   return new Promise((resolve, reject) => {
     exec(command, { env, maxBuffer: 1024 * 1024 }, (error, stdout, stderr) => {
-      // The wrapper's report file is the reliable channel (see its REPORT PROTOCOL
-      // comment); stdout is a fallback for failures too early to be written.
-      const report = readJsxError();
-      const hostDetail = [stderr, stdout].map(s => (s || '').trim()).filter(Boolean).join(' | ');
-
-      if (report && report !== 'OK') {
-        console.error(`Photoshop JSX Error: ${report}`);
-        return reject(new Error(report));
-      }
       if (error) {
-        // No report file at all means the wrapper never ran -- a bad script path,
-        // or a syntax error in run_jsx_wrapper.jsx itself (ExtendScript aborts the
-        // whole script at compile time, so its own try/catch never engages).
-        const message = report
-          ? `Photoshop launch failed: ${hostDetail || error.message}`
-          : `Photoshop could not run run_jsx_wrapper.jsx (no report file written -- ` +
-            `check the script path and that the wrapper compiles): ${hostDetail || error.message}`;
+        // stderr carries the useful text: the AppleScript error (including
+        // Photoshop's own message) or the PowerShell/COM exception.
+        const detail = [stderr, stdout].map(s => (s || '').trim()).filter(Boolean).join(' | ');
+        const message = `Photoshop error: ${detail || error.message}`;
         console.error(message);
         return reject(new Error(message));
-      }
-      if (!report) {
-        console.warn('Photoshop reported success but wrote no report file.');
       }
       console.log("Photoshop executed");
       resolve();
@@ -771,9 +743,8 @@ async function generateCardSide(jsxRelName, templateSubdir, templateName, output
   fs.mkdirSync(outputDir, { recursive: true });
 
   await deleteFile(outputPath);
-  await deleteFile(jsxErrorFile); // don't read a previous run's error as this one's
 
-  // Rejects with the JSX's own message if the script throws.
+  // Rejects with the host's error text if Photoshop or the JSX fails.
   await runPhotoshop(templatePath, jsxScript, [generated_outputs, outputPath]);
   return await waitForCardOutput(outputDir, outputFileName, outputPath);
 }
