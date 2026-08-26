@@ -36,12 +36,16 @@ var MIDDLE = 78+UPPER_BACKPLATE_HEIGHT+10;
 var LEFT = 57;
 var RIGHT = 57+675;
 var TOP = 78;
-//var MAX_NAME_WIDTH = 520; //pixels
+
+var MAX_NAME_WIDTH = 282; //pixels
+var MAX_STATE_WIDTH = 342-49; //pixels
 var MAX_ISSUE_WIDTH = 450; //pixels -- wrap width for top issues (JSX measures against this).
                            //Same px space as MAX_NAME_WIDTH(482)/donor box(450). TUNE to the
                            //real top-issues column width.
 
 var NAME_SIZE = 15.72;
+var STATE_SIZE = 10.24;
+
 
 
 /**
@@ -301,11 +305,12 @@ function normalize_text_box_size(text_layer) {
 
 
 
-function resize_text(text_layer, start_font_size, max_width) {
+function resize_text(text_layer, max_width) {
     /**
      * Resize a font if too big.
      * Currently used for name and state.
      */
+    var start_font_size = text_layer.textItem.size;
     text_layer.textItem.leading = 12;
     var layer_w = text_layer.bounds[2] - text_layer.bounds[0];
     log("checking resize: " + layer_w + " to " + max_width);
@@ -446,6 +451,38 @@ function write_temp(text) {
     }
 }
 
+
+function wrap_around_name(layer, text, resize) {
+
+    if (resize) {
+        layer.textItem.kind = TextType.POINTTEXT; 
+        var bounds = layer.bounds;
+        var exactWidth = bounds[2] - bounds[0];
+        var exactHeight = bounds[3] - bounds[1];
+        var scale = getTextLayerScale(layer);
+        log("Starting bounds: " + exactWidth+ "x"+exactHeight);
+    }
+
+    layer.textItem.leading = 5.5;
+    layer.textItem.kind = TextType.PARAGRAPHTEXT;
+    layer.textItem.contents = text;
+
+    if (resize) {
+        // Step 3: Convert it back to Paragraph Text
+       // layer.textItem.kind = TextType.PARAGRAPHTEXT;
+
+        // Step 4: Re-apply the exact dimensions to the text container.
+        // textItem.width/height live in the layer's PRE-transform space, so divide the
+        // canvas-px bounds back out by the layer's baked-in scale (~4.167x). Without this
+        // the box renders scale-times bigger than the text.
+        log("Scale by "+ scale.x + "/"+ scale.y)
+        log("Final bounds: "+ (exactWidth / scale.x) + "x" +( exactWidth / scale.y));
+
+        layer.textItem.width = new UnitValue(exactWidth / scale.x, "px");
+        layer.textItem.height = new UnitValue(exactHeight / scale.y, "px");
+       
+    }
+}
 
 
 function write_bulleted_list(layer, text_in, resize) {
@@ -671,6 +708,25 @@ function save_file_as_png_export(save_file_path, doc) {
 
 /////////////////////// TEXT EDITING /////////////////////////////
 
+function state_and_photo(photocard_layer, rep_info) {
+    ///////////////////////////////////////////////////////////
+    // STATE AND PHOTO CARD LAYER
+    //////////////////////////////////////////////////////////
+    var state_layer = photocard_layer.layers[0];
+
+    var photo_layer = photocard_layer.layers.getByName("Photo").layers.getByName("photo");
+    write(state_layer, rep_info["state"]);
+    var resized = resize_text(state_layer, MAX_STATE_WIDTH);
+    if (resized) {
+        //also recenter the state if resized
+        center(state_layer, photo_layer.bounds[0].value, photo_layer.bounds[2].value, 1)
+    }
+    log("Photo layer name and size before replacing photo: " + photo_layer.name + ", " + photo_layer.bounds);
+
+    add_photo(photo_layer, picFilePath);
+    log("Photo layer name and size after replacing photo: " + photo_layer.name + ", " + photo_layer.bounds);
+}
+
 
 
 
@@ -728,9 +784,10 @@ function name_and_title(name_and_info_layer, rep_info) {
 
     //for name, need to change the default line spacing
 
-    write(name_and_info_layer.layers[0], rep_info["name_line"]);
-    //resize_text(name_and_info_layer.layers[0], NAME_SIZE, MAX_NAME_WIDTH);
-
+    //write(name_and_info_layer.layers[0], rep_info["name_line"]);
+    wrap_around_name(name_and_info_layer.layers[0], rep_info['name_line'], false)
+    //resize_text(name_and_info_layer.layers[0], MAX_NAME_WIDTH);
+    resize_text(name_and_info_layer.layers[1], MAX_NAME_WIDTH);
     write(name_and_info_layer.layers[1], rep_info["chamber_line"]);
     //write(name_and_info_layer.layers[2], rep_info["chamber_line"]);
     write(name_and_info_layer.layers[3], rep_info["reelection_line"]);
@@ -856,7 +913,9 @@ if (app.documents.length > 0) {
     log("Top layer: " + toplayer.name);
 
     var lines_layer = toplayer.layers.getByName("Divider Lines");
-
+    
+    var photocard_layer = toplayer.layers.getByName("PHOTO CARD");
+    state_and_photo(photocard_layer, rep_info);
 
     var name_and_info_layer = toplayer.layers.getByName("NAME+INFO");
     name_and_title(name_and_info_layer, rep_info);
@@ -868,13 +927,9 @@ if (app.documents.length > 0) {
     var top_issues_layer = toplayer.layers.getByName("Top Issues");
     var top_donors_layer = toplayer.layers.getByName("Top Donors");
 
-    //var job_layer = toplayer.layers.getByName("Recent Jobs");
-    //var committees_layer = toplayer.layers.getByName("Committees");
 
     fill_top_issues(top_issues_layer, rep_info);
     fill_top_donors(top_donors_layer, rep_info);
-    //fill_committees(committees_layer, rep_info);
-    //fill_jobs(job_layer, rep_info);
 
 
     /////// REDO SPACING ////////
@@ -929,7 +984,7 @@ if (app.documents.length > 0) {
     // Optional save-path override via arguments[1] -- the "Gen Manual Card" flow
     // passes <name>_card_back.psd so it doesn't collide with the social
     // <name>_card.psd. Falls back to temp.txt's file_save_path otherwise.
-    var save_path = rep_info["file_save_path"]+"_card_back.psd";
+    var save_path = rep_info["file_save_path"]+"_card_photo_back.psd";
     saveAsNewFile(save_path);
 
     //save_file_as_png_export(file_save_path, doc);

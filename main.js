@@ -805,10 +805,12 @@ ipcMain.handle('gen-manual-card', async (_event, name, party) => {
     //    launching the next (avoids the two COM runs colliding in one process).
     const backResult = await generateCardSide(
       'fill_card_back_nosocial_template.jsx', 'physical_cards', `card_back_no_socials_${suffix}.psd`, `${stem}_card_back.psd`);
+    const backPhotoResult = await generateCardSide(
+      'fill_card_back_photo.jsx', 'physical_cards', `card_back_photo_${suffix}.psd`, `${stem}_card_photo_back.psd`);
     const frontResult = await generateCardSide(
       'fill_card_front_template.jsx', 'physical_cards', `card_front_${suffix}.psd`, `${stem}_card_front.psd`);
 
-    return { success: true, paths: [backResult.path, frontResult.path] };
+    return { success: true, paths: [backResult.path, backPhotoResult.path, frontResult.path] };
   } catch (error) {
     return { success: false, message: error.message || String(error) };
   }
