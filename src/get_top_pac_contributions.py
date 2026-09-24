@@ -348,14 +348,16 @@ def get_candidates_and_committees(session: requests.Session, office: str, cycle:
 
 
 def setup_person_for_cross_reference(fec_person, cycle):
+    committee_list = []
     if len(fec_person['principal_committees'])>1:
-        committee_list = []
         for comm in fec_person['principal_committees']:
             if cycle in comm['cycles']:
                 committee_list.append(comm['committee_id'])
                 #print(f" - Committee {comm['committee_id']} for {fec_person['name']} in cycle {cycle}")
-    else:
+    elif len(fec_person['principal_committees']) == 1:
         committee_list = [fec_person['principal_committees'][0]['committee_id']]
+    else:
+        print(f"No principal committees for {fec_person['name']}")
     possible_person = {
         "candidate_id": fec_person['candidate_id'],
         "committee_id": committee_list,
