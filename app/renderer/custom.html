@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+  <title>Generate Card</title>
+  <link rel="stylesheet" href="gencard.css">
+</head>
+<header>
+  <img src="../assets/icons/pp_logo.png" alt="App Logo" width="70">
+</header>
+
+<body>
+
+  <!-- Manual Insert Modal -->
+    <div class="modal-content">
+      <h2>Custom Update FEC</h2>
+      <!-- Step 1: Regenerate congressmen.json -->
+      <div id="step1" class="step">
+        <p>Enter the FEC candidate code manually to fetch top donors. (You can look them up at fec.gov)</p>
+        <div class="current-field-data">
+          <label for="manualCandidateInput">Candidate code (e.g. H/S00492785). </label>
+          <input type="text" id="manualCandidateInput" placeholder="H/S00000000" />
+        </div>
+        <p id="manualEntryError" class="error-message" style="white-space: pre-line;"></p>
+        <button class="btn-primary" id="manualCandidateSubmitBtn">Fetch Top Donors</button>
+        <div id="manualSpinner" class="spinner"></div>
+        <pre id="manualResult"></pre>
+        <div id="terminalOutput4" class="terminal"></div>
+      </div>
+    </div>
+
+  <script src="custom.js"></script>
+</body>
+</html>

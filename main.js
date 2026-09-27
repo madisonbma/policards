@@ -24,6 +24,7 @@ let mainWindow;
 let updateWindow;
 let configWindow;
 let genWindow;
+let customWindow;
 let pythonProcess = null;
 
 let config;
@@ -117,6 +118,26 @@ function createGenWindow() {
 
   genWindow.on('closed', () => {
     genWindow = null;
+  });
+}
+
+function createCustomWindow() {
+  customWindow = new BrowserWindow({
+    width: 800,
+    height: 500,
+    parent: mainWindow,
+    icon: path.join(__dirname, 'app/assets/icons/pp_logo_1024.png'),
+    webPreferences: {
+      nodeIntegration: false,
+      contextIsolation: true,
+      preload: path.join(__dirname, 'preload.js')
+    }
+  });
+
+  customWindow.loadFile('app/renderer/custom.html');
+
+  customWindow.on('closed', () => {
+    customWindow = null;
   });
 }
 
@@ -441,6 +462,14 @@ ipcMain.handle('open-gen-card', async () => {
 
   change_permissions_for_mac();
 
+});
+
+ipcMain.handle('open-custom-fec', () => {
+  if (customWindow) {
+    customWindow.focus();
+  } else {
+    createCustomWindow();
+  }
 });
 
 // Handle Update Data button - opens new window

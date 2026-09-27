@@ -2,6 +2,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('electronAPI', {
   openGenCard: () => ipcRenderer.invoke('open-gen-card'),
+  openCustomFEC: () => ipcRenderer.invoke('open-custom-fec'),
   genRepsJSON: () => ipcRenderer.invoke('gen-reps-json'),
   genVotingRecordJSON: () => ipcRenderer.invoke('gen-voting-record-json'),
   onTerminalUpdate: (callback) => ipcRenderer.on('terminal-update', (event, data) => callback(data)),
